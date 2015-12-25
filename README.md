@@ -152,7 +152,7 @@ make test
 ### Running Integration Tests
 
 All integration tests files can be found under
-[Tests/integration](blob/master/Tests/integration) folder. In addition,
+[Tests/integration](Tests/integration) folder. In addition,
 a utility script `run_integrations.sh` can help to run integration tests easily:
 
 ```bash
@@ -180,4 +180,4 @@ Ryuichi Saito
 ## License
 
 Swift Abstract Syntax Tree is available under the Apache License 2.0.
-See the [LICENSE](blob/master/LICENSE) file for more info.
+See the [LICENSE](LICENSE) file for more info.
