@@ -35,7 +35,7 @@ func specParsingImportDeclaration() {
                 }
                 try expect(node.module) == "ast"
                 try expect(node.attributes.count) == 0
-                try expect(node.importKind).to.beNil()
+                try expect(node.importKind) == .Module
             }
         }
     }
@@ -164,9 +164,17 @@ func specParsingImportDeclaration() {
 
     describe("Parse import decl with import kind") {
         $0.it("should have an import decl with import kind") {
-            let testKinds = ["typealias", "struct", "class", "enum", "protocol", "var", "func"]
-            for testKind in testKinds {
-                let (astContext, errors) = parser.parse("import \(testKind) foo.bar")
+            let testKinds: [String: ImportKind] = [
+                "typealias": .Typealias,
+                "struct": .Struct,
+                "class": .Class,
+                "enum": .Enum,
+                "protocol": .Protocol,
+                "var": .Var,
+                "func": .Func
+            ]
+            for (testKindString, testKind) in testKinds {
+                let (astContext, errors) = parser.parse("import \(testKindString) foo.bar")
                 try expect(errors.count) == 0
                 let stmts = astContext.topLevelDeclaration.statements
                 try expect(stmts.count) == 1
@@ -178,10 +186,7 @@ func specParsingImportDeclaration() {
                 let submodules = importDecl.submodules
                 try expect(submodules.count) == 1
                 try expect(submodules[0]) == "bar"
-                guard let importKind = importDecl.importKind else {
-                    throw failure("Expect an import kind for this import declaration.")
-                }
-                try expect(importKind) == testKind
+                try expect(importDecl.importKind) == testKind
             }
 
         }
@@ -200,10 +205,7 @@ func specParsingImportDeclaration() {
             try expect(importDecl.attributes.count) == 0
             try expect(importDecl.module) == "UIKit"
             try expect(importDecl.submodules.count) == 0
-            guard let importKind = importDecl.importKind else {
-                throw failure("Expect an import kind for this import declaration.")
-            }
-            try expect(importKind) == "class"
+            try expect(importDecl.importKind) == .Class
         }
     }
 }

@@ -14,13 +14,25 @@
    limitations under the License.
 */
 
+public enum ImportKind: String {
+  case Module
+
+  case Typealias
+  case Struct
+  case Class
+  case Enum
+  case Protocol
+  case Var
+  case Func
+}
+
 public class ImportDeclaration: Declaration {
     private let _module: String
     private let _submodules: [String]
-    private let _importKind: String?
+    private let _importKind: ImportKind
     private let _attributes: [Attribute]
 
-    public init(module: String, submodules: [String] = [], importKind: String?  = nil, attributes: [Attribute] = []) {
+    public init(module: String, submodules: [String] = [], importKind: ImportKind = .Module, attributes: [Attribute] = []) {
         _module = module
         _submodules = submodules
         _importKind = importKind
@@ -39,7 +51,7 @@ public class ImportDeclaration: Declaration {
         return _submodules
     }
 
-    public var importKind: String? {
+    public var importKind: ImportKind {
         return _importKind
     }
 
@@ -48,15 +60,11 @@ public class ImportDeclaration: Declaration {
         for submodule in _submodules {
             modules += ".\(submodule)"
         }
-        var kind = ""
-        if let importKind = _importKind {
-            kind = " kind=\(importKind)"
-        }
         var attrs = ""
         if !_attributes.isEmpty {
             let attrList = _attributes.map({ return $0.name }).joinWithSeparator(",")
             attrs = " attributes=\(attrList)"
         }
-        return "\(getIndentText(indent))(import-declaration '\(modules)'\(kind)\(attrs))".terminalColor(.Green)
+        return "\(getIndentText(indent))(import-declaration '\(modules)' kind=\(importKind)\(attrs))".terminalColor(.Green)
     }
 }

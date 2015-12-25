@@ -166,29 +166,29 @@ public class Parser {
     private func _parseImportDeclaration(attributes attributes: [Attribute]) throws {
         _skipWhitespaces()
 
-        var importKind: String?
+        var importKind: ImportKind = .Module
         if let token = currentToken, case let .Keyword(keyName, keywordType) = token where keywordType == .Declaration {
             switch keyName {
             case "typealias":
-                importKind = "typealias"
+                importKind = .Typealias
                 _skipWhitespaces()
             case "struct":
-                importKind = "struct"
+                importKind = .Struct
                 _skipWhitespaces()
             case "class":
-                importKind = "class"
+                importKind = .Class
                 _skipWhitespaces()
             case "enum":
-                importKind = "enum"
+                importKind = .Enum
                 _skipWhitespaces()
             case "protocol":
-                importKind = "protocol"
+                importKind = .Protocol
                 _skipWhitespaces()
             case "var":
-                importKind = "var"
+                importKind = .Var
                 _skipWhitespaces()
             case "func":
-                importKind = "func"
+                importKind = .Func
                 _skipWhitespaces()
             default: ()
             }
@@ -222,7 +222,7 @@ public class Parser {
 
             _topLevelCode.append(ImportDeclaration(module: moduleName, submodules: submodules, importKind: importKind, attributes: attributes))
 
-            if let _ = importKind where submodules.isEmpty {
+            if importKind != .Module && submodules.isEmpty {
                 throw ParserError.MissingModuleNameInImportDeclaration
             }
         }

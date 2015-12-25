@@ -32,13 +32,13 @@ Parser error: Statements must be separated by line breaks or semicolons.
 Parser error: Statements must be separated by line breaks or semicolons.
 
 (top-level-declaration
-  (import-declaration 'Foundation')
-  (import-declaration 'UIKit')
-  (import-declaration 'Darwin')
-  (import-declaration 'foo.bar')
-  (import-declaration 'UIKit.UIViewController' kind=class)
-  (import-declaration 'Darwin.glob' kind=func)
-  (import-declaration 'x.y.z' kind=struct attributes=a,b,c,d)
-  (import-declaration 'klass')
-  (import-declaration 'foo'))
+  (import-declaration 'Foundation' kind=Module)
+  (import-declaration 'UIKit' kind=Module)
+  (import-declaration 'Darwin' kind=Module)
+  (import-declaration 'foo.bar' kind=Module)
+  (import-declaration 'UIKit.UIViewController' kind=Class)
+  (import-declaration 'Darwin.glob' kind=Func)
+  (import-declaration 'x.y.z' kind=Struct attributes=a,b,c,d)
+  (import-declaration 'klass' kind=Module)
+  (import-declaration 'foo' kind=Module))
 */
