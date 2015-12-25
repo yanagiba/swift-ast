@@ -19,11 +19,33 @@ import PackageDescription
 let package = Package(
     name: "swift-ast",
     targets: [
-        Target(name: "ast", dependencies: [.Target(name: "util")]),
-        Target(name: "parser", dependencies: [.Target(name: "util"), .Target(name: "ast")]),
-        Target(name: "swift-ast", dependencies: [.Target(name: "parser")]),
+        Target(
+            name: "source"
+        ),
+        Target(
+            name: "ast",
+            dependencies: [
+                .Target(name: "util"),
+                .Target(name: "source"),
+            ]
+        ),
+        Target(
+            name: "parser",
+            dependencies: [
+                .Target(name: "util"),
+                .Target(name: "source"),
+                .Target(name: "ast"),
+            ]
+        ),
+        Target(
+            name: "swift-ast",
+            dependencies: [
+                .Target(name: "source"),
+                .Target(name: "parser"),
+            ]
+        ),
     ],
     testDependencies: [
-        .Package(url: "https://github.com/kylef/Spectre.git", majorVersion: 0)
+        .Package(url: "https://github.com/kylef/Spectre.git", majorVersion: 0),
     ]
 )
