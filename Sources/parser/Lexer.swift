@@ -17,6 +17,7 @@
 import Foundation
 
 import util
+import source
 
 class Lexer {
   init() {}
@@ -238,7 +239,7 @@ class Lexer {
     return result
   }
 
-  func lex(text: String) -> LexicalContext {
+  func lex(source: SourceFile) -> LexicalContext {
     let lexicalContext = LexicalContext()
 
     let decimalLiteralRegex = "[0-9][0-9_]*"
@@ -247,7 +248,7 @@ class Lexer {
 
     // TODO: store line and column
     var advanced = 0
-    var input = text
+    var input = source.content
 
     while !input.isEmpty {
       if advanced == 0 && _isPotentialStringLiteral(input) {

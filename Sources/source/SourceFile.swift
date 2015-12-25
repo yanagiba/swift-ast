@@ -17,6 +17,11 @@
 // Merry Christmas 2015! -Ryuichi
 
 public struct SourceFile {
-   let path: String
-   let content: String
+   public let path: String
+   public let content: String
+
+   public init(path: String, content: String) {
+      self.path = path
+      self.content = content
+   }
 }

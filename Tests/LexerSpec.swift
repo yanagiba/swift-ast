@@ -24,7 +24,15 @@ import Foundation
 
 import Spectre
 
+@testable import source
 @testable import parser
+
+extension Lexer {
+  func lex(text: String) -> LexicalContext {
+    let testSourceFile = SourceFile(path: "", content: text)
+    return lex(testSourceFile)
+  }
+}
 
 func specLexer() {
   let lexer = Lexer()

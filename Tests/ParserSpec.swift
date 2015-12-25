@@ -16,8 +16,16 @@
 
 import Spectre
 
+@testable import source
 @testable import ast
 @testable import parser
+
+extension Parser {
+  public func parse(text: String) -> (astContext: ASTContext, errors: [String]) {
+    let testSourceFile = SourceFile(path: "", content: text)
+    return parse(testSourceFile)
+  }
+}
 
 func specParser() {
     let parser = Parser()

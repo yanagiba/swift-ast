@@ -16,17 +16,27 @@
 
 import Foundation
 
+import PathKit
+
+import source
 import parser
 
 var filePaths = Process.arguments
 filePaths.removeAtIndex(0)
 
 for filePath in filePaths {
-  let fileContent = (try! NSString(contentsOfFile: filePath, encoding: NSUTF8StringEncoding)) as String
+  let absolutePath = Path(filePath).absolute()
+
+  guard let fileContent = try? absolutePath.read(NSUTF8StringEncoding) else {
+    print("Error in reading file \(absolutePath)")
+    continue
+  }
+
+  let sourceFile = SourceFile(path: "\(absolutePath)", content: fileContent)
 
   let parser = Parser()
   let parserStartTime = CFAbsoluteTimeGetCurrent()
-  let (astContext, errors) = parser.parse(fileContent)
+  let (astContext, errors) = parser.parse(sourceFile)
   let parserTimeElapsed = CFAbsoluteTimeGetCurrent() - parserStartTime
 
   for error in errors {

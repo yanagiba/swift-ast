@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+import source
 import ast
 
 public class Parser {
@@ -46,9 +47,9 @@ public class Parser {
         currentToken = _consumedTokens.popLast()
     }
 
-    public func parse(text: String) -> (astContext: ASTContext, errors: [String]) {
+    public func parse(source: SourceFile) -> (astContext: ASTContext, errors: [String]) {
         let lexer = Lexer()
-        let lexicalContext = lexer.lex(text)
+        let lexicalContext = lexer.lex(source)
         return _parse(lexicalContext)
     }
 
