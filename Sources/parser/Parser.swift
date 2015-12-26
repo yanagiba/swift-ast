@@ -242,12 +242,8 @@ public class Parser {
             }
 
             let importDecl = ImportDeclaration(module: moduleName, submodules: submodules, importKind: importKind, attributes: attributes)
-            if let currentRange = currentRange {
+            if let currentRange = currentRange ?? _consumedTokens.last?.1 {
                 importDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
-            }
-            else if let lastRange = _sourceRangeOfLastConsumedToken() {
-                // it is already the end of the file, get the cursor back to the last meaningful token
-                importDecl.sourceRange = SourceRange(start: startLocation, end: lastRange.end)
             }
             _topLevelCode.append(importDecl)
 
