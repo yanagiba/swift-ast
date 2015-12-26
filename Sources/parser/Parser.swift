@@ -226,26 +226,18 @@ public class Parser {
         if let moduleName = _readIdentifier(includeContextualKeywords: true) {
             var submodules = [String]()
             shiftToken()
-            parseSubmodulesLoop: while let token = currentToken {
-                switch token {
-                case let .Punctuator(type):
-                    if type == .Period {
+
+            while let token = currentToken {
+                if case let .Punctuator(type) = token where type == .Period {
+                    shiftToken()
+                    if let submoduleName = _readIdentifier(includeContextualKeywords: true) {
+                        submodules.append(submoduleName)
                         shiftToken()
-                        if let submoduleName = _readIdentifier(includeContextualKeywords: true) {
-                            submodules.append(submoduleName)
-                            shiftToken()
-                        }
-                        else {
-                            // TODO: error handling
-                        }
                     }
-                    else {
-                        try unshiftToken()
-                        break parseSubmodulesLoop
-                    }
-                default:
+                }
+                else {
                     try unshiftToken()
-                    break parseSubmodulesLoop
+                    break
                 }
             }
 
