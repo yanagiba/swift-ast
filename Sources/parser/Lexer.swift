@@ -383,7 +383,7 @@ class Lexer {
         .match(/"^/\\*") { _ in
           let nestedComment = self._lexNestedComment(input[input.startIndex.advancedBy(2)..<input.endIndex])
           let comment =  "/*\(nestedComment)"
-          let lines = comment.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
+          let lines = NSString(string: comment).componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
           currentLine += lines.count - 1
           currentColumn = 1 + (lines.last?.utf16.count ?? 0)
           currentToken = .Comment(comment)
