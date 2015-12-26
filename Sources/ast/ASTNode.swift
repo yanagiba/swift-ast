@@ -14,6 +14,10 @@
    limitations under the License.
 */
 
+import source
+
 public protocol ASTNode {
+    var sourceRange: SourceRange { get }
+
     func inspect(indent: Int) -> String
 }

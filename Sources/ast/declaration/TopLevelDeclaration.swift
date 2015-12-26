@@ -32,11 +32,11 @@ public class TopLevelDeclaration: Declaration {
     }
 
     public override func inspect(indent: Int = 0) -> String {
-        var inspectStr = "\(getIndentText(indent))(top-level-declaration".terminalColor(.Red)
+        var inspectStr = "\(getIndentText(indent))(top-level-declaration \(getSourceRangeText())".terminalColor(.Red)
         for statement in _statements {
             inspectStr += "\n\(statement.inspect(indent + 1))"
         }
-        inspectStr += ")".terminalColor(.Red)
+        inspectStr += "\n)".terminalColor(.Red)
         return "\(inspectStr)"
     }
 }

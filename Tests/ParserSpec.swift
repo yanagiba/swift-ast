@@ -22,8 +22,14 @@ import Spectre
 
 extension Parser {
   public func parse(text: String) -> (astContext: ASTContext, errors: [String]) {
-    let testSourceFile = SourceFile(path: "", content: text)
+    let testSourceFile = SourceFile(path: "test/parser", content: text)
     return parse(testSourceFile)
+  }
+}
+
+extension Statement {
+  var testSourceRangeDescription: String {
+    return "\(sourceRange.start.path)[\(sourceRange.start.line):\(sourceRange.start.column)-\(sourceRange.end.line):\(sourceRange.end.column)]"
   }
 }
 
@@ -34,6 +40,7 @@ func specParser() {
         $0.it("should get translation unit with empty nodes") {
             let (astContext, errors) = parser.parse("")
             try expect(errors.count) == 0
+            try expect(astContext.topLevelDeclaration.testSourceRangeDescription) == "<unknown>[0:0-0:0]"
             try expect(astContext.topLevelDeclaration.statements.count) == 0
         }
     }
@@ -60,13 +67,16 @@ func specParser() {
             let (astContext, errors) = parser.parse("import foo import bar")
             try expect(errors.count) == 1
             try expect(errors[0]) == "Statements must be separated by line breaks or semicolons."
+            try expect(astContext.topLevelDeclaration.testSourceRangeDescription) == "test/parser[1:1-1:22]"
             let nodes = astContext.topLevelDeclaration.statements
             try expect(nodes.count) == 2
             guard let node1 = nodes[0] as? ImportDeclaration, node2 = nodes[1] as? ImportDeclaration else {
                 throw failure("Nodes are not ImportDeclaration.")
             }
             try expect(node1.module) == "foo"
+            try expect(node1.testSourceRangeDescription) == "test/parser[1:1-1:11]"
             try expect(node2.module) == "bar"
+            try expect(node2.testSourceRangeDescription) == "test/parser[1:12-1:22]"
         }
     }
 }

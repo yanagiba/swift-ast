@@ -24,8 +24,12 @@ func specParsingImportDeclaration() {
 
     describe("Parse import decl") {
         $0.it("should an import decl") {
-            let testModuleNames = ["ast", "    ast", "\t\n\n\n\n\n\tast"]
-            for testModuleName in testModuleNames {
+            let testModuleNames = [
+                "ast": "1:11",
+                "    ast": "1:15",
+                "\t\n\n\n\n\n\tast": "6:5"
+            ]
+            for (testModuleName, endLocation) in testModuleNames {
                 let (astContext, errors) = parser.parse("import \(testModuleName)")
                 try expect(errors.count) == 0
                 let nodes = astContext.topLevelDeclaration.statements
@@ -36,6 +40,7 @@ func specParsingImportDeclaration() {
                 try expect(node.module) == "ast"
                 try expect(node.attributes.count) == 0
                 try expect(node.importKind) == .Module
+                try expect(node.testSourceRangeDescription) == "test/parser[1:1-\(endLocation)]"
             }
         }
     }

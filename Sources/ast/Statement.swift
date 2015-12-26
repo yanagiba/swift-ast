@@ -15,12 +15,26 @@
 */
 
 import util
+import source
 
 public class Statement: ASTNode {
-    public init() {}
+
+    public var sourceRange: SourceRange
+
+    public init() {
+        sourceRange = SourceRange(
+            start: SourceLocation(path: "<unknown>", line: 0, column: 0),
+            end: SourceLocation(path: "<unknown>", line: 0, column: 0))
+    }
 
     public func inspect(indent: Int = 0) -> String {
         return "\(getIndentText(indent))(statement)".terminalColor(.Red)
+    }
+
+    func getSourceRangeText() -> String {
+        let rangeStr = "\(sourceRange.start.line):\(sourceRange.start.column)-"
+            + "\(sourceRange.end.line):\(sourceRange.end.column)"
+        return "path=\(sourceRange.start.path) range=\(rangeStr)"
     }
 
     func getIndentText(indent: Int) -> String {

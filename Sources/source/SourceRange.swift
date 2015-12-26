@@ -14,15 +14,12 @@
    limitations under the License.
 */
 
-public struct SourceLocation {
-    let path: String
-    let line: Int
-    let column: Int
+public struct SourceRange {
+    public let start: SourceLocation
+    public let end: SourceLocation
 
-    public init(path: String, line: Int, column: Int) {
-        self.path = path
-        self.line = line
-        self.column = column
+    public init(start: SourceLocation, end: SourceLocation) {
+        self.start = start
+        self.end = end
     }
-
 }

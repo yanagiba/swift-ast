@@ -31,14 +31,15 @@ Parser error: Missing identifier.
 Parser error: Statements must be separated by line breaks or semicolons.
 Parser error: Statements must be separated by line breaks or semicolons.
 
-(top-level-declaration
-  (import-declaration 'Foundation' kind=Module)
-  (import-declaration 'UIKit' kind=Module)
-  (import-declaration 'Darwin' kind=Module)
-  (import-declaration 'foo.bar' kind=Module)
-  (import-declaration 'UIKit.UIViewController' kind=Class)
-  (import-declaration 'Darwin.glob' kind=Func)
-  (import-declaration 'x.y.z' kind=Struct attributes=a,b,c,d)
-  (import-declaration 'klass' kind=Module)
-  (import-declaration 'foo' kind=Module))
+(top-level-declaration path=Tests/integration/ImportDeclarationTest.swift range=1:1-46:1
+  (import-declaration 'Foundation' kind=Module path=Tests/integration/ImportDeclarationTest.swift range=17:1-17:18)
+  (import-declaration 'UIKit' kind=Module path=Tests/integration/ImportDeclarationTest.swift range=18:1-18:13)
+  (import-declaration 'Darwin' kind=Module path=Tests/integration/ImportDeclarationTest.swift range=18:22-18:35)
+  (import-declaration 'foo.bar' kind=Module path=Tests/integration/ImportDeclarationTest.swift range=19:1-19:15)
+  (import-declaration 'UIKit.UIViewController' kind=Class path=Tests/integration/ImportDeclarationTest.swift range=20:1-20:36)
+  (import-declaration 'Darwin.glob' kind=Func path=Tests/integration/ImportDeclarationTest.swift range=21:1-21:24)
+  (import-declaration 'x.y.z' kind=Struct attributes=a,b,c,d path=Tests/integration/ImportDeclarationTest.swift range=22:13-22:32)
+  (import-declaration 'klass' kind=Module path=Tests/integration/ImportDeclarationTest.swift range=26:1-26:13)
+  (import-declaration 'foo' kind=Module path=Tests/integration/ImportDeclarationTest.swift range=27:1-27:12)
+)
 */

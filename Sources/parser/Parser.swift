@@ -68,6 +68,11 @@ public class Parser {
 
         shiftToken()
 
+        guard let firstRange = currentRange else {
+            return (ASTContext(topLevelCode: _topLevelCode), parserErrors)
+        }
+        let startLocation = firstRange.start
+
         while let token = currentToken {
             do {
                 if _isStartOfDeclaration(token, tailTokens: _reversedTokens) {
@@ -91,6 +96,10 @@ public class Parser {
             }
 
             shiftToken()
+        }
+
+        if let lastRange = _sourceRangeOfLastConsumedToken() {
+            _topLevelCode.sourceRange = SourceRange(start: startLocation, end: lastRange.end)
         }
 
         return (ASTContext(topLevelCode: _topLevelCode), parserErrors)
@@ -176,6 +185,11 @@ public class Parser {
     }
 
     private func _parseImportDeclaration(attributes attributes: [Attribute]) throws {
+        guard let startRange = currentRange else {
+            throw ParserError.InteralError
+        }
+        let startLocation = startRange.start
+
         _skipWhitespaces()
 
         var importKind: ImportKind = .Module
@@ -232,7 +246,15 @@ public class Parser {
                 }
             }
 
-            _topLevelCode.append(ImportDeclaration(module: moduleName, submodules: submodules, importKind: importKind, attributes: attributes))
+            let importDecl = ImportDeclaration(module: moduleName, submodules: submodules, importKind: importKind, attributes: attributes)
+            if let currentRange = currentRange {
+                importDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
+            }
+            else if let lastRange = _sourceRangeOfLastConsumedToken() {
+                // it is already the end of the file, get the cursor back to the last meaningful token
+                importDecl.sourceRange = SourceRange(start: startLocation, end: lastRange.end)
+            }
+            _topLevelCode.append(importDecl)
 
             if importKind != .Module && submodules.isEmpty {
                 throw ParserError.MissingModuleNameInImportDeclaration
@@ -313,4 +335,9 @@ public class Parser {
             }
         }
     }
+
+    private func _sourceRangeOfLastConsumedToken() -> SourceRange? {
+        return _consumedTokens.last?.1
+    }
+
 }

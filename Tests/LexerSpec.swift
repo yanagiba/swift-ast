@@ -27,21 +27,21 @@ import Spectre
 @testable import source
 @testable import parser
 
-extension Lexer {
-  func lex(text: String) -> LexicalContext {
+private extension Lexer {
+  private func lex(text: String) -> LexicalContext {
     let testSourceFile = SourceFile(path: "test/lexer", content: text)
     return lex(testSourceFile)
   }
 }
 
-extension LexicalContext {
-  var onlyTokens: [Token] {
+private extension LexicalContext {
+  private var onlyTokens: [Token] {
     return tokens.map { $0.0 }
   }
 }
 
-extension SourceRange {
-  var testDescription: String {
+private extension SourceRange {
+  private var testDescription: String {
     return "\(start.path):\(start.line):\(start.column)-\(end.path):\(end.line):\(end.column)"
   }
 }

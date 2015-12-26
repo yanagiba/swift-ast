@@ -37,6 +37,8 @@ public class ImportDeclaration: Declaration {
         _submodules = submodules
         _importKind = importKind
         _attributes = attributes
+
+        super.init()
     }
 
     public var module: String {
@@ -65,6 +67,6 @@ public class ImportDeclaration: Declaration {
             let attrList = _attributes.map({ return $0.name }).joinWithSeparator(",")
             attrs = " attributes=\(attrList)"
         }
-        return "\(getIndentText(indent))(import-declaration '\(modules)' kind=\(importKind)\(attrs))".terminalColor(.Green)
+        return "\(getIndentText(indent))(import-declaration '\(modules)' kind=\(importKind)\(attrs) \(getSourceRangeText()))".terminalColor(.Green)
     }
 }
