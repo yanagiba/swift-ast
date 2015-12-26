@@ -14,14 +14,18 @@
    limitations under the License.
 */
 
-class LexicalContext {
-  private var _tokens = [Token]()
+import source
 
-  func append(token: Token) {
-    _tokens.append(token)
+typealias TokenWithLocation = (Token, SourceRange)
+
+class LexicalContext {
+  private var _tokens = [TokenWithLocation]()
+
+  func append(token: Token, _ sourceRange: SourceRange) {
+    _tokens.append((token, sourceRange))
   }
 
-  var tokens: [Token] {
+  var tokens: [TokenWithLocation] {
     return _tokens
   }
 }
@@ -29,7 +33,7 @@ class LexicalContext {
 extension LexicalContext: CustomStringConvertible {
   var description: String {
     var result = ""
-    for token in _tokens {
+    for (token, _) in _tokens {
       result += "\(token)"
     }
     return result
@@ -39,7 +43,7 @@ extension LexicalContext: CustomStringConvertible {
 extension LexicalContext {
   func inspect() -> String {
     var result = ""
-    for token in _tokens {
+    for (token, _) in _tokens {
       result += "\(token.inspect)"
     }
     return result

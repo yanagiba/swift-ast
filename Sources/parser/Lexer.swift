@@ -240,6 +240,9 @@ class Lexer {
   }
 
   func lex(source: SourceFile) -> LexicalContext {
+    let dummySourceLocation = SourceLocation(path: source.path, line: 0, column: 0)
+    let dummySourceRange = SourceRange(start: dummySourceLocation, end: dummySourceLocation)
+
     let lexicalContext = LexicalContext()
 
     let decimalLiteralRegex = "[0-9][0-9_]*"
@@ -258,12 +261,12 @@ class Lexer {
         .match(/"^\"((?:(\\\\\\(.*\\))|[^\\\\\"]|\\\\.)*)\"") {
           let stringLiteral = $0[1]
           if $0[2].isEmpty {
-            lexicalContext.append(.StaticStringLiteral(stringLiteral))
+            lexicalContext.append(.StaticStringLiteral(stringLiteral), dummySourceRange)
             advanced = stringLiteral.utf16.count + 2
           }
           else {
             let interpolatedStringLiteral = self._lexInterpolatedStringLiteral(stringLiteral)
-            lexicalContext.append(.InterpolatedStringLiteral(interpolatedStringLiteral))
+            lexicalContext.append(.InterpolatedStringLiteral(interpolatedStringLiteral), dummySourceRange)
             advanced = interpolatedStringLiteral.utf16.count + 2
           }
         }
@@ -278,32 +281,32 @@ class Lexer {
 
         .match(/"^-?0b[01][01_]*") {
           let binaryLiteralString = $0[0]
-          lexicalContext.append(.BinaryIntegerLiteral(binaryLiteralString))
+          lexicalContext.append(.BinaryIntegerLiteral(binaryLiteralString), dummySourceRange)
           advanced = binaryLiteralString.utf16.count
         }?
         .match(/"^-?0o[0-7][0-7_]*") {
           let octalLiteralString = $0[0]
-          lexicalContext.append(.OctalIntegerLiteral(octalLiteralString))
+          lexicalContext.append(.OctalIntegerLiteral(octalLiteralString), dummySourceRange)
           advanced = octalLiteralString.utf16.count
         }?
         .match(/"^-?0x[0-9a-fA-F][0-9a-fA-F_]*(\\.[0-9a-fA-F][0-9a-fA-F_]*)?[pP][\\+\\-]?\(decimalLiteralRegex)") {
           //    -_0 0x hexDigit   hexChars_o  (  . hexDigit   hexChars)_o   p|P  +|-_o    decimalLiteral
           let hexadecimalLiteralString = $0[0]
-          lexicalContext.append(.HexadecimalFloatingPointLiteral(hexadecimalLiteralString))
+          lexicalContext.append(.HexadecimalFloatingPointLiteral(hexadecimalLiteralString), dummySourceRange)
           advanced = hexadecimalLiteralString.utf16.count
         }?
         .match(/"^-?0x[0-9a-fA-F][0-9a-fA-F_]*") {
           let hexadecimalLiteralString = $0[0]
-          lexicalContext.append(.HexadecimalIntegerLiteral(hexadecimalLiteralString))
+          lexicalContext.append(.HexadecimalIntegerLiteral(hexadecimalLiteralString), dummySourceRange)
           advanced = hexadecimalLiteralString.utf16.count
         }?
         .match(/"^-?\(decimalLiteralRegex)(\\.\(decimalLiteralRegex))?([eE][\\+\\-]?\(decimalLiteralRegex))?") {
           let decimalLiteralString = $0[0]
           if $0[1].isEmpty && $0[2].isEmpty {
-            lexicalContext.append(.DecimalIntegerLiteral(decimalLiteralString))
+            lexicalContext.append(.DecimalIntegerLiteral(decimalLiteralString), dummySourceRange)
           }
           else {
-            lexicalContext.append(.DecimalFloatingPointLiteral(decimalLiteralString))
+            lexicalContext.append(.DecimalFloatingPointLiteral(decimalLiteralString), dummySourceRange)
           }
           advanced = decimalLiteralString.utf16.count
         }
@@ -314,17 +317,17 @@ class Lexer {
 
         /// boolean literals
         .match(/"^true(?!\(identifierRegex))") { _ in
-          lexicalContext.append(.TrueBooleanLiteral)
+          lexicalContext.append(.TrueBooleanLiteral, dummySourceRange)
           advanced = 4
         }?
         .match(/"^false(?!\(identifierRegex))") { _ in
-          lexicalContext.append(.FalseBooleanLiteral)
+          lexicalContext.append(.FalseBooleanLiteral, dummySourceRange)
           advanced = 5
         }?
 
         /// nil literal
         .match(/"^nil(?!\(identifierRegex))") { _ in
-          lexicalContext.append(.NilLiteral)
+          lexicalContext.append(.NilLiteral, dummySourceRange)
           advanced = 3
         }?
 
@@ -332,14 +335,14 @@ class Lexer {
         .match(/"^(\(keywordRegex))(?!\(identifierRegex))") {
           let keyword = $0[1]
           let keywordType = self._keywordsMapping[keyword]!
-          lexicalContext.append(.Keyword(keyword, keywordType))
+          lexicalContext.append(.Keyword(keyword, keywordType), dummySourceRange)
           advanced = keyword.utf16.count
         }?
 
         // Matches identifier
         .match(/"^\(identifierRegex)") {
           let identifier = $0[1]
-          lexicalContext.append(.Identifier(identifier))
+          lexicalContext.append(.Identifier(identifier), dummySourceRange)
           advanced = identifier.utf16.count
         }
       }
@@ -350,13 +353,13 @@ class Lexer {
         // comments
         .match(/"^//.*\\R") {
           let comment = $0[0]
-          lexicalContext.append(.Comment(comment))
+          lexicalContext.append(.Comment(comment), dummySourceRange)
           advanced = comment.utf16.count
         }?
         .match(/"^/\\*") { _ in
           let nestedComment = self._lexNestedComment(input[input.startIndex.advancedBy(2)..<input.endIndex])
           let comment =  "/*\(nestedComment)"
-          lexicalContext.append(.Comment(comment))
+          lexicalContext.append(.Comment(comment), dummySourceRange)
           advanced = comment.utf16.count
         }
       }
@@ -367,7 +370,7 @@ class Lexer {
         // Matches backtick identifier
         .match(/"^`\(identifierRegex)`") {
           let identifier = $0[1]
-          lexicalContext.append(.BacktickIdentifier(identifier))
+          lexicalContext.append(.BacktickIdentifier(identifier), dummySourceRange)
           advanced = identifier.utf16.count + 2
         }?
 
@@ -377,13 +380,13 @@ class Lexer {
         .match(/"^[(){}\\[\\],:;@#`]") {
           let punctuator = $0[0]
           let punctuatorType = self._punctuatorMapping[punctuator]!
-          lexicalContext.append(.Punctuator(punctuatorType))
+          lexicalContext.append(.Punctuator(punctuatorType), dummySourceRange)
           advanced = punctuator.utf16.count
         }?
 
         /// Matches Arrow
         .match(/"^->") { _ in
-          lexicalContext.append(.Punctuator(.Arrow))
+          lexicalContext.append(.Punctuator(.Arrow), dummySourceRange)
           advanced = 2
         }?
 
@@ -392,19 +395,19 @@ class Lexer {
           let op = $0[0]
           switch op {
           case "=":
-            lexicalContext.append(.Punctuator(.Equal))
+            lexicalContext.append(.Punctuator(.Equal), dummySourceRange)
             advanced = 1
           case "!":
-            lexicalContext.append(.Punctuator(.Exclaim))
+            lexicalContext.append(.Punctuator(.Exclaim), dummySourceRange)
             advanced = 1
           case "&":
-            lexicalContext.append(.Punctuator(.Amp))
+            lexicalContext.append(.Punctuator(.Amp), dummySourceRange)
             advanced = 1
           case "?":
-            lexicalContext.append(.Punctuator(.Question))
+            lexicalContext.append(.Punctuator(.Question), dummySourceRange)
             advanced = 1
           default:
-            lexicalContext.append(.Operator(op))
+            lexicalContext.append(.Operator(op), dummySourceRange)
             advanced = op.utf16.count
           }
         }?
@@ -412,13 +415,13 @@ class Lexer {
         /// Matches dot operators
         .match(/"^\\.\\.[\\.\(operatorCharRegex)]*") {
           let op = $0[0]
-          lexicalContext.append(.Operator(op))
+          lexicalContext.append(.Operator(op), dummySourceRange)
           advanced = op.utf16.count
         }?
 
         /// Matches the Period
         .match(/"^\\.") { _ in
-          lexicalContext.append(.Punctuator(.Period))
+          lexicalContext.append(.Punctuator(.Period), dummySourceRange)
           advanced = 1
         }
       }
@@ -426,36 +429,36 @@ class Lexer {
       if advanced == 0 /* everything else */ {
         switch _getFirstCharacter(input) {
         case "\n":
-          lexicalContext.append(.LineFeed)
+          lexicalContext.append(.LineFeed, dummySourceRange)
           advanced = 1
         case "\r":
-          lexicalContext.append(.CarriageReturn)
+          lexicalContext.append(.CarriageReturn, dummySourceRange)
           advanced = 1
         case "\r\n":
-          lexicalContext.append(.CarriageReturn)
-          lexicalContext.append(.LineFeed)
+          lexicalContext.append(.CarriageReturn, dummySourceRange)
+          lexicalContext.append(.LineFeed, dummySourceRange)
           advanced = 1
         case "\t":
-          lexicalContext.append(.HorizontalTab)
+          lexicalContext.append(.HorizontalTab, dummySourceRange)
           advanced = 1
         default:
           input
 
           /// Matches form feed
           .match(/"^\\u000C") { _ in
-            lexicalContext.append(.FormFeed)
+            lexicalContext.append(.FormFeed, dummySourceRange)
             advanced = 1
           }?
 
           /// Matches null
           .match(/"^\\u0000") { _ in
-            lexicalContext.append(.Null)
+            lexicalContext.append(.Null, dummySourceRange)
             advanced = 1
           }?
 
           /// Matches any other whitespace
           .match(/"^\\s") { _ in
-            lexicalContext.append(.Space)
+            lexicalContext.append(.Space, dummySourceRange)
             advanced = 1
           }?
 
@@ -463,7 +466,7 @@ class Lexer {
 
           /// Matches anything else and emit invalid token
           .match(/"^.?") {
-            lexicalContext.append(.Invalid(invalidTokenString: $0[0]))
+            lexicalContext.append(.Invalid(invalidTokenString: $0[0]), dummySourceRange)
             advanced = $0[0].utf16.count
           }
         }

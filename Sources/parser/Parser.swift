@@ -19,32 +19,38 @@ import ast
 
 public class Parser {
     private var _topLevelCode: TopLevelDeclaration
-    private var _reversedTokens: [Token]
-    private var _consumedTokens: [Token]
+    private var _reversedTokens: [TokenWithLocation]
+    private var _consumedTokens: [TokenWithLocation]
 
     public init() {
         _topLevelCode = TopLevelDeclaration()
-        _reversedTokens = [Token]()
-        _consumedTokens = [Token]()
+        _reversedTokens = [TokenWithLocation]()
+        _consumedTokens = [TokenWithLocation]()
     }
 
-    private var currentToken: Token?
+    private var currentTokenWithLocation: TokenWithLocation?
+    private var currentToken: Token? {
+        return currentTokenWithLocation?.0
+    }
+    private var currentRange: SourceRange? {
+        return currentTokenWithLocation?.1
+    }
 
     private func shiftToken() {
-        if let token = currentToken {
+        if let token = currentTokenWithLocation {
             _consumedTokens.append(token)
         }
 
-        currentToken = _reversedTokens.popLast()
+        currentTokenWithLocation = _reversedTokens.popLast()
     }
 
     private func unshiftToken() throws {
-        guard let token = currentToken else {
+        guard let token = currentTokenWithLocation else {
             throw ParserError.InteralError
         }
 
         _reversedTokens.append(token)
-        currentToken = _consumedTokens.popLast()
+        currentTokenWithLocation = _consumedTokens.popLast()
     }
 
     public func parse(source: SourceFile) -> (astContext: ASTContext, errors: [String]) {
@@ -56,7 +62,7 @@ public class Parser {
     private func _parse(lexicalContext: LexicalContext) -> (astContext: ASTContext, errors: [String]) {
         _topLevelCode = TopLevelDeclaration()
         _reversedTokens = lexicalContext.tokens.reverse()
-        _consumedTokens = [Token]()
+        _consumedTokens = [TokenWithLocation]()
 
         var parserErrors = [String]() // TODO: we probably will handle this with diagnostic classes
 
@@ -88,6 +94,11 @@ public class Parser {
         }
 
         return (ASTContext(topLevelCode: _topLevelCode), parserErrors)
+    }
+
+    private func _isStartOfDeclaration(headToken: Token?, tailTokens: [TokenWithLocation]) -> Bool {
+        let tailOnlyTokens = tailTokens.map { $0.0 }
+        return _isStartOfDeclaration(headToken, tailTokens: tailOnlyTokens)
     }
 
     private func _isStartOfDeclaration(headToken: Token?, tailTokens: [Token]) -> Bool {

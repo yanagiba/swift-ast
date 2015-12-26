@@ -34,20 +34,26 @@ extension Lexer {
   }
 }
 
+extension LexicalContext {
+  var onlyTokens: [Token] {
+    return tokens.map { $0.0 }
+  }
+}
+
 func specLexer() {
   let lexer = Lexer()
 
   describe("Empty string") {
     $0.it("Should be empty lexical context") {
       let lexicalContext = lexer.lex("")
-      try expect(lexicalContext.tokens.count) == 0
+      try expect(lexicalContext.onlyTokens.count) == 0
     }
   }
 
   describe("Invlid token") {
     $0.it("Should contain only one invalid token, and token is not a whitespace") {
       let lexicalContext = lexer.lex("\u{7}")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.Invalid(invalidTokenString: "\u{7}")
@@ -59,7 +65,7 @@ func specLexer() {
   describe("Lex one line feed") {
     $0.it("Should contain only one line feed token, and token is a whitespace") {
       let lexicalContext = lexer.lex("\n")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.LineFeed
@@ -71,7 +77,7 @@ func specLexer() {
   describe("Lex three line feeds") {
     $0.it("Should contain only one line feed token, and token is a whitespace") {
       let lexicalContext = lexer.lex("\n\n\n")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 3
       for token in tokens {
         try expect(token) == Token.LineFeed
@@ -84,7 +90,7 @@ func specLexer() {
   describe("Lex one carriage return") {
     $0.it("Should contain only one carriage return token, and token is a whitespace") {
       let lexicalContext = lexer.lex("\r")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.CarriageReturn
@@ -96,7 +102,7 @@ func specLexer() {
   describe("Lex one carriage return if it is a CR+LF") {
     $0.it("Should contain only one carriage return token, and token is a whitespace") {
       let lexicalContext = lexer.lex("\r\n")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 2
       try expect(tokens[0]) == Token.CarriageReturn
       try expect(tokens[1]) == Token.LineFeed
@@ -106,7 +112,7 @@ func specLexer() {
   describe("Lex one horizontal tab") {
     $0.it("Should contain only one horizontal tab token, and token is a whitespace") {
       let lexicalContext = lexer.lex("\t")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.HorizontalTab
@@ -118,7 +124,7 @@ func specLexer() {
   describe("Lex one form feed") {
     $0.it("Should contain only one form feed token, and token is a whitespace") {
       let lexicalContext = lexer.lex("\u{000C}")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.FormFeed
@@ -130,7 +136,7 @@ func specLexer() {
   describe("Lex one null") {
     $0.it("Should contain only one null token, and token is a whitespace") {
       let lexicalContext = lexer.lex("\0")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.Null
@@ -142,7 +148,7 @@ func specLexer() {
   describe("Lex one nil") {
     $0.it("Should contain only one nil token") {
       let lexicalContext = lexer.lex("nil")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.NilLiteral
@@ -154,7 +160,7 @@ func specLexer() {
   describe("Lex two nils") {
     $0.it("Should contain only two nils token") {
       let lexicalContext = lexer.lex("nil nil")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 3
       try expect(tokens[0]) == Token.NilLiteral
       try expect(tokens[1]) == Token.Space
@@ -167,7 +173,7 @@ func specLexer() {
       let testStrings = ["0b0", "0b1", "0b01", "0b1010", "0b01_10_01_10", "-0b1", "-0b10_10_10_10"]
       for testString in testStrings {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.BinaryIntegerLiteral(testString)
@@ -182,7 +188,7 @@ func specLexer() {
       let testStrings = ["0o0", "0o1", "0o7", "0o01", "0o1217", "0o01_67_24_35", "-0o7", "-0o10_23_45_67"]
       for testString in testStrings {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.OctalIntegerLiteral(testString)
@@ -197,7 +203,7 @@ func specLexer() {
       let testStrings = ["0", "1", "100", "300_200_100", "-123", "-1_000_000_000"]
       for testString in testStrings {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.DecimalIntegerLiteral(testString)
@@ -212,7 +218,7 @@ func specLexer() {
       let testStrings = ["0x0", "0x1", "0x9", "0xa1", "0x1f1A", "0xFF_eb_ca_DA", "-0xA", "-0x19_EC_BA_67"]
       for testString in testStrings {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.HexadecimalIntegerLiteral(testString)
@@ -227,7 +233,7 @@ func specLexer() {
       let testStrings = ["0.0", "1.1", "10_0.3_00", "300_200_100e13", "-123E+135", "-1_000_000_000.000_001e-1_0_0"]
       for testString in testStrings {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.DecimalFloatingPointLiteral(testString)
@@ -242,7 +248,7 @@ func specLexer() {
       let testStrings = ["0x0.1p2", "-0x1P10", "0x9.A_Fp+30", "-0xa_1.eaP-1_5"]
       for testString in testStrings {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.HexadecimalFloatingPointLiteral(testString)
@@ -255,7 +261,7 @@ func specLexer() {
   describe("Lex empty string literal token") {
     $0.it("Should contain only one string literal token") {
       let lexicalContext = lexer.lex("\"\"")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.StaticStringLiteral("")
@@ -267,7 +273,7 @@ func specLexer() {
   describe("Lex a string literal with single character token") {
     $0.it("Should contain only a string literal with single character token") {
       let lexicalContext = lexer.lex("\"a\"")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.StaticStringLiteral("a")
@@ -279,7 +285,7 @@ func specLexer() {
   describe("Lex a string literal with empty characters token") {
     $0.it("Should contain only a string literal with empty characters token") {
       let lexicalContext = lexer.lex("\"   \"")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.StaticStringLiteral("   ")
@@ -291,7 +297,7 @@ func specLexer() {
   describe("Lex string literals with spaces tokens") {
     $0.it("Should contain two string literals deided by two space tokens") {
       let lexicalContext = lexer.lex("\"   \"  \"abc\"")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 4
       try expect(tokens[0]) == Token.StaticStringLiteral("   ")
       try expect(tokens[1]) == Token.Space
@@ -303,7 +309,7 @@ func specLexer() {
   describe("Lex two string literals") {
     $0.it("Should contain two string literals deided by two space tokens") {
       let lexicalContext = lexer.lex("\"   \"\"abc\"")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 2
       try expect(tokens[0]) == Token.StaticStringLiteral("   ")
       try expect(tokens[1]) == Token.StaticStringLiteral("abc")
@@ -313,7 +319,7 @@ func specLexer() {
   describe("Lex two string literals with an identifier in between") {
     $0.it("Should contain two string literals deided by two space tokens") {
       let lexicalContext = lexer.lex("\"   \"xyz\"abc\"")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 3
       try expect(tokens[0]) == Token.StaticStringLiteral("   ")
       try expect(tokens[1]) == Token.Identifier("xyz")
@@ -324,7 +330,7 @@ func specLexer() {
   describe("Lex escaped characters inside the string literal") {
     $0.it("Should contain one string literal that contains escaped characters") {
       let lexicalContext = lexer.lex("\"\\0\\\\\\t\\n\\r\\\"\\\'\"")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       try expect(tokens[0]) == Token.StaticStringLiteral("\\0\\\\\\t\\n\\r\\\"\\\'")
     }
@@ -333,7 +339,7 @@ func specLexer() {
   describe("Lex interpolated text inside the string literal") {
     $0.it("Should contain one string literal that contains escaped characters") {
       let lexicalContext = lexer.lex("\"\\(\"3\")\"")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       try expect(tokens[0]) == Token.InterpolatedStringLiteral("\\(\"3\")")
     }
@@ -341,11 +347,11 @@ func specLexer() {
 
   describe("Lex string literals inside Swift Programming Language book") {
     $0.it("Should contain string literals from Swfit PL book") {
-      try expect(lexer.lex("\"1 2 3\"").tokens[0]) == Token.StaticStringLiteral("1 2 3")
-      try expect(lexer.lex("\"1 2 \\(3)\"").tokens[0]) == Token.InterpolatedStringLiteral("1 2 \\(3)")
-      try expect(lexer.lex("\"1 2 \\(\"3\")\"").tokens[0]) == Token.InterpolatedStringLiteral("1 2 \\(\"3\")")
-      try expect(lexer.lex("\"1 2 \\(\"1 + 2\")\"").tokens[0]) == Token.InterpolatedStringLiteral("1 2 \\(\"1 + 2\")")
-      try expect(lexer.lex("\"1 2 \\(x)\"").tokens[0]) == Token.InterpolatedStringLiteral("1 2 \\(x)")
+      try expect(lexer.lex("\"1 2 3\"").onlyTokens[0]) == Token.StaticStringLiteral("1 2 3")
+      try expect(lexer.lex("\"1 2 \\(3)\"").onlyTokens[0]) == Token.InterpolatedStringLiteral("1 2 \\(3)")
+      try expect(lexer.lex("\"1 2 \\(\"3\")\"").onlyTokens[0]) == Token.InterpolatedStringLiteral("1 2 \\(\"3\")")
+      try expect(lexer.lex("\"1 2 \\(\"1 + 2\")\"").onlyTokens[0]) == Token.InterpolatedStringLiteral("1 2 \\(\"1 + 2\")")
+      try expect(lexer.lex("\"1 2 \\(x)\"").onlyTokens[0]) == Token.InterpolatedStringLiteral("1 2 \\(x)")
     }
   }
 
@@ -353,7 +359,7 @@ func specLexer() {
     $0.it("Should contain one string literals that contains a double quote") {
       let content = "o\\\"o"
       let lexicalContext = lexer.lex("\"\(content)\"")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       try expect(tokens[0]) == Token.StaticStringLiteral(content)
     }
@@ -362,7 +368,7 @@ func specLexer() {
   describe("Lex string literal with correct ending double quote") {
     $0.it("Two string literals that could confuse aggressive regular expression matching") {
       let lexicalContext = lexer.lex("\"\\(\"helloworld\")foo\\(\"bar\")\"()\"()\"")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 4
       try expect(tokens[0]) == Token.InterpolatedStringLiteral("\\(\"helloworld\")foo\\(\"bar\")")
       try expect(tokens[1]) == Token.Punctuator(.LeftParen)
@@ -374,7 +380,7 @@ func specLexer() {
   describe("Lex one true token") {
     $0.it("Should contain only one true token") {
       let lexicalContext = lexer.lex("true")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.TrueBooleanLiteral
@@ -386,7 +392,7 @@ func specLexer() {
   describe("Lex one false token") {
     $0.it("Should contain only one false token") {
       let lexicalContext = lexer.lex("false")
-      let tokens = lexicalContext.tokens
+      let tokens = lexicalContext.onlyTokens
       try expect(tokens.count) == 1
       let token = tokens[0]
       try expect(token) == Token.FalseBooleanLiteral
@@ -403,7 +409,7 @@ func specLexer() {
       ]
       for testString in testStrings {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.Identifier(testString)
@@ -423,7 +429,7 @@ func specLexer() {
       ]
       for testString in testStrings {
         let lexicalContext = lexer.lex("`\(testString)`")
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.BacktickIdentifier(testString)
@@ -445,7 +451,7 @@ func specLexer() {
       ]
       for testString in testStrings {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.Comment(testString)
@@ -463,7 +469,7 @@ func specLexer() {
 
       for testString in patternKeywords {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.Keyword(testString, .Pattern)
@@ -495,7 +501,7 @@ func specLexer() {
 
       for testString in declKeywords {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.Keyword(testString, .Declaration)
@@ -525,7 +531,7 @@ func specLexer() {
 
       for testString in stmtKeywords {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.Keyword(testString, .Statement)
@@ -556,7 +562,7 @@ func specLexer() {
 
       for testString in exprKeywords {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.Keyword(testString, .Expression)
@@ -595,7 +601,7 @@ func specLexer() {
 
       for testString in contextualKeywords {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         if case let Token.Keyword(keyword, _) = token { // TODO: contextualKeywordType is not tested
@@ -634,7 +640,7 @@ func specLexer() {
       ]
       for (testString, testType) in testStrings {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.Punctuator(testType)
@@ -671,7 +677,7 @@ func specLexer() {
       ]
       for testString in testStrings {
         let lexicalContext = lexer.lex(testString)
-        let tokens = lexicalContext.tokens
+        let tokens = lexicalContext.onlyTokens
         try expect(tokens.count) == 1
         let token = tokens[0]
         try expect(token) == Token.Operator(testString)
