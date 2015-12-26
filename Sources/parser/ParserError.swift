@@ -21,4 +21,5 @@ enum ParserError: ErrorType {
     case MissingSeparator
     case MissingIdentifier
     case MissingModuleNameInImportDeclaration
+    case PostfixPeriodIsReserved
 }

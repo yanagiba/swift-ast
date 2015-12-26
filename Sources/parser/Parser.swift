@@ -79,7 +79,7 @@ public class Parser {
                     try _parseDeclaration()
                 }
             }
-            catch ParserError.InteralError {
+            catch ParserError.InteralError {  // TODO: better error message mapping
                 parserErrors.append("Fetal error.") // This should not happen
             }
             catch ParserError.MissingSeparator {
@@ -90,6 +90,9 @@ public class Parser {
             }
             catch ParserError.MissingModuleNameInImportDeclaration {
                 parserErrors.append("Missing module name in import declaration.")
+            }
+            catch ParserError.PostfixPeriodIsReserved {
+                parserErrors.append("Postfix '.' is reserved.")
             }
             catch {
                 parserErrors.append("Unknown error.")
@@ -258,6 +261,9 @@ public class Parser {
 
             if importKind != .Module && submodules.isEmpty {
                 throw ParserError.MissingModuleNameInImportDeclaration
+            }
+            if let token = currentToken ?? _consumedTokens.last?.0, case let .Punctuator(type) = token where type == .Period {
+                throw ParserError.PostfixPeriodIsReserved
             }
         }
         else {

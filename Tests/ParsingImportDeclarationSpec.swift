@@ -213,4 +213,21 @@ func specParsingImportDeclaration() {
             try expect(importDecl.importKind) == .Class
         }
     }
+
+    describe("Parse import decl ending with a period") {
+        $0.it("should throw error for postfix period being reserved") {
+            let (astContext, errors) = parser.parse("import foo.bar.")
+            try expect(errors.count) == 1
+            try expect(errors[0]) == "Postfix '.' is reserved."
+            let stmts = astContext.topLevelDeclaration.statements
+            try expect(stmts.count) == 1
+            guard let importDecl = stmts[0] as? ImportDeclaration else {
+                throw failure("Node is not a ImportDeclaration.")
+            }
+            try expect(importDecl.attributes.count) == 0
+            try expect(importDecl.module) == "foo"
+            try expect(importDecl.submodules.count) == 1
+            try expect(importDecl.submodules[0]) == "bar"
+        }
+    }
 }
