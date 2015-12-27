@@ -56,10 +56,10 @@ public class Parser {
     public func parse(source: SourceFile) -> (astContext: ASTContext, errors: [String]) {
         let lexer = Lexer()
         let lexicalContext = lexer.lex(source)
-        return _parse(lexicalContext)
+        return _parse(source, lexicalContext)
     }
 
-    private func _parse(lexicalContext: LexicalContext) -> (astContext: ASTContext, errors: [String]) {
+    private func _parse(source: SourceFile, _ lexicalContext: LexicalContext) -> (astContext: ASTContext, errors: [String]) {
         _topLevelCode = TopLevelDeclaration()
         _reversedTokens = lexicalContext.tokens.reverse()
         _consumedTokens = [TokenWithLocation]()
@@ -69,7 +69,7 @@ public class Parser {
         shiftToken()
 
         guard let firstRange = currentRange else {
-            return (ASTContext(topLevelCode: _topLevelCode), parserErrors)
+            return (ASTContext(topLevelCode: _topLevelCode, source: source), parserErrors)
         }
         let startLocation = firstRange.start
 
@@ -105,7 +105,7 @@ public class Parser {
             _topLevelCode.sourceRange = SourceRange(start: startLocation, end: lastRange.end)
         }
 
-        return (ASTContext(topLevelCode: _topLevelCode), parserErrors)
+        return (ASTContext(topLevelCode: _topLevelCode, source: source), parserErrors)
     }
 
     private func _isStartOfDeclaration(headToken: Token?, tailTokens: [TokenWithLocation]) -> Bool {

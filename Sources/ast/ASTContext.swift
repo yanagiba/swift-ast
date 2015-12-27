@@ -14,15 +14,23 @@
    limitations under the License.
 */
 
+import source
+
 public class ASTContext {
     private let _topLevelCode: TopLevelDeclaration
+    private let _sourceFile: SourceFile
 
-    public init(topLevelCode: TopLevelDeclaration) {
+    public init(topLevelCode: TopLevelDeclaration, source: SourceFile) {
         _topLevelCode = topLevelCode
+        _sourceFile = source
     }
 
     public var topLevelDeclaration: TopLevelDeclaration {
         return _topLevelCode
+    }
+
+    public var source: SourceFile {
+      return _sourceFile
     }
 
     public func inspect() -> String {
