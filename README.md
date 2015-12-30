@@ -1,5 +1,7 @@
 # Swift Abstract Syntax Tree
 
+![Travis CI Status](https://api.travis-ci.org/ryuichis/swift-ast.svg?branch=master)
+
 The Swift Abstract Syntax Tree is an initiative to parse
 [Swift Programming Language](https://swift.org/about/) in Swift itself.
 The output of this utility is the corresponding
