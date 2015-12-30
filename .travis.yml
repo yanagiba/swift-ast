@@ -10,3 +10,6 @@ install:
 script:
 - . ~/.swiftenv/init
 - make test
+matrix:
+  allow_failures:
+    - os: linux
