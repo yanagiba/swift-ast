@@ -25,23 +25,23 @@ let package = Package(
         Target(
             name: "ast",
             dependencies: [
-                .Target(name: "util"),
-                .Target(name: "source"),
+                "util",
+                "source",
             ]
         ),
         Target(
             name: "parser",
             dependencies: [
-                .Target(name: "util"),
-                .Target(name: "source"),
-                .Target(name: "ast"),
+                "util",
+                "source",
+                "ast",
             ]
         ),
         Target(
             name: "swift-ast",
             dependencies: [
-                .Target(name: "source"),
-                .Target(name: "parser"),
+                "source",
+                "parser",
             ]
         ),
     ],
