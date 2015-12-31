@@ -33,7 +33,7 @@ build:
 test: build $(BUILD_DIR)/test_runner
 	./$(BUILD_DIR)/test_runner
 
-$(BUILD_DIR)/test_runner: Tests/*.swift $(BUILD_DIR)/ast.a $(BUILD_DIR)/parser.a
+$(BUILD_DIR)/test_runner: Tests/*.swift $(BUILD_DIR)/ast.a $(BUILD_DIR)/parser.a $(BUILD_DIR)/source.a $(BUILD_DIR)/util.a
 	$(SWIFTC) -o $@ Tests/*.swift -I$(BUILD_DIR) -Xlinker $(BUILD_DIR)/Spectre.a $(LDFLAGS)
 
 install:
