@@ -67,7 +67,7 @@ import PackageDescription
 
 let package = Package(
   name: "ASTVisitor",
-  testDependencies: [
+  dependencies: [
     .Package(url: "https://github.com/ryuichis/swift-ast.git", majorVersion: 0)
   ]
 )
