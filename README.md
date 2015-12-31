@@ -145,7 +145,7 @@ The dev version of the tool can be invoked by:
 
 ### Running [Spectre](https://github.com/kylef/Spectre) Tests
 
-First, build the project with `make`. And then, compile and run the entire tests by:
+Compile and run the entire tests by:
 
 ```bash
 make test
