@@ -168,6 +168,11 @@ public class Parser {
     }
 
     private func _parseDeclaration() throws {
+        guard let startRange = currentRange else {
+            throw ParserError.InteralError
+        }
+        let startLocation = startRange.start
+
         let declarationAttributes = _parseAttributes()
 
         guard let token = currentToken else {
@@ -180,21 +185,19 @@ public class Parser {
 
         switch name {
         case "import":
-            try _parseImportDeclaration(attributes: declarationAttributes)
+            try _parseImportDeclaration(
+                attributes: declarationAttributes, startLocation: startLocation)
         case "enum":
-            try _parseEnumDeclaration(attributes: declarationAttributes)
+            try _parseEnumDeclaration(
+                attributes: declarationAttributes, startLocation: startLocation)
         default: ()
         }
 
         try _ensureStatementSeparator()
     }
 
-    private func _parseEnumDeclaration(attributes attributes: [Attribute]) throws {
-        guard let startRange = currentRange else {
-            throw ParserError.InteralError
-        }
-        let startLocation = startRange.start
-
+    private func _parseEnumDeclaration(
+        attributes attributes: [Attribute], startLocation: SourceLocation) throws {
         _skipWhitespaces()
 
         if let enumName = _readIdentifier(includeContextualKeywords: true) {
@@ -224,12 +227,8 @@ public class Parser {
         }
     }
 
-    private func _parseImportDeclaration(attributes attributes: [Attribute]) throws {
-        guard let startRange = currentRange else {
-            throw ParserError.InteralError
-        }
-        let startLocation = startRange.start
-
+    private func _parseImportDeclaration(
+        attributes attributes: [Attribute], startLocation: SourceLocation) throws {
         _skipWhitespaces()
 
         var importKind: ImportKind = .Module

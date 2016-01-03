@@ -18,8 +18,8 @@ enum EmptyEnum {}
 @a @b @c enum EmptyEnumWithAttributes {}
 
 /*
-(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=1:1-25:1
+(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=1:1-26:1
   (enum-declaration 'EmptyEnum' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=17:1-17:18)
-  (enum-declaration 'EmptyEnumWithAttributes' attributes=a,b,c path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=18:10-18:41)
+  (enum-declaration 'EmptyEnumWithAttributes' attributes=a,b,c path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=18:1-18:41)
 )
 */

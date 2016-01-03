@@ -109,6 +109,7 @@ func specParsingImportDeclaration() {
             let attributes = importDecl.attributes
             try expect(attributes.count) == 1
             try expect(attributes[0].name) == "testable"
+            try expect(importDecl.testSourceRangeDescription) == "test/parser[1:1-1:21]"
         }
     }
 
@@ -128,6 +129,7 @@ func specParsingImportDeclaration() {
             try expect(attributes[1].name) == "attr1"
             try expect(attributes[2].name) == "attr2"
             try expect(attributes[3].name) == "attr3"
+            try expect(importDecl.testSourceRangeDescription) == "test/parser[1:1-1:42]"
         }
     }
 

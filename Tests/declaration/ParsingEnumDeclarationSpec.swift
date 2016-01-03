@@ -56,7 +56,7 @@ func specParsingEnumDeclaration() {
             try expect(attributes[0].name) == "x"
             try expect(attributes[1].name) == "y"
             try expect(attributes[2].name) == "z"
-            // try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:21]" Failing due to attributes are not counted as the beginning of the declaration, will fix this in next commit
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:21]"
         }
     }
 }
