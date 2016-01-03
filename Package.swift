@@ -45,6 +45,9 @@ let package = Package(
             ]
         ),
     ],
+    exclude: [
+        "Integrations"
+    ],
     dependencies: [
         .Package(url: "https://github.com/kylef/PathKit.git", majorVersion: 0),
     ],

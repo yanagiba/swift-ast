@@ -154,11 +154,11 @@ make test
 ### Running Integration Tests
 
 All integration tests files can be found under
-[Tests/integration](Tests/integration) folder. In addition,
+[Integrations](Integrations) folder. In addition,
 a utility script `run_integrations.sh` can help to run integration tests easily:
 
 ```bash
-./run_integrations.sh Tests/integration/a.swift Tests/integration/b.swift
+./run_integrations.sh Integrations/a.swift Integrations/b.swift
 ```
 
 ## Known Limitations
