@@ -232,4 +232,34 @@ func specParsingImportDeclaration() {
             try expect(importDecl.submodules[0]) == "bar"
         }
     }
+
+    describe("Parse import decl with access level modifier") {
+        $0.it("should throw error that access level modifier cannot be applied to this declaration") {
+            let testPrefixes = [
+                "public": "public",
+                "internal": "internal",
+                "private": "private",
+                "public (set)": "public",
+                "internal (set)": "internal",
+                "private (set)": "private",
+                "@a public": "public",
+                "@bar internal": "internal",
+                "@x private": "private",
+                "@a public (set)": "public",
+                "@bar internal (set)": "internal",
+                "@x private (set)": "private"
+            ]
+            for (testPrefix, errorModifier) in testPrefixes {
+                let (astContext, errors) = parser.parse("\(testPrefix) import foo")
+                try expect(errors.count) == 1
+                try expect(errors[0]) == "'\(errorModifier)' modifier cannot be applied to this declaration."
+                let nodes = astContext.topLevelDeclaration.statements
+                try expect(nodes.count) == 1
+                guard let node = nodes[0] as? ImportDeclaration else {
+                    throw failure("Node is not a ImportDeclaration.")
+                }
+                try expect(node.module) == "foo"
+            }
+        }
+    }
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Saito, LLC
+   Copyright 2015-2016 Ryuichi Saito, LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -94,6 +94,9 @@ public class Parser {
             catch ParserError.PostfixPeriodIsReserved {
                 parserErrors.append("Postfix '.' is reserved.")
             }
+            catch ParserError.InvalidAccessLevelModifierToDeclaration(let modifier) {
+                parserErrors.append("'\(modifier.errorDescription)' modifier cannot be applied to this declaration.")
+            }
             catch {
                 parserErrors.append("Unknown error.")
             }
@@ -167,6 +170,58 @@ public class Parser {
         return declarationAttributes
     }
 
+    private func _parseAccessLevelModifier() throws -> AccessLevel? {
+        guard let token = currentToken else {
+            throw ParserError.InteralError
+        }
+
+        if case let .Keyword(name, _) = token {
+            switch name {
+            case "public", "private", "internal":
+                _skipWhitespaces()
+                if let openParenToken = currentToken, case let .Punctuator(type) = openParenToken where type == .LeftParen {
+                    _skipWhitespaces()
+                    if let setterAccessLevel = currentToken, case let .Keyword(setterIdentifier, _) = setterAccessLevel where setterIdentifier == "set" {
+                        _skipWhitespaces()
+                        if let closeParenToken = currentToken, case let .Punctuator(type) = closeParenToken where type == .RightParen {
+                            _skipWhitespaces()
+                            if name == "public" {
+                                return .PublicSet
+                            }
+                            else if name == "private" {
+                                return .PrivateSet
+                            }
+                            else {
+                                return .InternalSet
+                            }
+                        }
+                        else {
+                            throw ParserError.InteralError // TODO: better error handling
+                        }
+                    }
+                    else {
+                        throw ParserError.InteralError // TODO: better error handling
+                    }
+                }
+                else {
+                    if name == "public" {
+                        return .Public
+                    }
+                    else if name == "private" {
+                        return .Private
+                    }
+                    else {
+                        return .Internal
+                    }
+                }
+            default:
+                return nil
+            }
+        }
+
+        return nil
+    }
+
     private func _parseDeclaration() throws {
         guard let startRange = currentRange else {
             throw ParserError.InteralError
@@ -174,6 +229,7 @@ public class Parser {
         let startLocation = startRange.start
 
         let declarationAttributes = _parseAttributes()
+        let accessLevelModifier = try _parseAccessLevelModifier()
 
         guard let token = currentToken else {
             throw ParserError.InteralError
@@ -187,9 +243,14 @@ public class Parser {
         case "import":
             try _parseImportDeclaration(
                 attributes: declarationAttributes, startLocation: startLocation)
+            if let accessLevelModifier = accessLevelModifier {
+                throw ParserError.InvalidAccessLevelModifierToDeclaration(accessLevelModifier)
+            }
         case "enum":
             try _parseEnumDeclaration(
-                attributes: declarationAttributes, startLocation: startLocation)
+                attributes: declarationAttributes,
+                accessLevelModifier: accessLevelModifier ?? .Default,
+                startLocation: startLocation)
         default: ()
         }
 
@@ -197,7 +258,9 @@ public class Parser {
     }
 
     private func _parseEnumDeclaration(
-        attributes attributes: [Attribute], startLocation: SourceLocation) throws {
+        attributes attributes: [Attribute],
+        accessLevelModifier: AccessLevel,
+        startLocation: SourceLocation) throws {
         _skipWhitespaces()
 
         if let enumName = _readIdentifier(includeContextualKeywords: true) {
@@ -208,11 +271,23 @@ public class Parser {
 
                 if let token = currentToken, case let .Punctuator(type) = token where type == .RightBrace {
                     // TODO: too nested
-                    let enumDecl = EnumDeclaration(name: enumName, attributes: attributes)
+                    var enumDeclAccessLevel = accessLevelModifier
+                    switch accessLevelModifier {
+                    case .PublicSet, .InternalSet, .PrivateSet:
+                        enumDeclAccessLevel = .Default
+                    default: ()
+                    }
+                    let enumDecl = EnumDeclaration(
+                        name: enumName, attributes: attributes, accessLevel: enumDeclAccessLevel)
                     if let currentRange = currentRange ?? _consumedTokens.last?.1 {
                         enumDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
                     }
                     _topLevelCode.append(enumDecl)
+                    switch accessLevelModifier {
+                    case .PublicSet, .InternalSet, .PrivateSet:
+                        throw ParserError.InvalidAccessLevelModifierToDeclaration(accessLevelModifier)
+                    default: ()
+                    }
                 }
                 else {
                     // TODO: error handling

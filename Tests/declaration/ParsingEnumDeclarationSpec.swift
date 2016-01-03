@@ -33,6 +33,7 @@ func specParsingEnumDeclaration() {
             }
             try expect(node.name) == "foo"
             try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
             try expect(node.cases.count) == 0
             try expect(node.elements.count) == 0
             try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:12]"
@@ -59,4 +60,57 @@ func specParsingEnumDeclaration() {
             try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:21]"
         }
     }
+
+    describe("Parse empty enum decl with access level modifier") {
+        $0.it("should have an empty decl with access level modifier") {
+            let testPrefixes: [String: AccessLevel] = [
+                "public": .Public,
+                "internal": .Internal,
+                "private  ": .Private,
+                "@a   public": .Public,
+                "@bar internal    ": .Internal,
+                "@x private": .Private
+            ]
+            for (testPrefix, testModifierType) in testPrefixes {
+                let (astContext, errors) = parser.parse("\(testPrefix) enum foo {}")
+                try expect(errors.count) == 0
+                let nodes = astContext.topLevelDeclaration.statements
+                try expect(nodes.count) == 1
+                guard let node = nodes[0] as? EnumDeclaration else {
+                    throw failure("Node is not a EnumDeclaration.")
+                }
+                try expect(node.name) == "foo"
+                try expect(node.accessLevel) == testModifierType
+                try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:\(13 + testPrefix.characters.count)]"
+            }
+        }
+    }
+
+    describe("Parse enum decl with access level modifier for setters") {
+        $0.it("should throw error that access level modifier cannot be applied to this declaration") {
+            let testPrefixes = [
+                "public ( set       )": "public",
+                "internal(   set )": "internal",
+                "private (  set )    ": "private",
+                "@a public (set)": "public",
+                "@bar internal (set)": "internal",
+                "@x private (set)": "private"
+            ]
+            for (testPrefix, errorModifier) in testPrefixes {
+                let (astContext, errors) = parser.parse("\(testPrefix) enum foo {}")
+                try expect(errors.count) == 1
+                try expect(errors[0]) == "'\(errorModifier)' modifier cannot be applied to this declaration."
+                let nodes = astContext.topLevelDeclaration.statements
+                try expect(nodes.count) == 1
+                guard let node = nodes[0] as? EnumDeclaration else {
+                    throw failure("Node is not a EnumDeclaration.")
+                }
+                try expect(node.name) == "foo"
+                try expect(node.accessLevel) == .Default
+                try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:\(13 + testPrefix.characters.count)]"
+            }
+        }
+    }
+
+
 }

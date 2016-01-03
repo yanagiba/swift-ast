@@ -26,13 +26,19 @@ public class EnumCaseDelcaration: Declaration {
 
 public class EnumDeclaration: Declaration {
     private let _name: String
+    private let _accessLevel: AccessLevel
     private let _cases: [EnumCaseDelcaration]
     private let _attributes: [Attribute]
 
-    public init(name: String, cases: [EnumCaseDelcaration] = [], attributes: [Attribute] = []) {
+    public init(
+        name: String,
+        cases: [EnumCaseDelcaration] = [],
+        attributes: [Attribute] = [],
+        accessLevel: AccessLevel = .Default) {
         _name = name
         _cases = cases
         _attributes = attributes
+        _accessLevel = accessLevel
 
         super.init()
     }
@@ -43,6 +49,10 @@ public class EnumDeclaration: Declaration {
 
     public var attributes: [Attribute] {
         return _attributes
+    }
+
+    public var accessLevel: AccessLevel {
+        return _accessLevel
     }
 
     public var cases: [EnumCaseDelcaration] {
@@ -59,6 +69,6 @@ public class EnumDeclaration: Declaration {
             let attrList = _attributes.map({ return $0.name }).joinWithSeparator(",")
             attrs = " attributes=\(attrList)"
         }
-        return "\(getIndentText(indent))(enum-declaration '\(_name)'\(attrs) \(getSourceRangeText()))".terminalColor(.Green)
+        return "\(getIndentText(indent))(enum-declaration '\(_name)'\(attrs) access='\(_accessLevel)' \(getSourceRangeText()))".terminalColor(.Green)
     }
 }

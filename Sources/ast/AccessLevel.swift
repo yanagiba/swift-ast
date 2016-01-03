@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Ryuichi Saito, LLC
+   Copyright 2016 Ryuichi Saito, LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,28 +14,27 @@
    limitations under the License.
 */
 
-import ast
+public enum AccessLevel {
+    case Default
 
-enum ParserError: ErrorType {
-    case InteralError
-
-    case InvalidToken
-    case MissingSeparator
-    case MissingIdentifier
-    case MissingModuleNameInImportDeclaration
-    case PostfixPeriodIsReserved
-    case InvalidAccessLevelModifierToDeclaration(AccessLevel)
+    case Public
+    case Internal
+    case Private
+    case PublicSet
+    case InternalSet
+    case PrivateSet
 }
 
-extension AccessLevel {
-    var errorDescription: String {
+extension AccessLevel: CustomStringConvertible {
+    public var description: String {
         switch self {
-        case Default: return ""
-        case Public, PublicSet: return "public"
-        case Internal, InternalSet: return "internal"
-        case Private, PrivateSet: return "private"
+        case Default: return "default"
+        case Public: return "public"
+        case Internal: return "internal"
+        case Private: return "private"
+        case PublicSet: return "public(set)"
+        case InternalSet: return "internal(set)"
+        case PrivateSet: return "private(set)"
         }
     }
 }
-
-
