@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Saito, LLC
+   Copyright 2016 Ryuichi Saito, LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@
    limitations under the License.
 */
 
-specCanary()
-specLexer()
-specParser()
+enum EmptyEnum {}
+@a @b @c enum EmptyEnumWithAttributes {}
 
-// tests for parsing declarations
-specParsingImportDeclaration()
-specParsingEnumDeclaration()
+/*
+(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=1:1-25:1
+  (enum-declaration 'EmptyEnum' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=17:1-17:18)
+  (enum-declaration 'EmptyEnumWithAttributes' attributes=a,b,c path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=18:10-18:41)
+)
+*/

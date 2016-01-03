@@ -181,10 +181,47 @@ public class Parser {
         switch name {
         case "import":
             try _parseImportDeclaration(attributes: declarationAttributes)
+        case "enum":
+            try _parseEnumDeclaration(attributes: declarationAttributes)
         default: ()
         }
 
         try _ensureStatementSeparator()
+    }
+
+    private func _parseEnumDeclaration(attributes attributes: [Attribute]) throws {
+        guard let startRange = currentRange else {
+            throw ParserError.InteralError
+        }
+        let startLocation = startRange.start
+
+        _skipWhitespaces()
+
+        if let enumName = _readIdentifier(includeContextualKeywords: true) {
+            _skipWhitespaces()
+
+            if let token = currentToken, case let .Punctuator(type) = token where type == .LeftBrace {
+                _skipWhitespaces()
+
+                if let token = currentToken, case let .Punctuator(type) = token where type == .RightBrace {
+                    // TODO: too nested
+                    let enumDecl = EnumDeclaration(name: enumName, attributes: attributes)
+                    if let currentRange = currentRange ?? _consumedTokens.last?.1 {
+                        enumDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
+                    }
+                    _topLevelCode.append(enumDecl)
+                }
+                else {
+                    // TODO: error handling
+                }
+            }
+            else {
+                // TODO: error handling
+            }
+        }
+        else {
+            throw ParserError.MissingIdentifier
+        }
     }
 
     private func _parseImportDeclaration(attributes attributes: [Attribute]) throws {
