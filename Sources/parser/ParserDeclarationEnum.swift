@@ -45,6 +45,8 @@ extension Parser {
         startLocation: SourceLocation) throws {
         skipWhitespaces()
 
+        var containsMissingSeparatorError = false
+
         if let enumName = readIdentifier(includeContextualKeywords: true) {
             skipWhitespaces()
 
@@ -80,7 +82,22 @@ extension Parser {
                                     }
                                 }
                                 enumCases.append(EnumCaseDelcaration(elements: enumCaseElements))
-                                // skipe whitespaces and ensure a separator
+                                try unshiftToken()
+                                while let token = currentToken where token.isWhitespace() {
+                                    try unshiftToken()
+                                }
+                                do {
+                                    try ensureStatementSeparator(stopAtRightBrace: true)
+                                }
+                                catch _ {
+                                    containsMissingSeparatorError = true // just to delay throw this
+                                }
+
+                                if let token = currentToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightBrace {
+                                    break parseEnumMembers
+                                }
+
+                                skipWhitespaces(treatSemiAsWhitespace: true)
                                 continue parseEnumMembers
                             }
                             else {
@@ -116,6 +133,9 @@ extension Parser {
                     case .PublicSet, .InternalSet, .PrivateSet:
                         throw ParserError.InvalidAccessLevelModifierToDeclaration(accessLevelModifier)
                     default: ()
+                    }
+                    if containsMissingSeparatorError {
+                        throw ParserError.MissingSeparator
                     }
                 }
                 else {

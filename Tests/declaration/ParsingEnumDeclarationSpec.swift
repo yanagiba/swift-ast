@@ -208,5 +208,38 @@ func specParsingEnumDeclaration() {
         }
     }
 
+    describe("Parse enum decl with two cases separated by semicolon") {
+        $0.it("should have one enum decl with two cases") {
+            let (astContext, errors) = parser.parse("enum foo { case A, B, C; case set }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.cases.count) == 2
+            try expect(node.cases[0].elements.count) == 3
+            try expect(node.cases[1].elements.count) == 1
+        }
+    }
+
+    describe("Parse enum decl with two cases but no separator in between") {
+        $0.it("should have one enum decl with two cases and one error") {
+            let (astContext, errors) = parser.parse("enum foo { case A, B, C case set }")
+            try expect(errors.count) == 1
+            try expect(errors[0]) == "Statements must be separated by line breaks or semicolons."
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.cases.count) == 2
+            try expect(node.cases[0].elements.count) == 3
+            try expect(node.cases[1].elements.count) == 1
+        }
+    }
+
 
 }

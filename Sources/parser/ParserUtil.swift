@@ -17,13 +17,21 @@
 import source
 
 extension Parser {
-    func skipWhitespacesForTokens(tokens: [Token]) -> [Token] {
+    func skipWhitespacesForTokens(tokens: [Token], treatSemiAsWhitespace: Bool = false) -> [Token] {
         var remainingTokens = tokens
         var remainingHeadToken: Token?
         var isWhitespace = false
         repeat {
             remainingHeadToken = remainingTokens.popLast()
-            isWhitespace = remainingHeadToken?.isWhitespace() ?? false // when token is nil, terminate the loop
+            isWhitespace = false
+            if let remainingHeadToken = remainingHeadToken {
+                if remainingHeadToken.isWhitespace() {
+                    isWhitespace = true
+                }
+                else if case let .Punctuator(punctuatorType) = remainingHeadToken, case .Semi = punctuatorType where treatSemiAsWhitespace {
+                    isWhitespace = true
+                }
+            }
         } while isWhitespace
         if let headToken = remainingHeadToken {
             remainingTokens.append(headToken)
@@ -32,20 +40,31 @@ extension Parser {
         return remainingTokens
     }
 
-    func skipWhitespaces() {
+    func skipWhitespaces(treatSemiAsWhitespace treatSemiAsWhitespace: Bool = false) {
         shiftToken()
 
-        while let token = currentToken where token.isWhitespace() {
-            shiftToken()
+        while let token = currentToken {
+            if token.isWhitespace() {
+                shiftToken()
+                continue
+            }
+            if case let .Punctuator(punctuatorType) = token, case .Semi = punctuatorType where treatSemiAsWhitespace {
+                shiftToken()
+                continue
+            }
+            break
         }
     }
 
-    func ensureStatementSeparator() throws {
+    func ensureStatementSeparator(stopAtRightBrace stopAtRightBrace: Bool = false) throws {
         shiftToken()
 
         while let token = currentToken {
             if case let .Punctuator(punctuatorType) = token {
                 if case .Semi = punctuatorType {
+                    return
+                }
+                else if case .RightBrace = punctuatorType where stopAtRightBrace {
                     return
                 }
                 else {
