@@ -36,7 +36,7 @@ public class TopLevelDeclaration: Declaration {
         for statement in _statements {
             inspectStr += "\n\(statement.inspect(indent + 1))"
         }
-        inspectStr += "\n)".terminalColor(.Red)
+        inspectStr += ")".terminalColor(.Red)
         return "\(inspectStr)"
     }
 }

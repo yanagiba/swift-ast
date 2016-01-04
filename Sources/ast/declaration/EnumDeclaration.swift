@@ -24,6 +24,10 @@ public class EnumCaseElementDeclaration: Declaration {
     public var name: String {
         return _name
     }
+
+    public override func inspect(indent: Int = 0) -> String {
+        return "\(getIndentText(indent))(enum-case-element-declaration '\(_name)')".terminalColor(.Yellow)
+    }
 }
 
 public class EnumCaseDelcaration: Declaration {
@@ -39,6 +43,15 @@ public class EnumCaseDelcaration: Declaration {
 
     var elements: [EnumCaseElementDeclaration] {
         return _elements
+    }
+
+    public override func inspect(indent: Int = 0) -> String {
+        var inspectionText = "\(getIndentText(indent))(enum-case-declaration".terminalColor(.White)
+        for element in _elements {
+            inspectionText += "\n\(element.inspect(indent + 1))"
+        }
+        inspectionText += ")".terminalColor(.White)
+        return inspectionText
     }
 }
 
@@ -87,6 +100,11 @@ public class EnumDeclaration: Declaration {
             let attrList = _attributes.map({ return $0.name }).joinWithSeparator(",")
             attrs = " attributes=\(attrList)"
         }
-        return "\(getIndentText(indent))(enum-declaration '\(_name)'\(attrs) access='\(_accessLevel)' \(getSourceRangeText()))".terminalColor(.Green)
+        var inspectionText = "\(getIndentText(indent))(enum-declaration '\(_name)'\(attrs) access='\(_accessLevel)' \(getSourceRangeText())".terminalColor(.Green)
+        for enumCase in _cases {
+            inspectionText += "\n\(enumCase.inspect(indent + 1))"
+        }
+        inspectionText += ")".terminalColor(.Green)
+        return inspectionText
     }
 }

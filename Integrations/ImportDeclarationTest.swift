@@ -36,7 +36,7 @@ Parser error: Postfix '.' is reserved.
 Parser error: 'public' modifier cannot be applied to this declaration.
 Parser error: 'internal' modifier cannot be applied to this declaration.
 
-(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/ImportDeclarationTest.swift range=1:1-48:1
+(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/ImportDeclarationTest.swift range=1:1-53:1
   (import-declaration 'Foundation' kind=Module path=/Users/ryuichis/Projects/L/swift-ast/Integrations/ImportDeclarationTest.swift range=17:1-17:18)
   (import-declaration 'UIKit' kind=Module path=/Users/ryuichis/Projects/L/swift-ast/Integrations/ImportDeclarationTest.swift range=18:1-18:13)
   (import-declaration 'Darwin' kind=Module path=/Users/ryuichis/Projects/L/swift-ast/Integrations/ImportDeclarationTest.swift range=18:22-18:35)
@@ -47,6 +47,5 @@ Parser error: 'internal' modifier cannot be applied to this declaration.
   (import-declaration 'klass' kind=Module path=/Users/ryuichis/Projects/L/swift-ast/Integrations/ImportDeclarationTest.swift range=26:1-26:13)
   (import-declaration 'foo' kind=Module path=/Users/ryuichis/Projects/L/swift-ast/Integrations/ImportDeclarationTest.swift range=27:1-27:12)
   (import-declaration 'bar' kind=Module path=/Users/ryuichis/Projects/L/swift-ast/Integrations/ImportDeclarationTest.swift range=28:1-28:18)
-  (import-declaration 'a' kind=Module path=/Users/ryuichis/Projects/L/swift-ast/Integrations/ImportDeclarationTest.swift range=29:1-29:24)
-)
+  (import-declaration 'a' kind=Module path=/Users/ryuichis/Projects/L/swift-ast/Integrations/ImportDeclarationTest.swift range=29:1-29:24))
 */

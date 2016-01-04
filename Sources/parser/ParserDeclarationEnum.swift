@@ -33,7 +33,7 @@ extension Parser {
     - [_] raw-value-style-enum-members → raw-value-style-enum-member raw-value-style-enum-members/opt/
     - [_] raw-value-style-enum-member → declaration | raw-value-style-enum-case-clause
     - [_] raw-value-style-enum-case-clause → attributes/opt/ `case` raw-value-style-enum-case-list
-    - [ ] raw-value-style-enum-case-list → raw-value-style-enum-case | raw-value-style-enum-case `,` raw-value-style-enum-case-list
+    - [x] raw-value-style-enum-case-list → raw-value-style-enum-case | raw-value-style-enum-case `,` raw-value-style-enum-case-list
     - [_] raw-value-style-enum-case → enum-case-name raw-value-assignment/opt/
     - [ ] raw-value-assignment → `=` raw-value-literal
     - [ ] raw-value-literal → numeric-literal | static-string-literal | boolean-literal
@@ -57,11 +57,30 @@ extension Parser {
                     switch token {
                     case let .Keyword(keywordName, _):
                         if keywordName == "case" {
+                            var enumCaseElements = [EnumCaseElementDeclaration]()
                             skipWhitespaces()
                             if let enumCaseName = readIdentifier(includeContextualKeywords: true) {
-                                enumCases.append(
-                                    EnumCaseDelcaration(element:EnumCaseElementDeclaration(name: enumCaseName)))
+                                enumCaseElements.append(EnumCaseElementDeclaration(name: enumCaseName))
                                 skipWhitespaces()
+                                parseEnumCaseList: while let token = currentToken {
+                                    switch token {
+                                    case let .Punctuator(type) where type == .Comma:
+                                        skipWhitespaces()
+                                        if let nextEnumCaseName = readIdentifier(includeContextualKeywords: true) {
+                                            enumCaseElements.append(EnumCaseElementDeclaration(name: nextEnumCaseName))
+                                            skipWhitespaces()
+                                            continue parseEnumCaseList
+                                        }
+                                        else {
+                                            // TODO: error handling
+                                            break parseEnumCaseList
+                                        }
+                                    default:
+                                        break parseEnumCaseList
+                                    }
+                                }
+                                enumCases.append(EnumCaseDelcaration(elements: enumCaseElements))
+                                // skipe whitespaces and ensure a separator
                                 continue parseEnumMembers
                             }
                             else {
