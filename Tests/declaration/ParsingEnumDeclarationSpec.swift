@@ -127,8 +127,10 @@ func specParsingEnumDeclaration() {
             try expect(node.cases.count) == 1
             try expect(node.cases[0].elements.count) == 1
             try expect(node.cases[0].elements[0].name) == "A"
+            try expect(node.cases[0].elements[0].rawValue).to.beNil()
             try expect(node.elements.count) == 1
             try expect(node.elements[0].name) == "A"
+            try expect(node.elements[0].rawValue).to.beNil()
             try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:20]"
         }
     }
@@ -238,6 +240,72 @@ func specParsingEnumDeclaration() {
             try expect(node.cases.count) == 2
             try expect(node.cases[0].elements.count) == 3
             try expect(node.cases[1].elements.count) == 1
+        }
+    }
+
+    describe("Parse enum decl with cases that has raw value") {
+        $0.it("should have one enum decl with several cases that has raw value") {
+            let (astContext, errors) = parser.parse("enum foo { case A = 1\ncase B = \"abc\"\ncase C = false }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 3
+            try expect(node.elements.count) == 3
+            try expect(node.elements[0].name) == "A"
+            guard let elementRawValue0 = node.elements[0].rawValue else {
+                throw failure("Element 0 doesn't have raw value.")
+            }
+            try expect(elementRawValue0) == "1"
+            try expect(node.elements[1].name) == "B"
+            guard let elementRawValue1 = node.elements[1].rawValue else {
+                throw failure("Element 1 doesn't have raw value.")
+            }
+            try expect(elementRawValue1) == "abc"
+            try expect(node.elements[2].name) == "C"
+            guard let elementRawValue2 = node.elements[2].rawValue else {
+                throw failure("Element 2 doesn't have raw value.")
+            }
+            try expect(elementRawValue2) == "false"
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-3:17]"
+        }
+    }
+
+    describe("Parse enum decl with case that has elements that haves raw value") {
+        $0.it("should have one enum decl with several cases that has raw value") {
+            let (astContext, errors) = parser.parse("enum foo { case A = 1, B = \"abc\", C = false }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 1
+            try expect(node.elements.count) == 3
+            try expect(node.elements[0].name) == "A"
+            guard let elementRawValue0 = node.elements[0].rawValue else {
+                throw failure("Element 0 doesn't have raw value.")
+            }
+            try expect(elementRawValue0) == "1"
+            try expect(node.elements[1].name) == "B"
+            guard let elementRawValue1 = node.elements[1].rawValue else {
+                throw failure("Element 1 doesn't have raw value.")
+            }
+            try expect(elementRawValue1) == "abc"
+            try expect(node.elements[2].name) == "C"
+            guard let elementRawValue2 = node.elements[2].rawValue else {
+                throw failure("Element 2 doesn't have raw value.")
+            }
+            try expect(elementRawValue2) == "false"
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:46]"
         }
     }
 

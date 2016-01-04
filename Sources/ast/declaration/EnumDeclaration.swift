@@ -16,17 +16,31 @@
 
 public class EnumCaseElementDeclaration: Declaration {
     private let _name: String
+    private let _rawValueString: String?
 
-    public init(name: String) {
+    public init(name: String, rawValue: String?) {
         _name = name
+        _rawValueString = rawValue
+    }
+
+    public convenience init(name: String) {
+        self.init(name: name, rawValue: nil)
     }
 
     public var name: String {
         return _name
     }
 
+    public var rawValue: String? {
+        return _rawValueString
+    }
+
     public override func inspect(indent: Int = 0) -> String {
-        return "\(getIndentText(indent))(enum-case-element-declaration '\(_name)')".terminalColor(.Yellow)
+        var rawValueText = ""
+        if let rawValueString = _rawValueString {
+            rawValueText = " raw-value=\(rawValueString)"
+        }
+        return "\(getIndentText(indent))(enum-case-element-declaration '\(_name)'\(rawValueText))".terminalColor(.Yellow)
     }
 }
 

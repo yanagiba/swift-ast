@@ -62,15 +62,33 @@ extension Parser {
                             var enumCaseElements = [EnumCaseElementDeclaration]()
                             skipWhitespaces()
                             if let enumCaseName = readIdentifier(includeContextualKeywords: true) {
-                                enumCaseElements.append(EnumCaseElementDeclaration(name: enumCaseName))
                                 skipWhitespaces()
+                                if let token = currentToken, case let .Punctuator(type) = token where type == .Equal {
+                                    skipWhitespaces()
+                                    if let rawValueLiteralString = getLiteralString() {
+                                        enumCaseElements.append(EnumCaseElementDeclaration(name: enumCaseName, rawValue: rawValueLiteralString))
+                                        skipWhitespaces()
+                                    }
+                                }
+                                else {
+                                    enumCaseElements.append(EnumCaseElementDeclaration(name: enumCaseName))
+                                }
                                 parseEnumCaseList: while let token = currentToken {
                                     switch token {
                                     case let .Punctuator(type) where type == .Comma:
                                         skipWhitespaces()
                                         if let nextEnumCaseName = readIdentifier(includeContextualKeywords: true) {
-                                            enumCaseElements.append(EnumCaseElementDeclaration(name: nextEnumCaseName))
                                             skipWhitespaces()
+                                            if let token = currentToken, case let .Punctuator(type) = token where type == .Equal {
+                                                skipWhitespaces()
+                                                if let rawValueLiteralString = getLiteralString() {
+                                                    enumCaseElements.append(EnumCaseElementDeclaration(name: nextEnumCaseName, rawValue: rawValueLiteralString))
+                                                    skipWhitespaces()
+                                                }
+                                            }
+                                            else {
+                                                enumCaseElements.append(EnumCaseElementDeclaration(name: nextEnumCaseName))
+                                            }
                                             continue parseEnumCaseList
                                         }
                                         else {
@@ -149,5 +167,33 @@ extension Parser {
         else {
             throw ParserError.MissingIdentifier
         }
+    }
+
+    private func getLiteralString() -> String? {
+        if let token = currentToken {
+            switch token {
+            case let .BinaryIntegerLiteral(literal):
+                return literal
+            case let .OctalIntegerLiteral(literal):
+                return literal
+            case let .DecimalIntegerLiteral(literal):
+                return literal
+            case let .HexadecimalIntegerLiteral(literal):
+                return literal
+            case let .DecimalFloatingPointLiteral(literal):
+                return literal
+            case let .HexadecimalFloatingPointLiteral(literal):
+                return literal
+            case let .StaticStringLiteral(literal):
+                return literal
+            case .TrueBooleanLiteral:
+                return "true"
+            case .FalseBooleanLiteral:
+                return "false"
+            default:
+                return nil
+            }
+        }
+        return nil
     }
 }
