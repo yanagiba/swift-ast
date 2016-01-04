@@ -18,6 +18,13 @@ import ast
 import source
 
 extension Parser {
+    /*
+    - [x] import-declaration → attributes/opt/ `import` import-kind/opt/ import-path
+    - [x] import-kind → `typealias` | `struct` | `class` | `enum` | `protocol` | `var` | `func`
+    - [x] import-path → import-path-identifier | import-path-identifier `.` import-path
+    - [_] import-path-identifier → identifier | operator
+    - [x] error handling
+    */
     func parseImportDeclaration(
         attributes attributes: [Attribute], startLocation: SourceLocation) throws {
         skipWhitespaces()

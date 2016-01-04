@@ -17,6 +17,12 @@
 import ast
 
 extension Parser {
+    /*
+    - [x] access-level-modifier → `internal` | `internal ( set )`
+    - [x] access-level-modifier → `private` | `private ( set )`
+    - [x] access-level-modifier → `public` | `public ( set )`
+    - [_] error handling
+    */
     func parseAccessLevelModifier() throws -> AccessLevel? {
         guard let token = currentToken else {
             throw ParserError.InteralError

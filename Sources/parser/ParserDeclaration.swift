@@ -15,6 +15,23 @@
 */
 
 extension Parser {
+    /*
+    - [_] declaration → import-declaration
+    - [ ] declaration → constant-declaration
+    - [ ] declaration → variable-declaration
+    - [ ] declaration → typealias-declaration
+    - [ ] declaration → function-declaration
+    - [_] declaration → enum-declaration
+    - [ ] declaration → struct-declaration
+    - [ ] declaration → class-declaration
+    - [ ] declaration → protocol-declaration
+    - [ ] declaration → initializer-declaration
+    - [ ] declaration → deinitializer-declaration
+    - [ ] declaration → extension-declaration
+    - [ ] declaration → subscript-declaration
+    - [ ] declaration → operator-declaration
+    - [_] error handling
+    */
     func parseDeclaration() throws {
         guard let startRange = currentRange else {
             throw ParserError.InteralError

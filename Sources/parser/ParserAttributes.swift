@@ -17,6 +17,19 @@
 import ast
 
 extension Parser {
+    /*
+    - [_] attribute → `@` attribute-name attribute-argument-clause/opt/
+    - [x] attribute-name → identifier
+    - [ ] attribute-argument-clause → `(` balanced-tokens/opt/ `)`
+    - [ ] attributes → attribute attributes/opt/
+    - [ ] balanced-tokens → balanced-token balanced-tokens/opt/
+    - [ ] balanced-token → `(` balanced-tokens/opt/ `)`
+    - [ ] balanced-token → `[` balanced-tokens/opt/ `]`
+    - [ ] balanced-token → `{` balanced-tokens/opt/ `}`
+    - [ ] balanced-token → Any identifier, keyword, literal, or operator
+    - [ ] balanced-token → Any punctuation except `(`, `)`, `[`, `]`, `{`, or `}`
+    - [_] error handling
+    */
     func parseAttributes() -> [Attribute] {
         var declarationAttributes = [Attribute]()
         parseAttributesLoop: while let token = currentToken {
