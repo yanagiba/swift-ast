@@ -112,5 +112,50 @@ func specParsingEnumDeclaration() {
         }
     }
 
+    describe("Parse enum decl with one case that has one element") {
+        $0.it("should have one enum decl with one case one element") {
+            let (astContext, errors) = parser.parse("enum foo { case A }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 1
+            try expect(node.cases[0].elements.count) == 1
+            try expect(node.cases[0].elements[0].name) == "A"
+            try expect(node.elements.count) == 1
+            try expect(node.elements[0].name) == "A"
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:20]"
+        }
+    }
+
+    describe("Parse enum decl with two cases that each has one element") {
+        $0.it("should have one enum decl with two cases that each has one element") {
+            let (astContext, errors) = parser.parse("enum foo { case A\n case set }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 2
+            try expect(node.cases[0].elements.count) == 1
+            try expect(node.cases[0].elements[0].name) == "A"
+            try expect(node.cases[1].elements.count) == 1
+            try expect(node.cases[1].elements[0].name) == "set"
+            try expect(node.elements.count) == 2
+            try expect(node.elements[0].name) == "A"
+            try expect(node.elements[1].name) == "set"
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-2:12]"
+        }
+    }
+
 
 }

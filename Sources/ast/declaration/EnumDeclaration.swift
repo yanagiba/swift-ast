@@ -15,12 +15,30 @@
 */
 
 public class EnumCaseElementDeclaration: Declaration {
+    private let _name: String
 
+    public init(name: String) {
+        _name = name
+    }
+
+    public var name: String {
+        return _name
+    }
 }
 
 public class EnumCaseDelcaration: Declaration {
+    private let _elements: [EnumCaseElementDeclaration]
+
+    public init(elements: [EnumCaseElementDeclaration]) {
+        _elements = elements
+    }
+
+    public convenience init(element: EnumCaseElementDeclaration) {
+        self.init(elements: [element])
+    }
+
     var elements: [EnumCaseElementDeclaration] {
-        return []
+        return _elements
     }
 }
 

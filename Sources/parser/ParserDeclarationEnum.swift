@@ -28,13 +28,13 @@ extension Parser {
     - [ ] union-style-enum-case-list → union-style-enum-case | union-style-enum-case `,` union-style-enum-case-list
     - [ ] union-style-enum-case → enum-case-name tuple-type/opt/
     - [x] enum-name → identifier
-    - [ ] enum-case-name → identifier
-    - [ ] raw-value-style-enum → `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause `{` raw-value-style-enum-members `}`
-    - [ ] raw-value-style-enum-members → raw-value-style-enum-member raw-value-style-enum-members/opt/
-    - [ ] raw-value-style-enum-member → declaration | raw-value-style-enum-case-clause
-    - [ ] raw-value-style-enum-case-clause → attributes/opt/ `case` raw-value-style-enum-case-list
+    - [x] enum-case-name → identifier
+    - [_] raw-value-style-enum → `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause `{` raw-value-style-enum-members `}`
+    - [_] raw-value-style-enum-members → raw-value-style-enum-member raw-value-style-enum-members/opt/
+    - [_] raw-value-style-enum-member → declaration | raw-value-style-enum-case-clause
+    - [_] raw-value-style-enum-case-clause → attributes/opt/ `case` raw-value-style-enum-case-list
     - [ ] raw-value-style-enum-case-list → raw-value-style-enum-case | raw-value-style-enum-case `,` raw-value-style-enum-case-list
-    - [ ] raw-value-style-enum-case → enum-case-name raw-value-assignment/opt/
+    - [_] raw-value-style-enum-case → enum-case-name raw-value-assignment/opt/
     - [ ] raw-value-assignment → `=` raw-value-literal
     - [ ] raw-value-literal → numeric-literal | static-string-literal | boolean-literal
     - [_] error handling
@@ -51,6 +51,31 @@ extension Parser {
             if let token = currentToken, case let .Punctuator(type) = token where type == .LeftBrace {
                 skipWhitespaces()
 
+                var enumCases = [EnumCaseDelcaration]()
+
+                parseEnumMembers: while let token = currentToken {
+                    switch token {
+                    case let .Keyword(keywordName, _):
+                        if keywordName == "case" {
+                            skipWhitespaces()
+                            if let enumCaseName = readIdentifier(includeContextualKeywords: true) {
+                                enumCases.append(
+                                    EnumCaseDelcaration(element:EnumCaseElementDeclaration(name: enumCaseName)))
+                                skipWhitespaces()
+                                continue parseEnumMembers
+                            }
+                            else {
+                                // TODO: error handling - missing identifier
+                            }
+                        }
+                        else {
+                            break parseEnumMembers
+                        }
+                    default:
+                        break parseEnumMembers
+                    }
+                }
+
                 if let token = currentToken, case let .Punctuator(type) = token where type == .RightBrace {
                     // TODO: too nested
                     var enumDeclAccessLevel = accessLevelModifier
@@ -60,7 +85,10 @@ extension Parser {
                     default: ()
                     }
                     let enumDecl = EnumDeclaration(
-                        name: enumName, attributes: attributes, accessLevel: enumDeclAccessLevel)
+                        name: enumName,
+                        cases: enumCases,
+                        attributes: attributes,
+                        accessLevel: enumDeclAccessLevel)
                     if let currentRange = currentRange ?? consumedTokens.last?.1 {
                         enumDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
                     }
