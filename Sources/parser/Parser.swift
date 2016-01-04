@@ -62,7 +62,7 @@ public class Parser {
                     try parseDeclaration()
                 }
             }
-            catch ParserError.InteralError {  // TODO: better error message mapping
+            catch ParserError.InternalError {  // TODO: better error message mapping
                 parserErrors.append("Fetal error.") // This should not happen
             }
             catch ParserError.MissingSeparator {

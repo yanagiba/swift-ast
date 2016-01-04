@@ -34,9 +34,9 @@ extension Parser {
     - [_] raw-value-style-enum-member → declaration | raw-value-style-enum-case-clause
     - [_] raw-value-style-enum-case-clause → attributes/opt/ `case` raw-value-style-enum-case-list
     - [x] raw-value-style-enum-case-list → raw-value-style-enum-case | raw-value-style-enum-case `,` raw-value-style-enum-case-list
-    - [_] raw-value-style-enum-case → enum-case-name raw-value-assignment/opt/
-    - [ ] raw-value-assignment → `=` raw-value-literal
-    - [ ] raw-value-literal → numeric-literal | static-string-literal | boolean-literal
+    - [x] raw-value-style-enum-case → enum-case-name raw-value-assignment/opt/
+    - [x] raw-value-assignment → `=` raw-value-literal
+    - [_] raw-value-literal → numeric-literal | static-string-literal | boolean-literal
     - [_] error handling
     */
     func parseEnumDeclaration(
@@ -47,117 +47,74 @@ extension Parser {
 
         var containsMissingSeparatorError = false
 
-        if let enumName = readIdentifier(includeContextualKeywords: true) {
+        guard let enumName = readIdentifier(includeContextualKeywords: true) else {
+            throw ParserError.MissingIdentifier
+        }
+        skipWhitespaces()
+
+        if let token = currentToken, case let .Punctuator(type) = token where type == .LeftBrace {
             skipWhitespaces()
 
-            if let token = currentToken, case let .Punctuator(type) = token where type == .LeftBrace {
-                skipWhitespaces()
+            var enumCases = [EnumCaseDelcaration]()
 
-                var enumCases = [EnumCaseDelcaration]()
+            parseEnumMembers: while let token = currentToken {
+                switch token {
+                case let .Keyword(keywordName, _):
+                    if keywordName == "case" {
+                        skipWhitespaces()
+                        let enumCaseDecl = try parseEnumCaseDeclaration()
+                        enumCases.append(enumCaseDecl)
 
-                parseEnumMembers: while let token = currentToken {
-                    switch token {
-                    case let .Keyword(keywordName, _):
-                        if keywordName == "case" {
-                            var enumCaseElements = [EnumCaseElementDeclaration]()
-                            skipWhitespaces()
-                            if let enumCaseName = readIdentifier(includeContextualKeywords: true) {
-                                skipWhitespaces()
-                                if let token = currentToken, case let .Punctuator(type) = token where type == .Equal {
-                                    skipWhitespaces()
-                                    if let rawValueLiteralString = getLiteralString() {
-                                        enumCaseElements.append(EnumCaseElementDeclaration(name: enumCaseName, rawValue: rawValueLiteralString))
-                                        skipWhitespaces()
-                                    }
-                                }
-                                else {
-                                    enumCaseElements.append(EnumCaseElementDeclaration(name: enumCaseName))
-                                }
-                                parseEnumCaseList: while let token = currentToken {
-                                    switch token {
-                                    case let .Punctuator(type) where type == .Comma:
-                                        skipWhitespaces()
-                                        if let nextEnumCaseName = readIdentifier(includeContextualKeywords: true) {
-                                            skipWhitespaces()
-                                            if let token = currentToken, case let .Punctuator(type) = token where type == .Equal {
-                                                skipWhitespaces()
-                                                if let rawValueLiteralString = getLiteralString() {
-                                                    enumCaseElements.append(EnumCaseElementDeclaration(name: nextEnumCaseName, rawValue: rawValueLiteralString))
-                                                    skipWhitespaces()
-                                                }
-                                            }
-                                            else {
-                                                enumCaseElements.append(EnumCaseElementDeclaration(name: nextEnumCaseName))
-                                            }
-                                            continue parseEnumCaseList
-                                        }
-                                        else {
-                                            // TODO: error handling
-                                            break parseEnumCaseList
-                                        }
-                                    default:
-                                        break parseEnumCaseList
-                                    }
-                                }
-                                enumCases.append(EnumCaseDelcaration(elements: enumCaseElements))
-                                try unshiftToken()
-                                while let token = currentToken where token.isWhitespace() {
-                                    try unshiftToken()
-                                }
-                                do {
-                                    try ensureStatementSeparator(stopAtRightBrace: true)
-                                }
-                                catch _ {
-                                    containsMissingSeparatorError = true // just to delay throw this
-                                }
-
-                                if let token = currentToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightBrace {
-                                    break parseEnumMembers
-                                }
-
-                                skipWhitespaces(treatSemiAsWhitespace: true)
-                                continue parseEnumMembers
-                            }
-                            else {
-                                // TODO: error handling - missing identifier
-                            }
+                        try unshiftToken()
+                        while let token = currentToken where token.isWhitespace() {
+                            try unshiftToken()
                         }
-                        else {
+                        do {
+                            try ensureStatementSeparator(stopAtRightBrace: true)
+                        }
+                        catch _ {
+                            containsMissingSeparatorError = true // just to delay throw this
+                        } // TODO: ^ this block of code needs to be re-considered
+
+                        if let token = currentToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightBrace {
                             break parseEnumMembers
                         }
-                    default:
+
+                        skipWhitespaces(treatSemiAsWhitespace: true)
+                        continue parseEnumMembers
+                    }
+                    else {
                         break parseEnumMembers
                     }
+                default:
+                    break parseEnumMembers
                 }
+            }
 
-                if let token = currentToken, case let .Punctuator(type) = token where type == .RightBrace {
-                    // TODO: too nested
-                    var enumDeclAccessLevel = accessLevelModifier
-                    switch accessLevelModifier {
-                    case .PublicSet, .InternalSet, .PrivateSet:
-                        enumDeclAccessLevel = .Default
-                    default: ()
-                    }
-                    let enumDecl = EnumDeclaration(
-                        name: enumName,
-                        cases: enumCases,
-                        attributes: attributes,
-                        accessLevel: enumDeclAccessLevel)
-                    if let currentRange = currentRange ?? consumedTokens.last?.1 {
-                        enumDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
-                    }
-                    topLevelCode.append(enumDecl)
-                    switch accessLevelModifier {
-                    case .PublicSet, .InternalSet, .PrivateSet:
-                        throw ParserError.InvalidAccessLevelModifierToDeclaration(accessLevelModifier)
-                    default: ()
-                    }
-                    if containsMissingSeparatorError {
-                        throw ParserError.MissingSeparator
-                    }
+            if let token = currentToken, case let .Punctuator(type) = token where type == .RightBrace {
+                // TODO: too nested
+                var enumDeclAccessLevel = accessLevelModifier
+                switch accessLevelModifier {
+                case .PublicSet, .InternalSet, .PrivateSet:
+                    enumDeclAccessLevel = .Default
+                default: ()
                 }
-                else {
-                    // TODO: error handling
+                let enumDecl = EnumDeclaration(
+                    name: enumName,
+                    cases: enumCases,
+                    attributes: attributes,
+                    accessLevel: enumDeclAccessLevel)
+                if let currentRange = currentRange ?? consumedTokens.last?.1 {
+                    enumDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
+                }
+                topLevelCode.append(enumDecl)
+                switch accessLevelModifier {
+                case .PublicSet, .InternalSet, .PrivateSet:
+                    throw ParserError.InvalidAccessLevelModifierToDeclaration(accessLevelModifier)
+                default: ()
+                }
+                if containsMissingSeparatorError {
+                    throw ParserError.MissingSeparator
                 }
             }
             else {
@@ -165,35 +122,73 @@ extension Parser {
             }
         }
         else {
-            throw ParserError.MissingIdentifier
+            // TODO: error handling
         }
     }
 
-    private func getLiteralString() -> String? {
-        if let token = currentToken {
+    private func parseEnumCaseDeclaration() throws -> EnumCaseDelcaration {
+        var enumCaseElements = [EnumCaseElementDeclaration]()
+        guard let enumCaseName = readIdentifier(includeContextualKeywords: true) else {
+            throw ParserError.MissingIdentifier
+        }
+        skipWhitespaces()
+        let enumCaseElementDecl = try parseRawValue(caseName: enumCaseName)
+        enumCaseElements.append(enumCaseElementDecl)
+        parseEnumCaseList: while let token = currentToken {
             switch token {
-            case let .BinaryIntegerLiteral(literal):
-                return literal
-            case let .OctalIntegerLiteral(literal):
-                return literal
-            case let .DecimalIntegerLiteral(literal):
-                return literal
-            case let .HexadecimalIntegerLiteral(literal):
-                return literal
-            case let .DecimalFloatingPointLiteral(literal):
-                return literal
-            case let .HexadecimalFloatingPointLiteral(literal):
-                return literal
-            case let .StaticStringLiteral(literal):
-                return literal
-            case .TrueBooleanLiteral:
-                return "true"
-            case .FalseBooleanLiteral:
-                return "false"
+            case let .Punctuator(type) where type == .Comma:
+                skipWhitespaces()
+                guard let nextEnumCaseName = readIdentifier(includeContextualKeywords: true) else {
+                    throw ParserError.MissingIdentifier
+                }
+                skipWhitespaces()
+                let enumCaseElementDecl = try parseRawValue(caseName: nextEnumCaseName)
+                enumCaseElements.append(enumCaseElementDecl)
+                continue parseEnumCaseList
             default:
-                return nil
+                break parseEnumCaseList
             }
         }
-        return nil
+        return EnumCaseDelcaration(elements: enumCaseElements)
+    }
+
+    private func parseRawValue(caseName caseName: String) throws -> EnumCaseElementDeclaration {
+        guard let token = currentToken, case let .Punctuator(type) = token where type == .Equal else {
+            return EnumCaseElementDeclaration(name: caseName)
+        }
+        skipWhitespaces()
+        guard let rawValueLiteralString = getLiteralString() else {
+            throw ParserError.InternalError // TODO: better error handling
+        }
+        skipWhitespaces()
+        return EnumCaseElementDeclaration(name: caseName, rawValue: rawValueLiteralString) // TODO: need to distinguish different types of literals
+    }
+
+    private func getLiteralString() -> String? {
+        guard let token = currentToken else {
+            return nil
+        }
+        switch token {
+        case let .BinaryIntegerLiteral(literal):
+            return literal
+        case let .OctalIntegerLiteral(literal):
+            return literal
+        case let .DecimalIntegerLiteral(literal):
+            return literal
+        case let .HexadecimalIntegerLiteral(literal):
+            return literal
+        case let .DecimalFloatingPointLiteral(literal):
+            return literal
+        case let .HexadecimalFloatingPointLiteral(literal):
+            return literal
+        case let .StaticStringLiteral(literal):
+            return literal
+        case .TrueBooleanLiteral:
+            return "true"
+        case .FalseBooleanLiteral:
+            return "false"
+        default:
+            return nil
+        }
     }
 }

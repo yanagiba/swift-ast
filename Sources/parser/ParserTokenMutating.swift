@@ -25,7 +25,7 @@ extension Parser {
 
     func unshiftToken() throws {
         guard let token = currentTokenWithLocation else {
-            throw ParserError.InteralError
+            throw ParserError.InternalError
         }
 
         reversedTokens.append(token)

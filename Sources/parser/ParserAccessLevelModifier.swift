@@ -25,7 +25,7 @@ extension Parser {
     */
     func parseAccessLevelModifier() throws -> AccessLevel? {
         guard let token = currentToken else {
-            throw ParserError.InteralError
+            throw ParserError.InternalError
         }
 
         if case let .Keyword(name, _) = token {
@@ -49,11 +49,11 @@ extension Parser {
                             }
                         }
                         else {
-                            throw ParserError.InteralError // TODO: better error handling
+                            throw ParserError.InternalError // TODO: better error handling
                         }
                     }
                     else {
-                        throw ParserError.InteralError // TODO: better error handling
+                        throw ParserError.InternalError // TODO: better error handling
                     }
                 }
                 else {

@@ -34,7 +34,7 @@ extension Parser {
     */
     func parseDeclaration() throws {
         guard let startRange = currentRange else {
-            throw ParserError.InteralError
+            throw ParserError.InternalError
         }
         let startLocation = startRange.start
 
@@ -42,11 +42,11 @@ extension Parser {
         let accessLevelModifier = try parseAccessLevelModifier()
 
         guard let token = currentToken else {
-            throw ParserError.InteralError
+            throw ParserError.InternalError
         }
 
         guard case let .Keyword(name, _) = token else {
-            throw ParserError.InteralError
+            throw ParserError.InternalError
         }
 
         switch name {

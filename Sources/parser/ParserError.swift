@@ -17,7 +17,7 @@
 import ast
 
 enum ParserError: ErrorType {
-    case InteralError
+    case InternalError
 
     case InvalidToken
     case MissingSeparator
