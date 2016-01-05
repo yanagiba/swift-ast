@@ -77,8 +77,8 @@ public class Parser {
             catch ParserError.PostfixPeriodIsReserved {
                 parserErrors.append("Postfix '.' is reserved.")
             }
-            catch ParserError.InvalidAccessLevelModifierToDeclaration(let modifier) {
-                parserErrors.append("'\(modifier.errorDescription)' modifier cannot be applied to this declaration.")
+            catch ParserError.InvalidModifierToDeclaration(let modifier) {
+                parserErrors.append("'\(modifier)' modifier cannot be applied to this declaration.")
             }
             catch {
                 parserErrors.append("Unknown error.")

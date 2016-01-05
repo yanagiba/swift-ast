@@ -356,5 +356,45 @@ func specParsingEnumDeclaration() {
         }
     }
 
+    describe("Parse empty enum decl with modifiers other than `indirect`") {
+        $0.it("should have errors since only `indirect` modifier is allowed for enum") {
+            let modifiers = [
+                "convenience",
+                "dynamic",
+                "final",
+                "infix",
+                "lazy",
+                "mutating",
+                "nonmutating",
+                "optional",
+                "override",
+                "postfix",
+                "prefix",
+                "required",
+                "unowned",
+                "weak"
+            ]
+            for testModifier in modifiers {
+                let (astContext, errors) = parser.parse("\(testModifier) enum foo {}")
+                try expect(errors.count) == 1
+
+                let nodes = astContext.topLevelDeclaration.statements
+                try expect(nodes.count) == 1
+                try expect(errors[0]) == "'\(testModifier)' modifier cannot be applied to this declaration."
+                guard let node = nodes[0] as? EnumDeclaration else {
+                    throw failure("Node is not a EnumDeclaration.")
+                }
+                try expect(node.name) == "foo"
+                try expect(node.modifiers.count) == 1
+                try expect(node.modifiers[0]) == testModifier
+                try expect(node.attributes.count) == 0
+                try expect(node.accessLevel) == .Default
+                try expect(node.cases.count) == 0
+                try expect(node.elements.count) == 0
+                try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:\(13 + testModifier.characters.count)]"
+            }
+        }
+    }
+
 
 }

@@ -55,7 +55,7 @@ extension Parser {
             try parseImportDeclaration(
                 attributes: declarationAttributes, startLocation: startLocation)
             if let accessLevelModifier = accessLevelModifier {
-                throw ParserError.InvalidAccessLevelModifierToDeclaration(accessLevelModifier)
+                throw ParserError.InvalidModifierToDeclaration(accessLevelModifier.errorDescription)
             }
         case "enum":
             try parseEnumDeclaration(

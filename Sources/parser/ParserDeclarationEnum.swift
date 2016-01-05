@@ -112,8 +112,13 @@ extension Parser {
                 topLevelCode.append(enumDecl)
                 switch accessLevelModifier {
                 case .PublicSet, .InternalSet, .PrivateSet:
-                    throw ParserError.InvalidAccessLevelModifierToDeclaration(accessLevelModifier)
+                    throw ParserError.InvalidModifierToDeclaration(accessLevelModifier.errorDescription)
                 default: ()
+                }
+                for modifier in declarationModifiers {
+                    if modifier != "indirect" {
+                        throw ParserError.InvalidModifierToDeclaration(modifier)
+                    }
                 }
                 if containsMissingSeparatorError {
                     throw ParserError.MissingSeparator
