@@ -28,11 +28,12 @@ enum bar {
    , Z;case A,B,        C;case
    set
 }
-
 enum foo {
   case A = 1
   case B = "abc", C = false
 }
+indirect enum foo {}
+@a indirect enum bar{}
 
 internal (set) enum CannotApplyModifierEnum {}
 enum MissingSeparator { case A case B case C }
@@ -41,7 +42,7 @@ enum MissingSeparator { case A case B case C }
 Parser error: 'internal' modifier cannot be applied to this declaration.
 Parser error: Statements must be separated by line breaks or semicolons.
 
-(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=1:1-80:1
+(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=1:1-83:1
   (enum-declaration 'EmptyEnum' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=17:1-17:18)
   (enum-declaration 'EmptyEnumWithAttributes' attributes=a,b,c access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=18:1-18:41)
   (enum-declaration 'PublicEmptyEnum' access='public' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=19:1-19:31)
@@ -62,14 +63,16 @@ Parser error: Statements must be separated by line breaks or semicolons.
       (enum-case-element-declaration 'C'))
     (enum-case-declaration
       (enum-case-element-declaration 'set')))
-  (enum-declaration 'foo' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=32:1-35:2
+  (enum-declaration 'foo' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=31:1-34:2
     (enum-case-declaration
       (enum-case-element-declaration 'A' raw-value=1))
     (enum-case-declaration
       (enum-case-element-declaration 'B' raw-value=abc)
       (enum-case-element-declaration 'C' raw-value=false)))
-  (enum-declaration 'CannotApplyModifierEnum' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=37:1-37:47)
-  (enum-declaration 'MissingSeparator' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=38:1-38:47
+  (enum-declaration 'foo' modifiers=indirect access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=35:1-35:21)
+  (enum-declaration 'bar' attributes=a modifiers=indirect access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=36:1-36:23)
+  (enum-declaration 'CannotApplyModifierEnum' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=38:1-38:47)
+  (enum-declaration 'MissingSeparator' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=39:1-39:47
     (enum-case-declaration
       (enum-case-element-declaration 'A'))
     (enum-case-declaration

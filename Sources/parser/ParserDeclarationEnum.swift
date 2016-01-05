@@ -21,7 +21,7 @@ extension Parser {
     /*
     - [x] enum-declaration → attributes/opt/ access-level-modifier/opt/ union-style-enum
     - [x] enum-declaration → attributes/opt/ access-level-modifier/opt/ raw-value-style-enum
-    - [ ] union-style-enum → `indirect`/opt/ `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause/opt/ `{` union-style-enum-members/opt/ `}`
+    - [_] union-style-enum → `indirect`/opt/ `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause/opt/ `{` union-style-enum-members/opt/ `}`
     - [ ] union-style-enum-members → union-style-enum-member union-style-enum-members/opt/
     - [ ] union-style-enum-member → declaration | union-style-enum-case-clause
     - [ ] union-style-enum-case-clause → attributes/opt/ `indirect`/opt/ `case` union-style-enum-case-list
@@ -41,6 +41,7 @@ extension Parser {
     */
     func parseEnumDeclaration(
         attributes attributes: [Attribute],
+        declarationModifiers: [String],
         accessLevelModifier: AccessLevel,
         startLocation: SourceLocation) throws {
         skipWhitespaces()
@@ -103,6 +104,7 @@ extension Parser {
                     name: enumName,
                     cases: enumCases,
                     attributes: attributes,
+                    modifiers: declarationModifiers,
                     accessLevel: enumDeclAccessLevel)
                 if let currentRange = currentRange ?? consumedTokens.last?.1 {
                     enumDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)

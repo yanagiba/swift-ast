@@ -33,6 +33,7 @@ func specParsingEnumDeclaration() {
             }
             try expect(node.name) == "foo"
             try expect(node.attributes.count) == 0
+            try expect(node.modifiers.count) == 0
             try expect(node.accessLevel) == .Default
             try expect(node.cases.count) == 0
             try expect(node.elements.count) == 0
@@ -50,6 +51,7 @@ func specParsingEnumDeclaration() {
                 throw failure("Node is not a EnumDeclaration.")
             }
             try expect(node.name) == "foo"
+            try expect(node.modifiers.count) == 0
             try expect(node.cases.count) == 0
             try expect(node.elements.count) == 0
             let attributes = node.attributes
@@ -80,6 +82,7 @@ func specParsingEnumDeclaration() {
                     throw failure("Node is not a EnumDeclaration.")
                 }
                 try expect(node.name) == "foo"
+                try expect(node.modifiers.count) == 0
                 try expect(node.accessLevel) == testModifierType
                 try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:\(13 + testPrefix.characters.count)]"
             }
@@ -122,6 +125,7 @@ func specParsingEnumDeclaration() {
                 throw failure("Node is not a EnumDeclaration.")
             }
             try expect(node.name) == "foo"
+            try expect(node.modifiers.count) == 0
             try expect(node.attributes.count) == 0
             try expect(node.accessLevel) == .Default
             try expect(node.cases.count) == 1
@@ -306,6 +310,49 @@ func specParsingEnumDeclaration() {
             }
             try expect(elementRawValue2) == "false"
             try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:46]"
+        }
+    }
+
+    describe("Parse empty enum decl with `indirect` modifier") {
+        $0.it("should have an empty decl with `indirect` modifier with no cases") {
+            let (astContext, errors) = parser.parse("indirect enum foo {}")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.modifiers.count) == 1
+            try expect(node.modifiers[0]) == "indirect"
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 0
+            try expect(node.elements.count) == 0
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:21]"
+        }
+    }
+
+    describe("Parse empty enum decl with `indirect` modifier and attributes") {
+        $0.it("should have an empty decl with `indirect` modifier and attributes but no cases") {
+            let (astContext, errors) = parser.parse("@x @y @z indirect enum foo {}")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.modifiers.count) == 1
+            try expect(node.modifiers[0]) == "indirect"
+            try expect(node.cases.count) == 0
+            try expect(node.elements.count) == 0
+            let attributes = node.attributes
+            try expect(attributes.count) == 3
+            try expect(attributes[0].name) == "x"
+            try expect(attributes[1].name) == "y"
+            try expect(attributes[2].name) == "z"
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:30]"
         }
     }
 

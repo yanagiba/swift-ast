@@ -40,6 +40,7 @@ extension Parser {
 
         let declarationAttributes = parseAttributes()
         let accessLevelModifier = try parseAccessLevelModifier()
+        let declarationModifiers = parseDeclarationModifiers()
 
         guard let token = currentToken else {
             throw ParserError.InternalError
@@ -59,6 +60,7 @@ extension Parser {
         case "enum":
             try parseEnumDeclaration(
                 attributes: declarationAttributes,
+                declarationModifiers: declarationModifiers,
                 accessLevelModifier: accessLevelModifier ?? .Default,
                 startLocation: startLocation)
         default: ()
@@ -94,9 +96,42 @@ extension Parser {
             }
             return false
         case let .Keyword(_, type):
-            return type == .Declaration
+            switch type {
+            case .Declaration:
+                return true
+            case let .Contextual(contextualType):
+                if contextualType == .DeclarationModifier {
+                    var remainingTokens = skipWhitespacesForTokens(tailTokens)
+                    return isStartOfDeclaration(remainingTokens.popLast(), tailTokens: remainingTokens)
+                }
+                else {
+                    return false
+                }
+            default:
+                return false
+            }
         default:
             return false
         }
+    }
+
+    private func parseDeclarationModifiers() -> [String] {
+        var declarationModifiers = [String]()
+        parseModifiersLoop: while let token = currentToken {
+            switch token {
+            case let .Keyword(modifier, type):
+                if case let .Contextual(contextualType) = type where contextualType == .DeclarationModifier {
+                    declarationModifiers.append(modifier)
+                    skipWhitespaces()
+                    continue parseModifiersLoop
+                }
+                else {
+                    break parseModifiersLoop
+                }
+            default:
+                break parseModifiersLoop
+            }
+        }
+        return declarationModifiers
     }
 }

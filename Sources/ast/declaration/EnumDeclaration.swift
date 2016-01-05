@@ -74,15 +74,18 @@ public class EnumDeclaration: Declaration {
     private let _accessLevel: AccessLevel
     private let _cases: [EnumCaseDelcaration]
     private let _attributes: [Attribute]
+    private let _modifiers: [String]
 
     public init(
         name: String,
         cases: [EnumCaseDelcaration] = [],
         attributes: [Attribute] = [],
+        modifiers: [String] = [],
         accessLevel: AccessLevel = .Default) {
         _name = name
         _cases = cases
         _attributes = attributes
+        _modifiers = modifiers
         _accessLevel = accessLevel
 
         super.init()
@@ -94,6 +97,10 @@ public class EnumDeclaration: Declaration {
 
     public var attributes: [Attribute] {
         return _attributes
+    }
+
+    public var modifiers: [String] {
+        return _modifiers
     }
 
     public var accessLevel: AccessLevel {
@@ -114,7 +121,12 @@ public class EnumDeclaration: Declaration {
             let attrList = _attributes.map({ return $0.name }).joinWithSeparator(",")
             attrs = " attributes=\(attrList)"
         }
-        var inspectionText = "\(getIndentText(indent))(enum-declaration '\(_name)'\(attrs) access='\(_accessLevel)' \(getSourceRangeText())".terminalColor(.Green)
+        var mdfrs = ""
+        if !_modifiers.isEmpty {
+            let modifierList = _modifiers.joinWithSeparator(",")
+            mdfrs = " modifiers=\(modifierList)"
+        }
+        var inspectionText = "\(getIndentText(indent))(enum-declaration '\(_name)'\(attrs)\(mdfrs) access='\(_accessLevel)' \(getSourceRangeText())".terminalColor(.Green)
         for enumCase in _cases {
             inspectionText += "\n\(enumCase.inspect(indent + 1))"
         }
