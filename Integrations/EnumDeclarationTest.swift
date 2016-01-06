@@ -41,14 +41,16 @@ internal (set) enum CannotApplyModifierEnum {}
 weak enum A {}
 lazy enum B {}
 enum MissingSeparator { case A case B case C }
+enum A: class {}
 
 /*
 Parser error: 'internal' modifier cannot be applied to this declaration.
 Parser error: 'weak' modifier cannot be applied to this declaration.
 Parser error: 'lazy' modifier cannot be applied to this declaration.
 Parser error: Statements must be separated by line breaks or semicolons.
+Parser error: 'class' requirement only applies to protocols.
 
-(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=1:1-91:1
+(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=1:1-94:1
   (enum-declaration 'EmptyEnum' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=17:1-17:18)
   (enum-declaration 'EmptyEnumWithAttributes' attributes=a,b,c access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=18:1-18:41)
   (enum-declaration 'PublicEmptyEnum' access='public' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=19:1-19:31)
@@ -88,5 +90,6 @@ Parser error: Statements must be separated by line breaks or semicolons.
     (enum-case-declaration
       (enum-case-element-declaration 'B'))
     (enum-case-declaration
-      (enum-case-element-declaration 'C'))))
+      (enum-case-element-declaration 'C')))
+  (enum-declaration 'A' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=44:1-44:17))
 */

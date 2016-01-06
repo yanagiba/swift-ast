@@ -53,7 +53,8 @@ extension Parser {
         }
         skipWhitespaces()
 
-        let typeInheritance = try parseTypeInheritanceClause()
+        let typeInheritanceClause = try parseTypeInheritanceClause()
+        let (containsClassRequirement, typeInheritance) = refineTypeInheritanceClause(typeInheritanceClause)
 
         if let token = currentToken, case let .Punctuator(type) = token where type == .LeftBrace {
             skipWhitespaces()
@@ -122,6 +123,9 @@ extension Parser {
                     if modifier != "indirect" {
                         throw ParserError.InvalidModifierToDeclaration(modifier)
                     }
+                }
+                if containsClassRequirement {
+                    throw ParserError.InvalidClassRequirement
                 }
                 if containsMissingSeparatorError {
                     throw ParserError.MissingSeparator
@@ -200,5 +204,19 @@ extension Parser {
         default:
             return nil
         }
+    }
+
+    private func refineTypeInheritanceClause(types: [String]) -> (Bool, [String]) {
+        var refinedTypes = [String]()
+        var containsClassRequirement = false
+        for type in types {
+            if type == "class" {
+                containsClassRequirement = true
+            }
+            else {
+                refinedTypes.append(type)
+            }
+        }
+        return (containsClassRequirement, refinedTypes)
     }
 }

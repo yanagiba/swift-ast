@@ -80,6 +80,9 @@ public class Parser {
             catch ParserError.InvalidModifierToDeclaration(let modifier) {
                 parserErrors.append("'\(modifier)' modifier cannot be applied to this declaration.")
             }
+            catch ParserError.InvalidClassRequirement {
+                parserErrors.append("'class' requirement only applies to protocols.")
+            }
             catch {
                 parserErrors.append("Unknown error.")
             }

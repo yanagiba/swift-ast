@@ -445,4 +445,72 @@ func specParsingEnumDeclaration() {
         }
     }
 
+    describe("Parse empty enum decl with class requirement inheritance") {
+        $0.it("should have an empty decl with no type inheritances, but throw error") {
+            let (astContext, errors) = parser.parse("enum foo: class {}")
+            try expect(errors.count) == 1
+            try expect(errors[0]) == "'class' requirement only applies to protocols."
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.modifiers.count) == 0
+            try expect(node.typeInheritance.count) == 0
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 0
+            try expect(node.elements.count) == 0
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:19]"
+        }
+    }
+
+    describe("Parse empty enum decl with class requirement inheritance and other type inheritances") {
+        $0.it("should have an empty decl with three type inheritances, but also throw error") {
+            let (astContext, errors) = parser.parse("enum foo: class,  a.a.c, b  , c {}")
+            try expect(errors.count) == 1
+            try expect(errors[0]) == "'class' requirement only applies to protocols."
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.modifiers.count) == 0
+            try expect(node.typeInheritance.count) == 3
+            try expect(node.typeInheritance[0]) == "a.a.c"
+            try expect(node.typeInheritance[1]) == "b"
+            try expect(node.typeInheritance[2]) == "c"
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 0
+            try expect(node.elements.count) == 0
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:35]"
+        }
+    }
+    describe("Parse empty enum decl with class requirement inheritance in the middle") {
+        $0.it("should have an empty decl with three type inheritances, but also throw error") {
+            let (astContext, errors) = parser.parse("enum foo: a.a.c, b  ,class,   c {}")
+            try expect(errors.count) == 1
+            try expect(errors[0]) == "'class' requirement only applies to protocols."
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.modifiers.count) == 0
+            try expect(node.typeInheritance.count) == 3
+            try expect(node.typeInheritance[0]) == "a.a.c"
+            try expect(node.typeInheritance[1]) == "b"
+            try expect(node.typeInheritance[2]) == "c"
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 0
+            try expect(node.elements.count) == 0
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:35]"
+        }
+    }
+
 }

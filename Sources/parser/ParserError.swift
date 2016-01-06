@@ -25,6 +25,7 @@ enum ParserError: ErrorType {
     case MissingModuleNameInImportDeclaration
     case PostfixPeriodIsReserved
     case InvalidModifierToDeclaration(String)
+    case InvalidClassRequirement
 }
 
 extension AccessLevel {
