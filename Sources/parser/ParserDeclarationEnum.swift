@@ -53,6 +53,8 @@ extension Parser {
         }
         skipWhitespaces()
 
+        let typeInheritance = try parseTypeInheritanceClause()
+
         if let token = currentToken, case let .Punctuator(type) = token where type == .LeftBrace {
             skipWhitespaces()
 
@@ -105,7 +107,8 @@ extension Parser {
                     cases: enumCases,
                     attributes: attributes,
                     modifiers: declarationModifiers,
-                    accessLevel: enumDeclAccessLevel)
+                    accessLevel: enumDeclAccessLevel,
+                    typeInheritance: typeInheritance)
                 if let currentRange = currentRange ?? consumedTokens.last?.1 {
                     enumDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
                 }

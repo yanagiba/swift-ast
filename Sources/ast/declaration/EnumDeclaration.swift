@@ -75,18 +75,21 @@ public class EnumDeclaration: Declaration {
     private let _cases: [EnumCaseDelcaration]
     private let _attributes: [Attribute]
     private let _modifiers: [String]
+    private let _typeInheritance: [String]
 
     public init(
         name: String,
         cases: [EnumCaseDelcaration] = [],
         attributes: [Attribute] = [],
         modifiers: [String] = [],
-        accessLevel: AccessLevel = .Default) {
+        accessLevel: AccessLevel = .Default,
+        typeInheritance: [String] = []) {
         _name = name
         _cases = cases
         _attributes = attributes
         _modifiers = modifiers
         _accessLevel = accessLevel
+        _typeInheritance = typeInheritance
 
         super.init()
     }
@@ -115,22 +118,29 @@ public class EnumDeclaration: Declaration {
         return _cases.flatMap { $0.elements }
     }
 
+    public var typeInheritance: [String] {
+        return _typeInheritance
+    }
+
     public override func inspect(indent: Int = 0) -> String {
-        var attrs = ""
-        if !_attributes.isEmpty {
-            let attrList = _attributes.map({ return $0.name }).joinWithSeparator(",")
-            attrs = " attributes=\(attrList)"
-        }
-        var mdfrs = ""
-        if !_modifiers.isEmpty {
-            let modifierList = _modifiers.joinWithSeparator(",")
-            mdfrs = " modifiers=\(modifierList)"
-        }
-        var inspectionText = "\(getIndentText(indent))(enum-declaration '\(_name)'\(attrs)\(mdfrs) access='\(_accessLevel)' \(getSourceRangeText())".terminalColor(.Green)
+        let attrs = toInspectionText(_attributes.map({ return $0.name }), "attributes")
+        let mdfrs = toInspectionText(_modifiers, "modifiers")
+        let inheritance = toInspectionText(_typeInheritance, "type-inheritance")
+        var inspectionText = "\(getIndentText(indent))(enum-declaration '\(_name)'\(inheritance)\(attrs)\(mdfrs) access='\(_accessLevel)' \(getSourceRangeText())".terminalColor(.Green)
         for enumCase in _cases {
             inspectionText += "\n\(enumCase.inspect(indent + 1))"
         }
         inspectionText += ")".terminalColor(.Green)
         return inspectionText
+    }
+
+
+    private func toInspectionText(array: [String], _ keyName: String) -> String {
+        if array.isEmpty {
+            return ""
+        }
+
+        let inspectionText = array.joinWithSeparator(",")
+        return " \(keyName)=\(inspectionText)"
     }
 }

@@ -35,6 +35,7 @@ func specParsingEnumDeclaration() {
             try expect(node.attributes.count) == 0
             try expect(node.modifiers.count) == 0
             try expect(node.accessLevel) == .Default
+            try expect(node.typeInheritance.count) == 0
             try expect(node.cases.count) == 0
             try expect(node.elements.count) == 0
             try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:12]"
@@ -52,6 +53,7 @@ func specParsingEnumDeclaration() {
             }
             try expect(node.name) == "foo"
             try expect(node.modifiers.count) == 0
+            try expect(node.typeInheritance.count) == 0
             try expect(node.cases.count) == 0
             try expect(node.elements.count) == 0
             let attributes = node.attributes
@@ -128,6 +130,7 @@ func specParsingEnumDeclaration() {
             try expect(node.modifiers.count) == 0
             try expect(node.attributes.count) == 0
             try expect(node.accessLevel) == .Default
+            try expect(node.typeInheritance.count) == 0
             try expect(node.cases.count) == 1
             try expect(node.cases[0].elements.count) == 1
             try expect(node.cases[0].elements[0].name) == "A"
@@ -325,6 +328,7 @@ func specParsingEnumDeclaration() {
             try expect(node.name) == "foo"
             try expect(node.modifiers.count) == 1
             try expect(node.modifiers[0]) == "indirect"
+            try expect(node.typeInheritance.count) == 0
             try expect(node.attributes.count) == 0
             try expect(node.accessLevel) == .Default
             try expect(node.cases.count) == 0
@@ -345,6 +349,7 @@ func specParsingEnumDeclaration() {
             try expect(node.name) == "foo"
             try expect(node.modifiers.count) == 1
             try expect(node.modifiers[0]) == "indirect"
+            try expect(node.typeInheritance.count) == 0
             try expect(node.cases.count) == 0
             try expect(node.elements.count) == 0
             let attributes = node.attributes
@@ -396,5 +401,48 @@ func specParsingEnumDeclaration() {
         }
     }
 
+    describe("Parse empty enum decl with one type inheritance") {
+        $0.it("should have an empty decl with one type inheritance") {
+            let (astContext, errors) = parser.parse("enum foo: a {}")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.modifiers.count) == 0
+            try expect(node.typeInheritance.count) == 1
+            try expect(node.typeInheritance[0]) == "a"
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 0
+            try expect(node.elements.count) == 0
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:15]"
+        }
+    }
+
+    describe("Parse empty enum decl with multiple type inheritances") {
+        $0.it("should have an empty decl with three type inheritances") {
+            let (astContext, errors) = parser.parse("enum foo: a, b . c .d  , f {}")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.modifiers.count) == 0
+            try expect(node.typeInheritance.count) == 3
+            try expect(node.typeInheritance[0]) == "a"
+            try expect(node.typeInheritance[1]) == "b.c.d"
+            try expect(node.typeInheritance[2]) == "f"
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 0
+            try expect(node.elements.count) == 0
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:30]"
+        }
+    }
 
 }
