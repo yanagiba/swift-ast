@@ -15,13 +15,14 @@
 */
 
 import source
+import ast
 
 extension Parser {
     /*
     - [_] type-identifier → type-name generic-argument-clause/opt/ | type-name generic-argument-clause/opt/ `.` type-identifier
     - [x] type-name → identifier
     */
-    func parseTypeIdentifier() throws -> String {
+    func parseTypeIdentifier() throws -> TypeIdentifier {
         guard let typeName = readIdentifier(includeContextualKeywords: true) else {
             throw ParserError.MissingIdentifier
         }
@@ -42,7 +43,7 @@ extension Parser {
             break
         }
 
-        return names.joinWithSeparator(".")
+        return TypeIdentifier(names: names)
     }
 
     /*
@@ -86,7 +87,7 @@ extension Parser {
             return "class"
         }
         else if let typeIdentifier = try? parseTypeIdentifier() {
-            return typeIdentifier
+            return typeIdentifier.names.joinWithSeparator(".")
         }
         else {
             return nil
