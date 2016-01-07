@@ -53,7 +53,7 @@ extension Parser {
     - [x] type-inheritance-list → type-identifier | type-identifier , type-inheritance-list
     - [x] class-requirement → class
     */
-    func parseTypeInheritanceClause() throws -> [String] {
+    func parseTypeInheritanceClause() throws -> TypeInheritanceClause {
         guard let token = currentToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Colon else {
             return []
         }
@@ -63,7 +63,7 @@ extension Parser {
             throw ParserError.MissingIdentifier
         }
 
-        var list = [String]()
+        var list = TypeInheritanceClause()
         list.append(typeIdentifier)
 
         while let token = currentToken {
