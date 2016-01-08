@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Saito, LLC
+   Copyright 2016 Ryuichi Saito, LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,19 +14,14 @@
    limitations under the License.
 */
 
-specCanary()
-specLexer()
-specParser()
+public class OptionalType: Type {
+   private let _type: Type
 
-// tests for types
-specTypeIdentifier()
-specArrayType()
-specDictionaryType()
-specFunctionType()
-specOptionalType()
-specImplicitlyUnwrappedOptionalType()
-specType()
+   public init(type: Type) {
+      _type = type
+   }
 
-// tests for parsing declarations
-specParsingImportDeclaration()
-specParsingEnumDeclaration()
+   public var type: Type {
+      return _type
+   }
+}

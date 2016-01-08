@@ -64,4 +64,40 @@ func specType() {
       }
     }
   }
+
+  describe("Parse an optional type") {
+    $0.it("should return an optional type") {
+      parser.setupTestCode("Int?")
+      guard let type = try? parser.parseType() else {
+        throw failure("Failed in getting a type.")
+      }
+      guard type is OptionalType else {
+        throw failure("Failed in getting an optional type.")
+      }
+    }
+  }
+
+  describe("Parse an implicitly unwrapped optional type") {
+    $0.it("should return an implicitly unwrapped optional type") {
+      parser.setupTestCode("Int!")
+      guard let type = try? parser.parseType() else {
+        throw failure("Failed in getting a type.")
+      }
+      guard type is ImplicitlyUnwrappedOptionalType else {
+        throw failure("Failed in getting an implicitly unwrapped optional type.")
+      }
+    }
+  }
+
+  describe("Parse a function type") {
+    $0.it("should return a function type") {
+      parser.setupTestCode("String -> Int")
+      guard let type = try? parser.parseType() else {
+        throw failure("Failed in getting a type.")
+      }
+      guard type is FunctionType else {
+        throw failure("Failed in getting a function type.")
+      }
+    }
+  }
 }

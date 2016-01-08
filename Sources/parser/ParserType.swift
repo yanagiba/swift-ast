@@ -22,11 +22,11 @@ extension Parser {
     type →
     - [x] array-type |
     - [x] dictionary-type |
-    - [ ] function-type |
+    - [x] function-type |
     - [x] type-identifier |
     - [ ] tuple-type |
-    - [ ] optional-type |
-    - [ ] implicitly-unwrapped-optional-type |
+    - [x] optional-type |
+    - [x] implicitly-unwrapped-optional-type |
     - [ ] protocol-composition-type |
     - [ ] metatype-type
     */
@@ -45,6 +45,90 @@ extension Parser {
     }
 
     private func parseType(head: Token?, tokens: [Token]) -> (type: Type?, advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        var usedTokens = [Token]()
+
+        let atomicTypeResult = parseAtomicType(remainingHeadToken, tokens: remainingTokens)
+        if let atomicType = atomicTypeResult.type {
+            var resultType = atomicType
+
+            for _ in 0..<atomicTypeResult.advancedBy {
+                if let usedToken = remainingHeadToken {
+                    usedTokens.append(usedToken)
+                }
+                remainingHeadToken = remainingTokens.popLast()
+            }
+
+            // see if the type is wrapped into optional types
+            let isLastUsedTokenWhitespace = usedTokens.popLast()?.isWhitespace() ?? false
+            if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Question && !isLastUsedTokenWhitespace {
+                resultType = OptionalType(type: resultType)
+
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+            }
+            else if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Exclaim && !isLastUsedTokenWhitespace {
+                resultType = ImplicitlyUnwrappedOptionalType(type: resultType)
+
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+            }
+            else if let token = remainingHeadToken, case let .Operator(operatorString) = token {
+                for eachOperator in operatorString.characters {
+                    if eachOperator == "!" {
+                        resultType = ImplicitlyUnwrappedOptionalType(type: resultType)
+                    }
+                    else if eachOperator == "?" {
+                        resultType = OptionalType(type: resultType)
+                    }
+                    else {
+                        // TODO: error handling
+                    }
+                }
+
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+            }
+
+            // check to see if it is a function type
+            var functionThrowingMarker: FunctionThrowingMarker = .Nothrowing
+            if let token = remainingHeadToken, case let .Keyword(keywordName, _) = token where keywordName == "throws" || keywordName == "rethrows" {
+                if keywordName == "throws" {
+                    functionThrowingMarker = .Throwing
+                }
+                else {
+                    functionThrowingMarker = .Rethrowing
+                }
+
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+            }
+            if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Arrow {
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                let returnTypeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+                if let returnType = returnTypeResult.type {
+                    resultType = FunctionType(parameterType: resultType, returnType: returnType, throwingMarker: functionThrowingMarker)
+
+                    for _ in 0..<returnTypeResult.advancedBy {
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+            }
+
+            return (resultType, tokens.count - remainingTokens.count)
+        }
+
+        return (nil, 0)
+    }
+
+    // TODO: give a better name, currently it parses type identifier, array type, dictionary type,
+    // TODO: tuple type, protocol composition type, and metatype type
+    private func parseAtomicType(head: Token?, tokens: [Token]) -> (type: Type?, advancedBy: Int) {
         let dictTypeResult = parseDictionaryType(head, tokens: tokens)
         if let dictType = dictTypeResult.dictionaryType {
             return (dictType, dictTypeResult.advancedBy)
@@ -199,7 +283,6 @@ extension Parser {
                         if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightSquare {
                             remainingTokens = skipWhitespacesForTokens(remainingTokens)
                             remainingHeadToken = remainingTokens.popLast()
-
                             return (DictionaryType(keyType: keyType, valueType: valueType), tokens.count - remainingTokens.count)
                         }
                     }
@@ -208,6 +291,58 @@ extension Parser {
         }
 
         return (nil, 0)
+    }
+
+    /*
+    - [x] optional-type → type `?`
+    */
+    func parseOptionalType() throws -> OptionalType {
+        let result = parseType(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let optionalType = result.type as? OptionalType else {
+            throw ParserError.InternalError
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return optionalType
+    }
+
+    /*
+    - [x] implicitly-unwrapped-optional-type → type `!`
+    */
+    func parseImplicitlyUnwrappedOptionalType() throws -> ImplicitlyUnwrappedOptionalType {
+        let result = parseType(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let implicitlyUnwrappedOptionalType = result.type as? ImplicitlyUnwrappedOptionalType else {
+            throw ParserError.InternalError
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return implicitlyUnwrappedOptionalType
+    }
+
+    /*
+    - [x] function-type → type `throws`/opt/ `->` type
+    - [x] function-type → type `rethrows` `->` type
+    */
+    func parseFunctionType() throws -> FunctionType {
+        let result = parseType(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let functionType = result.type as? FunctionType else {
+            throw ParserError.InternalError
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return functionType
     }
 
     /*
