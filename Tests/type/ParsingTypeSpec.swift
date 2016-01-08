@@ -48,7 +48,19 @@ func specType() {
         throw failure("Failed in getting a type.")
       }
       guard type is ArrayType else {
-        throw failure("Failed in getting a type identifier.")
+        throw failure("Failed in getting an array type.")
+      }
+    }
+  }
+
+  describe("Parse a dictionary type") {
+    $0.it("should return a dictionary type") {
+      parser.setupTestCode("[String: Int]")
+      guard let type = try? parser.parseType() else {
+        throw failure("Failed in getting a type.")
+      }
+      guard type is DictionaryType else {
+        throw failure("Failed in getting a dictionary type.")
       }
     }
   }

@@ -21,7 +21,7 @@ extension Parser {
     /*
     type →
     - [x] array-type |
-    - [ ] dictionary-type |
+    - [x] dictionary-type |
     - [ ] function-type |
     - [x] type-identifier |
     - [ ] tuple-type |
@@ -45,6 +45,11 @@ extension Parser {
     }
 
     private func parseType(head: Token?, tokens: [Token]) -> (type: Type?, advancedBy: Int) {
+        let dictTypeResult = parseDictionaryType(head, tokens: tokens)
+        if let dictType = dictTypeResult.dictionaryType {
+            return (dictType, dictTypeResult.advancedBy)
+        }
+
         let arrayTypeResult = parseArrayType(head, tokens: tokens)
         if let arrayType = arrayTypeResult.arrayType {
             return (arrayType, arrayTypeResult.advancedBy)
@@ -66,7 +71,7 @@ extension Parser {
         let result = parseTypeIdentifier(currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let typeIdentifier = result.typeIdentifier else {
-            throw ParserError.MissingIdentifier
+            throw ParserError.InternalError
         }
 
         for _ in 0..<result.advancedBy {
@@ -114,7 +119,7 @@ extension Parser {
         let result = parseArrayType(currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let arrayType = result.arrayType else {
-            throw ParserError.MissingIdentifier
+            throw ParserError.InternalError
         }
 
         for _ in 0..<result.advancedBy {
@@ -143,6 +148,61 @@ extension Parser {
                     remainingHeadToken = remainingTokens.popLast()
 
                     return (ArrayType(type: type), tokens.count - remainingTokens.count)
+                }
+            }
+        }
+
+        return (nil, 0)
+    }
+
+    /*
+    - [x] dictionary-type → `[` type `:` type `]`
+    */
+    func parseDictionaryType() throws -> DictionaryType {
+        let result = parseDictionaryType(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let dictionaryType = result.dictionaryType else {
+            throw ParserError.InternalError
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return dictionaryType
+    }
+
+    private func parseDictionaryType(head: Token?, tokens: [Token]) -> (dictionaryType: DictionaryType?, advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftSquare {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let keyTypeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+            if let keyType = keyTypeResult.type {
+                for _ in 0..<keyTypeResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Colon {
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    let valueTypeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+                    if let valueType = valueTypeResult.type {
+                        for _ in 0..<valueTypeResult.advancedBy {
+                            remainingHeadToken = remainingTokens.popLast()
+                        }
+
+                        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightSquare {
+                            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                            remainingHeadToken = remainingTokens.popLast()
+
+                            return (DictionaryType(keyType: keyType, valueType: valueType), tokens.count - remainingTokens.count)
+                        }
+                    }
                 }
             }
         }

@@ -73,4 +73,23 @@ func specArrayType() {
       try expect(typeIdentifier.names[0]) == "Int"
     }
   }
+
+  describe("Parse an array type with dictionary type") {
+    $0.it("should return that dictionary type with key type array and value type array") {
+      parser.setupTestCode("[[a: b]]")
+      guard let arrayType = try? parser.parseArrayType() else {
+        throw failure("Failed in getting an array type.")
+      }
+      guard let dictType = arrayType.type as? DictionaryType else {
+        throw failure("Failed in getting a dictionary type.")
+      }
+      guard let keyType = dictType.keyType as? TypeIdentifier, valueType = dictType.valueType as? TypeIdentifier else {
+        throw failure("Failed in getting type identifiers.")
+      }
+      try expect(keyType.names.count) == 1
+      try expect(keyType.names[0]) == "a"
+      try expect(valueType.names.count) == 1
+      try expect(valueType.names[0]) == "b"
+    }
+  }
 }
