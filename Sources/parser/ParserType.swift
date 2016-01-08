@@ -20,7 +20,7 @@ import ast
 extension Parser {
     /*
     type →
-    - [ ] array-type |
+    - [x] array-type |
     - [ ] dictionary-type |
     - [ ] function-type |
     - [x] type-identifier |
@@ -45,6 +45,11 @@ extension Parser {
     }
 
     private func parseType(head: Token?, tokens: [Token]) -> (type: Type?, advancedBy: Int) {
+        let arrayTypeResult = parseArrayType(head, tokens: tokens)
+        if let arrayType = arrayTypeResult.arrayType {
+            return (arrayType, arrayTypeResult.advancedBy)
+        }
+
         let typeIdentifierResult = parseTypeIdentifier(head, tokens: tokens)
         if let typeIdentifier = typeIdentifierResult.typeIdentifier {
             return (typeIdentifier, typeIdentifierResult.advancedBy)
@@ -100,6 +105,49 @@ extension Parser {
         }
 
         return (TypeIdentifier(names: names), tokens.count - remainingTokens.count)
+    }
+
+    /*
+    - [x] array-type → `[` type `]`
+    */
+    func parseArrayType() throws -> ArrayType {
+        let result = parseArrayType(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let arrayType = result.arrayType else {
+            throw ParserError.MissingIdentifier
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return arrayType
+    }
+
+    private func parseArrayType(head: Token?, tokens: [Token]) -> (arrayType: ArrayType?, advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftSquare {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let typeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+            if let type = typeResult.type {
+                for _ in 0..<typeResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightSquare {
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    return (ArrayType(type: type), tokens.count - remainingTokens.count)
+                }
+            }
+        }
+
+        return (nil, 0)
     }
 
     /*

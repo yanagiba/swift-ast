@@ -29,23 +29,27 @@ func specType() {
     }
   }
 
-
-
   describe("Parse type identifier") {
     $0.it("should return a type identifier") {
       parser.setupTestCode("foo.bar.a.b.c")
       guard let type = try? parser.parseType() else {
         throw failure("Failed in getting a type.")
       }
-      guard let typeIdentifier = type as? TypeIdentifier else {
+      guard type is TypeIdentifier else {
         throw failure("Failed in getting a type identifier.")
       }
-      try expect(typeIdentifier.names.count) == 5
-      try expect(typeIdentifier.names[0]) == "foo"
-      try expect(typeIdentifier.names[1]) == "bar"
-      try expect(typeIdentifier.names[2]) == "a"
-      try expect(typeIdentifier.names[3]) == "b"
-      try expect(typeIdentifier.names[4]) == "c"
+    }
+  }
+
+  describe("Parse an array type") {
+    $0.it("should return an array type") {
+      parser.setupTestCode("[foo]")
+      guard let type = try? parser.parseType() else {
+        throw failure("Failed in getting a type.")
+      }
+      guard type is ArrayType else {
+        throw failure("Failed in getting a type identifier.")
+      }
     }
   }
 }
