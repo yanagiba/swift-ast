@@ -41,8 +41,8 @@ extension Parser {
     - [x] identifier-characters → identifier-character identifier-characters/opt/
     - [ ] implicit-parameter-name → $ decimal-digits
     */
-    func readIdentifier(includeContextualKeywords includeContextualKeywords: Bool = false) -> String? {
-        guard let token = currentToken else {
+    func readIdentifier(includeContextualKeywords includeContextualKeywords: Bool = false, forToken: Token? = nil) -> String? {
+        guard let token = forToken ?? currentToken else {
             return nil
         }
 

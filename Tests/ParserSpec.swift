@@ -22,8 +22,19 @@ import Spectre
 
 extension Parser {
   public func parse(text: String) -> (astContext: ASTContext, errors: [String]) {
-    let testSourceFile = SourceFile(path: "test/parser", content: text)
-    return parse(testSourceFile)
+    return parse(getTestSourceFile(text))
+  }
+
+  public func setupTestCode(text: String) {
+    let lexer = Lexer()
+    let lexicalContext = lexer.lex(getTestSourceFile(text))
+    reversedTokens = lexicalContext.tokens.reverse()
+    consumedTokens = [TokenWithLocation]()
+    shiftToken()
+  }
+
+  private func getTestSourceFile(text: String) -> SourceFile {
+    return SourceFile(path: "test/parser", content: text)
   }
 }
 

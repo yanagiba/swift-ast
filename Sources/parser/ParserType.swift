@@ -19,31 +19,87 @@ import ast
 
 extension Parser {
     /*
+    type →
+    - [ ] array-type |
+    - [ ] dictionary-type |
+    - [ ] function-type |
+    - [x] type-identifier |
+    - [ ] tuple-type |
+    - [ ] optional-type |
+    - [ ] implicitly-unwrapped-optional-type |
+    - [ ] protocol-composition-type |
+    - [ ] metatype-type
+    */
+    func parseType() throws -> Type {
+        let result = parseType(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let type = result.type else {
+            throw ParserError.InternalError // TODO: better error handling
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return type
+    }
+
+    private func parseType(head: Token?, tokens: [Token]) -> (type: Type?, advancedBy: Int) {
+        let typeIdentifierResult = parseTypeIdentifier(head, tokens: tokens)
+        if let typeIdentifier = typeIdentifierResult.typeIdentifier {
+            return (typeIdentifier, typeIdentifierResult.advancedBy)
+        }
+
+        return (nil, 0)
+    }
+
+    /*
     - [_] type-identifier → type-name generic-argument-clause/opt/ | type-name generic-argument-clause/opt/ `.` type-identifier
     - [x] type-name → identifier
     */
     func parseTypeIdentifier() throws -> TypeIdentifier {
-        guard let typeName = readIdentifier(includeContextualKeywords: true) else {
+        let result = parseTypeIdentifier(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let typeIdentifier = result.typeIdentifier else {
             throw ParserError.MissingIdentifier
         }
-        skipWhitespaces()
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return typeIdentifier
+    }
+
+    private func parseTypeIdentifier(head: Token?, tokens: [Token]) -> (typeIdentifier: TypeIdentifier?, advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        guard let typeName = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) else {
+            return (nil, 0)
+        }
+        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+        remainingHeadToken = remainingTokens.popLast()
 
         var names = [String]()
         names.append(typeName)
 
-        while let token = currentToken {
+        while let token = remainingHeadToken {
             if case let .Punctuator(type) = token where type == .Period {
-                skipWhitespaces()
-                if let subTypeName = readIdentifier(includeContextualKeywords: true) {
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+                if let subTypeName = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
                     names.append(subTypeName)
-                    skipWhitespaces()
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+
                     continue
                 }
             }
             break
         }
 
-        return TypeIdentifier(names: names)
+        return (TypeIdentifier(names: names), tokens.count - remainingTokens.count)
     }
 
     /*

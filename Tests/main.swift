@@ -18,6 +18,10 @@ specCanary()
 specLexer()
 specParser()
 
+// tests for types
+specTypeIdentifier()
+specType()
+
 // tests for parsing declarations
 specParsingImportDeclaration()
 specParsingEnumDeclaration()
