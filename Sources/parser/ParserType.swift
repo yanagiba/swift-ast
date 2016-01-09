@@ -27,7 +27,7 @@ extension Parser {
     - [ ] tuple-type |
     - [x] optional-type |
     - [x] implicitly-unwrapped-optional-type |
-    - [ ] protocol-composition-type |
+    - [x] protocol-composition-type |
     - [ ] metatype-type
     */
     func parseType() throws -> Type {
@@ -79,17 +79,20 @@ extension Parser {
                 for eachOperator in operatorString.characters {
                     if eachOperator == "!" {
                         resultType = ImplicitlyUnwrappedOptionalType(type: resultType)
+
+                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingHeadToken = remainingTokens.popLast()
                     }
                     else if eachOperator == "?" {
                         resultType = OptionalType(type: resultType)
+
+                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingHeadToken = remainingTokens.popLast()
                     }
                     else {
                         // TODO: error handling
                     }
                 }
-
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                remainingHeadToken = remainingTokens.popLast()
             }
 
             // check to see if it is a function type
@@ -153,7 +156,7 @@ extension Parser {
     }
 
     /*
-    - [_] type-identifier → type-name generic-argument-clause/opt/ | type-name generic-argument-clause/opt/ `.` type-identifier
+    - [x] type-identifier → type-name generic-argument-clause/opt/ | type-name generic-argument-clause/opt/ `.` type-identifier
     - [x] type-name → identifier
     */
     func parseTypeIdentifier() throws -> TypeIdentifier {
@@ -180,17 +183,28 @@ extension Parser {
         remainingTokens = skipWhitespacesForTokens(remainingTokens)
         remainingHeadToken = remainingTokens.popLast()
 
+        let genericResult = parseGenericArgumentClause(remainingHeadToken, tokens: remainingTokens)
+        for _ in 0..<genericResult.advancedBy {
+            remainingHeadToken = remainingTokens.popLast()
+        }
+
         var namedTypes = [NamedType]()
-        namedTypes.append(NamedType(name: typeName))
+        namedTypes.append(NamedType(name: typeName, generic: genericResult.genericArgumentClause))
 
         while let token = remainingHeadToken {
             if case let .Punctuator(type) = token where type == .Period {
                 remainingTokens = skipWhitespacesForTokens(remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
                 if let subTypeName = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
-                    namedTypes.append(NamedType(name: subTypeName))
                     remainingTokens = skipWhitespacesForTokens(remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
+
+                    let subGenericResult = parseGenericArgumentClause(remainingHeadToken, tokens: remainingTokens)
+                    for _ in 0..<subGenericResult.advancedBy {
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
+
+                    namedTypes.append(NamedType(name: subTypeName, generic: subGenericResult.genericArgumentClause))
 
                     continue
                 }

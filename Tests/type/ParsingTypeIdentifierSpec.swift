@@ -28,8 +28,9 @@ func specTypeIdentifier() {
       guard let typeIdentifier = try? parser.parseTypeIdentifier() else {
         throw failure("Failed in getting a type identifier.")
       }
-      try expect(typeIdentifier.names.count) == 1
-      try expect(typeIdentifier.names[0]) == "foo"
+      try expect(typeIdentifier.namedTypes.count) == 1
+      try expect(typeIdentifier.namedTypes[0].name) == "foo"
+      try expect(typeIdentifier.namedTypes[0].generic).to.beNil()
     }
   }
 
@@ -39,12 +40,17 @@ func specTypeIdentifier() {
       guard let typeIdentifier = try? parser.parseTypeIdentifier() else {
         throw failure("Failed in getting a type identifier.")
       }
-      try expect(typeIdentifier.names.count) == 5
-      try expect(typeIdentifier.names[0]) == "foo"
-      try expect(typeIdentifier.names[1]) == "bar"
-      try expect(typeIdentifier.names[2]) == "a"
-      try expect(typeIdentifier.names[3]) == "b"
-      try expect(typeIdentifier.names[4]) == "c"
+      try expect(typeIdentifier.namedTypes.count) == 5
+      try expect(typeIdentifier.namedTypes[0].name) == "foo"
+      try expect(typeIdentifier.namedTypes[0].generic).to.beNil()
+      try expect(typeIdentifier.namedTypes[1].name) == "bar"
+      try expect(typeIdentifier.namedTypes[1].generic).to.beNil()
+      try expect(typeIdentifier.namedTypes[2].name) == "a"
+      try expect(typeIdentifier.namedTypes[2].generic).to.beNil()
+      try expect(typeIdentifier.namedTypes[3].name) == "b"
+      try expect(typeIdentifier.namedTypes[3].generic).to.beNil()
+      try expect(typeIdentifier.namedTypes[4].name) == "c"
+      try expect(typeIdentifier.namedTypes[4].generic).to.beNil()
     }
   }
 
@@ -54,12 +60,151 @@ func specTypeIdentifier() {
       guard let typeIdentifier = try? parser.parseTypeIdentifier() else {
         throw failure("Failed in getting a type identifier.")
       }
-      try expect(typeIdentifier.names.count) == 5
-      try expect(typeIdentifier.names[0]) == "foo"
-      try expect(typeIdentifier.names[1]) == "bar"
-      try expect(typeIdentifier.names[2]) == "a"
-      try expect(typeIdentifier.names[3]) == "b"
-      try expect(typeIdentifier.names[4]) == "c"
+      try expect(typeIdentifier.namedTypes.count) == 5
+      try expect(typeIdentifier.namedTypes[0].name) == "foo"
+      try expect(typeIdentifier.namedTypes[0].generic).to.beNil()
+      try expect(typeIdentifier.namedTypes[1].name) == "bar"
+      try expect(typeIdentifier.namedTypes[1].generic).to.beNil()
+      try expect(typeIdentifier.namedTypes[2].name) == "a"
+      try expect(typeIdentifier.namedTypes[2].generic).to.beNil()
+      try expect(typeIdentifier.namedTypes[3].name) == "b"
+      try expect(typeIdentifier.namedTypes[3].generic).to.beNil()
+      try expect(typeIdentifier.namedTypes[4].name) == "c"
+      try expect(typeIdentifier.namedTypes[4].generic).to.beNil()
+    }
+  }
+
+  describe("Parse type identifier with generic") {
+    $0.it("should return a type name with a generic argument clause") {
+      parser.setupTestCode("A<B>")
+      guard let typeIdentifier = try? parser.parseTypeIdentifier() else {
+        throw failure("Failed in getting a type identifier.")
+      }
+      try expect(typeIdentifier.namedTypes.count) == 1
+      let namedType = typeIdentifier.namedTypes[0]
+      try expect(namedType.name) == "A"
+      guard let generic = namedType.generic else {
+        throw failure("Failed in getting a generic argument clause")
+      }
+      try expect(generic.types.count) == 1
+      guard let genericTypeIdentifier = generic.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier inside the generic argument clause")
+      }
+      try expect(genericTypeIdentifier.names.count) == 1
+      try expect(genericTypeIdentifier.names[0]) == "B"
+    }
+  }
+
+  describe("Parse type identifier with several names and generics") {
+    $0.it("should return type names with generic argument clauses") {
+      parser.setupTestCode("A<B>.C<D>.E<F>")
+      guard let typeIdentifier = try? parser.parseTypeIdentifier() else {
+        throw failure("Failed in getting a type identifier.")
+      }
+      try expect(typeIdentifier.namedTypes.count) == 3
+
+      try expect(typeIdentifier.namedTypes[0].name) == "A"
+      guard let generic0 = typeIdentifier.namedTypes[0].generic else {
+        throw failure("Failed in getting a generic argument clause")
+      }
+      try expect(generic0.types.count) == 1
+      guard let generic0TypeIdentifier = generic0.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier inside the generic argument clause")
+      }
+      try expect(generic0TypeIdentifier.names.count) == 1
+      try expect(generic0TypeIdentifier.names[0]) == "B"
+
+      try expect(typeIdentifier.namedTypes[1].name) == "C"
+      guard let generic1 = typeIdentifier.namedTypes[1].generic else {
+        throw failure("Failed in getting a generic argument clause")
+      }
+      try expect(generic1.types.count) == 1
+      guard let generic1TypeIdentifier = generic1.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier inside the generic argument clause")
+      }
+      try expect(generic1TypeIdentifier.names.count) == 1
+      try expect(generic1TypeIdentifier.names[0]) == "D"
+
+      try expect(typeIdentifier.namedTypes[2].name) == "E"
+      guard let generic2 = typeIdentifier.namedTypes[2].generic else {
+        throw failure("Failed in getting a generic argument clause")
+      }
+      try expect(generic2.types.count) == 1
+      guard let generic2TypeIdentifier = generic2.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier inside the generic argument clause")
+      }
+      try expect(generic2TypeIdentifier.names.count) == 1
+      try expect(generic2TypeIdentifier.names[0]) == "F"
+    }
+  }
+
+  describe("Parse type identifier with several names and other type identifiers embedded inside generics") {
+    $0.it("should return type names with generic argument clauses that other type identifiers that has generic argument clauses") {
+      parser.setupTestCode("A<B>.C<D<X<Y<Z>>>>.E<F>")
+      guard let typeIdentifier = try? parser.parseTypeIdentifier() else {
+        throw failure("Failed in getting a type identifier.")
+      }
+      try expect(typeIdentifier.namedTypes.count) == 3
+
+      try expect(typeIdentifier.namedTypes[0].name) == "A"
+      guard let generic0 = typeIdentifier.namedTypes[0].generic else {
+        throw failure("Failed in getting a generic argument clause")
+      }
+      try expect(generic0.types.count) == 1
+      guard let generic0TypeIdentifier = generic0.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier inside the generic argument clause")
+      }
+      try expect(generic0TypeIdentifier.names.count) == 1
+      try expect(generic0TypeIdentifier.names[0]) == "B"
+
+      try expect(typeIdentifier.namedTypes[1].name) == "C"
+      guard let generic1 = typeIdentifier.namedTypes[1].generic else {
+        throw failure("Failed in getting a generic argument clause")
+      }
+      try expect(generic1.types.count) == 1
+      guard let generic1TypeIdentifier = generic1.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier inside the generic argument clause")
+      }
+      try expect(generic1TypeIdentifier.namedTypes.count) == 1
+      try expect(generic1TypeIdentifier.namedTypes[0].name) == "D"
+      guard let generic11 = generic1TypeIdentifier.namedTypes[0].generic else {
+        throw failure("Failed in getting a generic argument clause")
+      }
+      try expect(generic11.types.count) == 1
+      guard let generic11TypeIdentifier = generic11.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier inside the generic argument clause")
+      }
+      try expect(generic11TypeIdentifier.namedTypes.count) == 1
+      try expect(generic11TypeIdentifier.namedTypes[0].name) == "X"
+      guard let generic111 = generic11TypeIdentifier.namedTypes[0].generic else {
+        throw failure("Failed in getting a generic argument clause")
+      }
+      try expect(generic111.types.count) == 1
+      guard let generic111TypeIdentifier = generic111.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier inside the generic argument clause")
+      }
+      try expect(generic111TypeIdentifier.namedTypes.count) == 1
+      try expect(generic111TypeIdentifier.namedTypes[0].name) == "Y"
+      guard let generic1111 = generic111TypeIdentifier.namedTypes[0].generic else {
+        throw failure("Failed in getting a generic argument clause")
+      }
+      try expect(generic1111.types.count) == 1
+      guard let generic1111TypeIdentifier = generic1111.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier inside the generic argument clause")
+      }
+      try expect(generic1111TypeIdentifier.namedTypes.count) == 1
+      try expect(generic1111TypeIdentifier.namedTypes[0].name) == "Z"
+
+      try expect(typeIdentifier.namedTypes[2].name) == "E"
+      guard let generic2 = typeIdentifier.namedTypes[2].generic else {
+        throw failure("Failed in getting a generic argument clause")
+      }
+      try expect(generic2.types.count) == 1
+      guard let generic2TypeIdentifier = generic2.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier inside the generic argument clause")
+      }
+      try expect(generic2TypeIdentifier.names.count) == 1
+      try expect(generic2TypeIdentifier.names[0]) == "F"
     }
   }
 }
