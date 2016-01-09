@@ -180,15 +180,15 @@ extension Parser {
         remainingTokens = skipWhitespacesForTokens(remainingTokens)
         remainingHeadToken = remainingTokens.popLast()
 
-        var names = [String]()
-        names.append(typeName)
+        var namedTypes = [NamedType]()
+        namedTypes.append(NamedType(name: typeName))
 
         while let token = remainingHeadToken {
             if case let .Punctuator(type) = token where type == .Period {
                 remainingTokens = skipWhitespacesForTokens(remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
                 if let subTypeName = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
-                    names.append(subTypeName)
+                    namedTypes.append(NamedType(name: subTypeName))
                     remainingTokens = skipWhitespacesForTokens(remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
@@ -198,7 +198,7 @@ extension Parser {
             break
         }
 
-        return (TypeIdentifier(names: names), tokens.count - remainingTokens.count)
+        return (TypeIdentifier(namedTypes: namedTypes), tokens.count - remainingTokens.count)
     }
 
     /*

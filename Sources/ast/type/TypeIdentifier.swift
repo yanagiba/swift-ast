@@ -16,14 +16,32 @@
 
 public typealias TypeName = String
 
+public class NamedType {
+    public let name: TypeName
+    public let generic: GenericArgumentClause?
+
+    public init(name: TypeName, generic: GenericArgumentClause?) {
+        self.name = name
+        self.generic = generic
+    }
+
+    public convenience init(name: TypeName) {
+        self.init(name: name, generic: nil)
+    }
+}
+
 public class TypeIdentifier: Type {
-   private let _names: [TypeName]
+    private let _namedType: [NamedType]
 
-   public init(names: [TypeName]) {
-      _names = names
-   }
+    public init(namedTypes: [NamedType]) {
+        _namedType = namedTypes
+    }
 
-   public var names: [TypeName] {
-      return _names
-   }
+    public var namedTypes: [NamedType] {
+        return _namedType
+    }
+
+    public var names: [TypeName] {
+        return _namedType.map({ $0.name })
+    }
 }
