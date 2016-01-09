@@ -100,4 +100,16 @@ func specType() {
       }
     }
   }
+
+  describe("Parse protocol composition type") {
+    $0.it("should return a protocol composition type") {
+      parser.setupTestCode("protocol<ProtocolA, ProtocolB>")
+      guard let type = try? parser.parseType() else {
+        throw failure("Failed in getting a type.")
+      }
+      guard type is ProtocolCompositionType else {
+        throw failure("Failed in getting a protocol composition type.")
+      }
+    }
+  }
 }

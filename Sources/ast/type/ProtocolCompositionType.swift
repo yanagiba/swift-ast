@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Saito, LLC
+   Copyright 2016 Ryuichi Saito, LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,20 +14,14 @@
    limitations under the License.
 */
 
-specCanary()
-specLexer()
-specParser()
+public class ProtocolCompositionType: Type {
+   private let _protocols: [TypeIdentifier]
 
-// tests for types
-specTypeIdentifier()
-specArrayType()
-specDictionaryType()
-specFunctionType()
-specOptionalType()
-specImplicitlyUnwrappedOptionalType()
-specProtocolCompositionType()
-specType()
+   public init(protocols: [TypeIdentifier]) {
+      _protocols = protocols
+   }
 
-// tests for parsing declarations
-specParsingImportDeclaration()
-specParsingEnumDeclaration()
+   public var protocols: [TypeIdentifier] {
+      return _protocols
+   }
+}

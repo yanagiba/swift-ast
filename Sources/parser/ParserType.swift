@@ -139,6 +139,11 @@ extension Parser {
             return (arrayType, arrayTypeResult.advancedBy)
         }
 
+        let protocolCompositionTypeResult = parseProtocolCompositionType(head, tokens: tokens)
+        if let protocolCompositionType = protocolCompositionTypeResult.protocolCompositionType {
+            return (protocolCompositionType, protocolCompositionTypeResult.advancedBy)
+        }
+
         let typeIdentifierResult = parseTypeIdentifier(head, tokens: tokens)
         if let typeIdentifier = typeIdentifierResult.typeIdentifier {
             return (typeIdentifier, typeIdentifierResult.advancedBy)
@@ -286,6 +291,85 @@ extension Parser {
                             return (DictionaryType(keyType: keyType, valueType: valueType), tokens.count - remainingTokens.count)
                         }
                     }
+                }
+            }
+        }
+
+        return (nil, 0)
+    }
+
+    /*
+    - [x] protocol-composition-type → `protocol` `<` protocol-identifier-list/opt/ `>`
+    - [x] protocol-identifier-list → protocol-identifier | protocol-identifier `,` protocol-identifier-list
+    - [x] protocol-identifier → type-identifier
+    */
+    func parseProtocolCompositionType() throws -> ProtocolCompositionType {
+        let result = parseProtocolCompositionType(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let protocolCompositionType = result.protocolCompositionType else {
+            throw ParserError.InternalError
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return protocolCompositionType
+    }
+
+    private func parseProtocolCompositionType(head: Token?, tokens: [Token]) -> (protocolCompositionType: ProtocolCompositionType?, advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let token = remainingHeadToken, case let .Keyword(keywordName, _) = token where keywordName == "protocol" {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == "<>" {
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                return (ProtocolCompositionType(protocols: []), tokens.count - remainingTokens.count)
+            }
+
+            if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == "<" {
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                var protocolIdentifiers = [TypeIdentifier]()
+                let firstProtocolIdentifierResult = parseTypeIdentifier(remainingHeadToken, tokens: remainingTokens)
+                if let firstProtocolIdentifier = firstProtocolIdentifierResult.typeIdentifier {
+                    protocolIdentifiers.append(firstProtocolIdentifier)
+
+                    for _ in 0..<firstProtocolIdentifierResult.advancedBy {
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
+
+                    while let token = remainingHeadToken {
+                        if case let .Punctuator(type) = token where type == .Comma {
+                            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                            remainingHeadToken = remainingTokens.popLast()
+
+                            let protocolIdentifierResult = parseTypeIdentifier(remainingHeadToken, tokens: remainingTokens)
+                            if let protocolIdentifier = protocolIdentifierResult.typeIdentifier {
+                                protocolIdentifiers.append(protocolIdentifier)
+
+                                for _ in 0..<protocolIdentifierResult.advancedBy {
+                                    remainingHeadToken = remainingTokens.popLast()
+                                }
+
+                                continue
+                            }
+                        }
+                        break
+                    }
+                }
+
+                if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == ">" {
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    return (ProtocolCompositionType(protocols: protocolIdentifiers), tokens.count - remainingTokens.count)
                 }
             }
         }
