@@ -763,7 +763,7 @@ func specLexer() {
   }
 
   describe("Lex operators >>>!!>>") {
-    $0.it("Should split into six tokens") {
+    $0.it("Should split into seven tokens") {
       let lexicalContext = lexer.lex(">>>!!>>")
       let tokens = lexicalContext.tokens
       try expect(tokens.count) == 7
@@ -781,6 +781,38 @@ func specLexer() {
       try expect(tokens[5].1.testDescription) == "test/lexer:1:6-test/lexer:1:7"
       try expect(tokens[6].0) == Token.Operator(">")
       try expect(tokens[6].1.testDescription) == "test/lexer:1:7-test/lexer:1:8"
+    }
+  }
+
+  describe("Multiple !s or ?s with no whitespace on the left needs to split into multiple postfix operators") {
+    $0.it("Should split into four punctuations") {
+      let lexicalContext = lexer.lex("foo?!?!")
+      let tokens = lexicalContext.tokens
+      try expect(tokens.count) == 5
+      try expect(tokens[0].0) == Token.Identifier("foo")
+      try expect(tokens[0].1.testDescription) == "test/lexer:1:1-test/lexer:1:4"
+      try expect(tokens[1].0) == Token.Punctuator(PunctuatorType.Question)
+      try expect(tokens[1].1.testDescription) == "test/lexer:1:4-test/lexer:1:5"
+      try expect(tokens[2].0) == Token.Punctuator(PunctuatorType.Exclaim)
+      try expect(tokens[2].1.testDescription) == "test/lexer:1:5-test/lexer:1:6"
+      try expect(tokens[3].0) == Token.Punctuator(PunctuatorType.Question)
+      try expect(tokens[3].1.testDescription) == "test/lexer:1:6-test/lexer:1:7"
+      try expect(tokens[4].0) == Token.Punctuator(PunctuatorType.Exclaim)
+      try expect(tokens[4].1.testDescription) == "test/lexer:1:7-test/lexer:1:8"
+    }
+  }
+
+  describe("Multiple !s or ?s with whitespace on the left will be treated as a custom operator") {
+    $0.it("Should split into three tokens") {
+      let lexicalContext = lexer.lex("foo ?!?!")
+      let tokens = lexicalContext.tokens
+      try expect(tokens.count) == 3
+      try expect(tokens[0].0) == Token.Identifier("foo")
+      try expect(tokens[0].1.testDescription) == "test/lexer:1:1-test/lexer:1:4"
+      try expect(tokens[1].0) == Token.Space
+      try expect(tokens[1].1.testDescription) == "test/lexer:1:4-test/lexer:1:5"
+      try expect(tokens[2].0) == Token.Operator("?!?!")
+      try expect(tokens[2].1.testDescription) == "test/lexer:1:5-test/lexer:1:9"
     }
   }
 

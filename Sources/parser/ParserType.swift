@@ -62,37 +62,22 @@ extension Parser {
             }
 
             // see if the type is wrapped into optional types
-            let isLastUsedTokenWhitespace = usedTokens.popLast()?.isWhitespace() ?? false
-            if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Question && !isLastUsedTokenWhitespace {
-                resultType = OptionalType(type: resultType)
-
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                remainingHeadToken = remainingTokens.popLast()
-            }
-            else if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Exclaim && !isLastUsedTokenWhitespace {
-                resultType = ImplicitlyUnwrappedOptionalType(type: resultType)
-
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                remainingHeadToken = remainingTokens.popLast()
-            }
-            else if let token = remainingHeadToken, case let .Operator(operatorString) = token {
-                for eachOperator in operatorString.characters {
-                    if eachOperator == "!" {
-                        resultType = ImplicitlyUnwrappedOptionalType(type: resultType)
-
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                        remainingHeadToken = remainingTokens.popLast()
-                    }
-                    else if eachOperator == "?" {
-                        resultType = OptionalType(type: resultType)
-
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                        remainingHeadToken = remainingTokens.popLast()
-                    }
-                    else {
-                        // TODO: error handling
-                    }
+            while let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token
+            where (punctuatorType == .Question || punctuatorType == .Exclaim) && !(usedTokens.popLast()?.isWhitespace() ?? false) {
+                if punctuatorType == .Question {
+                    resultType = OptionalType(type: resultType)
                 }
+                else {
+                    resultType = ImplicitlyUnwrappedOptionalType(type: resultType)
+                }
+
+                for _ in 0..<remainingTokens.count-skipWhitespacesForTokens(remainingTokens).count {
+                    if let usedToken = remainingHeadToken {
+                        usedTokens.append(usedToken)
+                    }
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+                remainingHeadToken = remainingTokens.popLast()
             }
 
             // check to see if it is a function type

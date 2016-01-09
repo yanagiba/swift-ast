@@ -437,7 +437,15 @@ class Lexer {
             currentToken = .Punctuator(.Question)
             advanced = 1
           default:
-            if op == "<>" {
+            if let lastToken = lexicalContext.tokens.last?.0 where !lastToken.isWhitespace() && self._containsOnlyExclaimOrQuestion(op) {
+              for eachIndex in 0..<op.utf16.count {
+                let punctuation = op[op.startIndex.advancedBy(eachIndex)]
+                let range = self._getSourceRange(startLine, startColumn + eachIndex, currentLine, currentColumn + eachIndex + 1)
+                let thisToken: Token = punctuation == "!" ? .Punctuator(.Exclaim) : .Punctuator(.Question)
+                lexicalContext.append(thisToken, range)
+              }
+            }
+            else if op == "<>" {
               lexicalContext.append(.Operator("<"), self._getSourceRange(startLine, startColumn, currentLine, currentColumn + 1))
               lexicalContext.append(.Operator(">"), self._getSourceRange(startLine, startColumn + 1, currentLine, currentColumn + 2))
             }
@@ -601,6 +609,16 @@ class Lexer {
 
   private func _getFirstCharacter(text: String) -> Character {
     return text[text.startIndex]
+  }
+
+  private func _containsOnlyExclaimOrQuestion(text: String) -> Bool {
+    for eachIndex in 0..<text.utf16.count {
+      let eachText = text[text.startIndex.advancedBy(eachIndex)]
+      if eachText != "!" && eachText != "?" {
+        return false
+      }
+    }
+    return true
   }
 }
 
