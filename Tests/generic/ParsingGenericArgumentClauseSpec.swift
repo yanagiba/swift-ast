@@ -51,15 +51,32 @@ func specGenericArgumentClause() {
     }
   }
 
-  /*
   describe("Parse generic argument clause with generic argument clauses") {
     $0.it("should return those embedded argument clauses") {
-      parser.setupTestCode("<A<B<C<protocol<D, E<F<G>>>>>>>")
-      guard let genericArgumentClauseA = try? parser.parseGenericArgumentClause() else {
+      parser.setupTestCode("<A<B, protocol<C, D>>>")
+      guard let genericArgumentClause = try? parser.parseGenericArgumentClause() else {
         throw failure("Failed in getting a generic argument clause.")
       }
-      try expect(genericArgumentClauseA.types.count) = 1
+      try expect(genericArgumentClause.types.count) == 1
+      guard let typeIdentifierA = genericArgumentClause.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier.")
+      }
+      try expect(typeIdentifierA.namedTypes.count) == 1
+      try expect(typeIdentifierA.namedTypes[0].name) == "A"
+      guard let genericArgumentClauseA = typeIdentifierA.namedTypes[0].generic else {
+        throw failure("Failed in getting a generic argument clause.")
+      }
+
+      try expect(genericArgumentClauseA.types.count) == 2
+      guard let typeIdentifierB = genericArgumentClauseA.types[0] as? TypeIdentifier else {
+        throw failure("Failed in getting a type identifier.")
+      }
+      try expect(typeIdentifierB.namedTypes[0].name) == "B"
+      try expect(typeIdentifierB.namedTypes[0].generic).to.beNil()
+      guard let protocolCompositionType = genericArgumentClauseA.types[1] as? ProtocolCompositionType else {
+        throw failure("Failed in getting a protocol composition type.")
+      }
+      try expect(protocolCompositionType.protocols.count) == 2
     }
   }
-  */
 }
