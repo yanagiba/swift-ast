@@ -28,6 +28,9 @@ specImplicitlyUnwrappedOptionalType()
 specProtocolCompositionType()
 specType()
 
+// tests for generics
+specGenericArgumentClause()
+
 // tests for parsing declarations
 specParsingImportDeclaration()
 specParsingEnumDeclaration()

@@ -437,7 +437,22 @@ class Lexer {
             currentToken = .Punctuator(.Question)
             advanced = 1
           default:
-            currentToken = .Operator(op)
+            if op == "<>" {
+              lexicalContext.append(.Operator("<"), self._getSourceRange(startLine, startColumn, currentLine, currentColumn + 1))
+              lexicalContext.append(.Operator(">"), self._getSourceRange(startLine, startColumn + 1, currentLine, currentColumn + 2))
+            }
+            else if op.rangeOfString(">>") != nil {
+              // TODO: we need to come back to this later. For now, if at least two `>>` exist, we split all operators
+              // TODO: this may also misunderstand a bit shift operator as two `>` tokens instead of one.
+              for eachIndex in 0..<op.utf16.count {
+                lexicalContext.append(
+                  .Operator("\(op[op.startIndex.advancedBy(eachIndex)])"),
+                  self._getSourceRange(startLine, startColumn + eachIndex, currentLine, currentColumn + eachIndex + 1))
+              }
+            }
+            else {
+              currentToken = .Operator(op)
+            }
             advanced = op.utf16.count
           }
           currentColumn += advanced

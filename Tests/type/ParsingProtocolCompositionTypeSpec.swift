@@ -108,4 +108,6 @@ func specProtocolCompositionType() {
       try expect(protocolCompositionType.protocols[2].names[2]) == "d"
     }
   }
+
+  // protocol<A<protocol<Double, B>>>, A<B<C>>>
 }

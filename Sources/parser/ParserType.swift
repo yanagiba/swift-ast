@@ -44,7 +44,7 @@ extension Parser {
         return type
     }
 
-    private func parseType(head: Token?, tokens: [Token]) -> (type: Type?, advancedBy: Int) {
+    func parseType(head: Token?, tokens: [Token]) -> (type: Type?, advancedBy: Int) {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
@@ -324,13 +324,6 @@ extension Parser {
         if let token = remainingHeadToken, case let .Keyword(keywordName, _) = token where keywordName == "protocol" {
             remainingTokens = skipWhitespacesForTokens(remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
-
-            if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == "<>" {
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                remainingHeadToken = remainingTokens.popLast()
-
-                return (ProtocolCompositionType(protocols: []), tokens.count - remainingTokens.count)
-            }
 
             if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == "<" {
                 remainingTokens = skipWhitespacesForTokens(remainingTokens)
