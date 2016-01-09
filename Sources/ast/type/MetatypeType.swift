@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Saito, LLC
+   Copyright 2016 Ryuichi Saito, LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,24 +14,25 @@
    limitations under the License.
 */
 
-specCanary()
-specLexer()
-specParser()
+public enum MetatypeMeta: String {
+   case Type
+   case Protocol
+}
 
-// tests for types
-specTypeIdentifier()
-specArrayType()
-specDictionaryType()
-specFunctionType()
-specOptionalType()
-specImplicitlyUnwrappedOptionalType()
-specProtocolCompositionType()
-specMetatypeType()
-specType()
+public class MetatypeType: Type {
+   private let _type: Type
+   private let _meta: MetatypeMeta
 
-// tests for generics
-specGenericArgumentClause()
+   public init(type: Type, meta: MetatypeMeta) {
+      _type = type
+      _meta = meta
+   }
 
-// tests for parsing declarations
-specParsingImportDeclaration()
-specParsingEnumDeclaration()
+   public var type: Type {
+      return _type
+   }
+
+   public var meta: MetatypeMeta {
+      return _meta
+   }
+}

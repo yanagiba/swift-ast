@@ -28,7 +28,7 @@ extension Parser {
     - [x] optional-type |
     - [x] implicitly-unwrapped-optional-type |
     - [x] protocol-composition-type |
-    - [ ] metatype-type
+    - [x] metatype-type
     */
     func parseType() throws -> Type {
         let result = parseType(currentToken, tokens: reversedTokens.map { $0.0 })
@@ -78,6 +78,28 @@ extension Parser {
                     remainingHeadToken = remainingTokens.popLast()
                 }
                 remainingHeadToken = remainingTokens.popLast()
+            }
+
+            // see if the type can be wrapped into metatype types
+            while let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Period {
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                if let
+                    token = remainingHeadToken,
+                    case let .Keyword(keywordName, keywordType) = token,
+                    case let .Contextual(contextualType) = keywordType
+                where contextualType == .Metatype {
+                    if keywordName == "Type" {
+                        resultType = MetatypeType(type: resultType, meta: .Type)
+                    }
+                    else {
+                        resultType = MetatypeType(type: resultType, meta: .Protocol)
+                    }
+
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+                }
             }
 
             // check to see if it is a function type
@@ -134,7 +156,8 @@ extension Parser {
 
         let typeIdentifierResult = parseTypeIdentifier(head, tokens: tokens)
         if let typeIdentifier = typeIdentifierResult.typeIdentifier {
-            return (typeIdentifier, typeIdentifierResult.advancedBy)
+            let typeIdentifierOrMetatypeType = convertTypeIdentifierToPotentialMetatypeType(typeIdentifier)
+            return (typeIdentifierOrMetatypeType, typeIdentifierResult.advancedBy)
         }
 
         return (nil, 0)
@@ -401,6 +424,58 @@ extension Parser {
         }
 
         return implicitlyUnwrappedOptionalType
+    }
+
+    /*
+    - [x] metatype-type → type `.` `Type` | type `.` `Protocol`
+    */
+    func parseMetatypeType() throws -> MetatypeType {
+        let result = parseType(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let metatypeType = result.type as? MetatypeType else {
+            throw ParserError.InternalError
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return metatypeType
+    }
+
+    private func convertTypeIdentifierToPotentialMetatypeType(typeIdentifier: TypeIdentifier) -> Type {
+        let namedTypes = typeIdentifier.namedTypes
+        if namedTypes.count >= 2 {
+            var theFirstIndexForMeta = namedTypes.count
+            for index in 1..<namedTypes.count {
+                let reversedIndex = namedTypes.count - index
+                let namedType = namedTypes[reversedIndex]
+                if (namedType.name == "Type" || namedType.name == "Protocol") && namedType.generic == nil {
+                    theFirstIndexForMeta = reversedIndex
+                    continue
+                }
+                break
+            }
+            if theFirstIndexForMeta < namedTypes.count {
+                var namedTypesForNewTypeIdentifier = [NamedType]()
+                for typeIdentifierIndex in 0..<theFirstIndexForMeta {
+                    let namedType = namedTypes[typeIdentifierIndex]
+                    namedTypesForNewTypeIdentifier.append(namedType)
+                }
+                var resultType: Type = TypeIdentifier(namedTypes: namedTypesForNewTypeIdentifier)
+                for metaIndex in theFirstIndexForMeta..<namedTypes.count {
+                    let metaName = namedTypes[metaIndex].name
+                    if metaName == "Type" {
+                        resultType = MetatypeType(type: resultType, meta: .Type)
+                    }
+                    else {
+                        resultType = MetatypeType(type: resultType, meta: .Protocol)
+                    }
+                }
+                return resultType
+            }
+        }
+        return typeIdentifier
     }
 
     /*

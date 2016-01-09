@@ -112,4 +112,16 @@ func specType() {
       }
     }
   }
+
+  describe("Parse metatype type") {
+    $0.it("should return a metatype type") {
+      parser.setupTestCode("UIKit.UITableViewDataSource.Protocol")
+      guard let type = try? parser.parseType() else {
+        throw failure("Failed in getting a type.")
+      }
+      guard type is MetatypeType else {
+        throw failure("Failed in getting a metatype type.")
+      }
+    }
+  }
 }
