@@ -109,5 +109,20 @@ func specProtocolCompositionType() {
     }
   }
 
-  // protocol<A<protocol<Double, B>>>, A<B<C>>>
+  describe("Parse protocol composition type with a type identifier that has generic") {
+    $0.it("should return those type identifiers and the generic") {
+      parser.setupTestCode("protocol<X, A<B<C>>>")
+      guard let protocolCompositionType = try? parser.parseProtocolCompositionType() else {
+        throw failure("Failed in getting a protocol composition type.")
+      }
+      try expect(protocolCompositionType.protocols.count) == 2
+      try expect(protocolCompositionType.protocols[0].names.count) == 1
+      try expect(protocolCompositionType.protocols[0].names[0]) == "X"
+      try expect(protocolCompositionType.protocols[1].names.count) == 1
+      try expect(protocolCompositionType.protocols[1].names[0]) == "A"
+      guard let _ = protocolCompositionType.protocols[1].namedTypes[0].generic else {
+        throw failure("Failed in getting a generic argument clause")
+      }
+    }
+  }
 }
