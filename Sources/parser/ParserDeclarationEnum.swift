@@ -137,20 +137,14 @@ extension Parser {
         skipWhitespaces()
         let enumCaseElementDecl = try parseRawValue(caseName: enumCaseName)
         enumCaseElements.append(enumCaseElementDecl)
-        parseEnumCaseList: while let token = currentToken {
-            switch token {
-            case let .Punctuator(type) where type == .Comma:
-                skipWhitespaces()
-                guard let nextEnumCaseName = readIdentifier(includeContextualKeywords: true) else {
-                    throw ParserError.MissingIdentifier
-                }
-                skipWhitespaces()
-                let enumCaseElementDecl = try parseRawValue(caseName: nextEnumCaseName)
-                enumCaseElements.append(enumCaseElementDecl)
-                continue parseEnumCaseList
-            default:
-                break parseEnumCaseList
+        while let token = currentToken, case let .Punctuator(type) = token where type == .Comma {
+            skipWhitespaces()
+            guard let nextEnumCaseName = readIdentifier(includeContextualKeywords: true) else {
+                throw ParserError.MissingIdentifier
             }
+            skipWhitespaces()
+            let enumCaseElementDecl = try parseRawValue(caseName: nextEnumCaseName)
+            enumCaseElements.append(enumCaseElementDecl)
         }
         return EnumCaseDelcaration(elements: enumCaseElements)
     }
