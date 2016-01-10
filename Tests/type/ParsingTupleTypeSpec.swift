@@ -103,6 +103,50 @@ func specTupleType() {
     }
   }
 
+  describe("Parse a tuple with multiple elements, some has attributes and some has inout parameters") {
+    $0.it("should be a tuple with multiple elements, some has attributes and some has inout parameters") {
+      parser.setupTestCode("(@a @b @c inout foo, bar?, inout [key: value], @test a -> b, ())")
+      guard let tupleType = try? parser.parseTupleType() else {
+        throw failure("Failed in getting a tuple type.")
+      }
+      try expect(tupleType.elements.count) == 5
+      try expect(tupleType.elements[0].name).to.beNil()
+      try expect(tupleType.elements[0].attributes.count) == 3
+      try expect(tupleType.elements[0].attributes[0].name) == "a"
+      try expect(tupleType.elements[0].attributes[1].name) == "b"
+      try expect(tupleType.elements[0].attributes[2].name) == "c"
+      try expect(tupleType.elements[0].isInOutParameter).to.beTrue()
+      guard tupleType.elements[0].type is TypeIdentifier else {
+        throw failure("Failed in getting a type identifier.")
+      }
+      try expect(tupleType.elements[1].name).to.beNil()
+      try expect(tupleType.elements[1].attributes.count) == 0
+      try expect(tupleType.elements[1].isInOutParameter).to.beFalse()
+      guard tupleType.elements[1].type is OptionalType else {
+        throw failure("Failed in getting an optional type.")
+      }
+      try expect(tupleType.elements[2].name).to.beNil()
+      try expect(tupleType.elements[2].attributes.count) == 0
+      try expect(tupleType.elements[2].isInOutParameter).to.beTrue()
+      guard tupleType.elements[2].type is DictionaryType else {
+        throw failure("Failed in getting a dictionary type.")
+      }
+      try expect(tupleType.elements[3].name).to.beNil()
+      try expect(tupleType.elements[3].attributes.count) == 1
+      try expect(tupleType.elements[3].attributes[0].name) == "test"
+      try expect(tupleType.elements[3].isInOutParameter).to.beFalse()
+      guard tupleType.elements[3].type is FunctionType else {
+        throw failure("Failed in getting a function type.")
+      }
+      try expect(tupleType.elements[4].name).to.beNil()
+      try expect(tupleType.elements[4].attributes.count) == 0
+      try expect(tupleType.elements[4].isInOutParameter).to.beFalse()
+      guard tupleType.elements[4].type is TupleType else {
+        throw failure("Failed in getting a tuple type.")
+      }
+    }
+  }
+
   describe("Parse a tuple with one named element") {
     $0.it("should be a tuple with one named element") {
       parser.setupTestCode("(foo: bar)")

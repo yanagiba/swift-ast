@@ -24,7 +24,7 @@ extension Parser {
     - [x] dictionary-type |
     - [x] function-type |
     - [x] type-identifier |
-    - [ ] tuple-type |
+    - [x] tuple-type |
     - [x] optional-type |
     - [x] implicitly-unwrapped-optional-type |
     - [x] protocol-composition-type |
@@ -400,7 +400,7 @@ extension Parser {
     - [x] tuple-type → ( tuple-type-body/opt/ )
     - [_] tuple-type-body → tuple-type-element-list `...`/opt/
     - [x] tuple-type-element-list → tuple-type-element | tuple-type-element `,` tuple-type-element-list
-    - [_] tuple-type-element → attributes/opt/ `inout`/opt/ type | `inout`/opt/ element-name type-annotation
+    - [x] tuple-type-element → attributes/opt/ `inout`/opt/ type | `inout`/opt/ element-name type-annotation
     - [x] element-name → identifier
     */
     func parseTupleType() throws -> TupleType {
@@ -464,6 +464,11 @@ extension Parser {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
+        let parsingAttributesResult = parseAttributes(remainingHeadToken, tokens: remainingTokens)
+        for _ in 0..<parsingAttributesResult.advancedBy {
+            remainingHeadToken = remainingTokens.popLast()
+        }
+
         var isInOutParameter = false
 
         if let token = remainingHeadToken, case let .Keyword(keywordName, keywordType) = token where keywordName == "inout" && keywordType == .Declaration {
@@ -499,7 +504,7 @@ extension Parser {
                 remainingHeadToken = remainingTokens.popLast()
             }
 
-            return (TupleTypeElement(type: type, isInOutParameter: isInOutParameter), tokens.count - remainingTokens.count)
+            return (TupleTypeElement(type: type, attributes: parsingAttributesResult.attributes, isInOutParameter: isInOutParameter), tokens.count - remainingTokens.count)
         }
 
         return (nil, 0)
