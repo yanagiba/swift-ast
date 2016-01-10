@@ -81,32 +81,26 @@ extension Parser {
 
         switch headToken {
         case let .Punctuator(type):
-            if type == .At {
-                var remainingTokens = skipWhitespacesForTokens(tailTokens)
-                if let remainingHeadToken = remainingTokens.popLast() {
-                    switch remainingHeadToken {
-                    case .Identifier(_):
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                        return isStartOfDeclaration(remainingTokens.popLast(), tailTokens: remainingTokens)
-                    default:
-                        return false
-                    }
-                }
+            guard type == .At else {
                 return false
             }
-            return false
+
+            var remainingTokens = skipWhitespacesForTokens(tailTokens)
+            guard let remainingHeadToken = remainingTokens.popLast(), case .Identifier(_) = remainingHeadToken else {
+                return false
+            }
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            return isStartOfDeclaration(remainingTokens.popLast(), tailTokens: remainingTokens)
         case let .Keyword(_, type):
             switch type {
             case .Declaration:
                 return true
             case let .Contextual(contextualType):
-                if contextualType == .DeclarationModifier {
-                    var remainingTokens = skipWhitespacesForTokens(tailTokens)
-                    return isStartOfDeclaration(remainingTokens.popLast(), tailTokens: remainingTokens)
-                }
-                else {
+                guard contextualType == .DeclarationModifier else {
                     return false
                 }
+                var remainingTokens = skipWhitespacesForTokens(tailTokens)
+                return isStartOfDeclaration(remainingTokens.popLast(), tailTokens: remainingTokens)
             default:
                 return false
             }

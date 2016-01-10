@@ -203,25 +203,21 @@ extension Parser {
         var namedTypes = [NamedType]()
         namedTypes.append(NamedType(name: typeName, generic: genericResult.genericArgumentClause))
 
-        while let token = remainingHeadToken {
-            if case let .Punctuator(type) = token where type == .Period {
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                remainingHeadToken = remainingTokens.popLast()
-                if let subTypeName = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                    remainingHeadToken = remainingTokens.popLast()
-
-                    let subGenericResult = parseGenericArgumentClause(remainingHeadToken, tokens: remainingTokens)
-                    for _ in 0..<subGenericResult.advancedBy {
-                        remainingHeadToken = remainingTokens.popLast()
-                    }
-
-                    namedTypes.append(NamedType(name: subTypeName, generic: subGenericResult.genericArgumentClause))
-
-                    continue
-                }
+        while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Period {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+            guard let subTypeName = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) else {
+                break
             }
-            break
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let subGenericResult = parseGenericArgumentClause(remainingHeadToken, tokens: remainingTokens)
+            for _ in 0..<subGenericResult.advancedBy {
+                remainingHeadToken = remainingTokens.popLast()
+            }
+
+            namedTypes.append(NamedType(name: subTypeName, generic: subGenericResult.genericArgumentClause))
         }
 
         return (TypeIdentifier(namedTypes: namedTypes), tokens.count - remainingTokens.count)
@@ -364,23 +360,19 @@ extension Parser {
                         remainingHeadToken = remainingTokens.popLast()
                     }
 
-                    while let token = remainingHeadToken {
-                        if case let .Punctuator(type) = token where type == .Comma {
-                            remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                            remainingHeadToken = remainingTokens.popLast()
+                    while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Comma {
+                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingHeadToken = remainingTokens.popLast()
 
-                            let protocolIdentifierResult = parseTypeIdentifier(remainingHeadToken, tokens: remainingTokens)
-                            if let protocolIdentifier = protocolIdentifierResult.typeIdentifier {
-                                protocolIdentifiers.append(protocolIdentifier)
-
-                                for _ in 0..<protocolIdentifierResult.advancedBy {
-                                    remainingHeadToken = remainingTokens.popLast()
-                                }
-
-                                continue
-                            }
+                        let protocolIdentifierResult = parseTypeIdentifier(remainingHeadToken, tokens: remainingTokens)
+                        guard let protocolIdentifier = protocolIdentifierResult.typeIdentifier else {
+                            break
                         }
-                        break
+                        protocolIdentifiers.append(protocolIdentifier)
+
+                        for _ in 0..<protocolIdentifierResult.advancedBy {
+                            remainingHeadToken = remainingTokens.popLast()
+                        }
                     }
                 }
 

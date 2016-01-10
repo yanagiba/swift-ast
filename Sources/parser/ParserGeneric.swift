@@ -55,23 +55,19 @@ extension Parser {
                     remainingHeadToken = remainingTokens.popLast()
                 }
 
-                while let token = remainingHeadToken {
-                    if case let .Punctuator(type) = token where type == .Comma {
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                        remainingHeadToken = remainingTokens.popLast()
+                while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Comma {
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
 
-                        let typeResult = parseType(remainingHeadToken, tokens: remainingTokens)
-                        if let type = typeResult.type {
-                            types.append(type)
-
-                            for _ in 0..<typeResult.advancedBy {
-                                remainingHeadToken = remainingTokens.popLast()
-                            }
-
-                            continue
-                        }
+                    let typeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+                    guard let type = typeResult.type else {
+                        break
                     }
-                    break
+                    types.append(type)
+
+                    for _ in 0..<typeResult.advancedBy {
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
                 }
 
                 if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == ">" {
