@@ -117,20 +117,10 @@ extension Parser {
 
     private func parseDeclarationModifiers() -> [String] {
         var declarationModifiers = [String]()
-        parseModifiersLoop: while let token = currentToken {
-            switch token {
-            case let .Keyword(modifier, type):
-                if case let .Contextual(contextualType) = type where contextualType == .DeclarationModifier {
-                    declarationModifiers.append(modifier)
-                    skipWhitespaces()
-                    continue parseModifiersLoop
-                }
-                else {
-                    break parseModifiersLoop
-                }
-            default:
-                break parseModifiersLoop
-            }
+        while let token = currentToken, case let .Keyword(modifier, keywordType) = token, case let .Contextual(contextualType) = keywordType
+        where contextualType == .DeclarationModifier {
+            declarationModifiers.append(modifier)
+            skipWhitespaces()
         }
         return declarationModifiers
     }

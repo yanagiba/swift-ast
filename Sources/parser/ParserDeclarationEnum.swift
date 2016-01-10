@@ -61,38 +61,27 @@ extension Parser {
 
             var enumCases = [EnumCaseDelcaration]()
 
-            parseEnumMembers: while let token = currentToken {
-                switch token {
-                case let .Keyword(keywordName, _):
-                    if keywordName == "case" {
-                        skipWhitespaces()
-                        let enumCaseDecl = try parseEnumCaseDeclaration()
-                        enumCases.append(enumCaseDecl)
+            while let token = currentToken, case let .Keyword(keywordName, _) = token where keywordName == "case" {
+                skipWhitespaces()
+                let enumCaseDecl = try parseEnumCaseDeclaration()
+                enumCases.append(enumCaseDecl)
 
-                        try unshiftToken()
-                        while let token = currentToken where token.isWhitespace() {
-                            try unshiftToken()
-                        }
-                        do {
-                            try ensureStatementSeparator(stopAtRightBrace: true)
-                        }
-                        catch _ {
-                            containsMissingSeparatorError = true // just to delay throw this
-                        } // TODO: ^ this block of code needs to be re-considered
-
-                        if let token = currentToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightBrace {
-                            break parseEnumMembers
-                        }
-
-                        skipWhitespaces(treatSemiAsWhitespace: true)
-                        continue parseEnumMembers
-                    }
-                    else {
-                        break parseEnumMembers
-                    }
-                default:
-                    break parseEnumMembers
+                try unshiftToken()
+                while let token = currentToken where token.isWhitespace() {
+                    try unshiftToken()
                 }
+                do {
+                    try ensureStatementSeparator(stopAtRightBrace: true)
+                }
+                catch _ {
+                    containsMissingSeparatorError = true // just to delay throw this
+                } // TODO: ^ this block of code needs to be re-considered
+
+                if let token = currentToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightBrace {
+                    break
+                }
+
+                skipWhitespaces(treatSemiAsWhitespace: true)
             }
 
             if let token = currentToken, case let .Punctuator(type) = token where type == .RightBrace {

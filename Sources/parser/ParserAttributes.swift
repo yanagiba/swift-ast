@@ -43,30 +43,19 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         var declarationAttributes = [Attribute]()
-        parseAttributesLoop: while let token = remainingHeadToken {
-            switch token {
-            case let .Punctuator(type):
-                if type == .At {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                    remainingHeadToken = remainingTokens.popLast()
+        while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .At {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
 
-                    if let attributeName = readIdentifier(forToken: remainingHeadToken) {
-                        declarationAttributes.append(Attribute(name: attributeName))
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                        remainingHeadToken = remainingTokens.popLast()
+            if let attributeName = readIdentifier(forToken: remainingHeadToken) {
+                declarationAttributes.append(Attribute(name: attributeName))
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
 
-                        continue parseAttributesLoop
-                    }
-                    else {
-                        // TODO: error handling
-                    }
-                }
-                else {
-                    break parseAttributesLoop
-                }
-            default:
-                break parseAttributesLoop
+                continue
             }
+
+            break
         }
         return (declarationAttributes, tokens.count - remainingTokens.count)
     }
