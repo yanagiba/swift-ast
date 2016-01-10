@@ -47,15 +47,13 @@ extension Parser {
             remainingTokens = skipWhitespacesForTokens(remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            if let attributeName = readIdentifier(forToken: remainingHeadToken) {
-                declarationAttributes.append(Attribute(name: attributeName))
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                remainingHeadToken = remainingTokens.popLast()
-
-                continue
+            guard let attributeName = readIdentifier(forToken: remainingHeadToken) else {
+                break
             }
 
-            break
+            declarationAttributes.append(Attribute(name: attributeName))
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
         }
         return (declarationAttributes, tokens.count - remainingTokens.count)
     }

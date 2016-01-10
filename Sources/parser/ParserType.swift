@@ -428,29 +428,24 @@ extension Parser {
             var tupleTypeElements = [TupleTypeElement]()
 
             let firstElementResult = parseTupleTypeElement(remainingHeadToken, tokens: remainingTokens)
-            if let firstElementType = firstElementResult.type {
-                tupleTypeElements.append(TupleTypeElement(type: firstElementType, name: firstElementResult.name))
-
+            if let firstElement = firstElementResult.element {
+                tupleTypeElements.append(firstElement)
                 for _ in 0..<firstElementResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
                 }
 
-                while let token = remainingHeadToken {
-                    if case let .Punctuator(type) = token where type == .Comma {
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                        remainingHeadToken = remainingTokens.popLast()
+                while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Comma {
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
 
-                        let elementResult = parseTupleTypeElement(remainingHeadToken, tokens: remainingTokens)
-                        if let elementType = elementResult.type {
-                            tupleTypeElements.append(TupleTypeElement(type: elementType, name: elementResult.name))
-                            for _ in 0..<elementResult.advancedBy {
-                                remainingHeadToken = remainingTokens.popLast()
-                            }
-
-                            continue
-                        }
+                    let elementResult = parseTupleTypeElement(remainingHeadToken, tokens: remainingTokens)
+                    guard let element = elementResult.element else {
+                        break
                     }
-                    break
+                    tupleTypeElements.append(element)
+                    for _ in 0..<elementResult.advancedBy {
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
                 }
             }
 
@@ -465,28 +460,38 @@ extension Parser {
         return (nil, 0)
     }
 
-    private func parseTupleTypeElement(head: Token?, tokens: [Token]) -> (type: Type?, name: ElementName?, advancedBy: Int) {
+    private func parseTupleTypeElement(head: Token?, tokens: [Token]) -> (element: TupleTypeElement?, advancedBy: Int) {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        var elementName: ElementName? = nil
+        var isInOutParameter = false
 
-        if let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
+        if let token = remainingHeadToken, case let .Keyword(keywordName, keywordType) = token where keywordName == "inout" && keywordType == .Declaration {
+            isInOutParameter = true
+
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+        }
+
+        let checkpointTokens = remainingTokens
+        let checkpointHeadToken: Token? = remainingHeadToken
+
+        if let elementName = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
             remainingTokens = skipWhitespacesForTokens(remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Colon {
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                remainingHeadToken = remainingTokens.popLast()
+            let typeAnnotationResult = parseTypeAnnotation(remainingHeadToken, tokens: remainingTokens)
+            if let type = typeAnnotationResult.type {
+                for _ in 0..<typeAnnotationResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
 
-                elementName = identifier
+                return (TupleTypeElement(type: type, name: elementName, attributes: typeAnnotationResult.attributes, isInOutParameter: isInOutParameter), tokens.count - remainingTokens.count)
             }
         }
 
-        if elementName == nil {
-            remainingTokens = tokens
-            remainingHeadToken = head
-        }
+        remainingTokens = checkpointTokens
+        remainingHeadToken = checkpointHeadToken
 
         let typeResult = parseType(remainingHeadToken, tokens: remainingTokens)
         if let type = typeResult.type {
@@ -494,10 +499,10 @@ extension Parser {
                 remainingHeadToken = remainingTokens.popLast()
             }
 
-            return (type, elementName, tokens.count - remainingTokens.count)
+            return (TupleTypeElement(type: type, isInOutParameter: isInOutParameter), tokens.count - remainingTokens.count)
         }
 
-        return (nil, nil, 0)
+        return (nil, 0)
     }
 
     /*
@@ -558,11 +563,10 @@ extension Parser {
             for index in 1..<namedTypes.count {
                 let reversedIndex = namedTypes.count - index
                 let namedType = namedTypes[reversedIndex]
-                if (namedType.name == "Type" || namedType.name == "Protocol") && namedType.generic == nil {
-                    theFirstIndexForMeta = reversedIndex
-                    continue
+                guard (namedType.name == "Type" || namedType.name == "Protocol") && namedType.generic == nil else {
+                    break
                 }
-                break
+                theFirstIndexForMeta = reversedIndex
             }
             if theFirstIndexForMeta < namedTypes.count {
                 var namedTypesForNewTypeIdentifier = [NamedType]()
@@ -605,6 +609,49 @@ extension Parser {
     }
 
     /*
+    - [x] type-annotation → `:` attributes/opt/ type
+    */
+    func parseTypeAnnotation() throws -> (type: Type, attributes: [Attribute]) {
+        let result = parseTypeAnnotation(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let type = result.type else {
+            throw ParserError.InternalError
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return (type, result.attributes)
+    }
+
+    private func parseTypeAnnotation(head: Token?, tokens: [Token]) -> (type: Type?, attributes: [Attribute], advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Colon {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let parsingAttributesResult = parseAttributes(remainingHeadToken, tokens: remainingTokens)
+            for _ in 0..<parsingAttributesResult.advancedBy {
+                remainingHeadToken = remainingTokens.popLast()
+            }
+
+            let typeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+            if let type = typeResult.type {
+                for _ in 0..<typeResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                return (type, parsingAttributesResult.attributes, tokens.count - remainingTokens.count)
+            }
+        }
+
+        return (nil, [], 0)
+    }
+
+    /*
     - [x] type-inheritance-clause → : class-requirement , type-inheritance-list
     - [x] type-inheritance-clause → : class-requirement
     - [x] type-inheritance-clause → : type-inheritance-list
@@ -624,16 +671,12 @@ extension Parser {
         var list = TypeInheritanceClause()
         list.append(typeIdentifier)
 
-        while let token = currentToken {
-            if case let .Punctuator(type) = token where type == .Comma {
-                skipWhitespaces()
-                if let typeIdentifier = parseEachTypeInheritance() {
-                    list.append(typeIdentifier)
-                    //skipWhitespaces()
-                    continue
-                }
+        while let token = currentToken, case let .Punctuator(type) = token where type == .Comma {
+            skipWhitespaces()
+            guard let typeIdentifier = parseEachTypeInheritance() else {
+                break
             }
-            break
+            list.append(typeIdentifier)
         }
 
         return list

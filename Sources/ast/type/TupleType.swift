@@ -19,14 +19,14 @@ public typealias ElementName = String
 public class TupleTypeElement {
     public let name: ElementName?
     public let type: Type
+    public let attributes: [Attribute]
+    public let isInOutParameter: Bool
 
-    public init(type: Type, name: ElementName?) {
+    public init(type: Type, name: ElementName? = nil, attributes: [Attribute] = [], isInOutParameter: Bool = false) {
         self.name = name
         self.type = type
-    }
-
-    public convenience init(type: Type) {
-        self.init(type: type, name: nil)
+        self.attributes = attributes
+        self.isInOutParameter = isInOutParameter
     }
 }
 

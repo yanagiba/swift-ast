@@ -45,6 +45,8 @@ func specTupleType() {
       }
       try expect(typeIdentifier.names.count) == 1
       try expect(typeIdentifier.names[0]) == "foo"
+      try expect(tupleType.elements[0].attributes.count) == 0
+      try expect(tupleType.elements[0].isInOutParameter).to.beFalse()
     }
   }
 
@@ -64,6 +66,10 @@ func specTupleType() {
       try expect(typeIdentifier1.names[0]) == "foo"
       try expect(typeIdentifier2.names.count) == 1
       try expect(typeIdentifier2.names[0]) == "bar"
+      try expect(tupleType.elements[0].attributes.count) == 0
+      try expect(tupleType.elements[0].isInOutParameter).to.beFalse()
+      try expect(tupleType.elements[1].attributes.count) == 0
+      try expect(tupleType.elements[1].isInOutParameter).to.beFalse()
     }
   }
 
@@ -110,6 +116,8 @@ func specTupleType() {
       }
       try expect(typeIdentifier.names.count) == 1
       try expect(typeIdentifier.names[0]) == "bar"
+      try expect(tupleType.elements[0].attributes.count) == 0
+      try expect(tupleType.elements[0].isInOutParameter).to.beFalse()
     }
   }
 
@@ -137,6 +145,50 @@ func specTupleType() {
         throw failure("Failed in getting a function type.")
       }
       try expect(tupleType.elements[4].name) == "p5"
+      guard tupleType.elements[4].type is TupleType else {
+        throw failure("Failed in getting a tuple type.")
+      }
+    }
+  }
+
+  describe("Parse a tuple with multiple elements with names and attributes, some has inout parameters") {
+    $0.it("should be the complex tuple type") {
+      parser.setupTestCode("(inout p1: @a foo, p2:bar?, p3   :   @x @y @z [key: value], inout p4    :a -> b, p5: ())")
+      guard let tupleType = try? parser.parseTupleType() else {
+        throw failure("Failed in getting a tuple type.")
+      }
+      try expect(tupleType.elements.count) == 5
+      try expect(tupleType.elements[0].name) == "p1"
+      try expect(tupleType.elements[0].attributes.count) == 1
+      try expect(tupleType.elements[0].attributes[0].name) == "a"
+      try expect(tupleType.elements[0].isInOutParameter).to.beTrue()
+      guard tupleType.elements[0].type is TypeIdentifier else {
+        throw failure("Failed in getting a type identifier.")
+      }
+      try expect(tupleType.elements[1].name) == "p2"
+      try expect(tupleType.elements[1].attributes.count) == 0
+      try expect(tupleType.elements[1].isInOutParameter).to.beFalse()
+      guard tupleType.elements[1].type is OptionalType else {
+        throw failure("Failed in getting an optional type.")
+      }
+      try expect(tupleType.elements[2].name) == "p3"
+      try expect(tupleType.elements[2].attributes.count) == 3
+      try expect(tupleType.elements[2].attributes[0].name) == "x"
+      try expect(tupleType.elements[2].attributes[1].name) == "y"
+      try expect(tupleType.elements[2].attributes[2].name) == "z"
+      try expect(tupleType.elements[2].isInOutParameter).to.beFalse()
+      guard tupleType.elements[2].type is DictionaryType else {
+        throw failure("Failed in getting a dictionary type.")
+      }
+      try expect(tupleType.elements[3].name) == "p4"
+      try expect(tupleType.elements[3].attributes.count) == 0
+      try expect(tupleType.elements[3].isInOutParameter).to.beTrue()
+      guard tupleType.elements[3].type is FunctionType else {
+        throw failure("Failed in getting a function type.")
+      }
+      try expect(tupleType.elements[4].name) == "p5"
+      try expect(tupleType.elements[4].attributes.count) == 0
+      try expect(tupleType.elements[4].isInOutParameter).to.beFalse()
       guard tupleType.elements[4].type is TupleType else {
         throw failure("Failed in getting a tuple type.")
       }
