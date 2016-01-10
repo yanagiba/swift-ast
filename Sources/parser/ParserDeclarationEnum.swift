@@ -135,7 +135,7 @@ extension Parser {
             throw ParserError.MissingIdentifier
         }
         skipWhitespaces()
-        let enumCaseElementDecl = try parseRawValue(caseName: enumCaseName)
+        let enumCaseElementDecl = try parseEnumCaseElement(caseName: enumCaseName)
         enumCaseElements.append(enumCaseElementDecl)
         while let token = currentToken, case let .Punctuator(type) = token where type == .Comma {
             skipWhitespaces()
@@ -143,16 +143,21 @@ extension Parser {
                 throw ParserError.MissingIdentifier
             }
             skipWhitespaces()
-            let enumCaseElementDecl = try parseRawValue(caseName: nextEnumCaseName)
+            let enumCaseElementDecl = try parseEnumCaseElement(caseName: nextEnumCaseName)
             enumCaseElements.append(enumCaseElementDecl)
         }
         return EnumCaseDelcaration(elements: enumCaseElements)
     }
 
-    private func parseRawValue(caseName caseName: String) throws -> EnumCaseElementDeclaration {
-        guard let token = currentToken, case let .Punctuator(type) = token where type == .Equal else {
-            return EnumCaseElementDeclaration(name: caseName)
+    private func parseEnumCaseElement(caseName caseName: String) throws -> EnumCaseElementDeclaration {
+        if let token = currentToken, case let .Punctuator(type) = token where type == .Equal {
+            return try parseRawValueStyleEnumCaseElement(caseName: caseName)
         }
+
+        return EnumCaseElementDeclaration(name: caseName)
+    }
+
+    private func parseRawValueStyleEnumCaseElement(caseName caseName: String) throws -> EnumCaseElementDeclaration {
         skipWhitespaces()
         guard let rawValueLiteralString = getLiteralString() else {
             throw ParserError.InternalError // TODO: better error handling
