@@ -27,6 +27,7 @@ specOptionalType()
 specImplicitlyUnwrappedOptionalType()
 specProtocolCompositionType()
 specMetatypeType()
+specTupleType()
 specType()
 
 // tests for generics

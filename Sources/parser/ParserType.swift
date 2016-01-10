@@ -126,7 +126,6 @@ extension Parser {
                     for _ in 0..<returnTypeResult.advancedBy {
                         remainingHeadToken = remainingTokens.popLast()
                     }
-                    remainingHeadToken = remainingTokens.popLast()
                 }
             }
 
@@ -152,6 +151,11 @@ extension Parser {
         let protocolCompositionTypeResult = parseProtocolCompositionType(head, tokens: tokens)
         if let protocolCompositionType = protocolCompositionTypeResult.protocolCompositionType {
             return (protocolCompositionType, protocolCompositionTypeResult.advancedBy)
+        }
+
+        let tupleTypeResult = parseTupleType(head, tokens: tokens)
+        if let tupleType = tupleTypeResult.tupleType {
+            return (tupleType, tupleTypeResult.advancedBy)
         }
 
         let typeIdentifierResult = parseTypeIdentifier(head, tokens: tokens)
@@ -390,6 +394,110 @@ extension Parser {
         }
 
         return (nil, 0)
+    }
+
+    /*
+    - [x] tuple-type → ( tuple-type-body/opt/ )
+    - [_] tuple-type-body → tuple-type-element-list `...`/opt/
+    - [x] tuple-type-element-list → tuple-type-element | tuple-type-element `,` tuple-type-element-list
+    - [_] tuple-type-element → attributes/opt/ `inout`/opt/ type | `inout`/opt/ element-name type-annotation
+    - [x] element-name → identifier
+    */
+    func parseTupleType() throws -> TupleType {
+        let result = parseTupleType(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let tupleType = result.tupleType else {
+            throw ParserError.InternalError
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return tupleType
+    }
+
+    private func parseTupleType(head: Token?, tokens: [Token]) -> (tupleType: TupleType?, advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftParen {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            var tupleTypeElements = [TupleTypeElement]()
+
+            let firstElementResult = parseTupleTypeElement(remainingHeadToken, tokens: remainingTokens)
+            if let firstElementType = firstElementResult.type {
+                tupleTypeElements.append(TupleTypeElement(type: firstElementType, name: firstElementResult.name))
+
+                for _ in 0..<firstElementResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                while let token = remainingHeadToken {
+                    if case let .Punctuator(type) = token where type == .Comma {
+                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingHeadToken = remainingTokens.popLast()
+
+                        let elementResult = parseTupleTypeElement(remainingHeadToken, tokens: remainingTokens)
+                        if let elementType = elementResult.type {
+                            tupleTypeElements.append(TupleTypeElement(type: elementType, name: elementResult.name))
+                            for _ in 0..<elementResult.advancedBy {
+                                remainingHeadToken = remainingTokens.popLast()
+                            }
+
+                            continue
+                        }
+                    }
+                    break
+                }
+            }
+
+            if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightParen {
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                return (TupleType(elements: tupleTypeElements), tokens.count - remainingTokens.count)
+            }
+        }
+
+        return (nil, 0)
+    }
+
+    private func parseTupleTypeElement(head: Token?, tokens: [Token]) -> (type: Type?, name: ElementName?, advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        var elementName: ElementName? = nil
+
+        if let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Colon {
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                elementName = identifier
+            }
+        }
+
+        if elementName == nil {
+            remainingTokens = tokens
+            remainingHeadToken = head
+        }
+
+        let typeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+        if let type = typeResult.type {
+            for _ in 0..<typeResult.advancedBy {
+                remainingHeadToken = remainingTokens.popLast()
+            }
+
+            return (type, elementName, tokens.count - remainingTokens.count)
+        }
+
+        return (nil, nil, 0)
     }
 
     /*

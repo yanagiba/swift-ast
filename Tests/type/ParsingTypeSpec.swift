@@ -124,4 +124,16 @@ func specType() {
       }
     }
   }
+
+  describe("Parse tuple type") {
+    $0.it("should return a tuple type") {
+      parser.setupTestCode("(String, Int, Double)")
+      guard let type = try? parser.parseType() else {
+        throw failure("Failed in getting a type.")
+      }
+      guard type is TupleType else {
+        throw failure("Failed in getting a tuple type.")
+      }
+    }
+  }
 }
