@@ -265,16 +265,19 @@ func specParsingEnumDeclaration() {
             try expect(node.cases.count) == 3
             try expect(node.elements.count) == 3
             try expect(node.elements[0].name) == "A"
+            try expect(node.elements[0].union).to.beNil()
             guard let elementRawValue0 = node.elements[0].rawValue else {
                 throw failure("Element 0 doesn't have raw value.")
             }
             try expect(elementRawValue0) == "1"
             try expect(node.elements[1].name) == "B"
+            try expect(node.elements[1].union).to.beNil()
             guard let elementRawValue1 = node.elements[1].rawValue else {
                 throw failure("Element 1 doesn't have raw value.")
             }
             try expect(elementRawValue1) == "abc"
             try expect(node.elements[2].name) == "C"
+            try expect(node.elements[2].union).to.beNil()
             guard let elementRawValue2 = node.elements[2].rawValue else {
                 throw failure("Element 2 doesn't have raw value.")
             }
@@ -298,21 +301,96 @@ func specParsingEnumDeclaration() {
             try expect(node.cases.count) == 1
             try expect(node.elements.count) == 3
             try expect(node.elements[0].name) == "A"
+            try expect(node.elements[0].union).to.beNil()
             guard let elementRawValue0 = node.elements[0].rawValue else {
                 throw failure("Element 0 doesn't have raw value.")
             }
             try expect(elementRawValue0) == "1"
             try expect(node.elements[1].name) == "B"
+            try expect(node.elements[1].union).to.beNil()
             guard let elementRawValue1 = node.elements[1].rawValue else {
                 throw failure("Element 1 doesn't have raw value.")
             }
             try expect(elementRawValue1) == "abc"
             try expect(node.elements[2].name) == "C"
+            try expect(node.elements[2].union).to.beNil()
             guard let elementRawValue2 = node.elements[2].rawValue else {
                 throw failure("Element 2 doesn't have raw value.")
             }
             try expect(elementRawValue2) == "false"
             try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:46]"
+        }
+    }
+
+    describe("Parse enum decl with cases that has tuple type") {
+        $0.it("should have one enum decl with several cases that has tuple type") {
+            let (astContext, errors) = parser.parse("enum foo { case A(String)\ncase B(Int, ())\ncase C(foo: [Int], bar: (String, String)) }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 3
+            try expect(node.elements.count) == 3
+            try expect(node.elements[0].name) == "A"
+            try expect(node.elements[0].rawValue).to.beNil()
+            guard let elementUnion0 = node.elements[0].union else {
+                throw failure("Element 0 doesn't have a union.")
+            }
+            try expect(elementUnion0.elements.count) == 1
+            try expect(node.elements[1].name) == "B"
+            try expect(node.elements[1].rawValue).to.beNil()
+            guard let elementUnion1 = node.elements[1].union else {
+                throw failure("Element 1 doesn't have a union.")
+            }
+            try expect(elementUnion1.elements.count) == 2
+            try expect(node.elements[2].name) == "C"
+            try expect(node.elements[2].rawValue).to.beNil()
+            guard let elementUnion2 = node.elements[2].union else {
+                throw failure("Element 2 doesn't have a union.")
+            }
+            try expect(elementUnion2.elements.count) == 2
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-3:44]"
+        }
+    }
+
+    describe("Parse enum decl with case that has elements that haves tuple type") {
+        $0.it("should have one enum decl with several cases that has tuple type") {
+            let (astContext, errors) = parser.parse("enum foo { case A(String), B(Int, ()), C(foo: [Int], bar: (String, String)) }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            try expect(node.attributes.count) == 0
+            try expect(node.accessLevel) == .Default
+            try expect(node.cases.count) == 1
+            try expect(node.elements.count) == 3
+            try expect(node.elements[0].name) == "A"
+            try expect(node.elements[0].rawValue).to.beNil()
+            guard let elementUnion0 = node.elements[0].union else {
+                throw failure("Element 0 doesn't have a union.")
+            }
+            try expect(elementUnion0.elements.count) == 1
+            try expect(node.elements[1].name) == "B"
+            try expect(node.elements[1].rawValue).to.beNil()
+            guard let elementUnion1 = node.elements[1].union else {
+                throw failure("Element 1 doesn't have a union.")
+            }
+            try expect(elementUnion1.elements.count) == 2
+            try expect(node.elements[2].name) == "C"
+            try expect(node.elements[2].rawValue).to.beNil()
+            guard let elementUnion2 = node.elements[2].union else {
+                throw failure("Element 2 doesn't have a union.")
+            }
+            try expect(elementUnion2.elements.count) == 2
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:78]"
         }
     }
 

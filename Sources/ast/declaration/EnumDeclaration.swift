@@ -17,14 +17,12 @@
 public class EnumCaseElementDeclaration: Declaration {
     private let _name: String
     private let _rawValueString: String?
+    private let _union: TupleType?
 
-    public init(name: String, rawValue: String?) {
+    public init(name: String, rawValue: String? = nil, union: TupleType? = nil) {
         _name = name
         _rawValueString = rawValue
-    }
-
-    public convenience init(name: String) {
-        self.init(name: name, rawValue: nil)
+        _union = union
     }
 
     public var name: String {
@@ -35,12 +33,20 @@ public class EnumCaseElementDeclaration: Declaration {
         return _rawValueString
     }
 
+    public var union: TupleType? {
+        return _union
+    }
+
     public override func inspect(indent: Int = 0) -> String {
         var rawValueText = ""
         if let rawValueString = _rawValueString {
             rawValueText = " raw-value=\(rawValueString)"
         }
-        return "\(getIndentText(indent))(enum-case-element-declaration '\(_name)'\(rawValueText))".terminalColor(.Yellow)
+        var tupleTypeText = ""
+        if let tupleType = _union {
+            tupleTypeText = " union=(TODO)"
+        }
+        return "\(getIndentText(indent))(enum-case-element-declaration '\(_name)'\(tupleTypeText)\(rawValueText))".terminalColor(.Yellow)
     }
 }
 

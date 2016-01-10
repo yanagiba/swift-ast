@@ -22,15 +22,15 @@ extension Parser {
     - [x] enum-declaration → attributes/opt/ access-level-modifier/opt/ union-style-enum
     - [x] enum-declaration → attributes/opt/ access-level-modifier/opt/ raw-value-style-enum
     - [_] union-style-enum → `indirect`/opt/ `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause/opt/ `{` union-style-enum-members/opt/ `}`
-    - [ ] union-style-enum-members → union-style-enum-member union-style-enum-members/opt/
-    - [ ] union-style-enum-member → declaration | union-style-enum-case-clause
-    - [ ] union-style-enum-case-clause → attributes/opt/ `indirect`/opt/ `case` union-style-enum-case-list
-    - [ ] union-style-enum-case-list → union-style-enum-case | union-style-enum-case `,` union-style-enum-case-list
-    - [ ] union-style-enum-case → enum-case-name tuple-type/opt/
+    - [x] union-style-enum-members → union-style-enum-member union-style-enum-members/opt/
+    - [_] union-style-enum-member → declaration | union-style-enum-case-clause
+    - [_] union-style-enum-case-clause → attributes/opt/ `indirect`/opt/ `case` union-style-enum-case-list
+    - [x] union-style-enum-case-list → union-style-enum-case | union-style-enum-case `,` union-style-enum-case-list
+    - [x] union-style-enum-case → enum-case-name tuple-type/opt/
     - [x] enum-name → identifier
     - [x] enum-case-name → identifier
     - [_] raw-value-style-enum → `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause `{` raw-value-style-enum-members `}`
-    - [_] raw-value-style-enum-members → raw-value-style-enum-member raw-value-style-enum-members/opt/
+    - [x] raw-value-style-enum-members → raw-value-style-enum-member raw-value-style-enum-members/opt/
     - [_] raw-value-style-enum-member → declaration | raw-value-style-enum-case-clause
     - [_] raw-value-style-enum-case-clause → attributes/opt/ `case` raw-value-style-enum-case-list
     - [x] raw-value-style-enum-case-list → raw-value-style-enum-case | raw-value-style-enum-case `,` raw-value-style-enum-case-list
@@ -150,11 +150,23 @@ extension Parser {
     }
 
     private func parseEnumCaseElement(caseName caseName: String) throws -> EnumCaseElementDeclaration {
-        if let token = currentToken, case let .Punctuator(type) = token where type == .Equal {
-            return try parseRawValueStyleEnumCaseElement(caseName: caseName)
+        if let token = currentToken, case let .Punctuator(punctuatorType) = token {
+            switch punctuatorType {
+            case .Equal:
+                return try parseRawValueStyleEnumCaseElement(caseName: caseName)
+            case .LeftParen:
+                return try parseUnionStyleEnumCaseElement(caseName: caseName)
+            default: ()
+            }
         }
 
         return EnumCaseElementDeclaration(name: caseName)
+    }
+
+    private func parseUnionStyleEnumCaseElement(caseName caseName: String) throws -> EnumCaseElementDeclaration {
+        let tupleType = try parseTupleType()
+
+        return EnumCaseElementDeclaration(name: caseName, union: tupleType)
     }
 
     private func parseRawValueStyleEnumCaseElement(caseName caseName: String) throws -> EnumCaseElementDeclaration {
