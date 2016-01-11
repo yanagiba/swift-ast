@@ -479,6 +479,139 @@ func specParsingEnumDeclaration() {
         }
     }
 
+    describe("Parse enum decl with case that has attribute") {
+        $0.it("Should return the case with correct modifiers") {
+            let (astContext, errors) = parser.parse("enum foo { @a case bar }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let enumDecl = nodes[0] as? EnumDeclaration else {
+                throw failure("Failed in getting an enum declaraion.")
+            }
+            try expect(enumDecl.cases.count) == 1
+            let enumCase = enumDecl.cases[0]
+            try expect(enumCase.attributes.count) == 1
+            try expect(enumCase.attributes[0].name) == "a"
+            try expect(enumCase.modifiers.count) == 0
+        }
+    }
+
+    describe("Parse enum decl with case that has attributes") {
+        $0.it("Should return the case with correct modifiers") {
+            let (astContext, errors) = parser.parse("enum foo { @a @b @c case bar }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let enumDecl = nodes[0] as? EnumDeclaration else {
+                throw failure("Failed in getting an enum declaraion.")
+            }
+            try expect(enumDecl.cases.count) == 1
+            let enumCase = enumDecl.cases[0]
+            try expect(enumCase.attributes.count) == 3
+            try expect(enumCase.attributes[0].name) == "a"
+            try expect(enumCase.attributes[1].name) == "b"
+            try expect(enumCase.attributes[2].name) == "c"
+            try expect(enumCase.modifiers.count) == 0
+        }
+    }
+
+    describe("Parse enum decl with case that has indirect") {
+        $0.it("Should return the case with correct modifiers") {
+            let (astContext, errors) = parser.parse("enum foo { indirect case bar }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let enumDecl = nodes[0] as? EnumDeclaration else {
+                throw failure("Failed in getting an enum declaraion.")
+            }
+            try expect(enumDecl.cases.count) == 1
+            let enumCase = enumDecl.cases[0]
+            try expect(enumCase.attributes.count) == 0
+            try expect(enumCase.modifiers.count) == 1
+            try expect(enumCase.modifiers[0]) == "indirect"
+        }
+    }
+
+    describe("Parse enum decl with case that has both attributes and indirect") {
+        $0.it("Should return the case with correct modifiers") {
+            let (astContext, errors) = parser.parse("enum foo { @a @b @c indirect case bar }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let enumDecl = nodes[0] as? EnumDeclaration else {
+                throw failure("Failed in getting an enum declaraion.")
+            }
+            try expect(enumDecl.cases.count) == 1
+            let enumCase = enumDecl.cases[0]
+            try expect(enumCase.attributes.count) == 3
+            try expect(enumCase.attributes[0].name) == "a"
+            try expect(enumCase.attributes[1].name) == "b"
+            try expect(enumCase.attributes[2].name) == "c"
+            try expect(enumCase.modifiers.count) == 1
+            try expect(enumCase.modifiers[0]) == "indirect"
+        }
+    }
+
+    describe("Parse enum decl with case that has decl modifiers other than indirect") {
+        $0.it("Should return the case with correct modifiers") {
+            let testModifiers = [
+                "convenience",
+                "dynamic",
+                "final",
+                "infix",
+                "lazy",
+                "mutating",
+                "nonmutating",
+                "optional",
+                "override",
+                "postfix",
+                "prefix",
+                "required",
+                "unowned",
+                "weak"
+            ]
+            for testModifier in testModifiers {
+                let (astContext, errors) = parser.parse("enum foo { \(testModifier) case bar }")
+                try expect(errors.count) == 0
+                let nodes = astContext.topLevelDeclaration.statements
+                try expect(nodes.count) == 1
+                guard let enumDecl = nodes[0] as? EnumDeclaration else {
+                    throw failure("Failed in getting an enum declaraion.")
+                }
+                try expect(enumDecl.cases.count) == 1
+                let enumCase = enumDecl.cases[0]
+                try expect(enumCase.attributes.count) == 0
+                try expect(enumCase.modifiers.count) == 0
+            }
+        }
+    }
+
+    describe("Parse enum decl with cases that some have attributes, some have indirect, some have both") {
+        $0.it("Should return the case with correct modifiers") {
+            let (astContext, errors) = parser.parse("enum foo { @a indirect case A; indirect case B\n@x case C }")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let enumDecl = nodes[0] as? EnumDeclaration else {
+                throw failure("Failed in getting an enum declaraion.")
+            }
+            try expect(enumDecl.cases.count) == 3
+            let enumCase0 = enumDecl.cases[0]
+            try expect(enumCase0.attributes.count) == 1
+            try expect(enumCase0.attributes[0].name) == "a"
+            try expect(enumCase0.modifiers.count) == 1
+            try expect(enumCase0.modifiers[0]) == "indirect"
+            let enumCase1 = enumDecl.cases[1]
+            try expect(enumCase1.attributes.count) == 0
+            try expect(enumCase1.modifiers.count) == 1
+            try expect(enumCase1.modifiers[0]) == "indirect"
+            let enumCase2 = enumDecl.cases[2]
+            try expect(enumCase2.attributes.count) == 1
+            try expect(enumCase2.attributes[0].name) == "x"
+            try expect(enumCase2.modifiers.count) == 0
+        }
+    }
+
     describe("Parse empty enum decl with one type inheritance") {
         $0.it("should have an empty decl with one type inheritance") {
             let (astContext, errors) = parser.parse("enum foo: a {}")

@@ -52,21 +52,35 @@ public class EnumCaseElementDeclaration: Declaration {
 
 public class EnumCaseDelcaration: Declaration {
     private let _elements: [EnumCaseElementDeclaration]
+    private let _attributes: [Attribute]
+    private let _modifiers: [String]
 
-    public init(elements: [EnumCaseElementDeclaration]) {
+    public init(elements: [EnumCaseElementDeclaration], attributes: [Attribute] = [], modifiers: [String] = []) {
         _elements = elements
+        _attributes = attributes
+        _modifiers = modifiers
     }
 
-    public convenience init(element: EnumCaseElementDeclaration) {
-        self.init(elements: [element])
+    public convenience init(element: EnumCaseElementDeclaration, attributes: [Attribute] = [], modifiers: [String] = []) {
+        self.init(elements: [element], attributes: attributes, modifiers: modifiers)
     }
 
-    var elements: [EnumCaseElementDeclaration] {
+    public var elements: [EnumCaseElementDeclaration] {
         return _elements
     }
 
+    public var attributes: [Attribute] {
+        return _attributes
+    }
+
+    public var modifiers: [String] {
+        return _modifiers
+    }
+
     public override func inspect(indent: Int = 0) -> String {
-        var inspectionText = "\(getIndentText(indent))(enum-case-declaration".terminalColor(.White)
+        let attrs = toInspectionText(_attributes.map({ return $0.name }), "attributes")
+        let mdfrs = toInspectionText(_modifiers, "modifiers")
+        var inspectionText = "\(getIndentText(indent))(enum-case-declaration\(attrs)\(mdfrs)".terminalColor(.White)
         for element in _elements {
             inspectionText += "\n\(element.inspect(indent + 1))"
         }
@@ -139,14 +153,13 @@ public class EnumDeclaration: Declaration {
         inspectionText += ")".terminalColor(.Green)
         return inspectionText
     }
+}
 
-
-    private func toInspectionText(array: [String], _ keyName: String) -> String {
-        if array.isEmpty {
-            return ""
-        }
-
-        let inspectionText = array.joinWithSeparator(",")
-        return " \(keyName)=\(inspectionText)"
+private func toInspectionText(array: [String], _ keyName: String) -> String {
+    if array.isEmpty {
+        return ""
     }
+
+    let inspectionText = array.joinWithSeparator(",")
+    return " \(keyName)=\(inspectionText)"
 }

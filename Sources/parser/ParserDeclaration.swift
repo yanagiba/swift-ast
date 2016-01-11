@@ -109,7 +109,7 @@ extension Parser {
         }
     }
 
-    private func parseDeclarationModifiers() -> [String] {
+    func parseDeclarationModifiers() -> [String] {
         var declarationModifiers = [String]()
         while let token = currentToken, case let .Keyword(modifier, keywordType) = token, case let .Contextual(contextualType) = keywordType
         where contextualType == .DeclarationModifier {

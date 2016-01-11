@@ -24,7 +24,7 @@ extension Parser {
     - [_] union-style-enum → `indirect`/opt/ `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause/opt/ `{` union-style-enum-members/opt/ `}`
     - [x] union-style-enum-members → union-style-enum-member union-style-enum-members/opt/
     - [_] union-style-enum-member → declaration | union-style-enum-case-clause
-    - [_] union-style-enum-case-clause → attributes/opt/ `indirect`/opt/ `case` union-style-enum-case-list
+    - [x] union-style-enum-case-clause → attributes/opt/ `indirect`/opt/ `case` union-style-enum-case-list
     - [x] union-style-enum-case-list → union-style-enum-case | union-style-enum-case `,` union-style-enum-case-list
     - [x] union-style-enum-case → enum-case-name tuple-type/opt/
     - [x] enum-name → identifier
@@ -32,7 +32,7 @@ extension Parser {
     - [_] raw-value-style-enum → `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause `{` raw-value-style-enum-members `}`
     - [x] raw-value-style-enum-members → raw-value-style-enum-member raw-value-style-enum-members/opt/
     - [_] raw-value-style-enum-member → declaration | raw-value-style-enum-case-clause
-    - [_] raw-value-style-enum-case-clause → attributes/opt/ `case` raw-value-style-enum-case-list
+    - [x] raw-value-style-enum-case-clause → attributes/opt/ `case` raw-value-style-enum-case-list
     - [x] raw-value-style-enum-case-list → raw-value-style-enum-case | raw-value-style-enum-case `,` raw-value-style-enum-case-list
     - [x] raw-value-style-enum-case → enum-case-name raw-value-assignment/opt/
     - [x] raw-value-assignment → `=` raw-value-literal
@@ -61,9 +61,11 @@ extension Parser {
 
             var enumCases = [EnumCaseDelcaration]()
 
+            var caseAttributes = parseAttributes()
+            var caseModifiers = parseDeclarationModifiers()
             while let token = currentToken, case let .Keyword(keywordName, _) = token where keywordName == "case" {
                 skipWhitespaces()
-                let enumCaseDecl = try parseEnumCaseDeclaration()
+                let enumCaseDecl = try parseEnumCaseDeclaration(attributes: caseAttributes, caseModifiers: caseModifiers)
                 enumCases.append(enumCaseDecl)
 
                 try unshiftToken()
@@ -82,6 +84,9 @@ extension Parser {
                 }
 
                 skipWhitespaces(treatSemiAsWhitespace: true)
+
+                caseAttributes = parseAttributes()
+                caseModifiers = parseDeclarationModifiers()
             }
 
             if let token = currentToken, case let .Punctuator(type) = token where type == .RightBrace {
@@ -129,7 +134,7 @@ extension Parser {
         }
     }
 
-    private func parseEnumCaseDeclaration() throws -> EnumCaseDelcaration {
+    private func parseEnumCaseDeclaration(attributes attributes: [Attribute], caseModifiers: [String]) throws -> EnumCaseDelcaration {
         var enumCaseElements = [EnumCaseElementDeclaration]()
         guard let enumCaseName = readIdentifier(includeContextualKeywords: true) else {
             throw ParserError.MissingIdentifier
@@ -146,7 +151,10 @@ extension Parser {
             let enumCaseElementDecl = try parseEnumCaseElement(caseName: nextEnumCaseName)
             enumCaseElements.append(enumCaseElementDecl)
         }
-        return EnumCaseDelcaration(elements: enumCaseElements)
+        return EnumCaseDelcaration(
+            elements: enumCaseElements,
+            attributes: attributes,
+            modifiers: caseModifiers.filter({ $0 == "indirect" })) // TODO: we simply remove all non-indirect modifiers, need to throw errors
     }
 
     private func parseEnumCaseElement(caseName caseName: String) throws -> EnumCaseElementDeclaration {
