@@ -22,10 +22,10 @@ enum foo {
   case A
 }
 enum bar {
-  case a
-  case X,
+  @q case a
+  indirect case X,
    Y
-   , Z;case A,B,        C;case
+   , Z;case A,B,        C; @w @e indirect case
    set
 }
 enum foo {
@@ -36,6 +36,11 @@ indirect enum foo {}
 @a indirect enum bar{}
 enum foo: a {}
 enum bar: x  , y,z {}
+enum foo {
+  case A(String, Int)
+  case B(Double -> Bool, protocol<UIKit.UITableViewDataSource, UIKit.UITableViewDelegate>)
+  case C()
+}
 
 internal (set) enum CannotApplyModifierEnum {}
 weak enum A {}
@@ -50,7 +55,7 @@ Parser error: 'lazy' modifier cannot be applied to this declaration.
 Parser error: Statements must be separated by line breaks or semicolons.
 Parser error: 'class' requirement only applies to protocols.
 
-(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=1:1-94:1
+(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=1:1-101:1
   (enum-declaration 'EmptyEnum' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=17:1-17:18)
   (enum-declaration 'EmptyEnumWithAttributes' attributes=a,b,c access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=18:1-18:41)
   (enum-declaration 'PublicEmptyEnum' access='public' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=19:1-19:31)
@@ -59,9 +64,9 @@ Parser error: 'class' requirement only applies to protocols.
     (enum-case-declaration
       (enum-case-element-declaration 'A')))
   (enum-declaration 'bar' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=24:1-30:2
-    (enum-case-declaration
+    (enum-case-declaration attributes=q
       (enum-case-element-declaration 'a'))
-    (enum-case-declaration
+    (enum-case-declaration modifiers=indirect
       (enum-case-element-declaration 'X')
       (enum-case-element-declaration 'Y')
       (enum-case-element-declaration 'Z'))
@@ -69,7 +74,7 @@ Parser error: 'class' requirement only applies to protocols.
       (enum-case-element-declaration 'A')
       (enum-case-element-declaration 'B')
       (enum-case-element-declaration 'C'))
-    (enum-case-declaration
+    (enum-case-declaration attributes=w,e modifiers=indirect
       (enum-case-element-declaration 'set')))
   (enum-declaration 'foo' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=31:1-34:2
     (enum-case-declaration
@@ -81,15 +86,22 @@ Parser error: 'class' requirement only applies to protocols.
   (enum-declaration 'bar' attributes=a modifiers=indirect access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=36:1-36:23)
   (enum-declaration 'foo' type-inheritance=a access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=37:1-37:15)
   (enum-declaration 'bar' type-inheritance=x,y,z access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=38:1-38:22)
-  (enum-declaration 'CannotApplyModifierEnum' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=40:1-40:47)
-  (enum-declaration 'A' modifiers=weak access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=41:1-41:15)
-  (enum-declaration 'B' modifiers=lazy access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=42:1-42:15)
-  (enum-declaration 'MissingSeparator' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=43:1-43:47
+  (enum-declaration 'foo' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=39:1-43:2
+    (enum-case-declaration
+      (enum-case-element-declaration 'A' union=(TODO)))
+    (enum-case-declaration
+      (enum-case-element-declaration 'B' union=(TODO)))
+    (enum-case-declaration
+      (enum-case-element-declaration 'C' union=(TODO))))
+  (enum-declaration 'CannotApplyModifierEnum' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=45:1-45:47)
+  (enum-declaration 'A' modifiers=weak access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=46:1-46:15)
+  (enum-declaration 'B' modifiers=lazy access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=47:1-47:15)
+  (enum-declaration 'MissingSeparator' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=48:1-48:47
     (enum-case-declaration
       (enum-case-element-declaration 'A'))
     (enum-case-declaration
       (enum-case-element-declaration 'B'))
     (enum-case-declaration
       (enum-case-element-declaration 'C')))
-  (enum-declaration 'A' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=44:1-44:17))
+  (enum-declaration 'A' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=49:1-49:17))
 */
