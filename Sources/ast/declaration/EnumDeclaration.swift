@@ -43,7 +43,7 @@ public class EnumCaseElementDeclaration: Declaration {
             rawValueText = " raw-value=\(rawValueString)"
         }
         var tupleTypeText = ""
-        if let tupleType = _union {
+        if let _ = _union {
             tupleTypeText = " union=(TODO)"
         }
         return "\(getIndentText(indent))(enum-case-element-declaration '\(_name)'\(tupleTypeText)\(rawValueText))".terminalColor(.Yellow)
@@ -91,6 +91,7 @@ public class EnumCaseDelcaration: Declaration {
 
 public class EnumDeclaration: Declaration {
     private let _name: String
+    private let _genericParameter: GenericParameterClause?
     private let _accessLevel: AccessLevel
     private let _cases: [EnumCaseDelcaration]
     private let _attributes: [Attribute]
@@ -99,12 +100,14 @@ public class EnumDeclaration: Declaration {
 
     public init(
         name: String,
+        genericParameter: GenericParameterClause? = nil,
         cases: [EnumCaseDelcaration] = [],
         attributes: [Attribute] = [],
         modifiers: [String] = [],
         accessLevel: AccessLevel = .Default,
         typeInheritance: [String] = []) {
         _name = name
+        _genericParameter = genericParameter
         _cases = cases
         _attributes = attributes
         _modifiers = modifiers
@@ -116,6 +119,10 @@ public class EnumDeclaration: Declaration {
 
     public var name: String {
         return _name
+    }
+
+    public var genericParameter: GenericParameterClause? {
+        return _genericParameter
     }
 
     public var attributes: [Attribute] {

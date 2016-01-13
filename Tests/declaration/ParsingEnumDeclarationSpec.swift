@@ -32,6 +32,7 @@ func specParsingEnumDeclaration() {
                 throw failure("Node is not a EnumDeclaration.")
             }
             try expect(node.name) == "foo"
+            try expect(node.genericParameter).to.beNil()
             try expect(node.attributes.count) == 0
             try expect(node.modifiers.count) == 0
             try expect(node.accessLevel) == .Default
@@ -622,6 +623,7 @@ func specParsingEnumDeclaration() {
                 throw failure("Node is not a EnumDeclaration.")
             }
             try expect(node.name) == "foo"
+            try expect(node.genericParameter).to.beNil()
             try expect(node.modifiers.count) == 0
             try expect(node.typeInheritance.count) == 1
             try expect(node.typeInheritance[0]) == "a"
@@ -643,6 +645,7 @@ func specParsingEnumDeclaration() {
                 throw failure("Node is not a EnumDeclaration.")
             }
             try expect(node.name) == "foo"
+            try expect(node.genericParameter).to.beNil()
             try expect(node.modifiers.count) == 0
             try expect(node.typeInheritance.count) == 3
             try expect(node.typeInheritance[0]) == "a"
@@ -667,6 +670,7 @@ func specParsingEnumDeclaration() {
                 throw failure("Node is not a EnumDeclaration.")
             }
             try expect(node.name) == "foo"
+            try expect(node.genericParameter).to.beNil()
             try expect(node.modifiers.count) == 0
             try expect(node.typeInheritance.count) == 0
             try expect(node.attributes.count) == 0
@@ -688,6 +692,7 @@ func specParsingEnumDeclaration() {
                 throw failure("Node is not a EnumDeclaration.")
             }
             try expect(node.name) == "foo"
+            try expect(node.genericParameter).to.beNil()
             try expect(node.modifiers.count) == 0
             try expect(node.typeInheritance.count) == 3
             try expect(node.typeInheritance[0]) == "a.a.c"
@@ -711,6 +716,7 @@ func specParsingEnumDeclaration() {
                 throw failure("Node is not a EnumDeclaration.")
             }
             try expect(node.name) == "foo"
+            try expect(node.genericParameter).to.beNil()
             try expect(node.modifiers.count) == 0
             try expect(node.typeInheritance.count) == 3
             try expect(node.typeInheritance[0]) == "a.a.c"
