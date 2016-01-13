@@ -185,7 +185,7 @@ extension Parser {
         return typeIdentifier
     }
 
-    private func parseTypeIdentifier(head: Token?, tokens: [Token]) -> (typeIdentifier: TypeIdentifier?, advancedBy: Int) {
+    func parseTypeIdentifier(head: Token?, tokens: [Token]) -> (typeIdentifier: TypeIdentifier?, advancedBy: Int) {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
@@ -339,7 +339,7 @@ extension Parser {
         return protocolCompositionType
     }
 
-    private func parseProtocolCompositionType(head: Token?, tokens: [Token]) -> (protocolCompositionType: ProtocolCompositionType?, advancedBy: Int) {
+    func parseProtocolCompositionType(head: Token?, tokens: [Token]) -> (protocolCompositionType: ProtocolCompositionType?, advancedBy: Int) {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 

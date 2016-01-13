@@ -31,6 +31,7 @@ specTupleType()
 specType()
 
 // tests for generics
+specGenericParameterClause()
 specGenericArgumentClause()
 
 // tests for parsing declarations

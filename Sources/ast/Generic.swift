@@ -15,13 +15,48 @@
 */
 
 public class GenericArgumentClause {
-    private let _types: [Type]
+    public let types: [Type]
 
     public init(types: [Type]) {
-        _types = types
+        self.types = types
+    }
+}
+
+public class GenericParameterClause {
+    public class GenericParameter {
+        public let typeName: TypeName
+        public let typeIdentifier: TypeIdentifier?
+        public let protocolCompositionType: ProtocolCompositionType?
+
+        public init(typeName: TypeName, typeIdentifier: TypeIdentifier? = nil, protocolCompositionType: ProtocolCompositionType? = nil) {
+            self.typeName = typeName
+            self.typeIdentifier = typeIdentifier
+            self.protocolCompositionType = protocolCompositionType
+        }
     }
 
-    public var types: [Type] {
-        return _types
+    public class Requirement {
+        public enum RequirementType {
+            case Conformance
+            case SameType
+        }
+
+        public let requirementType: RequirementType
+        public let typeIdentifier: TypeIdentifier
+        public let type: Type
+
+        public init(requirementType: RequirementType, typeIdentifier: TypeIdentifier, type: Type) {
+            self.requirementType = requirementType
+            self.typeIdentifier = typeIdentifier
+            self.type = type
+        }
+    }
+
+    public let parameters: [GenericParameter]
+    public let requirements: [Requirement]
+
+    public init(parameters: [GenericParameter], requirements: [Requirement] = []) {
+        self.parameters = parameters
+        self.requirements = requirements
     }
 }
