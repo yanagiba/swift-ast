@@ -36,7 +36,7 @@ public class GenericParameterClause {
     }
 
     public class Requirement {
-        public enum RequirementType {
+        public enum RequirementType: String {
             case Conformance
             case SameType
         }

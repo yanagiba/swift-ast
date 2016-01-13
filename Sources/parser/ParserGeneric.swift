@@ -20,17 +20,17 @@ import ast
 extension Parser {
 
     /*
-    - [_] generic-parameter-clause → `<` generic-parameter-list requirement-clause/opt/ `>`
+    - [x] generic-parameter-clause → `<` generic-parameter-list requirement-clause/opt/ `>`
     - [x] generic-parameter-list → generic-parameter | generic-parameter `,` generic-parameter-list
     - [x] generic-parameter → type-name
     - [x] generic-parameter → type-name `:` type-identifier
     - [x] generic-parameter → type-name `:` protocol-composition-type
-    - [ ] requirement-clause → `where` requirement-list
-    - [ ] requirement-list → requirement | requirement `,` requirement-list
-    - [ ] requirement → conformance-requirement | same-type-requirement
-    - [ ] conformance-requirement → type-identifier `:` type-identifier
-    - [ ] conformance-requirement → type-identifier `:` protocol-composition-type
-    - [ ] same-type-requirement → type-identifier `==` type
+    - [x] requirement-clause → `where` requirement-list
+    - [x] requirement-list → requirement | requirement `,` requirement-list
+    - [x] requirement → conformance-requirement | same-type-requirement
+    - [x] conformance-requirement → type-identifier `:` type-identifier
+    - [x] conformance-requirement → type-identifier `:` protocol-composition-type
+    - [x] same-type-requirement → type-identifier `==` type
     */
     func parseGenericParameterClause() throws -> GenericParameterClause {
         let result = parseGenericParameterClause(currentToken, tokens: reversedTokens.map { $0.0 })
@@ -80,11 +80,16 @@ extension Parser {
                     }
                 }
 
+                let requirementClauseResult = parseRequirementClause(remainingHeadToken, tokens: remainingTokens)
+                for _ in 0..<requirementClauseResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
                 if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == ">" {
                     remainingTokens = skipWhitespacesForTokens(remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
-                    return (GenericParameterClause(parameters: genericParameters), tokens.count - remainingTokens.count)
+                    return (GenericParameterClause(parameters: genericParameters, requirements: requirementClauseResult.requirementClause), tokens.count - remainingTokens.count)
                 }
             }
             else {
@@ -127,6 +132,106 @@ extension Parser {
         }
 
         return (GenericParameterClause.GenericParameter(typeName: typeName), tokens.count - remainingTokens.count)
+    }
+
+    private func parseRequirementClause(head: Token?, tokens: [Token]) -> (requirementClause: [GenericParameterClause.Requirement], advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        var requirementList: [GenericParameterClause.Requirement] = []
+
+        if let token = remainingHeadToken, case let .Keyword(keywordName, _) = token where keywordName == "where" {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let firstRequirementResult = parseRequirement(remainingHeadToken, tokens: remainingTokens)
+            if let firstRequirement = firstRequirementResult.requirement {
+                requirementList.append(firstRequirement)
+
+                for _ in 0..<firstRequirementResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Comma {
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    let requirementResult = parseRequirement(remainingHeadToken, tokens: remainingTokens)
+                    guard let requirement = requirementResult.requirement else {
+                        // TODO: also throw errors
+                        break
+                    }
+                    requirementList.append(requirement)
+
+                    for _ in 0..<requirementResult.advancedBy {
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
+                }
+            }
+            else {
+                // TODO: error handling, at least one type is required
+            }
+        }
+
+        return (requirementList, tokens.count - remainingTokens.count)
+    }
+
+    private func parseRequirement(head: Token?, tokens: [Token]) -> (requirement: GenericParameterClause.Requirement?, advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        let typeIdentifierResult = parseTypeIdentifier(remainingHeadToken, tokens: remainingTokens)
+        guard let typeIdentifier = typeIdentifierResult.typeIdentifier else {
+            return (nil, 0)
+        }
+        for _ in 0..<typeIdentifierResult.advancedBy {
+            remainingHeadToken = remainingTokens.popLast()
+        }
+
+        if let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Colon {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let conformanceTypeIdentifierResult = parseTypeIdentifier(remainingHeadToken, tokens: remainingTokens)
+            if let conformanceTypeIdentifier = conformanceTypeIdentifierResult.typeIdentifier {
+                for _ in 0..<conformanceTypeIdentifierResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+                let requirement = GenericParameterClause.Requirement(
+                    requirementType: .Conformance, typeIdentifier: typeIdentifier, type: conformanceTypeIdentifier)
+                return (requirement, tokens.count - remainingTokens.count)
+            }
+
+            let conformanceProtocolCompositionTypeResult = parseProtocolCompositionType(remainingHeadToken, tokens: remainingTokens)
+            if let conformanceProtocolCompositionType = conformanceProtocolCompositionTypeResult.protocolCompositionType {
+                for _ in 0..<conformanceProtocolCompositionTypeResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+                let requirement = GenericParameterClause.Requirement(
+                    requirementType: .Conformance, typeIdentifier: typeIdentifier, type: conformanceProtocolCompositionType)
+                return (requirement, tokens.count - remainingTokens.count)
+            }
+        }
+
+        if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == "==" {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let sameTypeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+            guard let sameType = sameTypeResult.type else {
+                return (nil, 0) // TODO: error handling
+            }
+
+            for _ in 0..<sameTypeResult.advancedBy {
+                remainingHeadToken = remainingTokens.popLast()
+            }
+
+            let requirement = GenericParameterClause.Requirement(
+                requirementType: .SameType, typeIdentifier: typeIdentifier, type: sameType)
+            return (requirement, tokens.count - remainingTokens.count)
+        }
+
+        return (nil, 0)
     }
 
     /*
