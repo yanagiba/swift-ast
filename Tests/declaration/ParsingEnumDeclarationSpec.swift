@@ -730,4 +730,46 @@ func specParsingEnumDeclaration() {
         }
     }
 
+    describe("Parse empty enum decl with generic parameter clause") {
+        $0.it("should have an empty decl with generic parameter clause but no cases") {
+            let (astContext, errors) = parser.parse("enum foo<T: Comparable> {}")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            guard let genericParameter = node.genericParameter else {
+                throw failure("Failed in getting a generic parameter clause.")
+            }
+            try expect(genericParameter.parameters.count) == 1
+            try expect(genericParameter.parameters[0].typeName) == "T"
+            try expect(genericParameter.requirements.count) == 0
+            try expect(node.typeInheritance.count) == 0
+        }
+    }
+
+    describe("Parse empty enum decl with generic parameter clause and type inheritance") {
+        $0.it("should have an empty decl with generic parameter clause and type inheritance") {
+            let (astContext, errors) = parser.parse("enum foo<S1, S2>: a {}")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? EnumDeclaration else {
+                throw failure("Node is not a EnumDeclaration.")
+            }
+            try expect(node.name) == "foo"
+            guard let genericParameter = node.genericParameter else {
+                throw failure("Failed in getting a generic parameter clause.")
+            }
+            try expect(genericParameter.parameters.count) == 2
+            try expect(genericParameter.parameters[0].typeName) == "S1"
+            try expect(genericParameter.parameters[1].typeName) == "S2"
+            try expect(genericParameter.requirements.count) == 0
+            try expect(node.typeInheritance.count) == 1
+            try expect(node.typeInheritance[0]) == "a"
+        }
+    }
+
 }

@@ -21,7 +21,7 @@ extension Parser {
     /*
     - [x] enum-declaration → attributes/opt/ access-level-modifier/opt/ union-style-enum
     - [x] enum-declaration → attributes/opt/ access-level-modifier/opt/ raw-value-style-enum
-    - [_] union-style-enum → `indirect`/opt/ `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause/opt/ `{` union-style-enum-members/opt/ `}`
+    - [x] union-style-enum → `indirect`/opt/ `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause/opt/ `{` union-style-enum-members/opt/ `}`
     - [x] union-style-enum-members → union-style-enum-member union-style-enum-members/opt/
     - [_] union-style-enum-member → declaration | union-style-enum-case-clause
     - [x] union-style-enum-case-clause → attributes/opt/ `indirect`/opt/ `case` union-style-enum-case-list
@@ -29,7 +29,7 @@ extension Parser {
     - [x] union-style-enum-case → enum-case-name tuple-type/opt/
     - [x] enum-name → identifier
     - [x] enum-case-name → identifier
-    - [_] raw-value-style-enum → `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause `{` raw-value-style-enum-members `}`
+    - [x] raw-value-style-enum → `enum` enum-name generic-parameter-clause/opt/ type-inheritance-clause `{` raw-value-style-enum-members `}`
     - [x] raw-value-style-enum-members → raw-value-style-enum-member raw-value-style-enum-members/opt/
     - [_] raw-value-style-enum-member → declaration | raw-value-style-enum-case-clause
     - [x] raw-value-style-enum-case-clause → attributes/opt/ `case` raw-value-style-enum-case-list
@@ -52,6 +52,8 @@ extension Parser {
             throw ParserError.MissingIdentifier
         }
         skipWhitespaces()
+
+        let genericParameterClause = try? parseGenericParameterClause()
 
         let typeInheritanceClause = try parseTypeInheritanceClause()
         let (containsClassRequirement, typeInheritance) = refineTypeInheritanceClause(typeInheritanceClause)
@@ -99,6 +101,7 @@ extension Parser {
                 }
                 let enumDecl = EnumDeclaration(
                     name: enumName,
+                    genericParameter: genericParameterClause,
                     cases: enumCases,
                     attributes: attributes,
                     modifiers: declarationModifiers,
