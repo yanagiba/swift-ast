@@ -52,8 +52,7 @@ extension Parser {
 
         switch name {
         case "import":
-            try parseImportDeclaration(
-                attributes: declarationAttributes, startLocation: startLocation)
+            try parseImportDeclaration(attributes: declarationAttributes, startLocation: startLocation)
             if let accessLevelModifier = accessLevelModifier {
                 throw ParserError.InvalidModifierToDeclaration(accessLevelModifier.errorDescription)
             }
@@ -61,6 +60,11 @@ extension Parser {
             try parseEnumDeclaration(
                 attributes: declarationAttributes,
                 declarationModifiers: declarationModifiers,
+                accessLevelModifier: accessLevelModifier ?? .Default,
+                startLocation: startLocation)
+        case "typealias":
+            try parseTypeAliasDeclaration(
+                attributes: declarationAttributes,
                 accessLevelModifier: accessLevelModifier ?? .Default,
                 startLocation: startLocation)
         default: ()

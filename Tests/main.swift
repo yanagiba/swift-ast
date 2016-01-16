@@ -37,3 +37,4 @@ specGenericArgumentClause()
 // tests for parsing declarations
 specParsingImportDeclaration()
 specParsingEnumDeclaration()
+specParsingTypeAliasDeclaration()
