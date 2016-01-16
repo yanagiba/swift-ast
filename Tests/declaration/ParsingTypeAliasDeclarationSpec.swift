@@ -42,4 +42,58 @@ func specParsingTypeAliasDeclaration() {
             try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:28]"
         }
     }
+
+    describe("Parse simple typealias decl with attributes") {
+        $0.it("should have a simple typealias decl with attributes") {
+            let (astContext, errors) = parser.parse("@x @y @z typealias MyColor = NSColor")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 1
+            guard let node = nodes[0] as? TypeAliasDeclaration else {
+                throw failure("Node is not a TypeAliasDeclaration.")
+            }
+            try expect(node.name) == "MyColor"
+            try expect(node.attributes.count) == 3
+            try expect(node.attributes[0].name) == "x"
+            try expect(node.attributes[1].name) == "y"
+            try expect(node.attributes[2].name) == "z"
+            try expect(node.accessLevel) == .Default
+            guard let typeIdentifier = node.type as? TypeIdentifier else {
+                throw failure("Failed in getting a type identifier.")
+            }
+            try expect(typeIdentifier.names.count) == 1
+            try expect(typeIdentifier.names[0]) == "NSColor"
+            try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:37]"
+        }
+    }
+
+    describe("Parse simple typealias decl with access level modifier") {
+        $0.it("should have a simple typealias decl with access level modifier") {
+            let testPrefixes: [String: AccessLevel] = [
+                "public": .Public,
+                "internal": .Internal,
+                "private  ": .Private,
+                "@a   public": .Public,
+                "@bar internal    ": .Internal,
+                "@x private": .Private
+            ]
+            for (testPrefix, testModifierType) in testPrefixes {
+                let (astContext, errors) = parser.parse("\(testPrefix) typealias MyColor = UIColor")
+                try expect(errors.count) == 0
+                let nodes = astContext.topLevelDeclaration.statements
+                try expect(nodes.count) == 1
+                guard let node = nodes[0] as? TypeAliasDeclaration else {
+                    throw failure("Node is not a TypeAliasDeclaration.")
+                }
+                try expect(node.name) == "MyColor"
+                try expect(node.accessLevel) == testModifierType
+                guard let typeIdentifier = node.type as? TypeIdentifier else {
+                    throw failure("Failed in getting a type identifier.")
+                }
+                try expect(typeIdentifier.names.count) == 1
+                try expect(typeIdentifier.names[0]) == "UIColor"
+                try expect(node.testSourceRangeDescription) == "test/parser[1:1-1:\(29 + testPrefix.characters.count)]"
+            }
+        }
+    }
 }

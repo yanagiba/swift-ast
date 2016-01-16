@@ -20,7 +20,7 @@ import source
 extension Parser {
     /*
     - [x] ypealias-declaration → typealias-head typealias-assignment
-    - [_] typealias-head → attributes/opt/ access-level-modifier/opt/ typealias typealias-name
+    - [x] typealias-head → attributes/opt/ access-level-modifier/opt/ typealias typealias-name
     - [x] typealias-name → identifier
     - [x] typealias-assignment → `=` type
     - [_] error handling
@@ -41,7 +41,8 @@ extension Parser {
 
             let existingType = try parseType()
 
-            let typealiasDecl = TypeAliasDeclaration(name: typeNewName, type: existingType)
+            let typealiasDecl = TypeAliasDeclaration(
+                name: typeNewName, type: existingType, attributes: attributes, accessLevel: accessLevelModifier)
             if let currentRange = currentRange ?? consumedTokens.last?.1 {
                 typealiasDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
             }
