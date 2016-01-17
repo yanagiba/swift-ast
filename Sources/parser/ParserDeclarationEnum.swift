@@ -107,7 +107,7 @@ extension Parser {
                     modifiers: declarationModifiers,
                     accessLevel: enumDeclAccessLevel,
                     typeInheritance: typeInheritance)
-                if let currentRange = currentRange ?? consumedTokens.last?.1 {
+                if let currentRange = currentRange {
                     enumDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
                 }
                 topLevelCode.append(enumDecl)
