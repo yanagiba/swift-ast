@@ -96,4 +96,28 @@ func specParsingTypeAliasDeclaration() {
             }
         }
     }
+
+    describe("Parse some typealias decls with a little bit complex type") {
+        $0.it("should return these typealias correctly") {
+            let testPrefixes: [String: Type.Type] = [
+                "protocol<A, B>": ProtocolCompositionType.self,
+                "A -> B": FunctionType.self,
+                "()": TupleType.self,
+                "(A, B, ())": TupleType.self,
+                "[A: B]": DictionaryType.self,
+                "A?": OptionalType.self
+            ]
+            for (testTypeStr, testType) in testPrefixes {
+                let (astContext, errors) = parser.parse("typealias MyColor = \(testTypeStr)")
+                try expect(errors.count) == 0
+                let nodes = astContext.topLevelDeclaration.statements
+                try expect(nodes.count) == 1
+                guard let node = nodes[0] as? TypeAliasDeclaration else {
+                    throw failure("Node is not a TypeAliasDeclaration.")
+                }
+                try expect(node.name) == "MyColor"
+                try expect(Mirror(reflecting: node.type).subjectType == testType).to.beTrue()
+            }
+        }
+    }
 }
