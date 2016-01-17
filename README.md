@@ -1,6 +1,6 @@
 # Swift Abstract Syntax Tree
 
-[![Travis CI Status](https://api.travis-ci.org/ryuichis/swift-ast.svg?branch=master)](https://travis-ci.org/ryuichis/swift-ast)
+[![Travis CI Status](https://api.travis-ci.org/yanagiba/swift-ast.svg?branch=master)](https://travis-ci.org/yanagiba/swift-ast)
 
 The Swift Abstract Syntax Tree is an initiative to parse
 [Swift Programming Language](https://swift.org/about/) in Swift itself.
@@ -9,7 +9,7 @@ The output of this utility is the corresponding
 of the source code.
 
 The AST produced in this tool is intended to be consumed in various scenarios.
-For example, linting tools like [swift-lint](https://github.com/ryuichis/swift-lint)
+For example, linting tools like [swift-lint](https://github.com/yanagiba/swift-lint)
 can traverse the AST and find patterns of
 [code smells](https://en.wikipedia.org/wiki/Code_smell).
 
@@ -45,7 +45,7 @@ catch up as Swift evolves.
 To use it as a standalone tool, clone this repository to your local machine by
 
 ```bash
-git clone https://github.com/ryuichis/swift-ast
+git clone https://github.com/yanagiba/swift-ast
 ```
 
 Go to the repository folder, run the following command:
@@ -68,7 +68,7 @@ import PackageDescription
 let package = Package(
   name: "ASTVisitor",
   dependencies: [
-    .Package(url: "https://github.com/ryuichis/swift-ast.git", majorVersion: 0)
+    .Package(url: "https://github.com/yanagiba/swift-ast.git", majorVersion: 0)
   ]
 )
 ```
