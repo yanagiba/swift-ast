@@ -120,4 +120,37 @@ func specParsingTypeAliasDeclaration() {
             }
         }
     }
+
+    describe("Parse two typeaslias decls with newline in between") {
+        $0.it("should get two typealias decls") {
+            let (astContext, errors) = parser.parse("typealias A = B \ntypealias X = Y      ")
+            try expect(errors.count) == 0
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 2
+            guard let node1 = nodes[0] as? TypeAliasDeclaration, node2 = nodes[1] as? TypeAliasDeclaration else {
+                throw failure("Nodes are not type alias decls.")
+            }
+            try expect(node1.name) == "A"
+            try expect(node1.testSourceRangeDescription) == "test/parser[1:1-1:16]"
+            try expect(node2.name) == "X"
+            try expect(node2.testSourceRangeDescription) == "test/parser[2:1-2:16]"
+        }
+    }
+
+    describe("Parse two typeaslias decls with missing separators in between") {
+        $0.it("should have an error with missing separators") {
+            let (astContext, errors) = parser.parse("typealias A = B typealias X = Y        ")
+            try expect(errors.count) == 1
+            try expect(errors[0]) == "Statements must be separated by line breaks or semicolons."
+            let nodes = astContext.topLevelDeclaration.statements
+            try expect(nodes.count) == 2
+            guard let node1 = nodes[0] as? TypeAliasDeclaration, node2 = nodes[1] as? TypeAliasDeclaration else {
+                throw failure("Nodes are not type alias decls.")
+            }
+            try expect(node1.name) == "A"
+            try expect(node1.testSourceRangeDescription) == "test/parser[1:1-1:16]"
+            try expect(node2.name) == "X"
+            try expect(node2.testSourceRangeDescription) == "test/parser[1:17-1:32]"
+        }
+    }
 }

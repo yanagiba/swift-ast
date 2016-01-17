@@ -56,6 +56,19 @@ extension Parser {
         }
     }
 
+    func rewindAllWhitespaces() throws {
+        if let token = currentToken where !token.isWhitespace() && reversedTokens.isEmpty {
+            // this is the end of the lexical context, and it's not a white space,
+            // so this is the last meaningful token that we are looking for, therefore, simply return.
+            return
+        }
+
+        try unshiftToken()
+        while let token = currentToken where token.isWhitespace() {
+            try unshiftToken()
+        }
+    }
+
     func ensureStatementSeparator(stopAtRightBrace stopAtRightBrace: Bool = false) throws {
         shiftToken()
 

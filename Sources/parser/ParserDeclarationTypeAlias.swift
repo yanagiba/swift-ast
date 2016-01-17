@@ -40,10 +40,11 @@ extension Parser {
             skipWhitespaces()
 
             let existingType = try parseType()
-
             let typealiasDecl = TypeAliasDeclaration(
                 name: typeNewName, type: existingType, attributes: attributes, accessLevel: accessLevelModifier)
-            if let currentRange = currentRange ?? consumedTokens.last?.1 {
+
+            try rewindAllWhitespaces()
+            if let currentRange = currentRange {
                 typealiasDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
             }
             topLevelCode.append(typealiasDecl)
