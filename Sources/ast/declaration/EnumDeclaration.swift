@@ -43,8 +43,8 @@ public class EnumCaseElementDeclaration: Declaration {
             rawValueText = " raw-value=\(rawValueString)"
         }
         var tupleTypeText = ""
-        if let _ = _union {
-            tupleTypeText = " union=(TODO)"
+        if let union = _union {
+            tupleTypeText = " union=\(union.inspect())"
         }
         return "\(getIndentText(indent))(enum-case-element-declaration '\(_name)'\(tupleTypeText)\(rawValueText))".terminalColor(.Yellow)
     }
@@ -150,10 +150,14 @@ public class EnumDeclaration: Declaration {
     }
 
     public override func inspect(indent: Int = 0) -> String {
+        var genericStr = ""
+        if let genericParameter = _genericParameter {
+            genericStr = " generic=\(genericParameter.inspect())"
+        }
         let attrs = toInspectionText(_attributes.map({ return $0.name }), "attributes")
         let mdfrs = toInspectionText(_modifiers, "modifiers")
         let inheritance = toInspectionText(_typeInheritance, "type-inheritance")
-        var inspectionText = "\(getIndentText(indent))(enum-declaration '\(_name)'\(inheritance)\(attrs)\(mdfrs) access='\(_accessLevel)' \(getSourceRangeText())".terminalColor(.Green)
+        var inspectionText = "\(getIndentText(indent))(enum-declaration '\(_name)'\(genericStr)\(inheritance)\(attrs)\(mdfrs) access='\(_accessLevel)' \(getSourceRangeText())".terminalColor(.Green)
         for enumCase in _cases {
             inspectionText += "\n\(enumCase.inspect(indent + 1))"
         }

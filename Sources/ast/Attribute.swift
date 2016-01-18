@@ -14,14 +14,10 @@
    limitations under the License.
 */
 
-public class Attribute {
-    private let _name: String
+public struct Attribute {
+    public let name: String
 
     public init(name: String) {
-        _name = name
-    }
-
-    public var name: String {
-        return _name
+        self.name = name
     }
 }

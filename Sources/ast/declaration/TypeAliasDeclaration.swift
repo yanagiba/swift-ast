@@ -38,7 +38,6 @@ public class TypeAliasDeclaration: Declaration {
         if !attrs.isEmpty {
             attrs = " attribtues=\(attributes.map({ return $0.name }).joinWithSeparator(","))"
         }
-        let typeStr = "TODO" // TODO
-        return "\(getIndentText(indent))(type-alias-declaration '\(name)'\(attrs) access='\(accessLevel)' type='\(typeStr)'\(getSourceRangeText()))".terminalColor(.Green)
+        return "\(getIndentText(indent))(type-alias-declaration '\(name)'\(attrs) access='\(accessLevel)' type='\(type.inspect())' \(getSourceRangeText()))".terminalColor(.Green)
     }
 }

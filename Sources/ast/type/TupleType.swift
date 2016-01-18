@@ -14,6 +14,8 @@
    limitations under the License.
 */
 
+import source
+
 public typealias ElementName = String
 
 public class TupleTypeElement {
@@ -28,6 +30,13 @@ public class TupleTypeElement {
         self.attributes = attributes
         self.isInOutParameter = isInOutParameter
     }
+
+    public func inspect() -> String {
+        let attr = attributes.isEmpty ? "" : "\(attributes.map { "@\($0.name)" }.joinWithSeparator(" ")) "
+        let inoutStr = isInOutParameter ? "inout " : ""
+        let nameStr = name == nil ? "" : "\(name): "
+        return "\(attr)\(inoutStr)\(nameStr)\(type.inspect())"
+    }
 }
 
 public class TupleType: Type {
@@ -39,5 +48,9 @@ public class TupleType: Type {
 
     public var elements: [TupleTypeElement] {
         return _elements
+    }
+
+    public func inspect() -> String {
+        return "(\(_elements.map { $0.inspect() }.joinWithSeparator(", ")))"
     }
 }

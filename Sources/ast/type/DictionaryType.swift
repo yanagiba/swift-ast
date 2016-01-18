@@ -14,20 +14,26 @@
    limitations under the License.
 */
 
+import source
+
 public class DictionaryType: Type {
-   private let _key: Type
-   private let _value: Type
+    private let _key: Type
+    private let _value: Type
 
-   public init(keyType: Type, valueType: Type) {
-      _key = keyType
-      _value = valueType
-   }
+    public init(keyType: Type, valueType: Type) {
+        _key = keyType
+        _value = valueType
+    }
 
-   public var keyType: Type {
-      return _key
-   }
+    public var keyType: Type {
+        return _key
+    }
 
-   public var valueType: Type {
-      return _value
-   }
+    public var valueType: Type {
+        return _value
+    }
+
+    public func inspect() -> String {
+        return "Dictionary<\(_key.inspect()), \(_value.inspect())>"
+    }
 }

@@ -36,7 +36,7 @@ indirect enum foo {}
 @a indirect enum bar{}
 enum foo: a {}
 enum bar: x  , y,z {}
-enum foo {
+enum foo<X, Y where X == Y, X : Y> {
   case A(String, Int)
   case B(Double -> Bool, protocol<UIKit.UITableViewDataSource, UIKit.UITableViewDelegate>)
   case C()
@@ -55,7 +55,7 @@ Parser error: 'lazy' modifier cannot be applied to this declaration.
 Parser error: Statements must be separated by line breaks or semicolons.
 Parser error: 'class' requirement only applies to protocols.
 
-(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=1:1-101:1
+(top-level-declaration path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=1:1-109:1
   (enum-declaration 'EmptyEnum' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=17:1-17:18)
   (enum-declaration 'EmptyEnumWithAttributes' attributes=a,b,c access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=18:1-18:41)
   (enum-declaration 'PublicEmptyEnum' access='public' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=19:1-19:31)
@@ -86,13 +86,13 @@ Parser error: 'class' requirement only applies to protocols.
   (enum-declaration 'bar' attributes=a modifiers=indirect access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=36:1-36:23)
   (enum-declaration 'foo' type-inheritance=a access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=37:1-37:15)
   (enum-declaration 'bar' type-inheritance=x,y,z access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=38:1-38:22)
-  (enum-declaration 'foo' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=39:1-43:2
+  (enum-declaration 'foo' generic=<X, Y where X = Y, X : Y> access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=39:1-43:2
     (enum-case-declaration
-      (enum-case-element-declaration 'A' union=(TODO)))
+      (enum-case-element-declaration 'A' union=(String, Int)))
     (enum-case-declaration
-      (enum-case-element-declaration 'B' union=(TODO)))
+      (enum-case-element-declaration 'B' union=((Double -> Bool), Protocol<UIKit.UITableViewDataSource,UIKit.UITableViewDelegate>)))
     (enum-case-declaration
-      (enum-case-element-declaration 'C' union=(TODO))))
+      (enum-case-element-declaration 'C' union=())))
   (enum-declaration 'CannotApplyModifierEnum' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=45:1-45:47)
   (enum-declaration 'A' modifiers=weak access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=46:1-46:15)
   (enum-declaration 'B' modifiers=lazy access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=47:1-47:15)
@@ -104,4 +104,5 @@ Parser error: 'class' requirement only applies to protocols.
     (enum-case-declaration
       (enum-case-element-declaration 'C')))
   (enum-declaration 'A' access='default' path=/Users/ryuichis/Projects/L/swift-ast/Integrations/EnumDeclarationTest.swift range=49:1-49:17))
+
 */

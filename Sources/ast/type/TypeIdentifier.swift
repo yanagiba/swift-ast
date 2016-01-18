@@ -14,6 +14,8 @@
    limitations under the License.
 */
 
+import source
+
 public typealias TypeName = String
 
 public class NamedType {
@@ -28,20 +30,31 @@ public class NamedType {
     public convenience init(name: TypeName) {
         self.init(name: name, generic: nil)
     }
+
+    public func inspect() -> String {
+        if let generic = generic {
+            return "\(name)<\(generic.inspect())>"
+        }
+        return "\(name)"
+    }
 }
 
 public class TypeIdentifier: Type {
-    private let _namedType: [NamedType]
+    private let _namedTypes: [NamedType]
 
     public init(namedTypes: [NamedType]) {
-        _namedType = namedTypes
+        _namedTypes = namedTypes
     }
 
     public var namedTypes: [NamedType] {
-        return _namedType
+        return _namedTypes
     }
 
     public var names: [TypeName] {
-        return _namedType.map({ $0.name })
+        return _namedTypes.map({ $0.name })
+    }
+
+    public func inspect() -> String {
+        return _namedTypes.map { $0.inspect() }.joinWithSeparator(".")
     }
 }
