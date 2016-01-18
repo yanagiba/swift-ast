@@ -28,6 +28,6 @@ public class ProtocolCompositionType: Type {
     }
 
     public func inspect() -> String {
-        return ""
+        return "Protocol<\(_protocols.map { $0.inspect() }.joinWithSeparator(","))>"
     }
 }

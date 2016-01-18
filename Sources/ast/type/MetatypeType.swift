@@ -39,6 +39,11 @@ public class MetatypeType: Type {
     }
 
     public func inspect() -> String {
-        return ""
+        switch _meta {
+        case .Type:
+            return "\(_type.inspect()).Type"
+        case .Protocol:
+            return "\(_type.inspect()).Protocol"
+        }
     }
 }

@@ -20,6 +20,10 @@ public class GenericArgumentClause {
     public init(types: [Type]) {
         self.types = types
     }
+
+    public func inspect() -> String {
+        return ""
+    }
 }
 
 public class GenericParameterClause {
@@ -58,5 +62,9 @@ public class GenericParameterClause {
     public init(parameters: [GenericParameter], requirements: [Requirement] = []) {
         self.parameters = parameters
         self.requirements = requirements
+    }
+
+    public func inspect() -> String {
+        return ""
     }
 }

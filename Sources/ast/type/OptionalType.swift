@@ -28,6 +28,6 @@ public class OptionalType: Type {
     }
 
     public func inspect() -> String {
-        return ""
+        return "Optional<\(_type.inspect())>"
     }
 }

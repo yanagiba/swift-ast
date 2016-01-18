@@ -50,6 +50,15 @@ public class FunctionType: Type {
     }
 
     public func inspect() -> String {
-        return ""
+        var throwingStr: String
+        switch _throwingMarker {
+        case .Throwing:
+            throwingStr = " throws"
+        case .Rethrowing:
+            throwingStr = " rethrows"
+        default:
+            throwingStr = ""
+        }
+        return "(\(_parameter.inspect())\(throwingStr) -> \(_return.inspect()))"
     }
 }

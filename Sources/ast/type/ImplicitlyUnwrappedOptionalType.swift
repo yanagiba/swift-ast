@@ -28,6 +28,6 @@ public class ImplicitlyUnwrappedOptionalType: Type {
     }
 
     public func inspect() -> String {
-        return ""
+        return "ImplicitlyUnwrappedOptional<\(_type.inspect())>"
     }
 }

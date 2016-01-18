@@ -43,8 +43,8 @@ public class EnumCaseElementDeclaration: Declaration {
             rawValueText = " raw-value=\(rawValueString)"
         }
         var tupleTypeText = ""
-        if let _ = _union {
-            tupleTypeText = " union=(TODO)"
+        if let union = _union {
+            tupleTypeText = " union=\(union.inspect())"
         }
         return "\(getIndentText(indent))(enum-case-element-declaration '\(_name)'\(tupleTypeText)\(rawValueText))".terminalColor(.Yellow)
     }

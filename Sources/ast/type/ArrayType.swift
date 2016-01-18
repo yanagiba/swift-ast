@@ -28,6 +28,6 @@ public class ArrayType: Type {
     }
 
     public func inspect() -> String {
-        return ""
+        return "Array<\(_type.inspect())>"
     }
 }

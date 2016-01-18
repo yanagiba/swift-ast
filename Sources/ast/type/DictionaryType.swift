@@ -34,6 +34,6 @@ public class DictionaryType: Type {
     }
 
     public func inspect() -> String {
-        return ""
+        return "Dictionary<\(_key.inspect()), \(_value.inspect())>"
     }
 }
