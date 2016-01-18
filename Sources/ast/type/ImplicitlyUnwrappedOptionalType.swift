@@ -14,14 +14,20 @@
    limitations under the License.
 */
 
+import source
+
 public class ImplicitlyUnwrappedOptionalType: Type {
-   private let _type: Type
+    private let _type: Type
 
-   public init(type: Type) {
-      _type = type
-   }
+    public init(type: Type) {
+        _type = type
+    }
 
-   public var type: Type {
-      return _type
-   }
+    public var type: Type {
+        return _type
+    }
+
+    public func inspect() -> String {
+        return ""
+    }
 }

@@ -14,6 +14,8 @@
    limitations under the License.
 */
 
+import source
+
 public typealias TypeName = String
 
 public class NamedType {
@@ -43,5 +45,9 @@ public class TypeIdentifier: Type {
 
     public var names: [TypeName] {
         return _namedType.map({ $0.name })
+    }
+
+    public func inspect() -> String {
+        return ""
     }
 }

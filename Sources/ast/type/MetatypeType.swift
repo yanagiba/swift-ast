@@ -14,25 +14,31 @@
    limitations under the License.
 */
 
+import source
+
 public enum MetatypeMeta: String {
-   case Type
-   case Protocol
+    case Type
+    case Protocol
 }
 
 public class MetatypeType: Type {
-   private let _type: Type
-   private let _meta: MetatypeMeta
+    private let _type: Type
+    private let _meta: MetatypeMeta
 
-   public init(type: Type, meta: MetatypeMeta) {
-      _type = type
-      _meta = meta
-   }
+    public init(type: Type, meta: MetatypeMeta) {
+        _type = type
+        _meta = meta
+    }
 
-   public var type: Type {
-      return _type
-   }
+    public var type: Type {
+        return _type
+    }
 
-   public var meta: MetatypeMeta {
-      return _meta
-   }
+    public var meta: MetatypeMeta {
+        return _meta
+    }
+
+    public func inspect() -> String {
+        return ""
+    }
 }

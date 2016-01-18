@@ -14,6 +14,8 @@
    limitations under the License.
 */
 
+import source
+
 public typealias ElementName = String
 
 public class TupleTypeElement {
@@ -39,5 +41,9 @@ public class TupleType: Type {
 
     public var elements: [TupleTypeElement] {
         return _elements
+    }
+
+    public func inspect() -> String {
+        return ""
     }
 }

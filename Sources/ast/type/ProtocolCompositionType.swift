@@ -14,14 +14,20 @@
    limitations under the License.
 */
 
+import source
+
 public class ProtocolCompositionType: Type {
-   private let _protocols: [TypeIdentifier]
+    private let _protocols: [TypeIdentifier]
 
-   public init(protocols: [TypeIdentifier]) {
-      _protocols = protocols
-   }
+    public init(protocols: [TypeIdentifier]) {
+        _protocols = protocols
+    }
 
-   public var protocols: [TypeIdentifier] {
-      return _protocols
-   }
+    public var protocols: [TypeIdentifier] {
+        return _protocols
+    }
+
+    public func inspect() -> String {
+        return ""
+    }
 }

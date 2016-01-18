@@ -14,5 +14,6 @@
    limitations under the License.
 */
 
-public protocol Type {
+public protocol Type: ASTNode {
+    func inspect() -> String
 }

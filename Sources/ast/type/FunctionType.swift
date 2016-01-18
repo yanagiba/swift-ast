@@ -14,36 +14,42 @@
    limitations under the License.
 */
 
+import source
+
 public enum FunctionThrowingMarker: String { // TODO: this needs to be re-considered when work on function declaration
-   case Throwing
-   case Rethrowing
-   case Nothrowing
+    case Throwing
+    case Rethrowing
+    case Nothrowing
 }
 
 public class FunctionType: Type {
-   private let _parameter: Type
-   private let _return: Type
-   private let _throwingMarker: FunctionThrowingMarker
+    private let _parameter: Type
+    private let _return: Type
+    private let _throwingMarker: FunctionThrowingMarker
 
-   public init(parameterType: Type, returnType: Type, throwingMarker: FunctionThrowingMarker) {
-      _parameter = parameterType
-      _return = returnType
-      _throwingMarker = throwingMarker
-   }
+    public init(parameterType: Type, returnType: Type, throwingMarker: FunctionThrowingMarker) {
+        _parameter = parameterType
+        _return = returnType
+        _throwingMarker = throwingMarker
+    }
 
-   public convenience init(parameterType: Type, returnType: Type) {
-      self.init(parameterType: parameterType, returnType: returnType, throwingMarker: .Nothrowing)
-   }
+    public convenience init(parameterType: Type, returnType: Type) {
+        self.init(parameterType: parameterType, returnType: returnType, throwingMarker: .Nothrowing)
+    }
 
-   public var parameterType: Type {
-      return _parameter
-   }
+    public var parameterType: Type {
+        return _parameter
+    }
 
-   public var returnType: Type {
-      return _return
-   }
+    public var returnType: Type {
+        return _return
+    }
 
-   public var throwingMarker: FunctionThrowingMarker {
-      return _throwingMarker
-   }
+    public var throwingMarker: FunctionThrowingMarker {
+        return _throwingMarker
+    }
+
+    public func inspect() -> String {
+        return ""
+    }
 }
