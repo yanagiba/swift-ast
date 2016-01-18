@@ -22,7 +22,7 @@ public class GenericArgumentClause {
     }
 
     public func inspect() -> String {
-        return ""
+        return "<\(types.map { $0.inspect() }.joinWithSeparator(", "))>"
     }
 }
 
@@ -36,6 +36,17 @@ public class GenericParameterClause {
             self.typeName = typeName
             self.typeIdentifier = typeIdentifier
             self.protocolCompositionType = protocolCompositionType
+        }
+
+        public func inspect() -> String {
+            var inspectionStr = typeName
+            if let typeIdentifier = typeIdentifier {
+                inspectionStr += " \(typeIdentifier.inspect())"
+            }
+            if let protocolCompositionType = protocolCompositionType {
+                inspectionStr += " \(protocolCompositionType.inspect())"
+            }
+            return inspectionStr
         }
     }
 
@@ -54,6 +65,17 @@ public class GenericParameterClause {
             self.typeIdentifier = typeIdentifier
             self.type = type
         }
+
+        public func inspect() -> String {
+            var inspectionStr = typeIdentifier.inspect()
+            switch requirementType {
+            case .Conformance:
+                inspectionStr += " : "
+            case .SameType:
+                inspectionStr += " = "
+            }
+            return inspectionStr + type.inspect()
+        }
     }
 
     public let parameters: [GenericParameter]
@@ -65,6 +87,10 @@ public class GenericParameterClause {
     }
 
     public func inspect() -> String {
-        return ""
+        var inspectionStr = "<\(parameters.map { $0.inspect() }.joinWithSeparator(", "))"
+        if !requirements.isEmpty {
+            inspectionStr += " where \(requirements.map { $0.inspect() }.joinWithSeparator(", "))"
+        }
+        return inspectionStr + ">"
     }
 }

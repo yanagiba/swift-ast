@@ -150,10 +150,14 @@ public class EnumDeclaration: Declaration {
     }
 
     public override func inspect(indent: Int = 0) -> String {
+        var genericStr = ""
+        if let genericParameter = _genericParameter {
+            genericStr = " generic=\(genericParameter.inspect())"
+        }
         let attrs = toInspectionText(_attributes.map({ return $0.name }), "attributes")
         let mdfrs = toInspectionText(_modifiers, "modifiers")
         let inheritance = toInspectionText(_typeInheritance, "type-inheritance")
-        var inspectionText = "\(getIndentText(indent))(enum-declaration '\(_name)'\(inheritance)\(attrs)\(mdfrs) access='\(_accessLevel)' \(getSourceRangeText())".terminalColor(.Green)
+        var inspectionText = "\(getIndentText(indent))(enum-declaration '\(_name)'\(genericStr)\(inheritance)\(attrs)\(mdfrs) access='\(_accessLevel)' \(getSourceRangeText())".terminalColor(.Green)
         for enumCase in _cases {
             inspectionText += "\n\(enumCase.inspect(indent + 1))"
         }
