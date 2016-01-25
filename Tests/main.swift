@@ -34,6 +34,10 @@ specType()
 specGenericParameterClause()
 specGenericArgumentClause()
 
+// tests for expressions
+specIdentifierExpression()
+specExpression()
+
 // tests for parsing declarations
 specParsingImportDeclaration()
 specParsingEnumDeclaration()

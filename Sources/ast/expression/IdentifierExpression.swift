@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Saito, LLC
+   Copyright 2016 Ryuichi Saito, LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,10 +14,16 @@
    limitations under the License.
 */
 
-import util
+public class IdentifierExpression: PrimaryExpression {
+    public let identifier: String
+    public let generic: GenericArgumentClause?
 
-public class Declaration: Statement {
-    public override func inspect(indent: Int = 0) -> String {
-        return "\(getIndentText(indent))(declaration)"
+    public init(identifier: String, generic: GenericArgumentClause?) {
+        self.identifier = identifier
+        self.generic = generic
+    }
+
+    public convenience init(identifier: String) {
+        self.init(identifier: identifier, generic: nil)
     }
 }
