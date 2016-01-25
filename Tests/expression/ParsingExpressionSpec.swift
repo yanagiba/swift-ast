@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Saito, LLC
+   Copyright 2016 Ryuichi Saito, LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,10 +14,23 @@
    limitations under the License.
 */
 
-import util
+import Spectre
 
-public class Declaration: Statement {
-    public override func inspect(indent: Int = 0) -> String {
-        return "\(getIndentText(indent))(declaration)"
+@testable import parser
+@testable import ast
+
+func specExpression() {
+  let parser = Parser()
+
+  describe("Parse identifier expression") {
+    $0.it("should return an identifier expression") {
+      parser.setupTestCode("foo")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is IdentifierExpression else {
+        throw failure("Failed in getting an identifier expression.")
+      }
     }
+  }
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Saito, LLC
+   Copyright 2016 Ryuichi Saito, LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,8 +16,11 @@
 
 import util
 
-public class Declaration: Statement {
+public class Expression: Statement {
     public override func inspect(indent: Int = 0) -> String {
-        return "\(getIndentText(indent))(declaration)"
+        return "\(getIndentText(indent))(expression)"
     }
+}
+
+public class PrimaryExpression: Expression {
 }

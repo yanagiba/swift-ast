@@ -33,8 +33,8 @@ build:
 test: build $(BUILD_DIR)/test_runner
 	./$(BUILD_DIR)/test_runner
 
-$(BUILD_DIR)/test_runner: Tests/*.swift Tests/declaration/*.swift Tests/type/*.swift Tests/generic/*.swift $(BUILD_DIR)/ast.a $(BUILD_DIR)/parser.a $(BUILD_DIR)/source.a $(BUILD_DIR)/util.a
-	$(SWIFTC) -o $@ Tests/*.swift Tests/declaration/*.swift Tests/type/*.swift Tests/generic/*.swift -I$(BUILD_DIR) -Xlinker $(BUILD_DIR)/Spectre.a $(LDFLAGS)
+$(BUILD_DIR)/test_runner: Tests/*.swift Tests/declaration/*.swift Tests/type/*.swift Tests/generic/*.swift Tests/expression/*.swift $(BUILD_DIR)/ast.a $(BUILD_DIR)/parser.a $(BUILD_DIR)/source.a $(BUILD_DIR)/util.a
+	$(SWIFTC) -o $@ Tests/*.swift Tests/declaration/*.swift Tests/type/*.swift Tests/generic/*.swift Tests/expression/*.swift -I$(BUILD_DIR) -Xlinker $(BUILD_DIR)/Spectre.a $(LDFLAGS)
 
 install:
 	$(COPY) $(BUILD_DIR)/swift-ast $(SWIFT_AST)
