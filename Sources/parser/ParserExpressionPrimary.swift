@@ -29,7 +29,7 @@ extension Parser {
     - [ ] primary-expression → wildcard-expression
     */
     func parsePrimaryExpression() throws -> PrimaryExpression {
-        let result = parsePrimaryExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = _parsePrimaryExpression(currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let primaryExpression = result.primaryExpression else {
             throw ParserError.InternalError // TODO: better error handling
@@ -39,16 +39,18 @@ extension Parser {
             shiftToken()
         }
 
+        try rewindAllWhitespaces()
+
         return primaryExpression
     }
 
-    func parsePrimaryExpression(head: Token?, tokens: [Token]) -> (primaryExpression: PrimaryExpression?, advancedBy: Int) {
-        let parseIdentifierExpressionResult = parseIdentifierExpression(head, tokens: tokens)
+    func _parsePrimaryExpression(head: Token?, tokens: [Token]) -> (primaryExpression: PrimaryExpression?, advancedBy: Int) {
+        let parseIdentifierExpressionResult = _parseIdentifierExpression(head, tokens: tokens)
         if let identifierExpression = parseIdentifierExpressionResult.identifierExpression {
             return (identifierExpression, parseIdentifierExpressionResult.advancedBy)
         }
 
-        let parseLiteralExpressionResult = parseLiteralExpression(head, tokens: tokens)
+        let parseLiteralExpressionResult = _parseLiteralExpression(head, tokens: tokens)
         if let literalExpression = parseLiteralExpressionResult.literalExpression {
             return (literalExpression, parseLiteralExpressionResult.advancedBy)
         }
@@ -60,7 +62,7 @@ extension Parser {
     - [x] primary-expression → identifier generic-argument-clause/opt/
     */
     func parseIdentifierExpression() throws -> IdentifierExpression {
-        let result = parseIdentifierExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = _parseIdentifierExpression(currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let identifierExpression = result.identifierExpression else {
             throw ParserError.InternalError // TODO: better error handling
@@ -70,10 +72,12 @@ extension Parser {
             shiftToken()
         }
 
+        try rewindAllWhitespaces()
+
         return identifierExpression
     }
 
-    func parseIdentifierExpression(head: Token?, tokens: [Token]) -> (identifierExpression: IdentifierExpression?, advancedBy: Int) {
+    func _parseIdentifierExpression(head: Token?, tokens: [Token]) -> (identifierExpression: IdentifierExpression?, advancedBy: Int) {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
@@ -106,7 +110,7 @@ extension Parser {
     - [x] dictionary-literal-item → expression `:` expression
     */
     func parseLiteralExpression() throws -> LiteralExpression {
-        let result = parseLiteralExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = _parseLiteralExpression(currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let literalExpression = result.literalExpression else {
             throw ParserError.InternalError // TODO: better error handling
@@ -116,10 +120,12 @@ extension Parser {
             shiftToken()
         }
 
+        try rewindAllWhitespaces()
+
         return literalExpression
     }
 
-    func parseLiteralExpression(head: Token?, tokens: [Token]) -> (literalExpression: LiteralExpression?, advancedBy: Int) {
+    func _parseLiteralExpression(head: Token?, tokens: [Token]) -> (literalExpression: LiteralExpression?, advancedBy: Int) {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
@@ -153,7 +159,7 @@ extension Parser {
         case .InterpolatedStringLiteral(let rawString):
             resultLiteral = StringLiteralExpression(kind: .Interpolated, rawString: rawString)
         case .Punctuator(let punctuatorType) where punctuatorType == .LeftSquare:
-            let parsingArrayLiteralExprResult = parseArrayLiteralExpression(remainingHeadToken, tokens: remainingTokens)
+            let parsingArrayLiteralExprResult = _parseArrayLiteralExpression(remainingHeadToken, tokens: remainingTokens)
             if let arrayLiteralExpr = parsingArrayLiteralExprResult.arrayLiteralExpression {
                 resultLiteral = arrayLiteralExpr
                 for _ in 0..<parsingArrayLiteralExprResult.advancedBy {
@@ -161,7 +167,7 @@ extension Parser {
                 }
             }
             else {
-                let parsingDictionaryLiteralExprResult = parseDictionaryLiteralExpression(remainingHeadToken, tokens: remainingTokens)
+                let parsingDictionaryLiteralExprResult = _parseDictionaryLiteralExpression(remainingHeadToken, tokens: remainingTokens)
                 if let dictLiteralExpr = parsingDictionaryLiteralExprResult.dictionaryLiteralExpression {
                     resultLiteral = dictLiteralExpr
                     for _ in 0..<parsingDictionaryLiteralExprResult.advancedBy {
@@ -192,7 +198,7 @@ extension Parser {
         return (nil, 0)
     }
 
-    private func parseArrayLiteralExpression(head: Token?, tokens: [Token]) -> (arrayLiteralExpression: LiteralExpression?, advancedBy: Int) {
+    private func _parseArrayLiteralExpression(head: Token?, tokens: [Token]) -> (arrayLiteralExpression: LiteralExpression?, advancedBy: Int) {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
@@ -207,7 +213,7 @@ extension Parser {
                     break
                 }
 
-                let parsingExpressionResult = parseExpression(remainingHeadToken, tokens: remainingTokens)
+                let parsingExpressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
                 guard let expressionItem = parsingExpressionResult.expression else {
                     break
                 }
@@ -238,7 +244,7 @@ extension Parser {
         return (nil, 0)
     }
 
-    private func parseDictionaryLiteralExpression(head: Token?, tokens: [Token]) -> (dictionaryLiteralExpression: LiteralExpression?, advancedBy: Int) {
+    private func _parseDictionaryLiteralExpression(head: Token?, tokens: [Token]) -> (dictionaryLiteralExpression: LiteralExpression?, advancedBy: Int) {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
@@ -253,7 +259,7 @@ extension Parser {
                     break
                 }
 
-                let parsingKeyExpressionResult = parseExpression(remainingHeadToken, tokens: remainingTokens)
+                let parsingKeyExpressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
                 guard let keyExpressionItem = parsingKeyExpressionResult.expression else {
                     break
                 }
@@ -268,7 +274,7 @@ extension Parser {
                 remainingTokens = skipWhitespacesForTokens(remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
 
-                let parsingValueExpressionResult = parseExpression(remainingHeadToken, tokens: remainingTokens)
+                let parsingValueExpressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
                 guard let valueExpressionItem = parsingValueExpressionResult.expression else {
                     return (nil, 0)
                 }

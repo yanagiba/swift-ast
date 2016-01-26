@@ -22,7 +22,7 @@ extension Parser {
     - [_] expression → try-operator/opt/ prefix-expression binary-expressions/opt/
     */
     func parseExpression() throws -> Expression {
-        let result = parseExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = _parseExpression(currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let expression = result.expression else {
             throw ParserError.InternalError // TODO: better error handling
@@ -32,11 +32,13 @@ extension Parser {
             shiftToken()
         }
 
+        try rewindAllWhitespaces()
+
         return expression
     }
 
-    func parseExpression(head: Token?, tokens: [Token]) -> (expression: Expression?, advancedBy: Int) {
-        let parsePrimaryExpressionResult = parsePrimaryExpression(head, tokens: tokens)
+    func _parseExpression(head: Token?, tokens: [Token]) -> (expression: Expression?, advancedBy: Int) {
+        let parsePrimaryExpressionResult = _parsePrimaryExpression(head, tokens: tokens)
         if let primaryExpression = parsePrimaryExpressionResult.primaryExpression {
             return (primaryExpression, parsePrimaryExpressionResult.advancedBy)
         }
