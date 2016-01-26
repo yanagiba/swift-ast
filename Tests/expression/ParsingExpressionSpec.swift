@@ -33,4 +33,29 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse literal expression") {
+    let testLiteralExpressions = [
+      "nil",
+      "1",
+      "1.23",
+      "\"foo\"",
+      "\"\\(1 + 2)\"",
+      "true",
+      "[1, 2, 3]",
+      "[1: true, 2: false, 3: true, 4: false]",
+      "__FILE__"
+    ]
+    for testLiteral in testLiteralExpressions {
+      $0.it("should return an identifier expression") {
+        parser.setupTestCode(testLiteral)
+        guard let expr = try? parser.parseExpression() else {
+          throw failure("Failed in getting an expression.")
+        }
+        guard expr is LiteralExpression else {
+          throw failure("Failed in getting a literal expression.")
+        }
+      }
+    }
+  }
 }

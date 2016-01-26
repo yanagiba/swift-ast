@@ -36,6 +36,7 @@ specGenericArgumentClause()
 
 // tests for expressions
 specIdentifierExpression()
+specLiteralExpression()
 specExpression()
 
 // tests for parsing declarations

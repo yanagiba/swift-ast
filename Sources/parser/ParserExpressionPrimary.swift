@@ -20,7 +20,7 @@ import ast
 extension Parser {
     /*
     - [x] primary-expression → identifier generic-argument-clause/opt/
-    - [ ] primary-expression → literal-expression
+    - [x] primary-expression → literal-expression
     - [ ] primary-expression → self-expression
     - [ ] primary-expression → superclass-expression
     - [ ] primary-expression → closure-expression
@@ -46,6 +46,11 @@ extension Parser {
         let parseIdentifierExpressionResult = parseIdentifierExpression(head, tokens: tokens)
         if let identifierExpression = parseIdentifierExpressionResult.identifierExpression {
             return (identifierExpression, parseIdentifierExpressionResult.advancedBy)
+        }
+
+        let parseLiteralExpressionResult = parseLiteralExpression(head, tokens: tokens)
+        if let literalExpression = parseLiteralExpressionResult.literalExpression {
+            return (literalExpression, parseLiteralExpressionResult.advancedBy)
         }
 
         return (nil, 0)
@@ -87,5 +92,211 @@ extension Parser {
             IdentifierExpression(identifier: identifier, generic: genericResult.genericArgumentClause)
 
         return (identifierExpression, tokens.count - remainingTokens.count)
+    }
+
+    /*
+    - [x] literal-expression → literal
+    - [x] literal-expression → array-literal | dictionary-literal
+    - [x] literal-expression → __FILE__ | __LINE__ | __COLUMN__ | __FUNCTION__
+    - [x] array-literal → `[` array-literal-items/opt/ `]`
+    - [x] array-literal-items → array-literal-item `,`/opt/ | array-literal-item `,` array-literal-items
+    - [x] array-literal-item → expression
+    - [x] dictionary-literal → `[` dictionary-literal-items `]` | `[` `:` `]`
+    - [x] dictionary-literal-items → dictionary-literal-item `,`/opt/ | dictionary-literal-item `,` dictionary-literal-items
+    - [x] dictionary-literal-item → expression `:` expression
+    */
+    func parseLiteralExpression() throws -> LiteralExpression {
+        let result = parseLiteralExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard let literalExpression = result.literalExpression else {
+            throw ParserError.InternalError // TODO: better error handling
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        return literalExpression
+    }
+
+    func parseLiteralExpression(head: Token?, tokens: [Token]) -> (literalExpression: LiteralExpression?, advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        guard let headToken = remainingHeadToken else {
+            return (nil, 0)
+        }
+
+        var resultLiteral: LiteralExpression?
+
+        switch headToken {
+        case .NilLiteral:
+            resultLiteral = NilLiteralExpression()
+        case .BinaryIntegerLiteral(let rawString):
+            resultLiteral = IntegerLiteralExpression(kind: .Binary, rawString: rawString)
+        case .OctalIntegerLiteral(let rawString):
+            resultLiteral = IntegerLiteralExpression(kind: .Octal, rawString: rawString)
+        case .DecimalIntegerLiteral(let rawString):
+            resultLiteral = IntegerLiteralExpression(kind: .Decimal, rawString: rawString)
+        case .HexadecimalIntegerLiteral(let rawString):
+            resultLiteral = IntegerLiteralExpression(kind: .Hexadecimal, rawString: rawString)
+        case .DecimalFloatingPointLiteral(let rawString):
+            resultLiteral = FloatLiteralExpression(kind: .Decimal, rawString: rawString)
+        case .HexadecimalFloatingPointLiteral(let rawString):
+            resultLiteral = FloatLiteralExpression(kind: .Hexadecimal, rawString: rawString)
+        case .TrueBooleanLiteral:
+            resultLiteral = BooleanLiteralExpression(kind: .True)
+        case .FalseBooleanLiteral:
+            resultLiteral = BooleanLiteralExpression(kind: .False)
+        case .StaticStringLiteral(let rawString):
+            resultLiteral = StringLiteralExpression(kind: .Ordinary, rawString: rawString)
+        case .InterpolatedStringLiteral(let rawString):
+            resultLiteral = StringLiteralExpression(kind: .Interpolated, rawString: rawString)
+        case .Punctuator(let punctuatorType) where punctuatorType == .LeftSquare:
+            let parsingArrayLiteralExprResult = parseArrayLiteralExpression(remainingHeadToken, tokens: remainingTokens)
+            if let arrayLiteralExpr = parsingArrayLiteralExprResult.arrayLiteralExpression {
+                resultLiteral = arrayLiteralExpr
+                for _ in 0..<parsingArrayLiteralExprResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+            }
+            else {
+                let parsingDictionaryLiteralExprResult = parseDictionaryLiteralExpression(remainingHeadToken, tokens: remainingTokens)
+                if let dictLiteralExpr = parsingDictionaryLiteralExprResult.dictionaryLiteralExpression {
+                    resultLiteral = dictLiteralExpr
+                    for _ in 0..<parsingDictionaryLiteralExprResult.advancedBy {
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
+                }
+            }
+        case .Keyword(let exprKeyword, let keywordType) where keywordType == .Expression && exprKeyword.hasPrefix("__") && exprKeyword.hasSuffix("__"):
+            switch exprKeyword {
+            case "__FILE__":
+                resultLiteral = SpecialLiteralExpression(kind: .File)
+            case "__LINE__":
+                resultLiteral = SpecialLiteralExpression(kind: .Line)
+            case "__COLUMN__":
+                resultLiteral = SpecialLiteralExpression(kind: .Column)
+            case "__FUNCTION__":
+                resultLiteral = SpecialLiteralExpression(kind: .Function)
+            default: ()
+            }
+        default: ()
+        }
+        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+        remainingHeadToken = remainingTokens.popLast()
+
+        if let resultLiteral = resultLiteral {
+            return (resultLiteral, tokens.count - remainingTokens.count)
+        }
+        return (nil, 0)
+    }
+
+    private func parseArrayLiteralExpression(head: Token?, tokens: [Token]) -> (arrayLiteralExpression: LiteralExpression?, advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftSquare {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            var items = [Expression]()
+
+            while let currentToken = remainingHeadToken {
+                if case let .Punctuator(punctuatorType) = currentToken where punctuatorType == .RightSquare {
+                    break
+                }
+
+                let parsingExpressionResult = parseExpression(remainingHeadToken, tokens: remainingTokens)
+                guard let expressionItem = parsingExpressionResult.expression else {
+                    break
+                }
+                items.append(expressionItem)
+
+                for _ in 0..<parsingExpressionResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                if let commaToken = remainingHeadToken, case let .Punctuator(punctuatorType) = commaToken where punctuatorType == .Comma {
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+                else {
+                    break
+                }
+            }
+
+            if let currentToken = remainingHeadToken, case let .Punctuator(punctuatorType) = currentToken where punctuatorType == .RightSquare {
+                return (ArrayLiteralExpression(items: items), tokens.count - remainingTokens.count)
+            }
+            else {
+                // TODO: error handling, missing closing square
+                return (nil, 0)
+            }
+        }
+
+        return (nil, 0)
+    }
+
+    private func parseDictionaryLiteralExpression(head: Token?, tokens: [Token]) -> (dictionaryLiteralExpression: LiteralExpression?, advancedBy: Int) {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftSquare {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            var items = [(Expression, Expression)]()
+
+            while let currentToken = remainingHeadToken {
+                if case let .Punctuator(punctuatorType) = currentToken where punctuatorType == .RightSquare {
+                    break
+                }
+
+                let parsingKeyExpressionResult = parseExpression(remainingHeadToken, tokens: remainingTokens)
+                guard let keyExpressionItem = parsingKeyExpressionResult.expression else {
+                    break
+                }
+
+                for _ in 0..<parsingKeyExpressionResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                guard let colonToken = remainingHeadToken, case let .Punctuator(punctuatorType) = colonToken where punctuatorType == .Colon else {
+                    return (nil, 0)
+                }
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                let parsingValueExpressionResult = parseExpression(remainingHeadToken, tokens: remainingTokens)
+                guard let valueExpressionItem = parsingValueExpressionResult.expression else {
+                    return (nil, 0)
+                }
+
+                for _ in 0..<parsingValueExpressionResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                items.append((keyExpressionItem, valueExpressionItem))
+
+                if let commaToken = remainingHeadToken, case let .Punctuator(punctuatorType) = commaToken where punctuatorType == .Comma {
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+                else {
+                    break
+                }
+            }
+
+            if let currentToken = remainingHeadToken, case let .Punctuator(punctuatorType) = currentToken where punctuatorType == .RightSquare {
+                return (DictionaryLiteralExpression(items: items), tokens.count - remainingTokens.count)
+            }
+            else {
+                // TODO: error handling, missing closing square
+                return (nil, 0)
+            }
+        }
+
+        return (nil, 0)
     }
 }
