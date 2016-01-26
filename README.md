@@ -36,7 +36,7 @@ catch up as Swift evolves.
 
 ## Requirements
 
-- [Swift 2.2 Snapshot](https://swift.org/download/)
+- [Swift Development Snapshot](https://swift.org/download/)
 
 ## Installing
 
