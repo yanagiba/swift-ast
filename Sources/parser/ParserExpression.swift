@@ -24,7 +24,7 @@ extension Parser {
     func parseExpression() throws -> Expression {
         let result = _parseExpression(currentToken, tokens: reversedTokens.map { $0.0 })
 
-        guard let expression = result.expression else {
+        guard result.hasResult else {
             throw ParserError.InternalError // TODO: better error handling
         }
 
@@ -34,15 +34,15 @@ extension Parser {
 
         try rewindAllWhitespaces()
 
-        return expression
+        return result.result
     }
 
-    func _parseExpression(head: Token?, tokens: [Token]) -> (expression: Expression?, advancedBy: Int) {
+    func _parseExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
         let parsePrimaryExpressionResult = _parsePrimaryExpression(head, tokens: tokens)
-        if let primaryExpression = parsePrimaryExpressionResult.primaryExpression {
-            return (primaryExpression, parsePrimaryExpressionResult.advancedBy)
+        if parsePrimaryExpressionResult.hasResult {
+            return ParsingResult<Expression>.wrap(parsePrimaryExpressionResult)
         }
 
-        return (nil, 0)
+        return ParsingResult<Expression>.makeNoResult()
     }
 }
