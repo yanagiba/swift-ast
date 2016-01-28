@@ -63,3 +63,21 @@ extension ParsingResult {
         return ParsingResult<T>.makeNoResult()
     }
 }
+
+extension Parser {
+    func _parseAndUnwrapParsingResult<U>(parsingFunction: () -> ParsingResult<U>) throws -> U {
+        let result = parsingFunction()
+
+        guard result.hasResult else {
+            throw ParserError.InternalError // TODO: better error handling
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        try rewindAllWhitespaces()
+
+        return result.result
+    }
+}

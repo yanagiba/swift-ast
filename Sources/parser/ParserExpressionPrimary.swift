@@ -21,7 +21,7 @@ extension Parser {
     /*
     - [x] primary-expression → identifier generic-argument-clause/opt/
     - [x] primary-expression → literal-expression
-    - [ ] primary-expression → self-expression
+    - [x] primary-expression → self-expression
     - [ ] primary-expression → superclass-expression
     - [ ] primary-expression → closure-expression
     - [ ] primary-expression → parenthesized-expression
@@ -29,19 +29,9 @@ extension Parser {
     - [ ] primary-expression → wildcard-expression
     */
     func parsePrimaryExpression() throws -> PrimaryExpression {
-        let result = _parsePrimaryExpression(currentToken, tokens: reversedTokens.map { $0.0 })
-
-        guard result.hasResult else {
-            throw ParserError.InternalError // TODO: better error handling
+        return try _parseAndUnwrapParsingResult {
+            self._parsePrimaryExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
-
-        for _ in 0..<result.advancedBy {
-            shiftToken()
-        }
-
-        try rewindAllWhitespaces()
-
-        return result.result
     }
 
     func _parsePrimaryExpression(head: Token?, tokens: [Token]) -> ParsingResult<PrimaryExpression> {
@@ -67,19 +57,9 @@ extension Parser {
     - [x] primary-expression → identifier generic-argument-clause/opt/
     */
     func parseIdentifierExpression() throws -> IdentifierExpression {
-        let result = _parseIdentifierExpression(currentToken, tokens: reversedTokens.map { $0.0 })
-
-        guard result.hasResult else {
-            throw ParserError.InternalError // TODO: better error handling
+        return try _parseAndUnwrapParsingResult {
+            self._parseIdentifierExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
-
-        for _ in 0..<result.advancedBy {
-            shiftToken()
-        }
-
-        try rewindAllWhitespaces()
-
-        return result.result
     }
 
     func _parseIdentifierExpression(head: Token?, tokens: [Token]) -> ParsingResult<IdentifierExpression> {
@@ -115,19 +95,9 @@ extension Parser {
     - [x] dictionary-literal-item → expression `:` expression
     */
     func parseLiteralExpression() throws -> LiteralExpression {
-        let result = _parseLiteralExpression(currentToken, tokens: reversedTokens.map { $0.0 })
-
-        guard result.hasResult else {
-            throw ParserError.InternalError // TODO: better error handling
+        return try _parseAndUnwrapParsingResult {
+            self._parseLiteralExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
-
-        for _ in 0..<result.advancedBy {
-            shiftToken()
-        }
-
-        try rewindAllWhitespaces()
-
-        return result.result
     }
 
     func _parseLiteralExpression(head: Token?, tokens: [Token]) -> ParsingResult<LiteralExpression> {
@@ -318,19 +288,9 @@ extension Parser {
     - [x] self-expression → `self` `.` `init`
     */
     func parseSelfExpression() throws -> SelfExpression {
-        let result = _parseSelfExpression(currentToken, tokens: reversedTokens.map { $0.0 })
-
-        guard result.hasResult else {
-            throw ParserError.InternalError // TODO: better error handling
+        return try _parseAndUnwrapParsingResult {
+            self._parseSelfExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
-
-        for _ in 0..<result.advancedBy {
-            shiftToken()
-        }
-
-        try rewindAllWhitespaces()
-
-        return result.result
     }
 
     func _parseSelfExpression(head: Token?, tokens: [Token]) -> ParsingResult<SelfExpression> {

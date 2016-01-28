@@ -22,19 +22,9 @@ extension Parser {
     - [_] expression → try-operator/opt/ prefix-expression binary-expressions/opt/
     */
     func parseExpression() throws -> Expression {
-        let result = _parseExpression(currentToken, tokens: reversedTokens.map { $0.0 })
-
-        guard result.hasResult else {
-            throw ParserError.InternalError // TODO: better error handling
+        return try _parseAndUnwrapParsingResult {
+            self._parseExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
-
-        for _ in 0..<result.advancedBy {
-            shiftToken()
-        }
-
-        try rewindAllWhitespaces()
-
-        return result.result
     }
 
     func _parseExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
@@ -50,19 +40,9 @@ extension Parser {
     - [x] expression-list → expression | expression `,` expression-list
     */
     func parseExpressionList() throws -> [Expression] {
-        let result = _parseExpressionList(currentToken, tokens: reversedTokens.map { $0.0 })
-
-        guard result.hasResult else {
-            throw ParserError.InternalError // TODO: better error handling
+        return try _parseAndUnwrapParsingResult {
+            self._parseExpressionList(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
-
-        for _ in 0..<result.advancedBy {
-            shiftToken()
-        }
-
-        try rewindAllWhitespaces()
-
-        return result.result
     }
 
     func _parseExpressionList(head: Token?, tokens: [Token]) -> ParsingResult<[Expression]> {
