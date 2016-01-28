@@ -55,6 +55,11 @@ extension Parser {
             return ParsingResult<PrimaryExpression>.wrap(parseLiteralExpressionResult)
         }
 
+        let parseSelfExpressionResult = _parseSelfExpression(head, tokens: tokens)
+        if parseSelfExpressionResult.hasResult {
+            return ParsingResult<PrimaryExpression>.wrap(parseSelfExpressionResult)
+        }
+
         return ParsingResult<PrimaryExpression>.makeNoResult()
     }
 
@@ -304,5 +309,82 @@ extension Parser {
         }
 
         return ParsingResult<DictionaryLiteralExpression>.makeNoResult()
+    }
+
+    /*
+    - [x] self-expression → `self`
+    - [x] self-expression → `self` `.` identifier
+    - [x] self-expression → `self` `[` expression-list `]`
+    - [x] self-expression → `self` `.` `init`
+    */
+    func parseSelfExpression() throws -> SelfExpression {
+        let result = _parseSelfExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard result.hasResult else {
+            throw ParserError.InternalError // TODO: better error handling
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        try rewindAllWhitespaces()
+
+        return result.result
+    }
+
+    func _parseSelfExpression(head: Token?, tokens: [Token]) -> ParsingResult<SelfExpression> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let headToken = remainingHeadToken, case let .Keyword(exprKeyword, keywordType) = headToken
+        where keywordType == .Expression && exprKeyword == "self" {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            var selfExpr = SelfExpression.makeSelfExpression()
+
+            if let connectingToken = remainingHeadToken, case let .Punctuator(punctuatorType) = connectingToken
+            where punctuatorType == .Period || punctuatorType == .LeftSquare {
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                if punctuatorType == .Period {
+                    if let keywordToken = remainingHeadToken, case let .Keyword(declKeyword, keywordType) = keywordToken
+                    where keywordType == .Declaration && declKeyword == "init" {
+                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingHeadToken = remainingTokens.popLast()
+
+                        selfExpr = SelfExpression.makeSelfInitializerExpression()
+                    }
+                    else if let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
+                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingHeadToken = remainingTokens.popLast()
+
+                        selfExpr = SelfExpression.makeSelfMethodExpression(identifier)
+                    }
+                }
+                else {
+                    let parsingExpressionListResult = _parseExpressionList(remainingHeadToken, tokens: remainingTokens)
+                    if parsingExpressionListResult.hasResult {
+                        for _ in 0..<parsingExpressionListResult.advancedBy {
+                            remainingHeadToken = remainingTokens.popLast()
+                        }
+
+                        if let closingToken = remainingHeadToken, case let .Punctuator(punctuatorType) = closingToken
+                        where punctuatorType == .RightSquare {
+                            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                            remainingHeadToken = remainingTokens.popLast()
+
+                            selfExpr = SelfExpression.makeSelfSubscriptExpression(parsingExpressionListResult.result)
+                        }
+                    }
+                }
+            }
+
+            return ParsingResult<SelfExpression>.makeResult(selfExpr, tokens.count - remainingTokens.count)
+        }
+
+        return ParsingResult<SelfExpression>.makeNoResult()
     }
 }

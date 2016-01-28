@@ -58,4 +58,24 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse self expression") {
+    let testLiteralExpressions = [
+      "self",
+      "self.foo",
+      "self[0, 1]",
+      "self.init"
+    ]
+    for testLiteral in testLiteralExpressions {
+      $0.it("should return an identifier expression") {
+        parser.setupTestCode(testLiteral)
+        guard let expr = try? parser.parseExpression() else {
+          throw failure("Failed in getting an expression.")
+        }
+        guard expr is SelfExpression else {
+          throw failure("Failed in getting a self expression.")
+        }
+      }
+    }
+  }
 }
