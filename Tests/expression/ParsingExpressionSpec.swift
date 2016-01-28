@@ -78,4 +78,23 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse superclass expression") {
+    let testLiteralExpressions = [
+      "super.foo",
+      "super[0, 1]",
+      "super.init"
+    ]
+    for testLiteral in testLiteralExpressions {
+      $0.it("should return an identifier expression") {
+        parser.setupTestCode(testLiteral)
+        guard let expr = try? parser.parseExpression() else {
+          throw failure("Failed in getting an expression.")
+        }
+        guard expr is SuperclassExpression else {
+          throw failure("Failed in getting a superclass expression.")
+        }
+      }
+    }
+  }
 }

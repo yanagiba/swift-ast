@@ -22,7 +22,7 @@ extension Parser {
     - [x] primary-expression → identifier generic-argument-clause/opt/
     - [x] primary-expression → literal-expression
     - [x] primary-expression → self-expression
-    - [ ] primary-expression → superclass-expression
+    - [x] primary-expression → superclass-expression
     - [ ] primary-expression → closure-expression
     - [ ] primary-expression → parenthesized-expression
     - [ ] primary-expression → implicit-member-expression
@@ -48,6 +48,11 @@ extension Parser {
         let parseSelfExpressionResult = _parseSelfExpression(head, tokens: tokens)
         if parseSelfExpressionResult.hasResult {
             return ParsingResult<PrimaryExpression>.wrap(parseSelfExpressionResult)
+        }
+
+        let parseSuperclassExpressionResult = _parseSuperclassExpression(head, tokens: tokens)
+        if parseSuperclassExpressionResult.hasResult {
+            return ParsingResult<PrimaryExpression>.wrap(parseSuperclassExpressionResult)
         }
 
         return ParsingResult<PrimaryExpression>.makeNoResult()
@@ -346,5 +351,74 @@ extension Parser {
         }
 
         return ParsingResult<SelfExpression>.makeNoResult()
+    }
+
+    /*
+    - [x] superclass-expression → superclass-method-expression | superclass-subscript-expression | superclass-initializer-expression
+    - [x] superclass-method-expression → `super` `.` identifier
+    - [x] superclass-subscript-expression → `super` `[` expression-list `]`
+    - [x] superclass-initializer-expression → `super` `.` `init`
+    */
+    func parseSuperclassExpression() throws -> SuperclassExpression {
+        return try _parseAndUnwrapParsingResult {
+            self._parseSuperclassExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+        }
+    }
+
+    func _parseSuperclassExpression(head: Token?, tokens: [Token]) -> ParsingResult<SuperclassExpression> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let headToken = remainingHeadToken, case let .Keyword(exprKeyword, keywordType) = headToken
+        where keywordType == .Expression && exprKeyword == "super" {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            var superExpr: SuperclassExpression?
+
+            if let connectingToken = remainingHeadToken, case let .Punctuator(punctuatorType) = connectingToken
+            where punctuatorType == .Period || punctuatorType == .LeftSquare {
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                if punctuatorType == .Period {
+                    if let keywordToken = remainingHeadToken, case let .Keyword(declKeyword, keywordType) = keywordToken
+                    where keywordType == .Declaration && declKeyword == "init" {
+                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingHeadToken = remainingTokens.popLast()
+
+                        superExpr = SuperclassExpression.makeSuperclassInitializerExpression()
+                    }
+                    else if let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
+                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingHeadToken = remainingTokens.popLast()
+
+                        superExpr = SuperclassExpression.makeSuperclassMethodExpression(identifier)
+                    }
+                }
+                else {
+                    let parsingExpressionListResult = _parseExpressionList(remainingHeadToken, tokens: remainingTokens)
+                    if parsingExpressionListResult.hasResult {
+                        for _ in 0..<parsingExpressionListResult.advancedBy {
+                            remainingHeadToken = remainingTokens.popLast()
+                        }
+
+                        if let closingToken = remainingHeadToken, case let .Punctuator(punctuatorType) = closingToken
+                        where punctuatorType == .RightSquare {
+                            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                            remainingHeadToken = remainingTokens.popLast()
+
+                            superExpr = SuperclassExpression.makeSuperclassSubscriptExpression(parsingExpressionListResult.result)
+                        }
+                    }
+                }
+            }
+
+            if let superExpr = superExpr {
+                return ParsingResult<SuperclassExpression>.makeResult(superExpr, tokens.count - remainingTokens.count)
+            }
+        }
+
+        return ParsingResult<SuperclassExpression>.makeNoResult()
     }
 }
