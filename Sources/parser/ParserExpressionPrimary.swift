@@ -65,6 +65,11 @@ extension Parser {
             return ParsingResult<PrimaryExpression>.wrap(parseImplicitMemberExpressionResult)
         }
 
+        let parseParenthesizedExpressionResult = _parseParenthesizedExpression(head, tokens: tokens)
+        if parseParenthesizedExpressionResult.hasResult {
+            return ParsingResult<PrimaryExpression>.wrap(parseParenthesizedExpressionResult)
+        }
+
         return ParsingResult<PrimaryExpression>.makeNoResult()
     }
 
@@ -212,7 +217,6 @@ extension Parser {
                 for _ in 0..<parsingExpressionResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
                 }
-
                 if let commaToken = remainingHeadToken, case let .Punctuator(punctuatorType) = commaToken where punctuatorType == .Comma {
                     remainingTokens = skipWhitespacesForTokens(remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
@@ -221,8 +225,9 @@ extension Parser {
                     break
                 }
             }
-
             if let currentToken = remainingHeadToken, case let .Punctuator(punctuatorType) = currentToken where punctuatorType == .RightSquare {
+                // Note: we don't skip whitespace tokens here, because the caller will do it for all literal expressions
+
                 return ParsingResult<ArrayLiteralExpression>.makeResult(ArrayLiteralExpression(items: items), tokens.count - remainingTokens.count)
             }
             else {
@@ -285,6 +290,8 @@ extension Parser {
             }
 
             if let currentToken = remainingHeadToken, case let .Punctuator(punctuatorType) = currentToken where punctuatorType == .RightSquare {
+                // Note: we don't skip whitespace tokens here, because the caller will do it for all literal expressions
+
                 return ParsingResult<DictionaryLiteralExpression>.makeResult(DictionaryLiteralExpression(items: items), tokens.count - remainingTokens.count)
             }
             else {
@@ -481,5 +488,85 @@ extension Parser {
         }
 
         return ParsingResult<ImplicitMemberExpression>.makeNoResult()
+    }
+
+    /*
+    - [x] parenthesized-expression → `(` expression-element-list/opt/ `)`
+    - [x] expression-element-list → expression-element | expression-element `,` expression-element-list
+    - [x] expression-element → expression | identifier `:` expression
+    */
+    func parseParenthesizedExpression() throws -> ParenthesizedExpression {
+        return try _parseAndUnwrapParsingResult {
+            self._parseParenthesizedExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+        }
+    }
+
+    func _parseParenthesizedExpression(head: Token?, tokens: [Token]) -> ParsingResult<ParenthesizedExpression> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftParen {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            var elements: [ParenthesizedExpression.ExpressionElement] = []
+
+            while let currentToken = remainingHeadToken {
+                if case let .Punctuator(punctuatorType) = currentToken where punctuatorType == .RightParen {
+                    break
+                }
+
+                var identifier: Identifier? = nil
+                if let potentialIdentifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
+                    let preservedRemainingTokens = remainingTokens
+                    let preservedHeadToken = remainingHeadToken
+
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    if let colonToken = remainingHeadToken, case let .Punctuator(punctuatorType) = colonToken where punctuatorType == .Colon {
+                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingHeadToken = remainingTokens.popLast()
+
+                        identifier = potentialIdentifier
+                    }
+                    else {
+                        remainingTokens = preservedRemainingTokens
+                        remainingHeadToken = preservedHeadToken
+                    }
+                }
+
+                let parsingExpressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
+                guard parsingExpressionResult.hasResult else {
+                    break
+                }
+                elements.append(ParenthesizedExpression.ExpressionElement(identifier: identifier, expression: parsingExpressionResult.result))
+
+                for _ in 0..<parsingExpressionResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                if let commaToken = remainingHeadToken, case let .Punctuator(punctuatorType) = commaToken where punctuatorType == .Comma {
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+                else {
+                    break
+                }
+            }
+
+            if let currentToken = remainingHeadToken, case let .Punctuator(punctuatorType) = currentToken where punctuatorType == .RightParen {
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                return ParsingResult<ParenthesizedExpression>.makeResult(ParenthesizedExpression(expressions: elements), tokens.count - remainingTokens.count)
+            }
+            else {
+                // TODO: error handling, missing closing square
+                return ParsingResult<ParenthesizedExpression>.makeNoResult()
+            }
+        }
+
+        return ParsingResult<ParenthesizedExpression>.makeNoResult()
     }
 }
