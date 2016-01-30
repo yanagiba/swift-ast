@@ -111,4 +111,16 @@ func specExpression() {
       */
     }
   }
+
+  describe("Parse an implicit member expression") {
+    $0.it("should return an implicit member expression") {
+      parser.setupTestCode(".foo")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is ImplicitMemberExpression else {
+        throw failure("Failed in getting an implicit member expression.")
+      }
+    }
+  }
 }

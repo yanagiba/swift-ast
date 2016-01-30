@@ -14,17 +14,10 @@
    limitations under the License.
 */
 
-import Spectre
+public class ImplicitMemberExpression: PrimaryExpression {
+    public let identifier: Identifier
 
-@testable import parser
-@testable import ast
-
-func specClosureExpression() {
-  let parser = Parser()
-
-  describe("Parse closure expression") {
-    $0.it("should return closure expression") {
-      parser.setupTestCode("{ $0 > $1 }")
+    public init(identifier: Identifier) {
+        self.identifier = identifier
     }
-  }
 }

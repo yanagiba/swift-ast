@@ -40,6 +40,7 @@ specLiteralExpression()
 specSelfExpression()
 specSuperclassExpression()
 specClosureExpression()
+specImplicitMemberExpression()
 specExpression()
 
 // tests for parsing declarations

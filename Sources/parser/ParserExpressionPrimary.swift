@@ -60,6 +60,11 @@ extension Parser {
             return ParsingResult<PrimaryExpression>.wrap(parseClosureExpressionResult)
         }
 
+        let parseImplicitMemberExpressionResult = _parseImplicitMemberExpression(head, tokens: tokens)
+        if parseImplicitMemberExpressionResult.hasResult {
+            return ParsingResult<PrimaryExpression>.wrap(parseImplicitMemberExpressionResult)
+        }
+
         return ParsingResult<PrimaryExpression>.makeNoResult()
     }
 
@@ -447,5 +452,34 @@ extension Parser {
 
     func _parseClosureExpression(head: Token?, tokens: [Token]) -> ParsingResult<ClosureExpression> {
         return ParsingResult<ClosureExpression>.makeNoResult() // TODO: come back later
+    }
+
+    /*
+    - [x] implicit-member-expression → `.` identifier
+    */
+    func parseImplicitMemberExpression() throws -> ImplicitMemberExpression {
+        return try _parseAndUnwrapParsingResult {
+            self._parseImplicitMemberExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+        }
+    }
+
+    func _parseImplicitMemberExpression(head: Token?, tokens: [Token]) -> ParsingResult<ImplicitMemberExpression> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Period {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            if let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                let implicitMemberExpression = ImplicitMemberExpression(identifier: identifier)
+                return ParsingResult<ImplicitMemberExpression>.makeResult(implicitMemberExpression, tokens.count - remainingTokens.count)
+            }
+        }
+
+        return ParsingResult<ImplicitMemberExpression>.makeNoResult()
     }
 }

@@ -19,12 +19,16 @@ import Spectre
 @testable import parser
 @testable import ast
 
-func specClosureExpression() {
+func specImplicitMemberExpression() {
   let parser = Parser()
 
-  describe("Parse closure expression") {
-    $0.it("should return closure expression") {
-      parser.setupTestCode("{ $0 > $1 }")
+  describe("Parse an implicit member expression") {
+    $0.it("should return an implicit member expression") {
+      parser.setupTestCode(".bar")
+      guard let expr = try? parser.parseImplicitMemberExpression() else {
+        throw failure("Failed in getting an implicit member expression.")
+      }
+      try expect(expr.identifier) == "bar"
     }
   }
 }
