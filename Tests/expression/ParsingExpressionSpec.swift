@@ -126,12 +126,24 @@ func specExpression() {
 
   describe("Parse a parenthesized expression") {
     $0.it("should return a parenthesized expression") {
-      parser.setupTestCode("( true, foo: 0, bar: 2.3) ")
+      parser.setupTestCode("( _, foo: 0, bar: 2.3) ")
       guard let expr = try? parser.parseExpression() else {
         throw failure("Failed in getting an expression.")
       }
       guard expr is ParenthesizedExpression else {
         throw failure("Failed in getting a parenthesized expression.")
+      }
+    }
+  }
+
+  describe("Parse a wildcard expression") {
+    $0.it("should return a wildcard expression") {
+      parser.setupTestCode("_ ")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is WildcardExpression else {
+        throw failure("Failed in getting a wildcard expression.")
       }
     }
   }

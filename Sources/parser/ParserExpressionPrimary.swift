@@ -23,10 +23,10 @@ extension Parser {
     - [x] primary-expression → literal-expression
     - [x] primary-expression → self-expression
     - [x] primary-expression → superclass-expression
-    - [ ] primary-expression → closure-expression
-    - [ ] primary-expression → parenthesized-expression
-    - [ ] primary-expression → implicit-member-expression
-    - [ ] primary-expression → wildcard-expression
+    - [_] primary-expression → closure-expression
+    - [x] primary-expression → parenthesized-expression
+    - [x] primary-expression → implicit-member-expression
+    - [x] primary-expression → wildcard-expression
     */
     func parsePrimaryExpression() throws -> PrimaryExpression {
         return try _parseAndUnwrapParsingResult {
@@ -68,6 +68,11 @@ extension Parser {
         let parseParenthesizedExpressionResult = _parseParenthesizedExpression(head, tokens: tokens)
         if parseParenthesizedExpressionResult.hasResult {
             return ParsingResult<PrimaryExpression>.wrap(parseParenthesizedExpressionResult)
+        }
+
+        let parseWildcardExpressionResult = _parseWildcardExpression(head, tokens: tokens)
+        if parseWildcardExpressionResult.hasResult {
+            return ParsingResult<PrimaryExpression>.wrap(parseWildcardExpressionResult)
         }
 
         return ParsingResult<PrimaryExpression>.makeNoResult()
@@ -568,5 +573,24 @@ extension Parser {
         }
 
         return ParsingResult<ParenthesizedExpression>.makeNoResult()
+    }
+
+    /*
+    - [x] wildcard-expression → _
+    */
+    func parseWildcardExpression() throws -> WildcardExpression {
+        return try _parseAndUnwrapParsingResult {
+            self._parseWildcardExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+        }
+    }
+
+    func _parseWildcardExpression(head: Token?, tokens: [Token]) -> ParsingResult<WildcardExpression> {
+        guard let headToken = head, case let .Keyword(_, keywordType) = headToken where keywordType == .Pattern else {
+            return ParsingResult<WildcardExpression>.makeNoResult()
+        }
+
+        var remainingTokens = skipWhitespacesForTokens(tokens)
+        remainingTokens.popLast()
+        return ParsingResult<WildcardExpression>.makeResult(WildcardExpression(), tokens.count - remainingTokens.count)
     }
 }
