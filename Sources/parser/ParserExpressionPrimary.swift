@@ -55,6 +55,11 @@ extension Parser {
             return ParsingResult<PrimaryExpression>.wrap(parseSuperclassExpressionResult)
         }
 
+        let parseClosureExpressionResult = _parseClosureExpression(head, tokens: tokens)
+        if parseClosureExpressionResult.hasResult {
+            return ParsingResult<PrimaryExpression>.wrap(parseClosureExpressionResult)
+        }
+
         return ParsingResult<PrimaryExpression>.makeNoResult()
     }
 
@@ -420,5 +425,27 @@ extension Parser {
         }
 
         return ParsingResult<SuperclassExpression>.makeNoResult()
+    }
+
+    /*
+    - [_] closure-expression → `{` closure-signature/opt/ statements `}`
+    - [ ] closure-signature → parameter-clause function-result/opt/ `in`
+    - [ ] closure-signature → identifier-list function-result/opt/ `in`
+    - [ ] closure-signature → capture-list parameter-clause function-result/opt/ `in`
+    - [ ] closure-signature → capture-list identifier-list function-result/opt/ `in`
+    - [ ] closure-signature → capture-list `in`
+    - [ ] capture-list → `[` capture-list-items `]`
+    - [ ] capture-list-items → capture-list-item | capture-list-item `,` capture-list-items
+    - [ ] capture-list-item → capture-specifier/opt/ expression
+    - [ ] capture-specifier → `weak` | `unowned` | `unowned(safe)` | `unowned(unsafe)`
+    */
+    func parseClosureExpression() throws -> ClosureExpression {
+        return try _parseAndUnwrapParsingResult {
+            self._parseClosureExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+        }
+    }
+
+    func _parseClosureExpression(head: Token?, tokens: [Token]) -> ParsingResult<ClosureExpression> {
+        return ParsingResult<ClosureExpression>.makeNoResult() // TODO: come back later
     }
 }

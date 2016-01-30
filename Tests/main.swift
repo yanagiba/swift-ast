@@ -39,6 +39,7 @@ specIdentifierExpression()
 specLiteralExpression()
 specSelfExpression()
 specSuperclassExpression()
+specClosureExpression()
 specExpression()
 
 // tests for parsing declarations

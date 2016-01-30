@@ -97,4 +97,18 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse closure expression") {
+    $0.it("should return closure expression") {
+      parser.setupTestCode("{ $0 > $1 }")
+      /*
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is ClosureExpression else {
+        throw failure("Failed in getting a closure expression.")
+      }
+      */
+    }
+  }
 }
