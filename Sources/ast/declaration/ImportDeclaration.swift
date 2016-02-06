@@ -21,7 +21,7 @@ public enum ImportKind: String {
   case Struct
   case Class
   case Enum
-  case Protocol
+  case `Protocol`
   case Var
   case Func
 }

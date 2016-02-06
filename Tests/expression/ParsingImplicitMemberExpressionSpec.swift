@@ -14,18 +14,21 @@
    limitations under the License.
 */
 
-public typealias Identifier = String // TODO: identifier will have its own dedicated class when it becomes more complicated
+import Spectre
 
-public class IdentifierExpression: PrimaryExpression {
-    public let identifier: Identifier
-    public let generic: GenericArgumentClause?
+@testable import parser
+@testable import ast
 
-    public init(identifier: Identifier, generic: GenericArgumentClause?) {
-        self.identifier = identifier
-        self.generic = generic
+func specImplicitMemberExpression() {
+  let parser = Parser()
+
+  describe("Parse an implicit member expression") {
+    $0.it("should return an implicit member expression") {
+      parser.setupTestCode(".bar")
+      guard let expr = try? parser.parseImplicitMemberExpression() else {
+        throw failure("Failed in getting an implicit member expression.")
+      }
+      try expect(expr.identifier) == "bar"
     }
-
-    public convenience init(identifier: Identifier) {
-        self.init(identifier: identifier, generic: nil)
-    }
+  }
 }

@@ -14,18 +14,24 @@
    limitations under the License.
 */
 
-public typealias Identifier = String // TODO: identifier will have its own dedicated class when it becomes more complicated
+public class ParenthesizedExpression: PrimaryExpression {
+  public struct ExpressionElement {
+    let identifier: Identifier?
+    let expression: Expression
 
-public class IdentifierExpression: PrimaryExpression {
-    public let identifier: Identifier
-    public let generic: GenericArgumentClause?
-
-    public init(identifier: Identifier, generic: GenericArgumentClause?) {
-        self.identifier = identifier
-        self.generic = generic
+    public init(identifier: Identifier?, expression: Expression) {
+      self.identifier = identifier
+      self.expression = expression
     }
 
-    public convenience init(identifier: Identifier) {
-        self.init(identifier: identifier, generic: nil)
+    public init(expression: Expression) {
+      self.init(identifier: nil, expression: expression)
     }
+  }
+
+  public let expressions: [ExpressionElement]
+
+  public init(expressions: [ExpressionElement]) {
+    self.expressions = expressions
+  }
 }

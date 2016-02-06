@@ -14,18 +14,17 @@
    limitations under the License.
 */
 
-public typealias Identifier = String // TODO: identifier will have its own dedicated class when it becomes more complicated
+import Spectre
 
-public class IdentifierExpression: PrimaryExpression {
-    public let identifier: Identifier
-    public let generic: GenericArgumentClause?
+@testable import parser
+@testable import ast
 
-    public init(identifier: Identifier, generic: GenericArgumentClause?) {
-        self.identifier = identifier
-        self.generic = generic
+func specClosureExpression() {
+  let parser = Parser()
+
+  describe("Parse closure expression") {
+    $0.it("should return closure expression") {
+      parser.setupTestCode("{ $0 > $1 }")
     }
-
-    public convenience init(identifier: Identifier) {
-        self.init(identifier: identifier, generic: nil)
-    }
+  }
 }

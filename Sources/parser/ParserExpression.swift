@@ -22,25 +22,59 @@ extension Parser {
     - [_] expression → try-operator/opt/ prefix-expression binary-expressions/opt/
     */
     func parseExpression() throws -> Expression {
-        let result = parseExpression(currentToken, tokens: reversedTokens.map { $0.0 })
-
-        guard let expression = result.expression else {
-            throw ParserError.InternalError // TODO: better error handling
+        return try _parseAndUnwrapParsingResult {
+            self._parseExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
-
-        for _ in 0..<result.advancedBy {
-            shiftToken()
-        }
-
-        return expression
     }
 
-    func parseExpression(head: Token?, tokens: [Token]) -> (expression: Expression?, advancedBy: Int) {
-        let parsePrimaryExpressionResult = parsePrimaryExpression(head, tokens: tokens)
-        if let primaryExpression = parsePrimaryExpressionResult.primaryExpression {
-            return (primaryExpression, parsePrimaryExpressionResult.advancedBy)
+    func _parseExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
+        let parsePrimaryExpressionResult = _parsePrimaryExpression(head, tokens: tokens)
+        if parsePrimaryExpressionResult.hasResult {
+            return ParsingResult<Expression>.wrap(parsePrimaryExpressionResult)
         }
 
-        return (nil, 0)
+        return ParsingResult<Expression>.makeNoResult()
+    }
+
+    /*
+    - [x] expression-list → expression | expression `,` expression-list
+    */
+    func parseExpressionList() throws -> [Expression] {
+        return try _parseAndUnwrapParsingResult {
+            self._parseExpressionList(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+        }
+    }
+
+    func _parseExpressionList(head: Token?, tokens: [Token]) -> ParsingResult<[Expression]> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        let firstExpressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
+        guard firstExpressionResult.hasResult else {
+            return ParsingResult<[Expression]>.makeNoResult()
+        }
+        for _ in 0..<firstExpressionResult.advancedBy {
+            remainingHeadToken = remainingTokens.popLast()
+        }
+
+        var expressions = [Expression]()
+        expressions.append(firstExpressionResult.result)
+
+        while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Comma {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let expressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
+            guard expressionResult.hasResult else {
+                return ParsingResult<[Expression]>.makeNoResult() // TODO: error handling
+            }
+            expressions.append(expressionResult.result)
+
+            for _ in 0..<expressionResult.advancedBy {
+                remainingHeadToken = remainingTokens.popLast()
+            }
+        }
+
+        return ParsingResult<[Expression]>.makeResult(expressions, tokens.count - remainingTokens.count)
     }
 }

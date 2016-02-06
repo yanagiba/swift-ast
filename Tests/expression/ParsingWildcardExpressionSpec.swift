@@ -14,18 +14,20 @@
    limitations under the License.
 */
 
-public typealias Identifier = String // TODO: identifier will have its own dedicated class when it becomes more complicated
+import Spectre
 
-public class IdentifierExpression: PrimaryExpression {
-    public let identifier: Identifier
-    public let generic: GenericArgumentClause?
+@testable import parser
+@testable import ast
 
-    public init(identifier: Identifier, generic: GenericArgumentClause?) {
-        self.identifier = identifier
-        self.generic = generic
+func specWildcardExpression() {
+  let parser = Parser()
+
+  describe("Parse a wildcard expression") {
+    $0.it("should return a wildcard expression") {
+      parser.setupTestCode("_")
+      guard let _ = try? parser.parseWildcardExpression() else {
+        throw failure("Failed in getting a wildcard expression.")
+      }
     }
-
-    public convenience init(identifier: Identifier) {
-        self.init(identifier: identifier, generic: nil)
-    }
+  }
 }

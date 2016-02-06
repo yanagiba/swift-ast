@@ -17,8 +17,8 @@
 import source
 
 public enum MetatypeMeta: String {
-    case Type
-    case Protocol
+    case `Type`
+    case `Protocol`
 }
 
 public class MetatypeType: Type {

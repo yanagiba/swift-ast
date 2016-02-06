@@ -36,6 +36,13 @@ specGenericArgumentClause()
 
 // tests for expressions
 specIdentifierExpression()
+specLiteralExpression()
+specSelfExpression()
+specSuperclassExpression()
+specClosureExpression()
+specImplicitMemberExpression()
+specParenthesizedExpression()
+specWildcardExpression()
 specExpression()
 
 // tests for parsing declarations
