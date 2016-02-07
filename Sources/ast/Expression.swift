@@ -22,5 +22,8 @@ public class Expression: Statement {
     }
 }
 
-public class PrimaryExpression: Expression {
+public class PostfixExpression: Expression {
+}
+
+public class PrimaryExpression: PostfixExpression {
 }
