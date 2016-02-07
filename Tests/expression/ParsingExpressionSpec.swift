@@ -147,4 +147,16 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse a postfix operator expression") {
+    $0.it("should return a postfix operator expression") {
+      parser.setupTestCode("happy ^-^")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is PostfixOperatorExpression else {
+        throw failure("Failed in getting a postfix operator expression.")
+      }
+    }
+  }
 }

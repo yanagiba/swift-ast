@@ -43,6 +43,7 @@ specClosureExpression()
 specImplicitMemberExpression()
 specParenthesizedExpression()
 specWildcardExpression()
+specPostfixOperatorExpression()
 specExpression()
 
 // tests for parsing declarations
