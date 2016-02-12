@@ -171,4 +171,19 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse an explicit member expression") {
+    $0.it("should return an explicit member expression") {
+      let testMembers = ["0", "1", "foo", "bar"]
+      for testMember in testMembers {
+        parser.setupTestCode("foo.\(testMember)")
+        guard let expr = try? parser.parseExpression() else {
+          throw failure("Failed in getting an expression.")
+        }
+        guard expr is ExplicitMemberExpression else {
+          throw failure("Failed in getting an explicit member expression.")
+        }
+      }
+    }
+  }
 }

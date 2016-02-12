@@ -64,6 +64,35 @@ extension Parser {
                     }
 
                     resultExpression = FunctionCallExpression.makeParenthesizedFunctionCallExpression(resultExpression, parseParenExprResult.result)
+                case .Period:
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    let parseIdExprResult = _parseIdentifierExpression(remainingHeadToken, tokens: remainingTokens)
+                    if parseIdExprResult.hasResult {
+                        for _ in 0..<parseIdExprResult.advancedBy {
+                            remainingHeadToken = remainingTokens.popLast()
+                        }
+                        resultExpression = ExplicitMemberExpression.makeNamedTypeExplicitMemberExpression(resultExpression, parseIdExprResult.result)
+                    }
+                    else {
+                        let parseLiteralExprResult = _parseLiteralExpression(remainingHeadToken, tokens: remainingTokens)
+                        if parseLiteralExprResult.hasResult {
+                            if let integerLiteralExpr = parseLiteralExprResult.result as? IntegerLiteralExpression where integerLiteralExpr.kind == .Decimal {
+                                for _ in 0..<parseLiteralExprResult.advancedBy {
+                                    remainingHeadToken = remainingTokens.popLast()
+                                }
+                                resultExpression = ExplicitMemberExpression.makeTupleExplicitMemberExpression(resultExpression, integerLiteralExpr)
+                            }
+                            else {
+                                break postfixLoop
+                            }
+                        }
+                        else {
+                            break postfixLoop
+                        }
+                    }
+
                 default:
                     break postfixLoop
                 }
@@ -94,6 +123,15 @@ extension Parser {
     func parseFunctionCallExpression() throws -> FunctionCallExpression {
         let functionCallExpression: FunctionCallExpression = try _parsePostfixExpressionAndCastToType()
         return functionCallExpression
+    }
+
+    /*
+    - [x] explicit-member-expression → postfix-expression `.` decimal-digits
+    - [x] explicit-member-expression → postfix-expression `.` identifier generic-argument-clause/opt/
+    */
+    func parseExplicitMemberExpression() throws -> ExplicitMemberExpression {
+        let explicitMemberExpression: ExplicitMemberExpression = try _parsePostfixExpressionAndCastToType()
+        return explicitMemberExpression
     }
 
     private func _parsePostfixExpressionAndCastToType<U>() throws -> U {
