@@ -21,7 +21,7 @@ extension Parser {
     /*
     - [x] postfix-expression → primary-expression
     - [x] postfix-expression → postfix-expression postfix-operator
-    - [ ] postfix-expression → function-call-expression
+    - [_] postfix-expression → function-call-expression
     - [ ] postfix-expression → initializer-expression
     - [ ] postfix-expression → explicit-member-expression
     - [ ] postfix-expression → postfix-self-expression
@@ -52,6 +52,21 @@ extension Parser {
 
         postfixLoop: while let currentHeadToken = remainingHeadToken {
             switch currentHeadToken {
+            case .Punctuator(let punctuatorType):
+                switch punctuatorType {
+                case .LeftParen:
+                    let parseParenExprResult = _parseParenthesizedExpression(remainingHeadToken, tokens: remainingTokens)
+                    guard parseParenExprResult.hasResult else {
+                        break postfixLoop
+                    }
+                    for _ in 0..<parseParenExprResult.advancedBy {
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
+
+                    resultExpression = FunctionCallExpression.makeParenthesizedFunctionCallExpression(resultExpression, parseParenExprResult.result)
+                default:
+                    break postfixLoop
+                }
             case .Operator(let operatorString):
                 remainingTokens = skipWhitespacesForTokens(remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
@@ -69,6 +84,16 @@ extension Parser {
     func parsePostfixOperatorExpression() throws -> PostfixOperatorExpression {
         let postfixOperatorExpression: PostfixOperatorExpression = try _parsePostfixExpressionAndCastToType()
         return postfixOperatorExpression
+    }
+
+    /*
+    - [x] function-call-expression → postfix-expression parenthesized-expression
+    - [ ] function-call-expression → postfix-expression parenthesized-expression/opt/ trailing-closure
+    - [ ] trailing-closure → closure-expression
+    */
+    func parseFunctionCallExpression() throws -> FunctionCallExpression {
+        let functionCallExpression: FunctionCallExpression = try _parsePostfixExpressionAndCastToType()
+        return functionCallExpression
     }
 
     private func _parsePostfixExpressionAndCastToType<U>() throws -> U {

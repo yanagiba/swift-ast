@@ -159,4 +159,16 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse a function call expression") {
+    $0.it("should return a function call expression") {
+      parser.setupTestCode("foo(x, y: 1, z: true)")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is FunctionCallExpression else {
+        throw failure("Failed in getting a function call expression.")
+      }
+    }
+  }
 }
