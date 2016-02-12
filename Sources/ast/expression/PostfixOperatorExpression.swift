@@ -15,8 +15,8 @@
 */
 
 public class PostfixOperatorExpression: PostfixExpression {
-  let postfixOperator: Operator
-  let postfixExpression: PostfixExpression
+  public let postfixOperator: Operator
+  public let postfixExpression: PostfixExpression
 
   public init(postfixOperator: Operator, postfixExpression: PostfixExpression) {
     self.postfixOperator = postfixOperator
