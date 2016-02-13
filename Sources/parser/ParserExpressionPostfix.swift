@@ -68,48 +68,15 @@ extension Parser {
                     remainingTokens = skipWhitespacesForTokens(remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
-                    if let currentHeadToken = remainingHeadToken, case let .Keyword(keywordStr, _) = currentHeadToken
-                    where keywordStr == "init" || keywordStr == "self" || keywordStr == "dynamicType­" {
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    let parseDotPostfixExprResult = _parseDotPostfixExpression(
+                        remainingHeadToken, tokens: remainingTokens, postfixExpression: resultExpression)
+                    guard parseDotPostfixExprResult.hasResult else {
+                        break postfixLoop
+                    }
+                    for _ in 0..<parseDotPostfixExprResult.advancedBy {
                         remainingHeadToken = remainingTokens.popLast()
-
-                        if keywordStr == "init" {
-                            resultExpression = InitializerExpression(postfixExpression: resultExpression)
-                        }
-                        else if keywordStr == "self" {
-
-                        }
-                        else {
-
-                        }
                     }
-                    else {
-                        let parseIdExprResult = _parseIdentifierExpression(remainingHeadToken, tokens: remainingTokens)
-                        if parseIdExprResult.hasResult {
-                            for _ in 0..<parseIdExprResult.advancedBy {
-                                remainingHeadToken = remainingTokens.popLast()
-                            }
-                            resultExpression = ExplicitMemberExpression.makeNamedTypeExplicitMemberExpression(resultExpression, parseIdExprResult.result)
-                        }
-                        else {
-                            let parseLiteralExprResult = _parseLiteralExpression(remainingHeadToken, tokens: remainingTokens)
-                            if parseLiteralExprResult.hasResult {
-                                if let integerLiteralExpr = parseLiteralExprResult.result as? IntegerLiteralExpression where integerLiteralExpr.kind == .Decimal {
-                                    for _ in 0..<parseLiteralExprResult.advancedBy {
-                                        remainingHeadToken = remainingTokens.popLast()
-                                    }
-                                    resultExpression = ExplicitMemberExpression.makeTupleExplicitMemberExpression(resultExpression, integerLiteralExpr)
-                                }
-                                else {
-                                    break postfixLoop
-                                }
-                            }
-                            else {
-                                break postfixLoop
-                            }
-                        }
-                    }
-
+                    resultExpression = parseDotPostfixExprResult.result
                 default:
                     break postfixLoop
                 }
@@ -125,6 +92,57 @@ extension Parser {
         }
 
         return ParsingResult<PostfixExpression>.makeResult(resultExpression, tokens.count - remainingTokens.count)
+    }
+
+    private func _parseDotPostfixExpression(
+        head: Token?,
+        tokens: [Token],
+        postfixExpression resultExpression: PostfixExpression) -> ParsingResult<PostfixExpression> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        // initializer expression, post self expression, dynamic type expression
+        if let currentHeadToken = remainingHeadToken, case let .Keyword(keywordStr, _) = currentHeadToken
+        where keywordStr == "init" || keywordStr == "self" || keywordStr == "dynamicType­" {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            if keywordStr == "init" {
+                return ParsingResult<PostfixExpression>.makeResult(
+                    InitializerExpression(postfixExpression: resultExpression), tokens.count - remainingTokens.count)
+            }
+
+            if keywordStr == "self" {
+
+            }
+
+            if keywordStr == "dynamicType­" {
+
+            }
+        }
+
+        // explicit member expression
+        let parseIdExprResult = _parseIdentifierExpression(remainingHeadToken, tokens: remainingTokens)
+        if parseIdExprResult.hasResult {
+            for _ in 0..<parseIdExprResult.advancedBy {
+                remainingHeadToken = remainingTokens.popLast()
+            }
+            return ParsingResult<PostfixExpression>.makeResult(
+                ExplicitMemberExpression.makeNamedTypeExplicitMemberExpression(resultExpression, parseIdExprResult.result),
+                tokens.count - remainingTokens.count)
+        }
+        let parseLiteralExprResult = _parseLiteralExpression(remainingHeadToken, tokens: remainingTokens)
+        if let integerLiteralExpr = parseLiteralExprResult.result as? IntegerLiteralExpression
+        where parseLiteralExprResult.hasResult && integerLiteralExpr.kind == .Decimal {
+            for _ in 0..<parseLiteralExprResult.advancedBy {
+                remainingHeadToken = remainingTokens.popLast()
+            }
+            return ParsingResult<PostfixExpression>.makeResult(
+                ExplicitMemberExpression.makeTupleExplicitMemberExpression(resultExpression, integerLiteralExpr),
+                tokens.count - remainingTokens.count)
+        }
+
+        return ParsingResult<PostfixExpression>.makeNoResult()
     }
 
     func parsePostfixOperatorExpression() throws -> PostfixOperatorExpression {
