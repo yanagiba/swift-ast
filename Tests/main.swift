@@ -46,6 +46,7 @@ specWildcardExpression()
 specPostfixOperatorExpression()
 specFunctionCallExpression()
 specExplicitMemberExpression()
+specInitializerExpression()
 specExpression()
 
 // tests for parsing declarations

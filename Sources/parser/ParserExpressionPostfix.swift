@@ -68,28 +68,45 @@ extension Parser {
                     remainingTokens = skipWhitespacesForTokens(remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
-                    let parseIdExprResult = _parseIdentifierExpression(remainingHeadToken, tokens: remainingTokens)
-                    if parseIdExprResult.hasResult {
-                        for _ in 0..<parseIdExprResult.advancedBy {
-                            remainingHeadToken = remainingTokens.popLast()
+                    if let currentHeadToken = remainingHeadToken, case let .Keyword(keywordStr, _) = currentHeadToken
+                    where keywordStr == "init" || keywordStr == "self" || keywordStr == "dynamicType­" {
+                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingHeadToken = remainingTokens.popLast()
+
+                        if keywordStr == "init" {
+                            resultExpression = InitializerExpression(postfixExpression: resultExpression)
                         }
-                        resultExpression = ExplicitMemberExpression.makeNamedTypeExplicitMemberExpression(resultExpression, parseIdExprResult.result)
+                        else if keywordStr == "self" {
+
+                        }
+                        else {
+
+                        }
                     }
                     else {
-                        let parseLiteralExprResult = _parseLiteralExpression(remainingHeadToken, tokens: remainingTokens)
-                        if parseLiteralExprResult.hasResult {
-                            if let integerLiteralExpr = parseLiteralExprResult.result as? IntegerLiteralExpression where integerLiteralExpr.kind == .Decimal {
-                                for _ in 0..<parseLiteralExprResult.advancedBy {
-                                    remainingHeadToken = remainingTokens.popLast()
+                        let parseIdExprResult = _parseIdentifierExpression(remainingHeadToken, tokens: remainingTokens)
+                        if parseIdExprResult.hasResult {
+                            for _ in 0..<parseIdExprResult.advancedBy {
+                                remainingHeadToken = remainingTokens.popLast()
+                            }
+                            resultExpression = ExplicitMemberExpression.makeNamedTypeExplicitMemberExpression(resultExpression, parseIdExprResult.result)
+                        }
+                        else {
+                            let parseLiteralExprResult = _parseLiteralExpression(remainingHeadToken, tokens: remainingTokens)
+                            if parseLiteralExprResult.hasResult {
+                                if let integerLiteralExpr = parseLiteralExprResult.result as? IntegerLiteralExpression where integerLiteralExpr.kind == .Decimal {
+                                    for _ in 0..<parseLiteralExprResult.advancedBy {
+                                        remainingHeadToken = remainingTokens.popLast()
+                                    }
+                                    resultExpression = ExplicitMemberExpression.makeTupleExplicitMemberExpression(resultExpression, integerLiteralExpr)
                                 }
-                                resultExpression = ExplicitMemberExpression.makeTupleExplicitMemberExpression(resultExpression, integerLiteralExpr)
+                                else {
+                                    break postfixLoop
+                                }
                             }
                             else {
                                 break postfixLoop
                             }
-                        }
-                        else {
-                            break postfixLoop
                         }
                     }
 
@@ -132,6 +149,14 @@ extension Parser {
     func parseExplicitMemberExpression() throws -> ExplicitMemberExpression {
         let explicitMemberExpression: ExplicitMemberExpression = try _parsePostfixExpressionAndCastToType()
         return explicitMemberExpression
+    }
+
+    /*
+    - [x] initializer-expression → postfix-expression `.` `init`
+    */
+    func parseInitializerExpression() throws -> InitializerExpression {
+        let initializerExpression: InitializerExpression = try _parsePostfixExpressionAndCastToType()
+        return initializerExpression
     }
 
     private func _parsePostfixExpressionAndCastToType<U>() throws -> U {

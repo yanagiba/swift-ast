@@ -118,5 +118,25 @@ func specFunctionCallExpression() {
     }
   }
 
-
+  describe("Parse a constructor call") {
+    $0.it("should return a constructor call") {
+      parser.setupTestCode("foo.init(a: 1, b: [x: true, y: false], c: (1, 2, 3))")
+      guard let funcCallExpr = try? parser.parseFunctionCallExpression() else {
+        throw failure("Failed in getting a function call expression.")
+      }
+      try expect(funcCallExpr.kind) == .Parenthesized
+      guard let parenExpr = funcCallExpr.parenthesizedExpression else {
+        throw failure("Failed in getting a parenthesize expression.")
+      }
+      try expect(parenExpr.expressions.count) == 3
+      try expect(funcCallExpr.trailingClosure).to.beNil()
+      guard let initExpr = funcCallExpr.postfixExpression as? InitializerExpression else {
+        throw failure("Failed in getting an initializer expression.")
+      }
+      guard let idExpr = initExpr.postfixExpression as? IdentifierExpression else {
+        throw failure("Failed in getting an identifier expression.")
+      }
+      try expect(idExpr.identifier) == "foo"
+    }
+  }
 }

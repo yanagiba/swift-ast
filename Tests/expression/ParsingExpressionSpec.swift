@@ -186,4 +186,16 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse an initializer expression") {
+    $0.it("should return an initializer expression") {
+      parser.setupTestCode("foo.init")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is InitializerExpression else {
+        throw failure("Failed in getting an initializer expression.")
+      }
+    }
+  }
 }
