@@ -198,4 +198,16 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse a postfix self expression") {
+    $0.it("should return a postfix self expression") {
+      parser.setupTestCode("foo.self")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is PostfixSelfExpression else {
+        throw failure("Failed in getting a postfix self expression.")
+      }
+    }
+  }
 }

@@ -22,9 +22,9 @@ extension Parser {
     - [x] postfix-expression → primary-expression
     - [x] postfix-expression → postfix-expression postfix-operator
     - [_] postfix-expression → function-call-expression
-    - [ ] postfix-expression → initializer-expression
-    - [ ] postfix-expression → explicit-member-expression
-    - [ ] postfix-expression → postfix-self-expression
+    - [x] postfix-expression → initializer-expression
+    - [x] postfix-expression → explicit-member-expression
+    - [x] postfix-expression → postfix-self-expression
     - [ ] postfix-expression → dynamic-type-expression
     - [ ] postfix-expression → subscript-expression
     - [ ] postfix-expression → forced-value-expression
@@ -103,7 +103,7 @@ extension Parser {
 
         // initializer expression, post self expression, dynamic type expression
         if let currentHeadToken = remainingHeadToken, case let .Keyword(keywordStr, _) = currentHeadToken
-        where keywordStr == "init" || keywordStr == "self" || keywordStr == "dynamicType­" {
+        where keywordStr == "init" || keywordStr == "self" || keywordStr == "dynamicType" {
             remainingTokens = skipWhitespacesForTokens(remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
@@ -113,10 +113,11 @@ extension Parser {
             }
 
             if keywordStr == "self" {
-
+                return ParsingResult<PostfixExpression>.makeResult(
+                    PostfixSelfExpression(postfixExpression: resultExpression), tokens.count - remainingTokens.count)
             }
 
-            if keywordStr == "dynamicType­" {
+            if keywordStr == "dynamicType" {
 
             }
         }
@@ -175,6 +176,14 @@ extension Parser {
     func parseInitializerExpression() throws -> InitializerExpression {
         let initializerExpression: InitializerExpression = try _parsePostfixExpressionAndCastToType()
         return initializerExpression
+    }
+
+    /*
+    - [x] postfix-self-expression → postfix-expression `.` `self`
+    */
+    func parsePostfixSelfExpression() throws -> PostfixSelfExpression {
+        let postfixSelfExpression: PostfixSelfExpression = try _parsePostfixExpressionAndCastToType()
+        return postfixSelfExpression
     }
 
     private func _parsePostfixExpressionAndCastToType<U>() throws -> U {
