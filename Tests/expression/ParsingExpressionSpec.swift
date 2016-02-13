@@ -210,4 +210,16 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse a dynamic type expression") {
+    $0.it("should return a dynamic type expression") {
+      parser.setupTestCode("foo.dynamicType")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is DynamicTypeExpression else {
+        throw failure("Failed in getting a dynamic type expression.")
+      }
+    }
+  }
 }

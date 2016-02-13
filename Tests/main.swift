@@ -48,6 +48,7 @@ specFunctionCallExpression()
 specExplicitMemberExpression()
 specInitializerExpression()
 specPostfixSelfExpression()
+specDynamicTypeExpression()
 specExpression()
 
 // tests for parsing declarations

@@ -25,7 +25,7 @@ extension Parser {
     - [x] postfix-expression → initializer-expression
     - [x] postfix-expression → explicit-member-expression
     - [x] postfix-expression → postfix-self-expression
-    - [ ] postfix-expression → dynamic-type-expression
+    - [x] postfix-expression → dynamic-type-expression
     - [ ] postfix-expression → subscript-expression
     - [ ] postfix-expression → forced-value-expression
     - [ ] postfix-expression → optional-chaining-expression
@@ -118,7 +118,8 @@ extension Parser {
             }
 
             if keywordStr == "dynamicType" {
-
+                return ParsingResult<PostfixExpression>.makeResult(
+                    DynamicTypeExpression(postfixExpression: resultExpression), tokens.count - remainingTokens.count)
             }
         }
 
@@ -184,6 +185,14 @@ extension Parser {
     func parsePostfixSelfExpression() throws -> PostfixSelfExpression {
         let postfixSelfExpression: PostfixSelfExpression = try _parsePostfixExpressionAndCastToType()
         return postfixSelfExpression
+    }
+
+    /*
+    - [x] dynamic-type-expression → postfix-expression `.` `dynamicType`
+    */
+    func parseDynamicTypeExpression() throws -> DynamicTypeExpression {
+        let dynamicTypeExpression: DynamicTypeExpression = try _parsePostfixExpressionAndCastToType()
+        return dynamicTypeExpression
     }
 
     private func _parsePostfixExpressionAndCastToType<U>() throws -> U {
