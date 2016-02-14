@@ -50,6 +50,8 @@ specInitializerExpression()
 specPostfixSelfExpression()
 specDynamicTypeExpression()
 specSubscriptExpression()
+specForcedValueExpression()
+specOptionalChainingExpression()
 specExpression()
 
 // tests for parsing declarations

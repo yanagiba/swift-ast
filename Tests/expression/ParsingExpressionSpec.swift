@@ -234,4 +234,28 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse a forced value expression") {
+    $0.it("should return a forced value expression") {
+      parser.setupTestCode("foo!")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is ForcedValueExpression else {
+        throw failure("Failed in getting a forced value expression.")
+      }
+    }
+  }
+
+  describe("Parse an optional chaining expression") {
+    $0.it("should return an optional chaining expression") {
+      parser.setupTestCode("foo?")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is OptionalChainingExpression else {
+        throw failure("Failed in getting an optional chaining expression.")
+      }
+    }
+  }
 }

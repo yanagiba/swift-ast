@@ -26,9 +26,9 @@ extension Parser {
     - [x] postfix-expression → explicit-member-expression
     - [x] postfix-expression → postfix-self-expression
     - [x] postfix-expression → dynamic-type-expression
-    - [ ] postfix-expression → subscript-expression
-    - [ ] postfix-expression → forced-value-expression
-    - [ ] postfix-expression → optional-chaining-expression
+    - [x] postfix-expression → subscript-expression
+    - [x] postfix-expression → forced-value-expression
+    - [x] postfix-expression → optional-chaining-expression
     */
     func parsePostfixExpression() throws -> PostfixExpression {
         return try _parseAndUnwrapParsingResult {
@@ -40,11 +40,14 @@ extension Parser {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
+        var previousUsedToken: Token?
+
         let parsePrimaryExpressionResult = _parsePrimaryExpression(remainingHeadToken, tokens: remainingTokens)
         guard parsePrimaryExpressionResult.hasResult else {
             return ParsingResult<PostfixExpression>.makeNoResult()
         }
         for _ in 0..<parsePrimaryExpressionResult.advancedBy {
+            previousUsedToken = remainingHeadToken
             remainingHeadToken = remainingTokens.popLast()
         }
 
@@ -60,6 +63,7 @@ extension Parser {
                         break postfixLoop
                     }
                     for _ in 0..<parseParenExprResult.advancedBy {
+                        previousUsedToken = remainingHeadToken
                         remainingHeadToken = remainingTokens.popLast()
                     }
 
@@ -74,6 +78,7 @@ extension Parser {
                         break postfixLoop
                     }
                     for _ in 0..<parseDotPostfixExprResult.advancedBy {
+                        previousUsedToken = remainingHeadToken
                         remainingHeadToken = remainingTokens.popLast()
                     }
 
@@ -92,7 +97,11 @@ extension Parser {
 
                     if let closingToken = remainingHeadToken, case let .Punctuator(punctuatorType) = closingToken
                     where punctuatorType == .RightSquare {
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        for _ in 0..<remainingTokens.count-skipWhitespacesForTokens(remainingTokens).count {
+                            previousUsedToken = remainingHeadToken
+                            remainingHeadToken = remainingTokens.popLast()
+                        }
+                        previousUsedToken = remainingHeadToken
                         remainingHeadToken = remainingTokens.popLast()
 
                         resultExpression = SubscriptExpression(
@@ -101,11 +110,39 @@ extension Parser {
                     else {
                         break postfixLoop
                     }
+                case .Exclaim:
+                    guard let previousConsumedToken = previousUsedToken where !previousConsumedToken.isWhitespace() else {
+                        break postfixLoop
+                    }
+                    for _ in 0..<remainingTokens.count-skipWhitespacesForTokens(remainingTokens).count {
+                        previousUsedToken = remainingHeadToken
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
+                    previousUsedToken = remainingHeadToken
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    resultExpression = ForcedValueExpression(postfixExpression: resultExpression)
+                case .Question:
+                    guard let previousConsumedToken = previousUsedToken where !previousConsumedToken.isWhitespace() else {
+                        break postfixLoop
+                    }
+                    for _ in 0..<remainingTokens.count-skipWhitespacesForTokens(remainingTokens).count {
+                        previousUsedToken = remainingHeadToken
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
+                    previousUsedToken = remainingHeadToken
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    resultExpression = OptionalChainingExpression(postfixExpression: resultExpression)
                 default:
                     break postfixLoop
                 }
             case .Operator(let operatorString):
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                for _ in 0..<remainingTokens.count-skipWhitespacesForTokens(remainingTokens).count {
+                    previousUsedToken = remainingHeadToken
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+                previousUsedToken = remainingHeadToken
                 remainingHeadToken = remainingTokens.popLast()
 
                 resultExpression = PostfixOperatorExpression(
@@ -225,6 +262,22 @@ extension Parser {
     func parseSubscriptExpression() throws -> SubscriptExpression {
         let subscriptExpression: SubscriptExpression = try _parsePostfixExpressionAndCastToType()
         return subscriptExpression
+    }
+
+    /*
+    - [x] forced-value-expression → postfix-expression `!`
+    */
+    func parseForcedValueExpression() throws -> ForcedValueExpression {
+        let forcedValueExpression: ForcedValueExpression = try _parsePostfixExpressionAndCastToType()
+        return forcedValueExpression
+    }
+
+    /*
+    - [x] optional-chaining-expression → postfix-expression `?`
+    */
+    func parseOptionalChainingExpression() throws -> OptionalChainingExpression {
+        let optionalChainingExpression: OptionalChainingExpression = try _parsePostfixExpressionAndCastToType()
+        return optionalChainingExpression
     }
 
     private func _parsePostfixExpressionAndCastToType<U>() throws -> U {
