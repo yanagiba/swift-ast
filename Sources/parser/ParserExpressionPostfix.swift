@@ -46,10 +46,8 @@ extension Parser {
         guard parsePrimaryExpressionResult.hasResult else {
             return ParsingResult<PostfixExpression>.makeNoResult()
         }
-        for _ in 0..<parsePrimaryExpressionResult.advancedBy {
-            previousUsedToken = remainingHeadToken
-            remainingHeadToken = remainingTokens.popLast()
-        }
+        __advancedTokensAndPreservePreviousToken(
+            parsePrimaryExpressionResult.advancedBy, &remainingTokens, &remainingHeadToken, &previousUsedToken)
 
         var resultExpression: PostfixExpression = parsePrimaryExpressionResult.result
 
@@ -62,11 +60,8 @@ extension Parser {
                     guard parseParenExprResult.hasResult else {
                         break postfixLoop
                     }
-                    for _ in 0..<parseParenExprResult.advancedBy {
-                        previousUsedToken = remainingHeadToken
-                        remainingHeadToken = remainingTokens.popLast()
-                    }
-
+                    __advancedTokensAndPreservePreviousToken(
+                        parseParenExprResult.advancedBy, &remainingTokens, &remainingHeadToken, &previousUsedToken)
                     resultExpression = FunctionCallExpression.makeParenthesizedFunctionCallExpression(resultExpression, parseParenExprResult.result)
                 case .Period:
                     remainingTokens = skipWhitespacesForTokens(remainingTokens)
@@ -77,33 +72,22 @@ extension Parser {
                     guard parseDotPostfixExprResult.hasResult else {
                         break postfixLoop
                     }
-                    for _ in 0..<parseDotPostfixExprResult.advancedBy {
-                        previousUsedToken = remainingHeadToken
-                        remainingHeadToken = remainingTokens.popLast()
-                    }
-
+                    __advancedTokensAndPreservePreviousToken(
+                        parseDotPostfixExprResult.advancedBy, &remainingTokens, &remainingHeadToken, &previousUsedToken)
                     resultExpression = parseDotPostfixExprResult.result
                 case .LeftSquare:
                     remainingTokens = skipWhitespacesForTokens(remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
                     let parsingExpressionListResult = _parseExpressionList(remainingHeadToken, tokens: remainingTokens)
-                    guard parsingExpressionListResult.hasResult  else {
+                    guard parsingExpressionListResult.hasResult else {
                         break postfixLoop
                     }
-                    for _ in 0..<parsingExpressionListResult.advancedBy {
-                        remainingHeadToken = remainingTokens.popLast()
-                    }
-
+                    __advancedTokensAndPreservePreviousToken(
+                        parsingExpressionListResult.advancedBy, &remainingTokens, &remainingHeadToken, &previousUsedToken)
                     if let closingToken = remainingHeadToken, case let .Punctuator(punctuatorType) = closingToken
                     where punctuatorType == .RightSquare {
-                        for _ in 0..<remainingTokens.count-skipWhitespacesForTokens(remainingTokens).count {
-                            previousUsedToken = remainingHeadToken
-                            remainingHeadToken = remainingTokens.popLast()
-                        }
-                        previousUsedToken = remainingHeadToken
-                        remainingHeadToken = remainingTokens.popLast()
-
+                        __skipWhitespacesAndPreservePreviousToken(&remainingTokens, &remainingHeadToken, &previousUsedToken)
                         resultExpression = SubscriptExpression(
                             postfixExpression: resultExpression, indexExpressions: parsingExpressionListResult.result)
                     }
@@ -114,37 +98,19 @@ extension Parser {
                     guard let previousConsumedToken = previousUsedToken where !previousConsumedToken.isWhitespace() else {
                         break postfixLoop
                     }
-                    for _ in 0..<remainingTokens.count-skipWhitespacesForTokens(remainingTokens).count {
-                        previousUsedToken = remainingHeadToken
-                        remainingHeadToken = remainingTokens.popLast()
-                    }
-                    previousUsedToken = remainingHeadToken
-                    remainingHeadToken = remainingTokens.popLast()
-
+                    __skipWhitespacesAndPreservePreviousToken(&remainingTokens, &remainingHeadToken, &previousUsedToken)
                     resultExpression = ForcedValueExpression(postfixExpression: resultExpression)
                 case .Question:
                     guard let previousConsumedToken = previousUsedToken where !previousConsumedToken.isWhitespace() else {
                         break postfixLoop
                     }
-                    for _ in 0..<remainingTokens.count-skipWhitespacesForTokens(remainingTokens).count {
-                        previousUsedToken = remainingHeadToken
-                        remainingHeadToken = remainingTokens.popLast()
-                    }
-                    previousUsedToken = remainingHeadToken
-                    remainingHeadToken = remainingTokens.popLast()
-
+                    __skipWhitespacesAndPreservePreviousToken(&remainingTokens, &remainingHeadToken, &previousUsedToken)
                     resultExpression = OptionalChainingExpression(postfixExpression: resultExpression)
                 default:
                     break postfixLoop
                 }
             case .Operator(let operatorString):
-                for _ in 0..<remainingTokens.count-skipWhitespacesForTokens(remainingTokens).count {
-                    previousUsedToken = remainingHeadToken
-                    remainingHeadToken = remainingTokens.popLast()
-                }
-                previousUsedToken = remainingHeadToken
-                remainingHeadToken = remainingTokens.popLast()
-
+                __skipWhitespacesAndPreservePreviousToken(&remainingTokens, &remainingHeadToken, &previousUsedToken)
                 resultExpression = PostfixOperatorExpression(
                     postfixOperator: operatorString, postfixExpression: resultExpression)
             default:
@@ -155,14 +121,75 @@ extension Parser {
         return ParsingResult<PostfixExpression>.makeResult(resultExpression, tokens.count - remainingTokens.count)
     }
 
+    private func __skipWhitespacesAndPreservePreviousToken( // method with side effect
+        inout remainingTokens: [Token], inout _ remainingHeadToken: Token?, inout _ previousUsedToken: Token?) {
+        __advancedTokensAndPreservePreviousToken(
+            remainingTokens.count - skipWhitespacesForTokens(remainingTokens).count + 1,
+            &remainingTokens,
+            &remainingHeadToken,
+            &previousUsedToken)
+    }
+
+    private func __advancedTokensAndPreservePreviousToken( // method with side effect
+        advancedBy: Int,
+        inout _ remainingTokens: [Token],
+        inout _ remainingHeadToken: Token?,
+        inout _ previousUsedToken: Token?) {
+        for _ in 0..<advancedBy {
+            previousUsedToken = remainingHeadToken
+            remainingHeadToken = remainingTokens.popLast()
+        }
+    }
+
     private func _parseDotPostfixExpression(
+        head: Token?,
+        tokens: [Token],
+        postfixExpression resultExpression: PostfixExpression) -> ParsingResult<PostfixExpression> {
+        let parseDotKeywordPostfixExpressionResult = _parseDotKeywordPostfixExpression(
+            head, tokens: tokens, postfixExpression: resultExpression)
+        if parseDotKeywordPostfixExpressionResult.hasResult {
+            return parseDotKeywordPostfixExpressionResult
+        }
+
+        return _parseExplicitMemberExpression(head, tokens: tokens, postfixExpression: resultExpression)
+    }
+
+    private func _parseExplicitMemberExpression(head: Token?,
+        tokens: [Token],
+        postfixExpression resultExpression: PostfixExpression) -> ParsingResult<PostfixExpression> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        let parseIdExprResult = _parseIdentifierExpression(remainingHeadToken, tokens: remainingTokens)
+        if parseIdExprResult.hasResult {
+            for _ in 0..<parseIdExprResult.advancedBy {
+                remainingHeadToken = remainingTokens.popLast()
+            }
+            return ParsingResult<PostfixExpression>.makeResult(
+                ExplicitMemberExpression.makeNamedTypeExplicitMemberExpression(resultExpression, parseIdExprResult.result),
+                tokens.count - remainingTokens.count)
+        }
+        let parseLiteralExprResult = _parseLiteralExpression(remainingHeadToken, tokens: remainingTokens)
+        if let integerLiteralExpr = parseLiteralExprResult.result as? IntegerLiteralExpression
+        where parseLiteralExprResult.hasResult && integerLiteralExpr.kind == .Decimal {
+            for _ in 0..<parseLiteralExprResult.advancedBy {
+                remainingHeadToken = remainingTokens.popLast()
+            }
+            return ParsingResult<PostfixExpression>.makeResult(
+                ExplicitMemberExpression.makeTupleExplicitMemberExpression(resultExpression, integerLiteralExpr),
+                tokens.count - remainingTokens.count)
+        }
+
+        return ParsingResult<PostfixExpression>.makeNoResult()
+    }
+
+    private func _parseDotKeywordPostfixExpression(
         head: Token?,
         tokens: [Token],
         postfixExpression resultExpression: PostfixExpression) -> ParsingResult<PostfixExpression> {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        // initializer expression, post self expression, dynamic type expression
         if let currentHeadToken = remainingHeadToken, case let .Keyword(keywordStr, _) = currentHeadToken
         where keywordStr == "init" || keywordStr == "self" || keywordStr == "dynamicType" {
             remainingTokens = skipWhitespacesForTokens(remainingTokens)
@@ -182,27 +209,6 @@ extension Parser {
                 return ParsingResult<PostfixExpression>.makeResult(
                     DynamicTypeExpression(postfixExpression: resultExpression), tokens.count - remainingTokens.count)
             }
-        }
-
-        // explicit member expression
-        let parseIdExprResult = _parseIdentifierExpression(remainingHeadToken, tokens: remainingTokens)
-        if parseIdExprResult.hasResult {
-            for _ in 0..<parseIdExprResult.advancedBy {
-                remainingHeadToken = remainingTokens.popLast()
-            }
-            return ParsingResult<PostfixExpression>.makeResult(
-                ExplicitMemberExpression.makeNamedTypeExplicitMemberExpression(resultExpression, parseIdExprResult.result),
-                tokens.count - remainingTokens.count)
-        }
-        let parseLiteralExprResult = _parseLiteralExpression(remainingHeadToken, tokens: remainingTokens)
-        if let integerLiteralExpr = parseLiteralExprResult.result as? IntegerLiteralExpression
-        where parseLiteralExprResult.hasResult && integerLiteralExpr.kind == .Decimal {
-            for _ in 0..<parseLiteralExprResult.advancedBy {
-                remainingHeadToken = remainingTokens.popLast()
-            }
-            return ParsingResult<PostfixExpression>.makeResult(
-                ExplicitMemberExpression.makeTupleExplicitMemberExpression(resultExpression, integerLiteralExpr),
-                tokens.count - remainingTokens.count)
         }
 
         return ParsingResult<PostfixExpression>.makeNoResult()
