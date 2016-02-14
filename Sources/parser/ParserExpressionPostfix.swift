@@ -76,7 +76,31 @@ extension Parser {
                     for _ in 0..<parseDotPostfixExprResult.advancedBy {
                         remainingHeadToken = remainingTokens.popLast()
                     }
+
                     resultExpression = parseDotPostfixExprResult.result
+                case .LeftSquare:
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    let parsingExpressionListResult = _parseExpressionList(remainingHeadToken, tokens: remainingTokens)
+                    guard parsingExpressionListResult.hasResult  else {
+                        break postfixLoop
+                    }
+                    for _ in 0..<parsingExpressionListResult.advancedBy {
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
+
+                    if let closingToken = remainingHeadToken, case let .Punctuator(punctuatorType) = closingToken
+                    where punctuatorType == .RightSquare {
+                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingHeadToken = remainingTokens.popLast()
+
+                        resultExpression = SubscriptExpression(
+                            postfixExpression: resultExpression, indexExpressions: parsingExpressionListResult.result)
+                    }
+                    else {
+                        break postfixLoop
+                    }
                 default:
                     break postfixLoop
                 }
@@ -193,6 +217,14 @@ extension Parser {
     func parseDynamicTypeExpression() throws -> DynamicTypeExpression {
         let dynamicTypeExpression: DynamicTypeExpression = try _parsePostfixExpressionAndCastToType()
         return dynamicTypeExpression
+    }
+
+    /*
+    - [x] subscript-expression → postfix-expression `[` expression-list `]`
+    */
+    func parseSubscriptExpression() throws -> SubscriptExpression {
+        let subscriptExpression: SubscriptExpression = try _parsePostfixExpressionAndCastToType()
+        return subscriptExpression
     }
 
     private func _parsePostfixExpressionAndCastToType<U>() throws -> U {

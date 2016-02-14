@@ -222,4 +222,16 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse a subscript expression") {
+    $0.it("should return a subscript expression") {
+      parser.setupTestCode("foo[0, 1, 5]")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is SubscriptExpression else {
+        throw failure("Failed in getting a subscript expression.")
+      }
+    }
+  }
 }
