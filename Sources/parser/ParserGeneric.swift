@@ -289,7 +289,7 @@ extension Parser {
                     remainingTokens = skipWhitespacesForTokens(remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
-                    return (GenericArgumentClause(types: types), tokens.count - remainingTokens.count)
+                    return (GenericArgumentClause(types: types), tokens.count - remainingTokens.count - (remainingHeadToken == nil ? 1 : 0))
                 }
             }
             else {

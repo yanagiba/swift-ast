@@ -22,9 +22,9 @@ public class SelfExpression: PrimaryExpression {
     case Initializer
   }
 
-  let kind: Kind
-  let methodIdentifier: Identifier
-  let subscriptExpressions: [Expression]
+  public let kind: Kind
+  public let methodIdentifier: Identifier
+  public let subscriptExpressions: [Expression]
 
   private init(kind: Kind, methodIdentifier: Identifier = "", subscriptExpressions: [Expression] = []) {
     self.kind = kind

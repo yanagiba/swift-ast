@@ -147,4 +147,115 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse a postfix operator expression") {
+    $0.it("should return a postfix operator expression") {
+      parser.setupTestCode("happy ^-^")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is PostfixOperatorExpression else {
+        throw failure("Failed in getting a postfix operator expression.")
+      }
+    }
+  }
+
+  describe("Parse a function call expression") {
+    $0.it("should return a function call expression") {
+      parser.setupTestCode("foo(x, y: 1, z: true)")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is FunctionCallExpression else {
+        throw failure("Failed in getting a function call expression.")
+      }
+    }
+  }
+
+  describe("Parse an explicit member expression") {
+    $0.it("should return an explicit member expression") {
+      let testMembers = ["0", "1", "foo", "bar"]
+      for testMember in testMembers {
+        parser.setupTestCode("foo.\(testMember)")
+        guard let expr = try? parser.parseExpression() else {
+          throw failure("Failed in getting an expression.")
+        }
+        guard expr is ExplicitMemberExpression else {
+          throw failure("Failed in getting an explicit member expression.")
+        }
+      }
+    }
+  }
+
+  describe("Parse an initializer expression") {
+    $0.it("should return an initializer expression") {
+      parser.setupTestCode("foo.init")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is InitializerExpression else {
+        throw failure("Failed in getting an initializer expression.")
+      }
+    }
+  }
+
+  describe("Parse a postfix self expression") {
+    $0.it("should return a postfix self expression") {
+      parser.setupTestCode("foo.self")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is PostfixSelfExpression else {
+        throw failure("Failed in getting a postfix self expression.")
+      }
+    }
+  }
+
+  describe("Parse a dynamic type expression") {
+    $0.it("should return a dynamic type expression") {
+      parser.setupTestCode("foo.dynamicType")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is DynamicTypeExpression else {
+        throw failure("Failed in getting a dynamic type expression.")
+      }
+    }
+  }
+
+  describe("Parse a subscript expression") {
+    $0.it("should return a subscript expression") {
+      parser.setupTestCode("foo[0, 1, 5]")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is SubscriptExpression else {
+        throw failure("Failed in getting a subscript expression.")
+      }
+    }
+  }
+
+  describe("Parse a forced value expression") {
+    $0.it("should return a forced value expression") {
+      parser.setupTestCode("foo!")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is ForcedValueExpression else {
+        throw failure("Failed in getting a forced value expression.")
+      }
+    }
+  }
+
+  describe("Parse an optional chaining expression") {
+    $0.it("should return an optional chaining expression") {
+      parser.setupTestCode("foo?")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is OptionalChainingExpression else {
+        throw failure("Failed in getting an optional chaining expression.")
+      }
+    }
+  }
 }

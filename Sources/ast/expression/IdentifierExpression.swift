@@ -14,8 +14,6 @@
    limitations under the License.
 */
 
-public typealias Identifier = String // TODO: identifier will have its own dedicated class when it becomes more complicated
-
 public class IdentifierExpression: PrimaryExpression {
     public let identifier: Identifier
     public let generic: GenericArgumentClause?

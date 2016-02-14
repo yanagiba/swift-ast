@@ -77,6 +77,9 @@ extension Parser {
                     }
                     remainingHeadToken = remainingTokens.popLast()
                 }
+                if let usedToken = remainingHeadToken {
+                    usedTokens.append(usedToken)
+                }
                 remainingHeadToken = remainingTokens.popLast()
             }
 

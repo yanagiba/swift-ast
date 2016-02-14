@@ -14,19 +14,12 @@
    limitations under the License.
 */
 
-import util
+public class SubscriptExpression: PostfixExpression {
+  public let postfixExpression: PostfixExpression
+  public let indexExpressions: [Expression]
 
-public class Expression: Statement {
-    public override func inspect(indent: Int = 0) -> String {
-        return "\(getIndentText(indent))(expression)"
-    }
+  public init(postfixExpression: PostfixExpression, indexExpressions: [Expression]) {
+    self.postfixExpression = postfixExpression
+    self.indexExpressions = indexExpressions
+  }
 }
-
-public class PostfixExpression: Expression {
-}
-
-public class PrimaryExpression: PostfixExpression {
-}
-
-public typealias Identifier = String // TODO: identifier will have its own dedicated class when it becomes more complicated
-public typealias Operator = String

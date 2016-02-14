@@ -28,9 +28,9 @@ extension Parser {
     }
 
     func _parseExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
-        let parsePrimaryExpressionResult = _parsePrimaryExpression(head, tokens: tokens)
-        if parsePrimaryExpressionResult.hasResult {
-            return ParsingResult<Expression>.wrap(parsePrimaryExpressionResult)
+        let parsePostfixExpressionResult = _parsePostfixExpression(head, tokens: tokens)
+        if parsePostfixExpressionResult.hasResult {
+            return ParsingResult<Expression>.wrap(parsePostfixExpressionResult)
         }
 
         return ParsingResult<Expression>.makeNoResult()
