@@ -31,15 +31,22 @@ extension Parser {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        var prefixOperator: String? = nil
-
-        if let token = remainingHeadToken, case let .Operator(operatorString) = token {
+        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Amp {
+            remainingHeadToken = remainingTokens.popLast()
+            guard let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) else {
+                return ParsingResult<Expression>.makeNoResult()
+            }
             remainingTokens = skipWhitespacesForTokens(remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
-
-            prefixOperator = operatorString
+            let inOutExpr = InOutExpression(identifier: identifier)
+            return ParsingResult<Expression>.makeResult(inOutExpr, tokens.count - remainingTokens.count)
         }
 
+        var prefixOperator: String? = nil
+        if let token = remainingHeadToken, case let .Operator(operatorString) = token {
+            remainingHeadToken = remainingTokens.popLast()
+            prefixOperator = operatorString
+        }
         let parsePostfixExpressionResult = _parsePostfixExpression(remainingHeadToken, tokens: remainingTokens)
         if parsePostfixExpressionResult.hasResult {
             if let prefixOperator = prefixOperator {

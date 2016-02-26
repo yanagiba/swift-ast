@@ -48,7 +48,7 @@ func specPrefixOperatorExpression() {
         "..--"
       ]
       for testString in testStrings {
-        let testCode = "\(testString) foo"
+        let testCode = "\(testString)foo"
         parser.setupTestCode(testCode)
         guard let prefixOpExpr = try? parser.parsePrefixOperatorExpression() else {
           throw failure("Failed in getting a prefix operator expression for code `\(testCode)`.")

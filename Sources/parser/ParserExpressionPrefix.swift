@@ -19,9 +19,9 @@ import ast
 
 extension Parser {
     /*
-    - [ ] prefix-expression → prefix-operator/opt/ postfix-expression
-    - [ ] prefix-expression → in-out-expression
-    - [ ] in-out-expression → `&` identifier
+    - [x] prefix-expression → prefix-operator/opt/ postfix-expression
+    - [x] prefix-expression → in-out-expression
+    - [x] in-out-expression → `&` identifier
     */
 
     func parsePrefixOperatorExpression() throws -> PrefixOperatorExpression {
@@ -42,5 +42,25 @@ extension Parser {
         try rewindAllWhitespaces()
 
         return prefixOperatorExpression
+    }
+
+    func parseInOutExpression() throws -> InOutExpression {
+        let result = _parseExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard result.hasResult else {
+            throw ParserError.InternalError // TODO: better error handling
+        }
+
+        guard let inOutExpression = result.result as? InOutExpression else {
+            throw ParserError.InternalError
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        try rewindAllWhitespaces()
+
+        return inOutExpression
     }
 }
