@@ -23,12 +23,6 @@ extension Parser {
     - [x] prefix-expression → in-out-expression
     - [x] in-out-expression → `&` identifier
     */
-    func parsePrefixExpression() throws -> Expression {
-        return try _parseAndUnwrapParsingResult {
-            self._parsePrefixExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
-        }
-    }
-
     func _parsePrefixExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head

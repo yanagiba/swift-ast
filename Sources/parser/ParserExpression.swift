@@ -28,6 +28,30 @@ extension Parser {
     }
 
     func _parseExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
+        return _parseTryOperatorExpression(head, tokens: tokens)
+    }
+
+    func parseTryOperatorExpression() throws -> TryOperatorExpression {
+        let result = _parseTryOperatorExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard result.hasResult else {
+            throw ParserError.InternalError // TODO: better error handling
+        }
+
+        guard let tryOperatorExpression = result.result as? TryOperatorExpression else {
+            throw ParserError.InternalError
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        try rewindAllWhitespaces()
+
+        return tryOperatorExpression
+    }
+
+    func _parseTryOperatorExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
@@ -69,26 +93,6 @@ extension Parser {
             return ParsingResult<Expression>.makeResult(tryOperatorExpr, tokens.count - remainingTokens.count)
         }
         return parsePrefixExpressionResult
-    }
-
-    func parseTryOperatorExpression() throws -> TryOperatorExpression {
-        let result = _parseExpression(currentToken, tokens: reversedTokens.map { $0.0 })
-
-        guard result.hasResult else {
-            throw ParserError.InternalError // TODO: better error handling
-        }
-
-        guard let tryOperatorExpression = result.result as? TryOperatorExpression else {
-            throw ParserError.InternalError
-        }
-
-        for _ in 0..<result.advancedBy {
-            shiftToken()
-        }
-
-        try rewindAllWhitespaces()
-
-        return tryOperatorExpression
     }
 
     /*
