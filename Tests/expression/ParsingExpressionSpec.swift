@@ -282,4 +282,16 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse a try operator expression") {
+    $0.it("should return a try operator expression") {
+      parser.setupTestCode("try foo")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is TryOperatorExpression else {
+        throw failure("Failed in getting a try operator expression.")
+      }
+    }
+  }
 }
