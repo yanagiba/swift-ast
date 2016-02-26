@@ -52,6 +52,8 @@ specDynamicTypeExpression()
 specSubscriptExpression()
 specForcedValueExpression()
 specOptionalChainingExpression()
+specPrefixOperatorExpression()
+specInOutExpression()
 specExpression()
 
 // tests for parsing declarations

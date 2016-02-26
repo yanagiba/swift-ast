@@ -258,4 +258,28 @@ func specExpression() {
       }
     }
   }
+
+  describe("Parse a prefix operator expression") {
+    $0.it("should return a prefix operator expression") {
+      parser.setupTestCode("^-^happy")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is PrefixOperatorExpression else {
+        throw failure("Failed in getting a prefix operator expression.")
+      }
+    }
+  }
+
+  describe("Parse an in-out expression") {
+    $0.it("should return an in-out expression") {
+      parser.setupTestCode("&a")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is InOutExpression else {
+        throw failure("Failed in getting an in-out expression.")
+      }
+    }
+  }
 }

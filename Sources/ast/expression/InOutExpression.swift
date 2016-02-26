@@ -14,22 +14,10 @@
    limitations under the License.
 */
 
-import util
+public class InOutExpression: PrefixExpression {
+    public let identifier: Identifier
 
-public class Expression: Statement {
-    public override func inspect(indent: Int = 0) -> String {
-        return "\(getIndentText(indent))(expression)"
+    public init(identifier: Identifier) {
+        self.identifier = identifier
     }
 }
-
-public class PrefixExpression: Expression {
-}
-
-public class PostfixExpression: Expression {
-}
-
-public class PrimaryExpression: PostfixExpression {
-}
-
-public typealias Identifier = String // TODO: identifier will have its own dedicated class when it becomes more complicated
-public typealias Operator = String

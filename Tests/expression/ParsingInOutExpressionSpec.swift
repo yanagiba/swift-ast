@@ -14,22 +14,21 @@
    limitations under the License.
 */
 
-import util
+import Spectre
 
-public class Expression: Statement {
-    public override func inspect(indent: Int = 0) -> String {
-        return "\(getIndentText(indent))(expression)"
+@testable import parser
+@testable import ast
+
+func specInOutExpression() {
+  let parser = Parser()
+
+  describe("Parse an in-out expression") {
+    $0.it("should return an in-out expression") {
+      parser.setupTestCode("&foo")
+      guard let inOutExpr = try? parser.parseInOutExpression() else {
+        throw failure("Failed in getting an in-out expression.")
+      }
+      try expect(inOutExpr.identifier) == "foo"
     }
+  }
 }
-
-public class PrefixExpression: Expression {
-}
-
-public class PostfixExpression: Expression {
-}
-
-public class PrimaryExpression: PostfixExpression {
-}
-
-public typealias Identifier = String // TODO: identifier will have its own dedicated class when it becomes more complicated
-public typealias Operator = String
