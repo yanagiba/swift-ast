@@ -28,9 +28,28 @@ extension Parser {
     }
 
     func _parseExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
-        let parsePostfixExpressionResult = _parsePostfixExpression(head, tokens: tokens)
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        var prefixOperator: String? = nil
+
+        if let token = remainingHeadToken, case let .Operator(operatorString) = token {
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            prefixOperator = operatorString
+        }
+
+        let parsePostfixExpressionResult = _parsePostfixExpression(remainingHeadToken, tokens: remainingTokens)
         if parsePostfixExpressionResult.hasResult {
-            return ParsingResult<Expression>.wrap(parsePostfixExpressionResult)
+            if let prefixOperator = prefixOperator {
+                let prefixOperatorExpr = PrefixOperatorExpression(
+                    prefixOperator: prefixOperator, postfixExpression: parsePostfixExpressionResult.result)
+                return ParsingResult<Expression>.makeResult(prefixOperatorExpr, tokens.count - remainingTokens.count)
+            }
+            else {
+                return ParsingResult<Expression>.wrap(parsePostfixExpressionResult)
+            }
         }
 
         return ParsingResult<Expression>.makeNoResult()
