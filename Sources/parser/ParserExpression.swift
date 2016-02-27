@@ -19,7 +19,7 @@ import ast
 
 extension Parser {
     /*
-    - [_] expression → try-operator/opt/ prefix-expression binary-expressions/opt/
+    - [x] expression → try-operator/opt/ prefix-expression binary-expressions/opt/
     */
     func parseExpression() throws -> Expression {
         return try _parseAndUnwrapParsingResult {
@@ -28,7 +28,26 @@ extension Parser {
     }
 
     func _parseExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
-        return _parseTryOperatorExpression(head, tokens: tokens)
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        let parsingTryOpExprResult = _parseTryOperatorExpression(remainingHeadToken, tokens: remainingTokens)
+        guard parsingTryOpExprResult.hasResult else {
+            return parsingTryOpExprResult
+        }
+        for _ in 0..<parsingTryOpExprResult.advancedBy {
+            remainingHeadToken = remainingTokens.popLast()
+        }
+
+        let parsingBiExprsResult = _parseBinaryExpressions(remainingHeadToken, tokens: remainingTokens, lhs: parsingTryOpExprResult.result)
+        guard parsingBiExprsResult.hasResult else {
+            return parsingTryOpExprResult
+        }
+        for _ in 0..<parsingBiExprsResult.advancedBy {
+            remainingHeadToken = remainingTokens.popLast()
+        }
+
+        return ParsingResult<Expression>.makeResult(parsingBiExprsResult.result, tokens.count - remainingTokens.count)
     }
 
     func parseTryOperatorExpression() throws -> TryOperatorExpression {

@@ -55,6 +55,7 @@ specOptionalChainingExpression()
 specPrefixOperatorExpression()
 specInOutExpression()
 specTryOperatorExpression()
+specBinaryOperatorExpression()
 specExpression()
 
 // tests for parsing declarations
