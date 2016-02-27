@@ -59,18 +59,23 @@ extension Parser {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        if let currentToken = remainingHeadToken, case let .Operator(operatorString) = currentToken {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
-            remainingHeadToken = remainingTokens.popLast()
+        if let currentToken = remainingHeadToken {
+            switch currentToken {
+            case .Operator(let operatorString):
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
 
-            let parsingPrefixExprResult = _parsePrefixExpression(remainingHeadToken, tokens: remainingTokens)
-            if parsingPrefixExprResult.hasResult {
-                for _ in 0..<parsingPrefixExprResult.advancedBy {
-                    remainingHeadToken = remainingTokens.popLast()
+                let parsingPrefixExprResult = _parsePrefixExpression(remainingHeadToken, tokens: remainingTokens)
+                if parsingPrefixExprResult.hasResult {
+                    for _ in 0..<parsingPrefixExprResult.advancedBy {
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
+
+                    let biOpExpr = BinaryOperatorExpression(binaryOperator: operatorString, leftExpression: lhs, rightExpression: parsingPrefixExprResult.result)
+                    return ParsingResult<BinaryExpression>.makeResult(biOpExpr, tokens.count - remainingTokens.count)
                 }
-
-                let biOpExpr = BinaryOperatorExpression(binaryOperator: operatorString, leftExpression: lhs, rightExpression: parsingPrefixExprResult.result)
-                return ParsingResult<BinaryExpression>.makeResult(biOpExpr, tokens.count - remainingTokens.count)
+            default:
+                return ParsingResult<BinaryExpression>.makeNoResult()
             }
         }
 
