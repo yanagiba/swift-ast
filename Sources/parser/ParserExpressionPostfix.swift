@@ -110,6 +110,12 @@ extension Parser {
                     break postfixLoop
                 }
             case .Operator(let operatorString):
+                guard let previousConsumedToken = previousUsedToken where !previousConsumedToken.isWhitespace() else {
+                    break postfixLoop
+                }
+                guard __isValidPostfixOperatorExpression(remainingHeadToken, tokens: remainingTokens) else {
+                    break postfixLoop
+                }
                 __skipWhitespacesAndPreservePreviousToken(&remainingTokens, &remainingHeadToken, &previousUsedToken)
                 resultExpression = PostfixOperatorExpression(
                     postfixOperator: operatorString, postfixExpression: resultExpression)
@@ -117,8 +123,7 @@ extension Parser {
                 break postfixLoop
             }
         }
-
-        return ParsingResult<PostfixExpression>.makeResult(resultExpression, tokens.count - remainingTokens.count)
+        return ParsingResult<PostfixExpression>.makeResult(resultExpression, tokens.count - remainingTokens.count - (remainingHeadToken == nil ? 1 : 0))
     }
 
     private func __skipWhitespacesAndPreservePreviousToken( // method with side effect
@@ -139,6 +144,21 @@ extension Parser {
             previousUsedToken = remainingHeadToken
             remainingHeadToken = remainingTokens.popLast()
         }
+    }
+
+    private func __isValidPostfixOperatorExpression(head: Token?, tokens: [Token]) -> Bool {
+        // TODO: the goal for this method is to verify if there is a prefix expression following the operator
+        // TODO: the approach here is very nasty, and need to reconsider
+        if tokens.isEmpty {
+            return true
+        }
+
+        var remainingTokens = tokens
+        remainingTokens.popLast()
+        remainingTokens = skipWhitespacesForTokens(tokens)
+        let remainingHeadToken = remainingTokens.popLast()
+        let parsingPrefixExpressionResult = _parsePrefixExpression(remainingHeadToken, tokens: remainingTokens)
+        return !parsingPrefixExpressionResult.hasResult
     }
 
     private func _parseDotPostfixExpression(
