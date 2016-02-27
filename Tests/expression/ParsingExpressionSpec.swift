@@ -307,6 +307,18 @@ func specExpression() {
     }
   }
 
+  describe("Parse an assignment operator expression") {
+    $0.it("should return an assignment operator expression") {
+      parser.setupTestCode("a = 1")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is AssignmentOperatorExpression else {
+        throw failure("Failed in getting an assignment operator expression.")
+      }
+    }
+  }
+
   describe("Parse binary expressions") {
     $0.it("should return a binary expression with embedded binary expressions") {
       parser.setupTestCode("1 + 2 * 3 - 4")

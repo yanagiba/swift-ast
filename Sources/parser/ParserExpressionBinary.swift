@@ -51,9 +51,11 @@ extension Parser {
 
     /*
     - [x] binary-expression → binary-operator prefix-expression
-    - [ ] binary-expression → assignment-operator try-operator/opt/ prefix-expression
+    - [x] binary-expression → assignment-operator try-operator/opt/ prefix-expression
     - [ ] binary-expression → conditional-operator try-operator/opt/ prefix-expression
     - [ ] binary-expression → type-casting-operator
+
+    - [x] assignment-operator → `=`
     */
     func _parseBinaryExpression(head: Token?, tokens: [Token], lhs: Expression) -> ParsingResult<BinaryExpression> {
         var remainingTokens = tokens
@@ -61,6 +63,26 @@ extension Parser {
 
         if let currentToken = remainingHeadToken {
             switch currentToken {
+            case .Punctuator(let punctuatorType):
+                switch punctuatorType {
+                case .Equal:
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    let parsingTryOpExprResult = _parseTryOperatorExpression(remainingHeadToken, tokens: remainingTokens)
+                    if parsingTryOpExprResult.hasResult {
+                        for _ in 0..<parsingTryOpExprResult.advancedBy {
+                            remainingHeadToken = remainingTokens.popLast()
+                        }
+
+                        let assignmentOpExpr = AssignmentOperatorExpression(leftExpression: lhs, rightExpression: parsingTryOpExprResult.result)
+                        return ParsingResult<BinaryExpression>.makeResult(assignmentOpExpr, tokens.count - remainingTokens.count)
+                    }
+                case .Question:
+                    return ParsingResult<BinaryExpression>.makeNoResult()
+                default:
+                    return ParsingResult<BinaryExpression>.makeNoResult()
+                }
             case .Operator(let operatorString):
                 remainingTokens = skipWhitespacesForTokens(remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
@@ -85,6 +107,11 @@ extension Parser {
     func parseBinaryOperatorExpression() throws -> BinaryOperatorExpression {
         let binaryOperatorExpression: BinaryOperatorExpression = try _parseBinaryExpressionAndCastToType()
         return binaryOperatorExpression
+    }
+
+    func parseAssignmentOperatorExpression() throws -> AssignmentOperatorExpression {
+        let assignmentOperatorExpression: AssignmentOperatorExpression = try _parseBinaryExpressionAndCastToType()
+        return assignmentOperatorExpression
     }
 
     private func _parseBinaryExpressionAndCastToType<U>() throws -> U {
