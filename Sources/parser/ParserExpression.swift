@@ -78,6 +78,9 @@ extension Parser {
         guard parsePrefixExpressionResult.hasResult else {
             return ParsingResult<Expression>.makeNoResult()
         }
+        for _ in 0..<parsePrefixExpressionResult.advancedBy {
+            remainingHeadToken = remainingTokens.popLast()
+        }
 
         if let tryOperatorKind = tryOperatorKind {
             let prefixExpression = parsePrefixExpressionResult.result
