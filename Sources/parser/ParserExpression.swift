@@ -71,6 +71,13 @@ extension Parser {
     }
 
     func _parseTryOperatorExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
+        return _parseAndWrapTryOperatorExpression(head, tokens: tokens) { self._parsePrefixExpression($0, tokens: $1) }
+    }
+
+    func _parseAndWrapTryOperatorExpression(
+        head: Token?,
+        tokens: [Token],
+        parsingFunction: (Token?, [Token]) -> ParsingResult<Expression>) -> ParsingResult<Expression> {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
@@ -93,16 +100,16 @@ extension Parser {
             remainingHeadToken = remainingTokens.popLast()
         }
 
-        let parsePrefixExpressionResult = _parsePrefixExpression(remainingHeadToken, tokens: remainingTokens)
-        guard parsePrefixExpressionResult.hasResult else {
+        let parseExpressionResult = parsingFunction(remainingHeadToken, remainingTokens)
+        guard parseExpressionResult.hasResult else {
             return ParsingResult<Expression>.makeNoResult()
         }
-        for _ in 0..<parsePrefixExpressionResult.advancedBy {
+        for _ in 0..<parseExpressionResult.advancedBy {
             remainingHeadToken = remainingTokens.popLast()
         }
 
         if let tryOperatorKind = tryOperatorKind {
-            let prefixExpression = parsePrefixExpressionResult.result
+            let prefixExpression = parseExpressionResult.result
             let tryOperatorExpr: TryOperatorExpression
             switch tryOperatorKind {
             case .Try:
@@ -114,7 +121,7 @@ extension Parser {
             }
             return ParsingResult<Expression>.makeResult(tryOperatorExpr, tokens.count - remainingTokens.count)
         }
-        return parsePrefixExpressionResult
+        return parseExpressionResult
     }
 
     /*

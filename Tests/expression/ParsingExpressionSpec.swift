@@ -319,6 +319,18 @@ func specExpression() {
     }
   }
 
+  describe("Parse a ternary conditional operator expression") {
+    $0.it("should return a ternary conditional operator expression") {
+      parser.setupTestCode("a ? b : c")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is TernaryConditionalOperatorExpression else {
+        throw failure("Failed in getting a ternary conditional operator expression.")
+      }
+    }
+  }
+
   describe("Parse binary expressions") {
     $0.it("should return a binary expression with embedded binary expressions") {
       parser.setupTestCode("1 + 2 * 3 - 4")

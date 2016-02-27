@@ -52,10 +52,11 @@ extension Parser {
     /*
     - [x] binary-expression → binary-operator prefix-expression
     - [x] binary-expression → assignment-operator try-operator/opt/ prefix-expression
-    - [ ] binary-expression → conditional-operator try-operator/opt/ prefix-expression
+    - [x] binary-expression → conditional-operator try-operator/opt/ prefix-expression
     - [ ] binary-expression → type-casting-operator
 
     - [x] assignment-operator → `=`
+    - [x] conditional-operator → `?` try-operator/opt/ expression `:`
     */
     func _parseBinaryExpression(head: Token?, tokens: [Token], lhs: Expression) -> ParsingResult<BinaryExpression> {
         var remainingTokens = tokens
@@ -79,7 +80,33 @@ extension Parser {
                         return ParsingResult<BinaryExpression>.makeResult(assignmentOpExpr, tokens.count - remainingTokens.count)
                     }
                 case .Question:
-                    return ParsingResult<BinaryExpression>.makeNoResult()
+                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    let parsingTrueExprResult = _parseAndWrapTryOperatorExpression(remainingHeadToken, tokens: remainingTokens) { self._parseExpression($0, tokens: $1) }
+                    if parsingTrueExprResult.hasResult {
+                        for _ in 0..<parsingTrueExprResult.advancedBy {
+                            remainingHeadToken = remainingTokens.popLast()
+                        }
+
+                        if let colonToken = remainingHeadToken, case let .Punctuator(colonPunctuator) = colonToken where colonPunctuator == .Colon {
+                            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                            remainingHeadToken = remainingTokens.popLast()
+
+                            let parsingFalseExprResult = _parseTryOperatorExpression(remainingHeadToken, tokens: remainingTokens)
+                            if parsingFalseExprResult.hasResult {
+                                for _ in 0..<parsingFalseExprResult.advancedBy {
+                                    remainingHeadToken = remainingTokens.popLast()
+                                }
+
+                                let ternaryConditionalOpExpr = TernaryConditionalOperatorExpression(
+                                    conditionExpression: lhs,
+                                    trueExpression: parsingTrueExprResult.result,
+                                    falseExpression: parsingFalseExprResult.result)
+                                return ParsingResult<BinaryExpression>.makeResult(ternaryConditionalOpExpr, tokens.count - remainingTokens.count)
+                            }
+                        }
+                    }
                 default:
                     return ParsingResult<BinaryExpression>.makeNoResult()
                 }
@@ -112,6 +139,11 @@ extension Parser {
     func parseAssignmentOperatorExpression() throws -> AssignmentOperatorExpression {
         let assignmentOperatorExpression: AssignmentOperatorExpression = try _parseBinaryExpressionAndCastToType()
         return assignmentOperatorExpression
+    }
+
+    func parseTernaryConditionalOperatorExpression() throws -> TernaryConditionalOperatorExpression {
+        let ternaryConditionalOperatorExpression: TernaryConditionalOperatorExpression = try _parseBinaryExpressionAndCastToType()
+        return ternaryConditionalOperatorExpression
     }
 
     private func _parseBinaryExpressionAndCastToType<U>() throws -> U {
