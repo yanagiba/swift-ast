@@ -42,14 +42,12 @@ let package = Package(
             dependencies: [
                 "source",
                 "parser",
+                "util",
             ]
         ),
     ],
     exclude: [
         "Integrations"
-    ],
-    dependencies: [
-        .Package(url: "https://github.com/kylef/PathKit.git", majorVersion: 0),
     ],
     testDependencies: [
         .Package(url: "https://github.com/kylef/Spectre.git", majorVersion: 0),
