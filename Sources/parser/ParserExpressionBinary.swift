@@ -53,10 +53,16 @@ extension Parser {
     - [x] binary-expression → binary-operator prefix-expression
     - [x] binary-expression → assignment-operator try-operator/opt/ prefix-expression
     - [x] binary-expression → conditional-operator try-operator/opt/ prefix-expression
-    - [ ] binary-expression → type-casting-operator
+    - [x] binary-expression → type-casting-operator
 
     - [x] assignment-operator → `=`
+
     - [x] conditional-operator → `?` try-operator/opt/ expression `:`
+
+    - [x] type-casting-operator → `is` type
+    - [x] type-casting-operator → `as` type
+    - [x] type-casting-operator → `as``?` type
+    - [x] type-casting-operator → `as``!` type
     */
     func _parseBinaryExpression(head: Token?, tokens: [Token], lhs: Expression) -> ParsingResult<BinaryExpression> {
         var remainingTokens = tokens
@@ -64,6 +70,33 @@ extension Parser {
 
         if let currentToken = remainingHeadToken {
             switch currentToken {
+            case .Keyword(let keywordString, _) where keywordString == "is" || keywordString == "as":
+                var castingKind: TypeCastingOperatorExpression.Kind = .Is
+                if keywordString == "as" {
+                    castingKind = .As
+                    if let nextToken = remainingTokens.last, case let .Punctuator(punctuatorType) = nextToken
+                    where punctuatorType == .Exclaim || punctuatorType == .Question {
+                        remainingHeadToken = remainingTokens.popLast()
+                        if punctuatorType == .Exclaim {
+                            castingKind = .ForcedAs
+                        }
+                        else {
+                            castingKind = .OptionalAs
+                        }
+                    }
+                }
+                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingHeadToken = remainingTokens.popLast()
+
+                let parsingTypeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+                if let type = parsingTypeResult.type {
+                    for _ in 0..<parsingTypeResult.advancedBy {
+                        remainingHeadToken = remainingTokens.popLast()
+                    }
+
+                    let typeCastingOpExpr = TypeCastingOperatorExpression(kind: castingKind, expression: lhs, type: type)
+                    return ParsingResult<BinaryExpression>.makeResult(typeCastingOpExpr, tokens.count - remainingTokens.count)
+                }
             case .Punctuator(let punctuatorType):
                 switch punctuatorType {
                 case .Equal:
@@ -144,6 +177,11 @@ extension Parser {
     func parseTernaryConditionalOperatorExpression() throws -> TernaryConditionalOperatorExpression {
         let ternaryConditionalOperatorExpression: TernaryConditionalOperatorExpression = try _parseBinaryExpressionAndCastToType()
         return ternaryConditionalOperatorExpression
+    }
+
+    func parseTypeCastingOperatorExpression() throws -> TypeCastingOperatorExpression {
+        let typeCastingOperatorExpression: TypeCastingOperatorExpression = try _parseBinaryExpressionAndCastToType()
+        return typeCastingOperatorExpression
     }
 
     private func _parseBinaryExpressionAndCastToType<U>() throws -> U {

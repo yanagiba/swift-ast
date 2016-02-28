@@ -35,19 +35,19 @@ func specExpression() {
   }
 
   describe("Parse literal expression") {
-    let testLiteralExpressions = [
-      "nil",
-      "1",
-      "1.23",
-      "\"foo\"",
-      "\"\\(1 + 2)\"",
-      "true",
-      "[1, 2, 3]",
-      "[1: true, 2: false, 3: true, 4: false]",
-      "__FILE__"
-    ]
-    for testLiteral in testLiteralExpressions {
-      $0.it("should return an identifier expression") {
+    $0.it("should return an identifier expression") {
+      let testLiteralExpressions = [
+        "nil",
+        "1",
+        "1.23",
+        "\"foo\"",
+        "\"\\(1 + 2)\"",
+        "true",
+        "[1, 2, 3]",
+        "[1: true, 2: false, 3: true, 4: false]",
+        "__FILE__"
+      ]
+      for testLiteral in testLiteralExpressions {
         parser.setupTestCode(testLiteral)
         guard let expr = try? parser.parseExpression() else {
           throw failure("Failed in getting an expression.")
@@ -60,14 +60,14 @@ func specExpression() {
   }
 
   describe("Parse self expression") {
-    let testLiteralExpressions = [
-      "self",
-      "self.foo",
-      "self[0, 1]",
-      "self.init"
-    ]
-    for testLiteral in testLiteralExpressions {
-      $0.it("should return an identifier expression") {
+    $0.it("should return an identifier expression") {
+      let testLiteralExpressions = [
+        "self",
+        "self.foo",
+        "self[0, 1]",
+        "self.init"
+      ]
+      for testLiteral in testLiteralExpressions {
         parser.setupTestCode(testLiteral)
         guard let expr = try? parser.parseExpression() else {
           throw failure("Failed in getting an expression.")
@@ -80,13 +80,13 @@ func specExpression() {
   }
 
   describe("Parse superclass expression") {
-    let testLiteralExpressions = [
-      "super.foo",
-      "super[0, 1]",
-      "super.init"
-    ]
-    for testLiteral in testLiteralExpressions {
-      $0.it("should return an identifier expression") {
+    $0.it("should return an identifier expression") {
+      let testLiteralExpressions = [
+        "super.foo",
+        "super[0, 1]",
+        "super.init"
+      ]
+      for testLiteral in testLiteralExpressions {
         parser.setupTestCode(testLiteral)
         guard let expr = try? parser.parseExpression() else {
           throw failure("Failed in getting an expression.")
@@ -327,6 +327,26 @@ func specExpression() {
       }
       guard expr is TernaryConditionalOperatorExpression else {
         throw failure("Failed in getting a ternary conditional operator expression.")
+      }
+    }
+  }
+
+  describe("Parse type-casting operator expressions") {
+    $0.it("should return an identifier expression") {
+      let testTypeCasts = [
+        "is",
+        "as",
+        "as?",
+        "as!"
+      ]
+      for testTypeCast in testTypeCasts {
+        parser.setupTestCode("foo \(testTypeCast) bar")
+        guard let expr = try? parser.parseExpression() else {
+          throw failure("Failed in getting an expression.")
+        }
+        guard expr is TypeCastingOperatorExpression else {
+          throw failure("Failed in getting a type-casting operator expression.")
+        }
       }
     }
   }
