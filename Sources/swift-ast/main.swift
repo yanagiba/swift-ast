@@ -17,18 +17,16 @@
 import CoreFoundation
 import Foundation
 
-import PathKit
-
 import source
 import parser
+import util
 
 var filePaths = Process.arguments
 filePaths.removeAtIndex(0)
 
 for filePath in filePaths {
-  let absolutePath = Path(filePath).absolute()
-
-  guard let fileContent = try? absolutePath.read(NSUTF8StringEncoding) else {
+  let absolutePath = filePath.absolutePath()
+  guard let fileContent = try? absolutePath.readFile() else {
     print("Error in reading file \(absolutePath)")
     continue
   }
@@ -50,3 +48,4 @@ for filePath in filePaths {
   print("File contains \(fileContent.characters.count) chars, and it takes \(parserTimeElapsed) seconds to parse.")
   print("----------")
 }
+
