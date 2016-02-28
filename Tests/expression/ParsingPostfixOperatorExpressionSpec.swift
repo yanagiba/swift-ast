@@ -48,7 +48,7 @@ func specPostfixOperatorExpression() {
         "..--"
       ]
       for testString in testStrings {
-        let testCode = "foo \(testString)"
+        let testCode = "foo\(testString)"
         parser.setupTestCode(testCode)
         guard let postfixOpExpr = try? parser.parsePostfixOperatorExpression() else {
           throw failure("Failed in getting a postfix operator expression for code `\(testCode)`.")
@@ -61,7 +61,7 @@ func specPostfixOperatorExpression() {
 
   describe("Parse a embeded postfix operator expression") {
     $0.it("should return a embeded postfix operator expression") {
-      parser.setupTestCode("foo <>")
+      parser.setupTestCode("foo<>")
       guard let postfixOpExpr = try? parser.parsePostfixOperatorExpression() else {
         throw failure("Failed in getting a postfix operator expression.")
       }
@@ -76,7 +76,7 @@ func specPostfixOperatorExpression() {
 
   describe("Parse a multiple-level embeded postfix operator expression") {
     $0.it("should return a multiple-level embeded postfix operator expression") {
-      parser.setupTestCode("foo >>>!!>>")
+      parser.setupTestCode("foo>>>!!>>")
       guard let postfixOpExpr = try? parser.parsePostfixOperatorExpression() else {
         throw failure("Failed in getting a postfix operator expression.")
       }

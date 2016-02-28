@@ -54,6 +54,11 @@ specForcedValueExpression()
 specOptionalChainingExpression()
 specPrefixOperatorExpression()
 specInOutExpression()
+specTryOperatorExpression()
+specBinaryOperatorExpression()
+specAssignmentOperatorExpression()
+specTernaryConditionalOperatorExpression()
+specTypeCastingOperatorExpression()
 specExpression()
 
 // tests for parsing declarations

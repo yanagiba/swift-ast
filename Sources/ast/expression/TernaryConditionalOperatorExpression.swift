@@ -14,25 +14,14 @@
    limitations under the License.
 */
 
-import util
+public class TernaryConditionalOperatorExpression: BinaryExpression {
+  public let conditionExpression: Expression
+  public let trueExpression: Expression
+  public let falseExpression: Expression
 
-public class Expression: Statement {
-    public override func inspect(indent: Int = 0) -> String {
-        return "\(getIndentText(indent))(expression)"
-    }
+  public init(conditionExpression: Expression, trueExpression: Expression, falseExpression: Expression) {
+    self.conditionExpression = conditionExpression
+    self.trueExpression = trueExpression
+    self.falseExpression = falseExpression
+  }
 }
-
-public class BinaryExpression: Expression {
-}
-
-public class PrefixExpression: Expression {
-}
-
-public class PostfixExpression: Expression {
-}
-
-public class PrimaryExpression: PostfixExpression {
-}
-
-public typealias Identifier = String // TODO: identifier will have its own dedicated class when it becomes more complicated
-public typealias Operator = String

@@ -14,25 +14,12 @@
    limitations under the License.
 */
 
-import util
+public class AssignmentOperatorExpression: BinaryExpression {
+  public let leftExpression: Expression
+  public let rightExpression: Expression
 
-public class Expression: Statement {
-    public override func inspect(indent: Int = 0) -> String {
-        return "\(getIndentText(indent))(expression)"
-    }
+  public init(leftExpression: Expression, rightExpression: Expression) {
+    self.leftExpression = leftExpression
+    self.rightExpression = rightExpression
+  }
 }
-
-public class BinaryExpression: Expression {
-}
-
-public class PrefixExpression: Expression {
-}
-
-public class PostfixExpression: Expression {
-}
-
-public class PrimaryExpression: PostfixExpression {
-}
-
-public typealias Identifier = String // TODO: identifier will have its own dedicated class when it becomes more complicated
-public typealias Operator = String

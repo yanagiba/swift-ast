@@ -23,9 +23,43 @@ extension Parser {
     - [x] prefix-expression → in-out-expression
     - [x] in-out-expression → `&` identifier
     */
+    func _parsePrefixExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Amp {
+            remainingHeadToken = remainingTokens.popLast()
+            guard let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) else {
+                return ParsingResult<Expression>.makeNoResult()
+            }
+            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+            let inOutExpr = InOutExpression(identifier: identifier)
+            return ParsingResult<Expression>.makeResult(inOutExpr, tokens.count - remainingTokens.count)
+        }
+
+        var prefixOperator: String? = nil
+        if let token = remainingHeadToken, case let .Operator(operatorString) = token {
+            remainingHeadToken = remainingTokens.popLast()
+            prefixOperator = operatorString
+        }
+        let parsePostfixExpressionResult = _parsePostfixExpression(remainingHeadToken, tokens: remainingTokens)
+        if parsePostfixExpressionResult.hasResult {
+            if let prefixOperator = prefixOperator {
+                let prefixOperatorExpr = PrefixOperatorExpression(
+                    prefixOperator: prefixOperator, postfixExpression: parsePostfixExpressionResult.result)
+                return ParsingResult<Expression>.makeResult(prefixOperatorExpr, tokens.count - remainingTokens.count)
+            }
+            else {
+                return ParsingResult<Expression>.wrap(parsePostfixExpressionResult)
+            }
+        }
+
+        return ParsingResult<Expression>.makeNoResult()
+    }
 
     func parsePrefixOperatorExpression() throws -> PrefixOperatorExpression {
-        let result = _parseExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = _parsePrefixExpression(currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard result.hasResult else {
             throw ParserError.InternalError // TODO: better error handling
@@ -45,7 +79,7 @@ extension Parser {
     }
 
     func parseInOutExpression() throws -> InOutExpression {
-        let result = _parseExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = _parsePrefixExpression(currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard result.hasResult else {
             throw ParserError.InternalError // TODO: better error handling

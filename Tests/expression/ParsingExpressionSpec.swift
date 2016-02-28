@@ -35,19 +35,19 @@ func specExpression() {
   }
 
   describe("Parse literal expression") {
-    let testLiteralExpressions = [
-      "nil",
-      "1",
-      "1.23",
-      "\"foo\"",
-      "\"\\(1 + 2)\"",
-      "true",
-      "[1, 2, 3]",
-      "[1: true, 2: false, 3: true, 4: false]",
-      "__FILE__"
-    ]
-    for testLiteral in testLiteralExpressions {
-      $0.it("should return an identifier expression") {
+    $0.it("should return an identifier expression") {
+      let testLiteralExpressions = [
+        "nil",
+        "1",
+        "1.23",
+        "\"foo\"",
+        "\"\\(1 + 2)\"",
+        "true",
+        "[1, 2, 3]",
+        "[1: true, 2: false, 3: true, 4: false]",
+        "__FILE__"
+      ]
+      for testLiteral in testLiteralExpressions {
         parser.setupTestCode(testLiteral)
         guard let expr = try? parser.parseExpression() else {
           throw failure("Failed in getting an expression.")
@@ -60,14 +60,14 @@ func specExpression() {
   }
 
   describe("Parse self expression") {
-    let testLiteralExpressions = [
-      "self",
-      "self.foo",
-      "self[0, 1]",
-      "self.init"
-    ]
-    for testLiteral in testLiteralExpressions {
-      $0.it("should return an identifier expression") {
+    $0.it("should return an identifier expression") {
+      let testLiteralExpressions = [
+        "self",
+        "self.foo",
+        "self[0, 1]",
+        "self.init"
+      ]
+      for testLiteral in testLiteralExpressions {
         parser.setupTestCode(testLiteral)
         guard let expr = try? parser.parseExpression() else {
           throw failure("Failed in getting an expression.")
@@ -80,13 +80,13 @@ func specExpression() {
   }
 
   describe("Parse superclass expression") {
-    let testLiteralExpressions = [
-      "super.foo",
-      "super[0, 1]",
-      "super.init"
-    ]
-    for testLiteral in testLiteralExpressions {
-      $0.it("should return an identifier expression") {
+    $0.it("should return an identifier expression") {
+      let testLiteralExpressions = [
+        "super.foo",
+        "super[0, 1]",
+        "super.init"
+      ]
+      for testLiteral in testLiteralExpressions {
         parser.setupTestCode(testLiteral)
         guard let expr = try? parser.parseExpression() else {
           throw failure("Failed in getting an expression.")
@@ -150,7 +150,7 @@ func specExpression() {
 
   describe("Parse a postfix operator expression") {
     $0.it("should return a postfix operator expression") {
-      parser.setupTestCode("happy ^-^")
+      parser.setupTestCode("happy^-^")
       guard let expr = try? parser.parseExpression() else {
         throw failure("Failed in getting an expression.")
       }
@@ -280,6 +280,102 @@ func specExpression() {
       guard expr is InOutExpression else {
         throw failure("Failed in getting an in-out expression.")
       }
+    }
+  }
+
+  describe("Parse a try operator expression") {
+    $0.it("should return a try operator expression") {
+      parser.setupTestCode("try foo")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is TryOperatorExpression else {
+        throw failure("Failed in getting a try operator expression.")
+      }
+    }
+  }
+
+  describe("Parse a binary operator expression") {
+    $0.it("should return a binary operator expression") {
+      parser.setupTestCode("foo == bar")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is BinaryOperatorExpression else {
+        throw failure("Failed in getting a binary operator expression.")
+      }
+    }
+  }
+
+  describe("Parse an assignment operator expression") {
+    $0.it("should return an assignment operator expression") {
+      parser.setupTestCode("a = 1")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is AssignmentOperatorExpression else {
+        throw failure("Failed in getting an assignment operator expression.")
+      }
+    }
+  }
+
+  describe("Parse a ternary conditional operator expression") {
+    $0.it("should return a ternary conditional operator expression") {
+      parser.setupTestCode("a ? b : c")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+      guard expr is TernaryConditionalOperatorExpression else {
+        throw failure("Failed in getting a ternary conditional operator expression.")
+      }
+    }
+  }
+
+  describe("Parse type-casting operator expressions") {
+    $0.it("should return an identifier expression") {
+      let testTypeCasts = [
+        "is",
+        "as",
+        "as?",
+        "as!"
+      ]
+      for testTypeCast in testTypeCasts {
+        parser.setupTestCode("foo \(testTypeCast) bar")
+        guard let expr = try? parser.parseExpression() else {
+          throw failure("Failed in getting an expression.")
+        }
+        guard expr is TypeCastingOperatorExpression else {
+          throw failure("Failed in getting a type-casting operator expression.")
+        }
+      }
+    }
+  }
+
+  describe("Parse binary expressions") {
+    $0.it("should return a binary expression with embedded binary expressions") {
+      parser.setupTestCode("1 + 2 * 3 - 4")
+      guard let expr = try? parser.parseExpression() else {
+        throw failure("Failed in getting an expression.")
+      }
+
+      guard let biExpr1 = expr as? BinaryOperatorExpression else {
+        throw failure("Failed in getting a binary operator expression.")
+      }
+      try expect(biExpr1.binaryOperator) == "-"
+      try expect(biExpr1.rightExpression is IntegerLiteralExpression).to.beTrue()
+
+      guard let biExpr2 = biExpr1.leftExpression as? BinaryOperatorExpression else {
+        throw failure("Failed in getting a binary operator expression.")
+      }
+      try expect(biExpr2.binaryOperator) == "*"
+      try expect(biExpr2.rightExpression is IntegerLiteralExpression).to.beTrue()
+
+      guard let biExpr3 = biExpr2.leftExpression as? BinaryOperatorExpression else {
+        throw failure("Failed in getting a binary operator expression.")
+      }
+      try expect(biExpr3.binaryOperator) == "+"
+      try expect(biExpr3.leftExpression is IntegerLiteralExpression).to.beTrue()
+      try expect(biExpr3.rightExpression is IntegerLiteralExpression).to.beTrue()
     }
   }
 }

@@ -19,7 +19,7 @@ import ast
 
 extension Parser {
     /*
-    - [_] expression → try-operator/opt/ prefix-expression binary-expressions/opt/
+    - [x] expression → try-operator/opt/ prefix-expression binary-expressions/opt/
     */
     func parseExpression() throws -> Expression {
         return try _parseAndUnwrapParsingResult {
@@ -31,35 +31,97 @@ extension Parser {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Amp {
+        let parsingTryOpExprResult = _parseTryOperatorExpression(remainingHeadToken, tokens: remainingTokens)
+        guard parsingTryOpExprResult.hasResult else {
+            return parsingTryOpExprResult
+        }
+        for _ in 0..<parsingTryOpExprResult.advancedBy {
             remainingHeadToken = remainingTokens.popLast()
-            guard let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) else {
-                return ParsingResult<Expression>.makeNoResult()
+        }
+
+        let parsingBiExprsResult = _parseBinaryExpressions(remainingHeadToken, tokens: remainingTokens, lhs: parsingTryOpExprResult.result)
+        guard parsingBiExprsResult.hasResult else {
+            return parsingTryOpExprResult
+        }
+        for _ in 0..<parsingBiExprsResult.advancedBy {
+            remainingHeadToken = remainingTokens.popLast()
+        }
+
+        return ParsingResult<Expression>.makeResult(parsingBiExprsResult.result, tokens.count - remainingTokens.count)
+    }
+
+    func parseTryOperatorExpression() throws -> TryOperatorExpression {
+        let result = _parseTryOperatorExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+
+        guard result.hasResult else {
+            throw ParserError.InternalError // TODO: better error handling
+        }
+
+        guard let tryOperatorExpression = result.result as? TryOperatorExpression else {
+            throw ParserError.InternalError
+        }
+
+        for _ in 0..<result.advancedBy {
+            shiftToken()
+        }
+
+        try rewindAllWhitespaces()
+
+        return tryOperatorExpression
+    }
+
+    func _parseTryOperatorExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
+        return _parseAndWrapTryOperatorExpression(head, tokens: tokens) { self._parsePrefixExpression($0, tokens: $1) }
+    }
+
+    func _parseAndWrapTryOperatorExpression(
+        head: Token?,
+        tokens: [Token],
+        parsingFunction: (Token?, [Token]) -> ParsingResult<Expression>) -> ParsingResult<Expression> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        var tryOperatorKind: TryOperatorExpression.Kind? = nil
+        if let keywordToken = remainingHeadToken, case let .Keyword(keywordString, _) = keywordToken where keywordString == "try" {
+            tryOperatorKind = .Try
+
+            if let punctuatorToken = remainingTokens.last, case let .Punctuator(punctuatorType) = punctuatorToken
+            where punctuatorType == .Exclaim || punctuatorType == .Question {
+                remainingHeadToken = remainingTokens.popLast()
+                if punctuatorType == .Exclaim {
+                    tryOperatorKind = .ForcedTry
+                }
+                else {
+                    tryOperatorKind = .OptionalTry
+                }
             }
+
             remainingTokens = skipWhitespacesForTokens(remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
-            let inOutExpr = InOutExpression(identifier: identifier)
-            return ParsingResult<Expression>.makeResult(inOutExpr, tokens.count - remainingTokens.count)
         }
 
-        var prefixOperator: String? = nil
-        if let token = remainingHeadToken, case let .Operator(operatorString) = token {
+        let parseExpressionResult = parsingFunction(remainingHeadToken, remainingTokens)
+        guard parseExpressionResult.hasResult else {
+            return ParsingResult<Expression>.makeNoResult()
+        }
+        for _ in 0..<parseExpressionResult.advancedBy {
             remainingHeadToken = remainingTokens.popLast()
-            prefixOperator = operatorString
-        }
-        let parsePostfixExpressionResult = _parsePostfixExpression(remainingHeadToken, tokens: remainingTokens)
-        if parsePostfixExpressionResult.hasResult {
-            if let prefixOperator = prefixOperator {
-                let prefixOperatorExpr = PrefixOperatorExpression(
-                    prefixOperator: prefixOperator, postfixExpression: parsePostfixExpressionResult.result)
-                return ParsingResult<Expression>.makeResult(prefixOperatorExpr, tokens.count - remainingTokens.count)
-            }
-            else {
-                return ParsingResult<Expression>.wrap(parsePostfixExpressionResult)
-            }
         }
 
-        return ParsingResult<Expression>.makeNoResult()
+        if let tryOperatorKind = tryOperatorKind {
+            let prefixExpression = parseExpressionResult.result
+            let tryOperatorExpr: TryOperatorExpression
+            switch tryOperatorKind {
+            case .Try:
+                tryOperatorExpr = TryOperatorExpression.makeTryOperatorExpression(prefixExpression)
+            case .OptionalTry:
+                tryOperatorExpr = TryOperatorExpression.makeOptionalTryOperatorExpression(prefixExpression)
+            case .ForcedTry:
+                tryOperatorExpr = TryOperatorExpression.makeForcedTryOperatorExpression(prefixExpression)
+            }
+            return ParsingResult<Expression>.makeResult(tryOperatorExpr, tokens.count - remainingTokens.count)
+        }
+        return parseExpressionResult
     }
 
     /*
