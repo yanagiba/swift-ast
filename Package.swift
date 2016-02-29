@@ -45,11 +45,20 @@ let package = Package(
                 "util",
             ]
         ),
+        Target(
+            name: "xctest",
+            dependencies: [
+                "util",
+                "source",
+                "ast",
+                "parser",
+            ]
+        )
     ],
     exclude: [
         "Integrations"
     ],
-    testDependencies: [
-        .Package(url: "https://github.com/kylef/Spectre.git", majorVersion: 0),
+    dependencies: [
+        .Package(url: "https://github.com/norio-nomura/swift-corelibs-xctest.git", majorVersion: 0),
     ]
 )
