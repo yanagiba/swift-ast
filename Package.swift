@@ -46,7 +46,7 @@ let package = Package(
             ]
         ),
         Target(
-            name: "xctest",
+            name: "mytest",
             dependencies: [
                 "util",
                 "source",
