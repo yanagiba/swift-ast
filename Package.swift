@@ -59,6 +59,6 @@ let package = Package(
         "Integrations"
     ],
     dependencies: [
-        .Package(url: "https://github.com/norio-nomura/swift-corelibs-xctest.git", majorVersion: 0),
+        .Package(url: "https://github.com/ryuichis/swift-corelibs-xctest.git", Version(16,3,1)),
     ]
 )
