@@ -47,9 +47,6 @@ let package = Package(
         ),
     ],
     exclude: [
-        "Integrations",
-    ],
-    dependencies: [
-        //.Package(url: "https://github.com/ryuichis/swift-corelibs-xctest.git", Version(16,4,1)),
+        "Integrations", "Spectre"
     ]
 )
