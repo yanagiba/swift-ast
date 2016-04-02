@@ -24,7 +24,7 @@ build:
 	swift build
 
 test: build
-	./$(BUILD_DIR)/mytest
+	swift test
 
 install:
 	$(COPY) $(BUILD_DIR)/swift-ast $(SWIFT_AST)
