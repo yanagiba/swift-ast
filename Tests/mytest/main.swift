@@ -16,6 +16,6 @@
 
 import XCTest
 
-XCTMain([
-  CanaryTests(),
-])
+// XCTMain([
+//   CanaryTests(),
+// ])

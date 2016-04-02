@@ -171,6 +171,6 @@ private func toInspectionText(array: [String], _ keyName: String) -> String {
         return ""
     }
 
-    let inspectionText = array.joinWithSeparator(",")
+    let inspectionText = array.joined(separator: ",")
     return " \(keyName)=\(inspectionText)"
 }

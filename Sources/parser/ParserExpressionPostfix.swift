@@ -127,7 +127,7 @@ extension Parser {
     }
 
     private func __skipWhitespacesAndPreservePreviousToken( // method with side effect
-        inout remainingTokens: [Token], inout _ remainingHeadToken: Token?, inout _ previousUsedToken: Token?) {
+        remainingTokens: inout [Token], _ remainingHeadToken: inout Token?, _ previousUsedToken: inout Token?) {
         __advancedTokensAndPreservePreviousToken(
             remainingTokens.count - skipWhitespacesForTokens(remainingTokens).count + 1,
             &remainingTokens,
@@ -137,9 +137,9 @@ extension Parser {
 
     private func __advancedTokensAndPreservePreviousToken( // method with side effect
         advancedBy: Int,
-        inout _ remainingTokens: [Token],
-        inout _ remainingHeadToken: Token?,
-        inout _ previousUsedToken: Token?) {
+        _ remainingTokens: inout [Token],
+        _ remainingHeadToken: inout Token?,
+        _ previousUsedToken: inout Token?) {
         for _ in 0..<advancedBy {
             previousUsedToken = remainingHeadToken
             remainingHeadToken = remainingTokens.popLast()

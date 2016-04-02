@@ -44,7 +44,7 @@ public class Parser {
 
     func parse(source: SourceFile, _ lexicalContext: LexicalContext) -> (astContext: ASTContext, errors: [String]) {
         topLevelCode = TopLevelDeclaration()
-        reversedTokens = lexicalContext.tokens.reverse()
+        reversedTokens = lexicalContext.tokens.reversed()
         consumedTokens = [TokenWithLocation]()
 
         var parserErrors = [String]() // TODO: we probably will handle this with diagnostic classes

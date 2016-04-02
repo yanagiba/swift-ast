@@ -22,7 +22,7 @@ public class GenericArgumentClause {
     }
 
     public func inspect() -> String {
-        return "<\(types.map { $0.inspect() }.joinWithSeparator(", "))>"
+        return "<\(types.map { $0.inspect() }.joined(separator: ", "))>"
     }
 }
 
@@ -87,9 +87,10 @@ public class GenericParameterClause {
     }
 
     public func inspect() -> String {
-        var inspectionStr = "<\(parameters.map { $0.inspect() }.joinWithSeparator(", "))"
+        var inspectionStr = "<\(parameters.map { $0.inspect() }.joined(separator: ", "))"
         if !requirements.isEmpty {
-            inspectionStr += " where \(requirements.map { $0.inspect() }.joinWithSeparator(", "))"
+            inspectionStr += " where \(requirements.map { $0.inspect() }.joined(separator: ", "))"
+            inspectionStr += " where \(requirements.map { $0.inspect() }.joined(separator: ", "))"
         }
         return inspectionStr + ">"
     }

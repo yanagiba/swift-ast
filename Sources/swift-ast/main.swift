@@ -22,7 +22,7 @@ import parser
 import util
 
 var filePaths = Process.arguments
-filePaths.removeAtIndex(0)
+filePaths.remove(at: 0)
 
 for filePath in filePaths {
   let absolutePath = filePath.absolutePath()

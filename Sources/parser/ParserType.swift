@@ -688,7 +688,7 @@ extension Parser {
             return "class"
         }
         else if let typeIdentifier = try? parseTypeIdentifier() {
-            return typeIdentifier.names.joinWithSeparator(".")
+            return typeIdentifier.names.joined(separator: ".")
         }
         else {
             return nil

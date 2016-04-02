@@ -55,6 +55,6 @@ public class TypeIdentifier: Type {
     }
 
     public func inspect() -> String {
-        return _namedTypes.map { $0.inspect() }.joinWithSeparator(".")
+        return _namedTypes.map { $0.inspect() }.joined(separator: ".")
     }
 }

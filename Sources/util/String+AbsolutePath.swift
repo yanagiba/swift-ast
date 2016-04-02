@@ -43,7 +43,7 @@ public extension String {
       }
     }
 
-    let absolutePath = pathHead.joinWithSeparator("/") + "/" + pathTail.joinWithSeparator("/")
-    return absolutePath.substringFromIndex(absolutePath.startIndex.successor())
+    let absolutePath = pathHead.joined(separator: "/") + "/" + pathTail.joined(separator: "/")
+    return absolutePath.substring(from: absolutePath.startIndex.successor())
   }
 }

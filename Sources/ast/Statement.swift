@@ -38,6 +38,6 @@ public class Statement: ASTNode {
     }
 
     func getIndentText(indent: Int) -> String {
-        return String(count: (indent * 2), repeatedValue:" " as Character)
+        return String(repeating: (" " as Character), count: (indent * 2))
     }
 }

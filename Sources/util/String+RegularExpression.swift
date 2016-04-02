@@ -18,15 +18,15 @@ import Foundation
 
 public extension String {
     func match(regex: NSRegularExpression, closure: (matches: [String]) -> ()) -> String? {
-        if let match = regex.firstMatchInString(self, options: NSMatchingOptions(rawValue: 0), range: NSMakeRange(0, self.utf16.count)) {
+        if let match = regex.firstMatch(in: self, options: NSMatchingOptions(rawValue: 0), range: NSMakeRange(0, self.utf16.count)) {
             var groups = [String]()
             for index in 0..<match.numberOfRanges {
-                let rangeAtIndex = match.rangeAtIndex(index)
+                let rangeAtIndex = match.range(at: index)
                 if rangeAtIndex.location == NSNotFound {
                     groups.append("")
                 }
                 else {
-                    let matchedGroup = self[self.startIndex.advancedBy(rangeAtIndex.location)..<self.startIndex.advancedBy(rangeAtIndex.location + rangeAtIndex.length)]
+                    let matchedGroup = self[self.startIndex.advanced(by: rangeAtIndex.location)..<self.startIndex.advanced(by: rangeAtIndex.location + rangeAtIndex.length)]
                     groups.append(matchedGroup)
                 }
             }
