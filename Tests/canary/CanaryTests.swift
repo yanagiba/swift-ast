@@ -16,7 +16,7 @@
 
 import XCTest
 
-class CanaryTestCase: XCTestCase {
+class CanaryTests: XCTestCase {
   func testCanary() {
     XCTAssertTrue(true)
   }
