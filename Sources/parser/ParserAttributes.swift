@@ -31,7 +31,7 @@ extension Parser {
     - [_] error handling
     */
     func parseAttributes() -> [Attribute] {
-        let parsingAttributesResult = parseAttributes(currentToken, tokens: reversedTokens.map { $0.0 })
+        let parsingAttributesResult = parseAttributes(head: currentToken, tokens: reversedTokens.map { $0.0 })
         for _ in 0..<parsingAttributesResult.advancedBy {
             shiftToken()
         }
@@ -44,7 +44,7 @@ extension Parser {
 
         var declarationAttributes = [Attribute]()
         while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .At {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             guard let attributeName = readIdentifier(forToken: remainingHeadToken) else {
@@ -52,7 +52,7 @@ extension Parser {
             }
 
             declarationAttributes.append(Attribute(name: attributeName))
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
         }
         return (declarationAttributes, tokens.count - remainingTokens.count)

@@ -17,7 +17,7 @@
 import source
 
 extension Parser {
-    func skipWhitespacesForTokens(tokens: [Token], treatSemiAsWhitespace: Bool = false) -> [Token] {
+    func skipWhitespaces(for tokens: [Token], treatSemiAsWhitespace: Bool = false) -> [Token] {
         var remainingTokens = tokens
         var remainingHeadToken: Token?
         var isWhitespace = false
@@ -40,7 +40,7 @@ extension Parser {
         return remainingTokens
     }
 
-    func skipWhitespaces(treatSemiAsWhitespace treatSemiAsWhitespace: Bool = false) {
+    func skipWhitespaces(treatSemiAsWhitespace: Bool = false) {
         shiftToken()
 
         while let token = currentToken {
@@ -69,7 +69,7 @@ extension Parser {
         }
     }
 
-    func ensureStatementSeparator(stopAtRightBrace stopAtRightBrace: Bool = false) throws {
+    func ensureStatementSeparator(stopAtRightBrace: Bool = false) throws {
         shiftToken()
 
         while let token = currentToken {

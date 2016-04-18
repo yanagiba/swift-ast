@@ -28,7 +28,7 @@ public enum TerminalColor: Int {
 }
 
 public extension String {
-    public func terminalColor(color: TerminalColor = .Default) -> String {
+    public func toTerminalString(with color: TerminalColor = .Default) -> String {
         let defaultColor = "\u{001B}[0m"
         switch color {
             case .Default:

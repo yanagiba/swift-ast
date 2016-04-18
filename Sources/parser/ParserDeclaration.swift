@@ -75,7 +75,7 @@ extension Parser {
 
     func isStartOfDeclaration(headToken: Token?, tailTokens: [TokenWithLocation]) -> Bool {
         let tailOnlyTokens = tailTokens.map { $0.0 }
-        return isStartOfDeclaration(headToken, tailTokens: tailOnlyTokens)
+        return isStartOfDeclaration(headToken: headToken, tailTokens: tailOnlyTokens)
     }
 
     func isStartOfDeclaration(headToken: Token?, tailTokens: [Token]) -> Bool {
@@ -89,12 +89,12 @@ extension Parser {
                 return false
             }
 
-            var remainingTokens = skipWhitespacesForTokens(tailTokens)
+            var remainingTokens = skipWhitespaces(for: tailTokens)
             guard let remainingHeadToken = remainingTokens.popLast(), case .Identifier(_) = remainingHeadToken else {
                 return false
             }
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
-            return isStartOfDeclaration(remainingTokens.popLast(), tailTokens: remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
+            return isStartOfDeclaration(headToken: remainingTokens.popLast(), tailTokens: remainingTokens)
         case let .Keyword(_, type):
             switch type {
             case .Declaration:
@@ -103,8 +103,8 @@ extension Parser {
                 guard contextualType == .DeclarationModifier else {
                     return false
                 }
-                var remainingTokens = skipWhitespacesForTokens(tailTokens)
-                return isStartOfDeclaration(remainingTokens.popLast(), tailTokens: remainingTokens)
+                var remainingTokens = skipWhitespaces(for: tailTokens)
+                return isStartOfDeclaration(headToken: remainingTokens.popLast(), tailTokens: remainingTokens)
             default:
                 return false
             }

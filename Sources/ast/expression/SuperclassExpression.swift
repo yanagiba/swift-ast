@@ -31,11 +31,11 @@ public class SuperclassExpression: PrimaryExpression {
     self.subscriptExpressions = subscriptExpressions
   }
 
-  public class func makeSuperclassMethodExpression(methodIdentifier: Identifier) -> SuperclassExpression {
+  public class func makeSuperclassMethodExpression(_ methodIdentifier: Identifier) -> SuperclassExpression {
     return SuperclassExpression(kind: .Method, methodIdentifier: methodIdentifier)
   }
 
-  public class func makeSuperclassSubscriptExpression(subscriptExpressions: [Expression]) -> SuperclassExpression {
+  public class func makeSuperclassSubscriptExpression(_ subscriptExpressions: [Expression]) -> SuperclassExpression {
     return SuperclassExpression(kind: .Subscript, subscriptExpressions: subscriptExpressions)
   }
 

@@ -37,7 +37,8 @@ public class FunctionCallExpression: PostfixExpression {
   }
 
   public class func makeParenthesizedFunctionCallExpression(
-    postfixExpression: PostfixExpression, _ parenthesizedExpression: ParenthesizedExpression) -> FunctionCallExpression {
+    _ postfixExpression: PostfixExpression,
+    _ parenthesizedExpression: ParenthesizedExpression) -> FunctionCallExpression {
     return FunctionCallExpression(
       kind: .Parenthesized,
       postfixExpression: postfixExpression,
@@ -46,7 +47,7 @@ public class FunctionCallExpression: PostfixExpression {
   }
 
   public class func makeClosureFunctionCallExpression(
-    postfixExpression: PostfixExpression,
+    _ postfixExpression: PostfixExpression,
     _ parenthesizedExpression: ParenthesizedExpression?,
     _ trailingClosure: ClosureExpression) -> FunctionCallExpression {
     return FunctionCallExpression(

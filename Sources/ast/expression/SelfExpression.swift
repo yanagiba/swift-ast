@@ -36,11 +36,11 @@ public class SelfExpression: PrimaryExpression {
     return SelfExpression(kind: .Self)
   }
 
-  public class func makeSelfMethodExpression(methodIdentifier: Identifier) -> SelfExpression {
+  public class func makeSelfMethodExpression(_ methodIdentifier: Identifier) -> SelfExpression {
     return SelfExpression(kind: .Method, methodIdentifier: methodIdentifier)
   }
 
-  public class func makeSelfSubscriptExpression(subscriptExpressions: [Expression]) -> SelfExpression {
+  public class func makeSelfSubscriptExpression(_ subscriptExpressions: [Expression]) -> SelfExpression {
     return SelfExpression(kind: .Subscript, subscriptExpressions: subscriptExpressions)
   }
 

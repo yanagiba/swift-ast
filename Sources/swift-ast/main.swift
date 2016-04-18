@@ -35,7 +35,7 @@ for filePath in filePaths {
 
   let parser = Parser()
   let parserStartTime = CFAbsoluteTimeGetCurrent()
-  let (astContext, errors) = parser.parse(sourceFile)
+  let (astContext, errors) = parser.parse(source: sourceFile)
   let parserTimeElapsed = CFAbsoluteTimeGetCurrent() - parserStartTime
 
   for error in errors {

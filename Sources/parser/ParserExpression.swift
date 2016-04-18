@@ -23,7 +23,7 @@ extension Parser {
     */
     func parseExpression() throws -> Expression {
         return try _parseAndUnwrapParsingResult {
-            self._parseExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parseExpression(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
@@ -31,7 +31,7 @@ extension Parser {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        let parsingTryOpExprResult = _parseTryOperatorExpression(remainingHeadToken, tokens: remainingTokens)
+        let parsingTryOpExprResult = _parseTryOperatorExpression(head: remainingHeadToken, tokens: remainingTokens)
         guard parsingTryOpExprResult.hasResult else {
             return parsingTryOpExprResult
         }
@@ -39,7 +39,7 @@ extension Parser {
             remainingHeadToken = remainingTokens.popLast()
         }
 
-        let parsingBiExprsResult = _parseBinaryExpressions(remainingHeadToken, tokens: remainingTokens, lhs: parsingTryOpExprResult.result)
+        let parsingBiExprsResult = _parseBinaryExpressions(head: remainingHeadToken, tokens: remainingTokens, lhs: parsingTryOpExprResult.result)
         guard parsingBiExprsResult.hasResult else {
             return parsingTryOpExprResult
         }
@@ -51,7 +51,7 @@ extension Parser {
     }
 
     func parseTryOperatorExpression() throws -> TryOperatorExpression {
-        let result = _parseTryOperatorExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = _parseTryOperatorExpression(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard result.hasResult else {
             throw ParserError.InternalError // TODO: better error handling
@@ -71,7 +71,9 @@ extension Parser {
     }
 
     func _parseTryOperatorExpression(head: Token?, tokens: [Token]) -> ParsingResult<Expression> {
-        return _parseAndWrapTryOperatorExpression(head, tokens: tokens) { self._parsePrefixExpression($0, tokens: $1) }
+        return _parseAndWrapTryOperatorExpression(head: head, tokens: tokens) {
+            self._parsePrefixExpression(head: $0, tokens: $1)
+        }
     }
 
     func _parseAndWrapTryOperatorExpression(
@@ -96,7 +98,7 @@ extension Parser {
                 }
             }
 
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
         }
 
@@ -129,7 +131,7 @@ extension Parser {
     */
     func parseExpressionList() throws -> [Expression] {
         return try _parseAndUnwrapParsingResult {
-            self._parseExpressionList(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parseExpressionList(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
@@ -137,7 +139,7 @@ extension Parser {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        let firstExpressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
+        let firstExpressionResult = _parseExpression(head: remainingHeadToken, tokens: remainingTokens)
         guard firstExpressionResult.hasResult else {
             return ParsingResult<[Expression]>.makeNoResult()
         }
@@ -149,10 +151,10 @@ extension Parser {
         expressions.append(firstExpressionResult.result)
 
         while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Comma {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            let expressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
+            let expressionResult = _parseExpression(head: remainingHeadToken, tokens: remainingTokens)
             guard expressionResult.hasResult else {
                 return ParsingResult<[Expression]>.makeNoResult() // TODO: error handling
             }

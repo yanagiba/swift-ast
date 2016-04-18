@@ -38,11 +38,11 @@ public class Parser {
 
     public func parse(source: SourceFile) -> (astContext: ASTContext, errors: [String]) {
         let lexer = Lexer()
-        let lexicalContext = lexer.lex(source)
-        return parse(source, lexicalContext)
+        let lexicalContext = lexer.lex(source: source)
+        return parse(source: source, lexicalContext: lexicalContext)
     }
 
-    func parse(source: SourceFile, _ lexicalContext: LexicalContext) -> (astContext: ASTContext, errors: [String]) {
+    func parse(source: SourceFile, lexicalContext: LexicalContext) -> (astContext: ASTContext, errors: [String]) {
         topLevelCode = TopLevelDeclaration()
         reversedTokens = lexicalContext.tokens.reversed()
         consumedTokens = [TokenWithLocation]()
@@ -58,7 +58,7 @@ public class Parser {
 
         while let token = currentToken {
             do {
-                if isStartOfDeclaration(token, tailTokens: reversedTokens) {
+                if isStartOfDeclaration(headToken: token, tailTokens: reversedTokens) {
                     try parseDeclaration()
                 }
             }

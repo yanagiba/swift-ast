@@ -40,7 +40,7 @@ extension Parser {
     - [_] error handling
     */
     func parseEnumDeclaration(
-        attributes attributes: [Attribute],
+        attributes: [Attribute],
         declarationModifiers: [String],
         accessLevelModifier: AccessLevel,
         startLocation: SourceLocation) throws {
@@ -56,7 +56,7 @@ extension Parser {
         let genericParameterClause = try? parseGenericParameterClause()
 
         let typeInheritanceClause = try parseTypeInheritanceClause()
-        let (containsClassRequirement, typeInheritance) = refineTypeInheritanceClause(typeInheritanceClause)
+        let (containsClassRequirement, typeInheritance) = refineTypeInheritanceClause(for: typeInheritanceClause)
 
         if let token = currentToken, case let .Punctuator(type) = token where type == .LeftBrace {
             skipWhitespaces()
@@ -110,7 +110,7 @@ extension Parser {
                 if let currentRange = currentRange {
                     enumDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
                 }
-                topLevelCode.append(enumDecl)
+                topLevelCode.append(statement: enumDecl)
                 switch accessLevelModifier {
                 case .PublicSet, .InternalSet, .PrivateSet:
                     throw ParserError.InvalidModifierToDeclaration(accessLevelModifier.errorDescription)
@@ -137,7 +137,7 @@ extension Parser {
         }
     }
 
-    private func parseEnumCaseDeclaration(attributes attributes: [Attribute], caseModifiers: [String]) throws -> EnumCaseDelcaration {
+    private func parseEnumCaseDeclaration(attributes: [Attribute], caseModifiers: [String]) throws -> EnumCaseDelcaration {
         var enumCaseElements = [EnumCaseElementDeclaration]()
         guard let enumCaseName = readIdentifier(includeContextualKeywords: true) else {
             throw ParserError.MissingIdentifier
@@ -160,7 +160,7 @@ extension Parser {
             modifiers: caseModifiers.filter({ $0 == "indirect" })) // TODO: we simply remove all non-indirect modifiers, need to throw errors
     }
 
-    private func parseEnumCaseElement(caseName caseName: String) throws -> EnumCaseElementDeclaration {
+    private func parseEnumCaseElement(caseName: String) throws -> EnumCaseElementDeclaration {
         if let token = currentToken, case let .Punctuator(punctuatorType) = token {
             switch punctuatorType {
             case .Equal:
@@ -174,13 +174,13 @@ extension Parser {
         return EnumCaseElementDeclaration(name: caseName)
     }
 
-    private func parseUnionStyleEnumCaseElement(caseName caseName: String) throws -> EnumCaseElementDeclaration {
+    private func parseUnionStyleEnumCaseElement(caseName: String) throws -> EnumCaseElementDeclaration {
         let tupleType = try parseTupleType()
 
         return EnumCaseElementDeclaration(name: caseName, union: tupleType)
     }
 
-    private func parseRawValueStyleEnumCaseElement(caseName caseName: String) throws -> EnumCaseElementDeclaration {
+    private func parseRawValueStyleEnumCaseElement(caseName: String) throws -> EnumCaseElementDeclaration {
         skipWhitespaces()
         guard let rawValueLiteralString = getLiteralString() else {
             throw ParserError.InternalError // TODO: better error handling
@@ -217,7 +217,7 @@ extension Parser {
         }
     }
 
-    private func refineTypeInheritanceClause(types: [String]) -> (Bool, [String]) {
+    private func refineTypeInheritanceClause(for types: [String]) -> (Bool, [String]) {
         var refinedTypes = [String]()
         var containsClassRequirement = false
         for type in types {

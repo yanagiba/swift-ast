@@ -38,6 +38,6 @@ public class TypeAliasDeclaration: Declaration {
         if !attrs.isEmpty {
             attrs = " attribtues=\(attributes.map({ return $0.name }).joined(separator: ","))"
         }
-        return "\(getIndentText(indent))(type-alias-declaration '\(name)'\(attrs) access='\(accessLevel)' type='\(type.inspect())' \(getSourceRangeText()))".terminalColor(.Green)
+        return "\(getIndentText(indent))(type-alias-declaration '\(name)'\(attrs) access='\(accessLevel)' type='\(type.inspect())' \(getSourceRangeText()))".toTerminalString(with: .Green)
     }
 }

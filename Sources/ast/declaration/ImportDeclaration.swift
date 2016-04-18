@@ -67,6 +67,6 @@ public class ImportDeclaration: Declaration {
             let attrList = _attributes.map({ return $0.name }).joined(separator: ",")
             attrs = " attributes=\(attrList)"
         }
-        return "\(getIndentText(indent))(import-declaration '\(modules)' kind=\(importKind)\(attrs) \(getSourceRangeText()))".terminalColor(.Green)
+        return "\(getIndentText(indent))(import-declaration '\(modules)' kind=\(importKind)\(attrs) \(getSourceRangeText()))".toTerminalString(with: .Green)
     }
 }
