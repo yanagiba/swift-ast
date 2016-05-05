@@ -72,7 +72,7 @@ class ParsingImplicitlyUnwrappedOptionalTypeTests: XCTestCase {
     XCTAssertEqual(typeIdentifier.names[0], "foo")
   }
 
-  func testExclamationMarkDoesNotFollowTheTypeImmeidatelyShouldNotReturnParseImplicitlyUnwrappedOptionalType() {
+  func testExclamationMarkDoesNotFollowTheTypeImmeidatelyShouldNotReturnImplicitlyUnwrappedOptionalType() {
     parser.setupTestCode("foo !")
     guard let type = try? parser.parseType() else {
       XCTFail("Failed in getting a type.")
