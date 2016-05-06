@@ -168,7 +168,7 @@ class Lexer {
       input
 
       .match(/"^/\\*") { _ in
-        let nestedComment = self._lexNestedComment(input[input.startIndex.advanced(by: 2)..<input.endIndex])
+        let nestedComment = self._lexNestedComment(input[input.index(input.startIndex, offsetBy: 2)..<input.endIndex])
         comment +=  "/*\(nestedComment)"
         advanced = 2 + nestedComment.utf16.count
       }?
@@ -184,7 +184,7 @@ class Lexer {
         advanced = commentChar.utf16.count
       }
 
-      input = input[input.startIndex.advanced(by: advanced)..<input.endIndex]
+      input = input[input.index(input.startIndex, offsetBy: advanced)..<input.endIndex]
       advanced = 0
     }
 
@@ -381,7 +381,7 @@ class Lexer {
           currentColumn = 1
         }?
         .match(/"^/\\*") { _ in
-          let nestedComment = self._lexNestedComment(input[input.startIndex.advanced(by: 2)..<input.endIndex])
+          let nestedComment = self._lexNestedComment(input[input.index(input.startIndex, offsetBy: 2)..<input.endIndex])
           let comment =  "/*\(nestedComment)"
           let lines = comment.components(separatedBy: NSCharacterSet.newlines())
           currentLine += lines.count - 1
@@ -439,7 +439,7 @@ class Lexer {
           default:
             if let lastToken = lexicalContext.tokens.last?.0 where !lastToken.isWhitespace() && self._containsOnlyExclaimOrQuestion(op) {
               for eachIndex in 0..<op.utf16.count {
-                let punctuation = op[op.startIndex.advanced(by: eachIndex)]
+                let punctuation = op[op.index(op.startIndex, offsetBy: eachIndex)]
                 let range = self._getSourceRange(startLine, startColumn + eachIndex, currentLine, currentColumn + eachIndex + 1)
                 let thisToken: Token = punctuation == "!" ? .Punctuator(.Exclaim) : .Punctuator(.Question)
                 lexicalContext.append(thisToken, range)
@@ -454,7 +454,7 @@ class Lexer {
               // TODO: this may also misunderstand a bit shift operator as two `>` tokens instead of one.
               for eachIndex in 0..<op.utf16.count {
                 lexicalContext.append(
-                  .Operator("\(op[op.startIndex.advanced(by: eachIndex)])"),
+                  .Operator("\(op[op.index(op.startIndex, offsetBy: eachIndex)])"),
                   self._getSourceRange(startLine, startColumn + eachIndex, currentLine, currentColumn + eachIndex + 1))
               }
             }
@@ -547,7 +547,7 @@ class Lexer {
         return lexicalContext
       }
 
-      input = input[input.startIndex.advanced(by: advanced)..<input.endIndex]
+      input = input[input.index(input.startIndex, offsetBy: advanced)..<input.endIndex]
       currentToken = nil
       advanced = 0
     }
@@ -563,7 +563,7 @@ class Lexer {
     switch _getFirstCharacter(text) {
     case "-":
       if first && text.utf16.count > 1 {
-        return _isPotentialNumericLiteral(text[text.startIndex.advanced(by: 1)..<text.endIndex], first: false)
+        return _isPotentialNumericLiteral(text[text.index(text.startIndex, offsetBy: 1)..<text.endIndex], first: false)
       }
       else {
         return false
@@ -613,7 +613,7 @@ class Lexer {
 
   private func _containsOnlyExclaimOrQuestion(_ text: String) -> Bool {
     for eachIndex in 0..<text.utf16.count {
-      let eachText = text[text.startIndex.advanced(by: eachIndex)]
+      let eachText = text[text.index(text.startIndex, offsetBy: eachIndex)]
       if eachText != "!" && eachText != "?" {
         return false
       }

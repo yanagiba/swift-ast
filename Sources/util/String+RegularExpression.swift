@@ -26,7 +26,8 @@ public extension String {
                     groups.append("")
                 }
                 else {
-                    let matchedGroup = self[self.startIndex.advanced(by: rangeAtIndex.location)..<self.startIndex.advanced(by: rangeAtIndex.location + rangeAtIndex.length)]
+                    let matchedGroup = self[self.index(self.startIndex, offsetBy: rangeAtIndex.location) ..<
+                        self.index(self.startIndex, offsetBy: rangeAtIndex.location + rangeAtIndex.length)]
                     groups.append(matchedGroup)
                 }
             }
