@@ -14,21 +14,24 @@
    limitations under the License.
 */
 
-import Spectre
+import XCTest
 
 @testable import parser
 @testable import ast
 
-func specImplicitMemberExpression() {
+class ParsingInitializerExpressionTests: XCTestCase {
   let parser = Parser()
 
-  describe("Parse an implicit member expression") {
-    $0.it("should return an implicit member expression") {
-      parser.setupTestCode(".bar")
-      guard let expr = try? parser.parseImplicitMemberExpression() else {
-        throw failure("Failed in getting an implicit member expression.")
-      }
-      try expect(expr.identifier) == "bar"
+  func testParseInitializerExpression() {
+    parser.setupTestCode("foo.init")
+    guard let initExpr = try? parser.parseInitializerExpression() else {
+      XCTFail("Failed in getting an initializer expression.")
+      return
     }
+    guard let idExpr = initExpr.postfixExpression as? IdentifierExpression else {
+      XCTFail("Failed in getting an identifier expression.")
+      return
+    }
+    XCTAssertEqual(idExpr.identifier, "foo")
   }
 }

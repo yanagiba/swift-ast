@@ -14,24 +14,24 @@
    limitations under the License.
 */
 
-import Spectre
+import XCTest
 
 @testable import parser
 @testable import ast
 
-func specInitializerExpression() {
+class ParsingPostfixSelfExpressionTests: XCTestCase {
   let parser = Parser()
 
-  describe("Parse an initializer expression") {
-    $0.it("should return an initializer expression") {
-      parser.setupTestCode("foo.init")
-      guard let initExpr = try? parser.parseInitializerExpression() else {
-        throw failure("Failed in getting an initializer expression.")
-      }
-      guard let idExpr = initExpr.postfixExpression as? IdentifierExpression else {
-        throw failure("Failed in getting an identifier expression.")
-      }
-      try expect(idExpr.identifier) == "foo"
+  func testParsePostfixSelfExpression() {
+    parser.setupTestCode("foo.self")
+    guard let initExpr = try? parser.parsePostfixSelfExpression() else {
+      XCTFail("Failed in getting a postfix self expression.")
+      return
     }
+    guard let idExpr = initExpr.postfixExpression as? IdentifierExpression else {
+      XCTFail("Failed in getting an identifier expression.")
+      return
+    }
+    XCTAssertEqual(idExpr.identifier, "foo")
   }
 }

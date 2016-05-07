@@ -14,17 +14,20 @@
    limitations under the License.
 */
 
-import Spectre
+import XCTest
 
 @testable import parser
 @testable import ast
 
-func specClosureExpression() {
+class ParsingImplicitMemberExpressionTests: XCTestCase {
   let parser = Parser()
 
-  describe("Parse closure expression") {
-    $0.it("should return closure expression") {
-      parser.setupTestCode("{ $0 > $1 }")
+  func testParseImplicitMemberExpression() {
+    parser.setupTestCode(".bar")
+    guard let expr = try? parser.parseImplicitMemberExpression() else {
+      XCTFail("Failed in getting an implicit member expression.")
+      return
     }
+    XCTAssertEqual(expr.identifier, "bar")
   }
 }

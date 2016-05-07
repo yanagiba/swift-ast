@@ -14,24 +14,20 @@
    limitations under the License.
 */
 
-import Spectre
+import XCTest
 
 @testable import parser
 @testable import ast
 
-func specDynamicTypeExpression() {
+class ParsingInOutExpressionTests: XCTestCase {
   let parser = Parser()
 
-  describe("Parse a dynamic type expression") {
-    $0.it("should return a dynamic type expression") {
-      parser.setupTestCode("foo.dynamicType")
-      guard let initExpr = try? parser.parseDynamicTypeExpression() else {
-        throw failure("Failed in getting a dynamic type expression.")
-      }
-      guard let idExpr = initExpr.postfixExpression as? IdentifierExpression else {
-        throw failure("Failed in getting an identifier expression.")
-      }
-      try expect(idExpr.identifier) == "foo"
+  func testParseInoutExpression() {
+    parser.setupTestCode("&foo")
+    guard let inOutExpr = try? parser.parseInOutExpression() else {
+      XCTFail("Failed in getting an in-out expression.")
+      return
     }
+    XCTAssertEqual(inOutExpr.identifier, "foo")
   }
 }

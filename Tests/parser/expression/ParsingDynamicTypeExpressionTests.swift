@@ -14,20 +14,24 @@
    limitations under the License.
 */
 
-import Spectre
+import XCTest
 
 @testable import parser
 @testable import ast
 
-func specWildcardExpression() {
+class ParsingDynamicTypeExpressionTests: XCTestCase {
   let parser = Parser()
 
-  describe("Parse a wildcard expression") {
-    $0.it("should return a wildcard expression") {
-      parser.setupTestCode("_")
-      guard let _ = try? parser.parseWildcardExpression() else {
-        throw failure("Failed in getting a wildcard expression.")
-      }
+  func testParseDynamicTypeExpression() {
+    parser.setupTestCode("foo.dynamicType")
+    guard let initExpr = try? parser.parseDynamicTypeExpression() else {
+      XCTFail("Failed in getting a dynamic type expression.")
+      return
     }
+    guard let idExpr = initExpr.postfixExpression as? IdentifierExpression else {
+      XCTFail("Failed in getting an identifier expression.")
+      return
+    }
+    XCTAssertEqual(idExpr.identifier, "foo")
   }
 }

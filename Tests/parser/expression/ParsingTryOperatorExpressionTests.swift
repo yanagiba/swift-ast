@@ -14,21 +14,29 @@
    limitations under the License.
 */
 
-import Spectre
+import XCTest
 
 @testable import parser
 @testable import ast
 
-func specInOutExpression() {
+class ParsingTryOperatorExpressionTests: XCTestCase {
   let parser = Parser()
 
-  describe("Parse an in-out expression") {
-    $0.it("should return an in-out expression") {
-      parser.setupTestCode("&foo")
-      guard let inOutExpr = try? parser.parseInOutExpression() else {
-        throw failure("Failed in getting an in-out expression.")
+  func testParseTryOperatorExpression() {
+    let testStrings: [String: TryOperatorExpression.Kind] = [
+      "try": .Try,
+      "try?": .OptionalTry,
+      "try!": .ForcedTry
+    ]
+    for (testString, testKind) in testStrings {
+      let testCode = "\(testString) foo"
+      parser.setupTestCode(testCode)
+      guard let tryOpExpr = try? parser.parseTryOperatorExpression() else {
+        XCTFail("Failed in getting a try operator expression for code `\(testCode)`.")
+        return
       }
-      try expect(inOutExpr.identifier) == "foo"
+      XCTAssertEqual(tryOpExpr.kind, testKind)
+      XCTAssertTrue(tryOpExpr.expression is IdentifierExpression)
     }
   }
 }

@@ -14,24 +14,15 @@
    limitations under the License.
 */
 
-import Spectre
+import XCTest
 
 @testable import parser
 @testable import ast
 
-func specPostfixSelfExpression() {
+class ParsingClosureExpressionTests: XCTestCase {
   let parser = Parser()
 
-  describe("Parse a postfix self expression") {
-    $0.it("should return a postfix self expression") {
-      parser.setupTestCode("foo.self")
-      guard let initExpr = try? parser.parsePostfixSelfExpression() else {
-        throw failure("Failed in getting a postfix self expression.")
-      }
-      guard let idExpr = initExpr.postfixExpression as? IdentifierExpression else {
-        throw failure("Failed in getting an identifier expression.")
-      }
-      try expect(idExpr.identifier) == "foo"
-    }
+  func testParseClosureExpression() {
+    parser.setupTestCode("{ $0 > $1 }")
   }
 }
