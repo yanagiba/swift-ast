@@ -143,7 +143,7 @@ The dev version of the tool can be invoked by:
 .build/debug/swift-ast path/to/file.swift
 ```
 
-### Running [Spectre](https://github.com/kylef/Spectre) Tests
+### Running Tests
 
 Compile and run the entire tests by:
 
