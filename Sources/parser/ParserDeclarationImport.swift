@@ -25,8 +25,7 @@ extension Parser {
     - [_] import-path-identifier → identifier | operator
     - [x] error handling
     */
-    func parseImportDeclaration(
-        attributes attributes: [Attribute], startLocation: SourceLocation) throws {
+    func parseImportDeclaration(attributes: [Attribute], startLocation: SourceLocation) throws {
         skipWhitespaces()
 
         var importKind: ImportKind = .Module
@@ -79,7 +78,7 @@ extension Parser {
             if let currentRange = currentRange ?? consumedTokens.last?.1 {
                 importDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
             }
-            topLevelCode.append(importDecl)
+            topLevelCode.append(statement: importDecl)
 
             if importKind != .Module && submodules.isEmpty {
                 throw ParserError.MissingModuleNameInImportDeclaration

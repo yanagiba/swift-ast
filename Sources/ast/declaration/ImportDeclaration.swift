@@ -64,9 +64,9 @@ public class ImportDeclaration: Declaration {
         }
         var attrs = ""
         if !_attributes.isEmpty {
-            let attrList = _attributes.map({ return $0.name }).joinWithSeparator(",")
+            let attrList = _attributes.map({ return $0.name }).joined(separator: ",")
             attrs = " attributes=\(attrList)"
         }
-        return "\(getIndentText(indent))(import-declaration '\(modules)' kind=\(importKind)\(attrs) \(getSourceRangeText()))".terminalColor(.Green)
+        return "\(getIndentText(indent))(import-declaration '\(modules)' kind=\(importKind)\(attrs) \(getSourceRangeText()))".toTerminalString(with: .Green)
     }
 }

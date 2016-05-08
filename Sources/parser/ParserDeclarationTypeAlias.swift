@@ -26,7 +26,7 @@ extension Parser {
     - [_] error handling
     */
     func parseTypeAliasDeclaration(
-        attributes attributes: [Attribute],
+        attributes: [Attribute],
         accessLevelModifier: AccessLevel,
         startLocation: SourceLocation) throws {
         skipWhitespaces()
@@ -47,7 +47,7 @@ extension Parser {
             if let currentRange = currentRange {
                 typealiasDecl.sourceRange = SourceRange(start: startLocation, end: currentRange.end)
             }
-            topLevelCode.append(typealiasDecl)
+            topLevelCode.append(statement: typealiasDecl)
         }
         else {
             throw ParserError.InternalError // TODO: error handling

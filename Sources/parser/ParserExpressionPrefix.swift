@@ -32,7 +32,7 @@ extension Parser {
             guard let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) else {
                 return ParsingResult<Expression>.makeNoResult()
             }
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
             let inOutExpr = InOutExpression(identifier: identifier)
             return ParsingResult<Expression>.makeResult(inOutExpr, tokens.count - remainingTokens.count)
@@ -43,7 +43,7 @@ extension Parser {
             remainingHeadToken = remainingTokens.popLast()
             prefixOperator = operatorString
         }
-        let parsePostfixExpressionResult = _parsePostfixExpression(remainingHeadToken, tokens: remainingTokens)
+        let parsePostfixExpressionResult = _parsePostfixExpression(head: remainingHeadToken, tokens: remainingTokens)
         if parsePostfixExpressionResult.hasResult {
             if let prefixOperator = prefixOperator {
                 let prefixOperatorExpr = PrefixOperatorExpression(
@@ -59,7 +59,7 @@ extension Parser {
     }
 
     func parsePrefixOperatorExpression() throws -> PrefixOperatorExpression {
-        let result = _parsePrefixExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = _parsePrefixExpression(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard result.hasResult else {
             throw ParserError.InternalError // TODO: better error handling
@@ -79,7 +79,7 @@ extension Parser {
     }
 
     func parseInOutExpression() throws -> InOutExpression {
-        let result = _parsePrefixExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = _parsePrefixExpression(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard result.hasResult else {
             throw ParserError.InternalError // TODO: better error handling

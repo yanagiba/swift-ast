@@ -154,10 +154,10 @@ class Lexer {
   }
 
   private var keywordRegex: String {
-    return _keywordsMapping.keys.map { $0 }.joinWithSeparator("|")
+    return _keywordsMapping.keys.map { $0 }.joined(separator: "|")
   }
 
-  private func _lexNestedComment(text: String) -> String {
+  private func _lexNestedComment(_ text: String) -> String {
     var comment = ""
 
     var advanced = 0
@@ -168,7 +168,7 @@ class Lexer {
       input
 
       .match(/"^/\\*") { _ in
-        let nestedComment = self._lexNestedComment(input[input.startIndex.advancedBy(2)..<input.endIndex])
+        let nestedComment = self._lexNestedComment(input[input.index(input.startIndex, offsetBy: 2)..<input.endIndex])
         comment +=  "/*\(nestedComment)"
         advanced = 2 + nestedComment.utf16.count
       }?
@@ -184,14 +184,14 @@ class Lexer {
         advanced = commentChar.utf16.count
       }
 
-      input = input[input.startIndex.advancedBy(advanced)..<input.endIndex]
+      input = input[input.index(input.startIndex, offsetBy: advanced)..<input.endIndex]
       advanced = 0
     }
 
     return comment
   }
 
-  private func _lexInterpolatedStringLiteral(text: String) -> String {
+  private func _lexInterpolatedStringLiteral(_ text: String) -> String {
     var result = ""
 
     var insideInterpolated = false
@@ -240,7 +240,7 @@ class Lexer {
   }
 
   private var _sourceFilePath: String!
-  private func _getSourceRange(startLine: Int, _ startColumn: Int, _ endLine: Int, _ endColumn: Int) -> SourceRange {
+  private func _getSourceRange(_ startLine: Int, _ startColumn: Int, _ endLine: Int, _ endColumn: Int) -> SourceRange {
     let startSourceLocation = SourceLocation(path: _sourceFilePath, line: startLine, column: startColumn)
     let endSourceLocation = SourceLocation(path: _sourceFilePath, line: endLine, column: endColumn)
     return SourceRange(start: startSourceLocation, end: endSourceLocation)
@@ -381,9 +381,9 @@ class Lexer {
           currentColumn = 1
         }?
         .match(/"^/\\*") { _ in
-          let nestedComment = self._lexNestedComment(input[input.startIndex.advancedBy(2)..<input.endIndex])
+          let nestedComment = self._lexNestedComment(input[input.index(input.startIndex, offsetBy: 2)..<input.endIndex])
           let comment =  "/*\(nestedComment)"
-          let lines = NSString(string: comment).componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
+          let lines = comment.components(separatedBy: NSCharacterSet.newlines())
           currentLine += lines.count - 1
           currentColumn = 1 + (lines.last?.utf16.count ?? 0)
           currentToken = .Comment(comment)
@@ -439,7 +439,7 @@ class Lexer {
           default:
             if let lastToken = lexicalContext.tokens.last?.0 where !lastToken.isWhitespace() && self._containsOnlyExclaimOrQuestion(op) {
               for eachIndex in 0..<op.utf16.count {
-                let punctuation = op[op.startIndex.advancedBy(eachIndex)]
+                let punctuation = op[op.index(op.startIndex, offsetBy: eachIndex)]
                 let range = self._getSourceRange(startLine, startColumn + eachIndex, currentLine, currentColumn + eachIndex + 1)
                 let thisToken: Token = punctuation == "!" ? .Punctuator(.Exclaim) : .Punctuator(.Question)
                 lexicalContext.append(thisToken, range)
@@ -449,12 +449,12 @@ class Lexer {
               lexicalContext.append(.Operator("<"), self._getSourceRange(startLine, startColumn, currentLine, currentColumn + 1))
               lexicalContext.append(.Operator(">"), self._getSourceRange(startLine, startColumn + 1, currentLine, currentColumn + 2))
             }
-            else if op.rangeOfString(">>") != nil {
+            else if op.range(of: ">>") != nil {
               // TODO: we need to come back to this later. For now, if at least two `>>` exist, we split all operators
               // TODO: this may also misunderstand a bit shift operator as two `>` tokens instead of one.
               for eachIndex in 0..<op.utf16.count {
                 lexicalContext.append(
-                  .Operator("\(op[op.startIndex.advancedBy(eachIndex)])"),
+                  .Operator("\(op[op.index(op.startIndex, offsetBy: eachIndex)])"),
                   self._getSourceRange(startLine, startColumn + eachIndex, currentLine, currentColumn + eachIndex + 1))
               }
             }
@@ -547,7 +547,7 @@ class Lexer {
         return lexicalContext
       }
 
-      input = input[input.startIndex.advancedBy(advanced)..<input.endIndex]
+      input = input[input.index(input.startIndex, offsetBy: advanced)..<input.endIndex]
       currentToken = nil
       advanced = 0
     }
@@ -555,15 +555,15 @@ class Lexer {
     return lexicalContext
   }
 
-  private func _isPotentialStringLiteral(text: String) -> Bool {
+  private func _isPotentialStringLiteral(_ text: String) -> Bool {
     return _getFirstCharacter(text) == "\""
   }
 
-  private func _isPotentialNumericLiteral(text: String, first: Bool = true) -> Bool {
+  private func _isPotentialNumericLiteral(_ text: String, first: Bool = true) -> Bool {
     switch _getFirstCharacter(text) {
     case "-":
       if first && text.utf16.count > 1 {
-        return _isPotentialNumericLiteral(text[text.startIndex.advancedBy(1)..<text.endIndex], first: false)
+        return _isPotentialNumericLiteral(text[text.index(text.startIndex, offsetBy: 1)..<text.endIndex], first: false)
       }
       else {
         return false
@@ -575,7 +575,7 @@ class Lexer {
     }
   }
 
-  private func _isPotentialIdentifierOrKeywords(text: String) -> Bool {
+  private func _isPotentialIdentifierOrKeywords(_ text: String) -> Bool {
     switch _getFirstCharacter(text) {
     case "A", "B", "C", "D", "E", "F", "G",
          "H", "I", "J", "K", "L", "M", "N",
@@ -592,11 +592,11 @@ class Lexer {
     }
   }
 
-  private func _isPotentialComment(text: String) -> Bool {
+  private func _isPotentialComment(_ text: String) -> Bool {
     return _getFirstCharacter(text) == "/"
   }
 
-  private func _isPotentialPunctuation(text: String) -> Bool {
+  private func _isPotentialPunctuation(_ text: String) -> Bool {
     switch _getFirstCharacter(text) {
     case "(", ")", "{", "}", "[", "]", "<", ">",
          ".", ",", ":", ";", "=", "@", "#", "&", "`",
@@ -607,13 +607,13 @@ class Lexer {
     }
   }
 
-  private func _getFirstCharacter(text: String) -> Character {
+  private func _getFirstCharacter(_ text: String) -> Character {
     return text[text.startIndex]
   }
 
-  private func _containsOnlyExclaimOrQuestion(text: String) -> Bool {
+  private func _containsOnlyExclaimOrQuestion(_ text: String) -> Bool {
     for eachIndex in 0..<text.utf16.count {
-      let eachText = text[text.startIndex.advancedBy(eachIndex)]
+      let eachText = text[text.index(text.startIndex, offsetBy: eachIndex)]
       if eachText != "!" && eachText != "?" {
         return false
       }

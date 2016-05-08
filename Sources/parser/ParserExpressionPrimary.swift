@@ -30,47 +30,47 @@ extension Parser {
     */
     func parsePrimaryExpression() throws -> PrimaryExpression {
         return try _parseAndUnwrapParsingResult {
-            self._parsePrimaryExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parsePrimaryExpression(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
     func _parsePrimaryExpression(head: Token?, tokens: [Token]) -> ParsingResult<PrimaryExpression> {
-        let parseIdentifierExpressionResult = _parseIdentifierExpression(head, tokens: tokens)
+        let parseIdentifierExpressionResult = _parseIdentifierExpression(head: head, tokens: tokens)
         if parseIdentifierExpressionResult.hasResult {
             return ParsingResult<PrimaryExpression>.wrap(parseIdentifierExpressionResult)
         }
 
-        let parseLiteralExpressionResult = _parseLiteralExpression(head, tokens: tokens)
+        let parseLiteralExpressionResult = _parseLiteralExpression(head: head, tokens: tokens)
         if parseLiteralExpressionResult.hasResult {
             return ParsingResult<PrimaryExpression>.wrap(parseLiteralExpressionResult)
         }
 
-        let parseSelfExpressionResult = _parseSelfExpression(head, tokens: tokens)
+        let parseSelfExpressionResult = _parseSelfExpression(head: head, tokens: tokens)
         if parseSelfExpressionResult.hasResult {
             return ParsingResult<PrimaryExpression>.wrap(parseSelfExpressionResult)
         }
 
-        let parseSuperclassExpressionResult = _parseSuperclassExpression(head, tokens: tokens)
+        let parseSuperclassExpressionResult = _parseSuperclassExpression(head: head, tokens: tokens)
         if parseSuperclassExpressionResult.hasResult {
             return ParsingResult<PrimaryExpression>.wrap(parseSuperclassExpressionResult)
         }
 
-        let parseClosureExpressionResult = _parseClosureExpression(head, tokens: tokens)
+        let parseClosureExpressionResult = _parseClosureExpression(head: head, tokens: tokens)
         if parseClosureExpressionResult.hasResult {
             return ParsingResult<PrimaryExpression>.wrap(parseClosureExpressionResult)
         }
 
-        let parseImplicitMemberExpressionResult = _parseImplicitMemberExpression(head, tokens: tokens)
+        let parseImplicitMemberExpressionResult = _parseImplicitMemberExpression(head: head, tokens: tokens)
         if parseImplicitMemberExpressionResult.hasResult {
             return ParsingResult<PrimaryExpression>.wrap(parseImplicitMemberExpressionResult)
         }
 
-        let parseParenthesizedExpressionResult = _parseParenthesizedExpression(head, tokens: tokens)
+        let parseParenthesizedExpressionResult = _parseParenthesizedExpression(head: head, tokens: tokens)
         if parseParenthesizedExpressionResult.hasResult {
             return ParsingResult<PrimaryExpression>.wrap(parseParenthesizedExpressionResult)
         }
 
-        let parseWildcardExpressionResult = _parseWildcardExpression(head, tokens: tokens)
+        let parseWildcardExpressionResult = _parseWildcardExpression(head: head, tokens: tokens)
         if parseWildcardExpressionResult.hasResult {
             return ParsingResult<PrimaryExpression>.wrap(parseWildcardExpressionResult)
         }
@@ -83,7 +83,7 @@ extension Parser {
     */
     func parseIdentifierExpression() throws -> IdentifierExpression {
         return try _parseAndUnwrapParsingResult {
-            self._parseIdentifierExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parseIdentifierExpression(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
@@ -94,10 +94,10 @@ extension Parser {
         guard let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) else {
             return ParsingResult<IdentifierExpression>.makeNoResult()
         }
-        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+        remainingTokens = skipWhitespaces(for: remainingTokens)
         remainingHeadToken = remainingTokens.popLast()
 
-        let genericResult = parseGenericArgumentClause(remainingHeadToken, tokens: remainingTokens)
+        let genericResult = parseGenericArgumentClause(head: remainingHeadToken, tokens: remainingTokens)
         for _ in 0..<genericResult.advancedBy {
             remainingHeadToken = remainingTokens.popLast()
         }
@@ -121,7 +121,7 @@ extension Parser {
     */
     func parseLiteralExpression() throws -> LiteralExpression {
         return try _parseAndUnwrapParsingResult {
-            self._parseLiteralExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parseLiteralExpression(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
@@ -159,7 +159,7 @@ extension Parser {
         case .InterpolatedStringLiteral(let rawString):
             resultLiteral = StringLiteralExpression(kind: .Interpolated, rawString: rawString)
         case .Punctuator(let punctuatorType) where punctuatorType == .LeftSquare:
-            let parsingArrayLiteralExprResult = _parseArrayLiteralExpression(remainingHeadToken, tokens: remainingTokens)
+            let parsingArrayLiteralExprResult = _parseArrayLiteralExpression(head: remainingHeadToken, tokens: remainingTokens)
             if parsingArrayLiteralExprResult.hasResult {
                 resultLiteral = parsingArrayLiteralExprResult.result
                 for _ in 0..<parsingArrayLiteralExprResult.advancedBy {
@@ -167,7 +167,7 @@ extension Parser {
                 }
             }
             else {
-                let parsingDictionaryLiteralExprResult = _parseDictionaryLiteralExpression(remainingHeadToken, tokens: remainingTokens)
+                let parsingDictionaryLiteralExprResult = _parseDictionaryLiteralExpression(head: remainingHeadToken, tokens: remainingTokens)
                 if parsingDictionaryLiteralExprResult.hasResult {
                     resultLiteral = parsingDictionaryLiteralExprResult.result
                     for _ in 0..<parsingDictionaryLiteralExprResult.advancedBy {
@@ -189,7 +189,7 @@ extension Parser {
             }
         default: ()
         }
-        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+        remainingTokens = skipWhitespaces(for: remainingTokens)
         remainingHeadToken = remainingTokens.popLast()
 
         if let resultLiteral = resultLiteral {
@@ -203,7 +203,7 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftSquare {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             var items = [Expression]()
@@ -213,7 +213,7 @@ extension Parser {
                     break
                 }
 
-                let parsingExpressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
+                let parsingExpressionResult = _parseExpression(head: remainingHeadToken, tokens: remainingTokens)
                 guard parsingExpressionResult.hasResult else {
                     break
                 }
@@ -223,7 +223,7 @@ extension Parser {
                     remainingHeadToken = remainingTokens.popLast()
                 }
                 if let commaToken = remainingHeadToken, case let .Punctuator(punctuatorType) = commaToken where punctuatorType == .Comma {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
                 }
                 else {
@@ -249,7 +249,7 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftSquare {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             var items = [(Expression, Expression)]()
@@ -259,7 +259,7 @@ extension Parser {
                     break
                 }
 
-                let parsingKeyExpressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
+                let parsingKeyExpressionResult = _parseExpression(head: remainingHeadToken, tokens: remainingTokens)
                 guard parsingKeyExpressionResult.hasResult else {
                     break
                 }
@@ -271,10 +271,10 @@ extension Parser {
                 guard let colonToken = remainingHeadToken, case let .Punctuator(punctuatorType) = colonToken where punctuatorType == .Colon else {
                     return ParsingResult<DictionaryLiteralExpression>.makeNoResult()
                 }
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingTokens = skipWhitespaces(for: remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
 
-                let parsingValueExpressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
+                let parsingValueExpressionResult = _parseExpression(head: remainingHeadToken, tokens: remainingTokens)
                 guard parsingValueExpressionResult.hasResult else {
                     return ParsingResult<DictionaryLiteralExpression>.makeNoResult()
                 }
@@ -286,7 +286,7 @@ extension Parser {
                 items.append((parsingKeyExpressionResult.result, parsingValueExpressionResult.result))
 
                 if let commaToken = remainingHeadToken, case let .Punctuator(punctuatorType) = commaToken where punctuatorType == .Comma {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
                 }
                 else {
@@ -316,7 +316,7 @@ extension Parser {
     */
     func parseSelfExpression() throws -> SelfExpression {
         return try _parseAndUnwrapParsingResult {
-            self._parseSelfExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parseSelfExpression(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
@@ -326,33 +326,33 @@ extension Parser {
 
         if let headToken = remainingHeadToken, case let .Keyword(exprKeyword, keywordType) = headToken
         where keywordType == .Expression && exprKeyword == "self" {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             var selfExpr = SelfExpression.makeSelfExpression()
 
             if let connectingToken = remainingHeadToken, case let .Punctuator(punctuatorType) = connectingToken
             where punctuatorType == .Period || punctuatorType == .LeftSquare {
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingTokens = skipWhitespaces(for: remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
 
                 if punctuatorType == .Period {
                     if let keywordToken = remainingHeadToken, case let .Keyword(declKeyword, keywordType) = keywordToken
                     where keywordType == .Declaration && declKeyword == "init" {
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingTokens = skipWhitespaces(for: remainingTokens)
                         remainingHeadToken = remainingTokens.popLast()
 
                         selfExpr = SelfExpression.makeSelfInitializerExpression()
                     }
                     else if let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingTokens = skipWhitespaces(for: remainingTokens)
                         remainingHeadToken = remainingTokens.popLast()
 
                         selfExpr = SelfExpression.makeSelfMethodExpression(identifier)
                     }
                 }
                 else {
-                    let parsingExpressionListResult = _parseExpressionList(remainingHeadToken, tokens: remainingTokens)
+                    let parsingExpressionListResult = _parseExpressionList(head: remainingHeadToken, tokens: remainingTokens)
                     if parsingExpressionListResult.hasResult {
                         for _ in 0..<parsingExpressionListResult.advancedBy {
                             remainingHeadToken = remainingTokens.popLast()
@@ -360,7 +360,7 @@ extension Parser {
 
                         if let closingToken = remainingHeadToken, case let .Punctuator(punctuatorType) = closingToken
                         where punctuatorType == .RightSquare {
-                            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                            remainingTokens = skipWhitespaces(for: remainingTokens)
                             remainingHeadToken = remainingTokens.popLast()
 
                             selfExpr = SelfExpression.makeSelfSubscriptExpression(parsingExpressionListResult.result)
@@ -383,7 +383,7 @@ extension Parser {
     */
     func parseSuperclassExpression() throws -> SuperclassExpression {
         return try _parseAndUnwrapParsingResult {
-            self._parseSuperclassExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parseSuperclassExpression(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
@@ -393,33 +393,33 @@ extension Parser {
 
         if let headToken = remainingHeadToken, case let .Keyword(exprKeyword, keywordType) = headToken
         where keywordType == .Expression && exprKeyword == "super" {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             var superExpr: SuperclassExpression?
 
             if let connectingToken = remainingHeadToken, case let .Punctuator(punctuatorType) = connectingToken
             where punctuatorType == .Period || punctuatorType == .LeftSquare {
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingTokens = skipWhitespaces(for: remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
 
                 if punctuatorType == .Period {
                     if let keywordToken = remainingHeadToken, case let .Keyword(declKeyword, keywordType) = keywordToken
                     where keywordType == .Declaration && declKeyword == "init" {
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingTokens = skipWhitespaces(for: remainingTokens)
                         remainingHeadToken = remainingTokens.popLast()
 
                         superExpr = SuperclassExpression.makeSuperclassInitializerExpression()
                     }
                     else if let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingTokens = skipWhitespaces(for: remainingTokens)
                         remainingHeadToken = remainingTokens.popLast()
 
                         superExpr = SuperclassExpression.makeSuperclassMethodExpression(identifier)
                     }
                 }
                 else {
-                    let parsingExpressionListResult = _parseExpressionList(remainingHeadToken, tokens: remainingTokens)
+                    let parsingExpressionListResult = _parseExpressionList(head: remainingHeadToken, tokens: remainingTokens)
                     if parsingExpressionListResult.hasResult {
                         for _ in 0..<parsingExpressionListResult.advancedBy {
                             remainingHeadToken = remainingTokens.popLast()
@@ -427,7 +427,7 @@ extension Parser {
 
                         if let closingToken = remainingHeadToken, case let .Punctuator(punctuatorType) = closingToken
                         where punctuatorType == .RightSquare {
-                            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                            remainingTokens = skipWhitespaces(for: remainingTokens)
                             remainingHeadToken = remainingTokens.popLast()
 
                             superExpr = SuperclassExpression.makeSuperclassSubscriptExpression(parsingExpressionListResult.result)
@@ -458,7 +458,7 @@ extension Parser {
     */
     func parseClosureExpression() throws -> ClosureExpression {
         return try _parseAndUnwrapParsingResult {
-            self._parseClosureExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parseClosureExpression(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
@@ -471,7 +471,7 @@ extension Parser {
     */
     func parseImplicitMemberExpression() throws -> ImplicitMemberExpression {
         return try _parseAndUnwrapParsingResult {
-            self._parseImplicitMemberExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parseImplicitMemberExpression(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
@@ -480,11 +480,11 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Period {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             if let identifier = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingTokens = skipWhitespaces(for: remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
 
                 let implicitMemberExpression = ImplicitMemberExpression(identifier: identifier)
@@ -502,7 +502,7 @@ extension Parser {
     */
     func parseParenthesizedExpression() throws -> ParenthesizedExpression {
         return try _parseAndUnwrapParsingResult {
-            self._parseParenthesizedExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parseParenthesizedExpression(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
@@ -511,7 +511,7 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftParen {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             var elements: [ParenthesizedExpression.ExpressionElement] = []
@@ -526,11 +526,11 @@ extension Parser {
                     let preservedRemainingTokens = remainingTokens
                     let preservedHeadToken = remainingHeadToken
 
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
                     if let colonToken = remainingHeadToken, case let .Punctuator(punctuatorType) = colonToken where punctuatorType == .Colon {
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingTokens = skipWhitespaces(for: remainingTokens)
                         remainingHeadToken = remainingTokens.popLast()
 
                         identifier = potentialIdentifier
@@ -541,7 +541,7 @@ extension Parser {
                     }
                 }
 
-                let parsingExpressionResult = _parseExpression(remainingHeadToken, tokens: remainingTokens)
+                let parsingExpressionResult = _parseExpression(head: remainingHeadToken, tokens: remainingTokens)
                 guard parsingExpressionResult.hasResult else {
                     break
                 }
@@ -552,7 +552,7 @@ extension Parser {
                 }
 
                 if let commaToken = remainingHeadToken, case let .Punctuator(punctuatorType) = commaToken where punctuatorType == .Comma {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
                 }
                 else {
@@ -561,7 +561,7 @@ extension Parser {
             }
 
             if let currentToken = remainingHeadToken, case let .Punctuator(punctuatorType) = currentToken where punctuatorType == .RightParen {
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingTokens = skipWhitespaces(for: remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
 
                 return ParsingResult<ParenthesizedExpression>.makeResult(ParenthesizedExpression(expressions: elements), tokens.count - remainingTokens.count)
@@ -580,7 +580,7 @@ extension Parser {
     */
     func parseWildcardExpression() throws -> WildcardExpression {
         return try _parseAndUnwrapParsingResult {
-            self._parseWildcardExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parseWildcardExpression(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
@@ -589,8 +589,8 @@ extension Parser {
             return ParsingResult<WildcardExpression>.makeNoResult()
         }
 
-        var remainingTokens = skipWhitespacesForTokens(tokens)
-        remainingTokens.popLast()
+        var remainingTokens = skipWhitespaces(for: tokens)
+        let _ = remainingTokens.popLast()
         return ParsingResult<WildcardExpression>.makeResult(WildcardExpression(), tokens.count - remainingTokens.count)
     }
 }

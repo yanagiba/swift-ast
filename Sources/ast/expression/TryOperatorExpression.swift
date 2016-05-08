@@ -29,15 +29,15 @@ public class TryOperatorExpression: Expression {
     self.expression = expression
   }
 
-  public class func makeTryOperatorExpression(expr: Expression) -> TryOperatorExpression {
+  public class func makeTryOperatorExpression(_ expr: Expression) -> TryOperatorExpression {
     return TryOperatorExpression(kind: .Try, expression: expr)
   }
 
-  public class func makeOptionalTryOperatorExpression(expr: Expression) -> TryOperatorExpression {
+  public class func makeOptionalTryOperatorExpression(_ expr: Expression) -> TryOperatorExpression {
     return TryOperatorExpression(kind: .OptionalTry, expression: expr)
   }
 
-  public class func makeForcedTryOperatorExpression(expr: Expression) -> TryOperatorExpression {
+  public class func makeForcedTryOperatorExpression(_ expr: Expression) -> TryOperatorExpression {
     return TryOperatorExpression(kind: .ForcedTry, expression: expr)
   }
 }

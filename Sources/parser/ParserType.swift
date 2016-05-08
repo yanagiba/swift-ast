@@ -31,7 +31,7 @@ extension Parser {
     - [x] metatype-type
     */
     func parseType() throws -> Type {
-        let result = parseType(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseType(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let type = result.type else {
             throw ParserError.InternalError // TODO: better error handling
@@ -50,7 +50,7 @@ extension Parser {
 
         var usedTokens = [Token]()
 
-        let atomicTypeResult = parseAtomicType(remainingHeadToken, tokens: remainingTokens)
+        let atomicTypeResult = parseAtomicType(head: remainingHeadToken, tokens: remainingTokens)
         if let atomicType = atomicTypeResult.type {
             var resultType = atomicType
 
@@ -71,7 +71,7 @@ extension Parser {
                     resultType = ImplicitlyUnwrappedOptionalType(type: resultType)
                 }
 
-                for _ in 0..<remainingTokens.count-skipWhitespacesForTokens(remainingTokens).count {
+                for _ in 0..<remainingTokens.count-skipWhitespaces(for: remainingTokens).count {
                     if let usedToken = remainingHeadToken {
                         usedTokens.append(usedToken)
                     }
@@ -85,7 +85,7 @@ extension Parser {
 
             // see if the type can be wrapped into metatype types
             while let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Period {
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingTokens = skipWhitespaces(for: remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
 
                 if let
@@ -100,7 +100,7 @@ extension Parser {
                         resultType = MetatypeType(type: resultType, meta: .Protocol)
                     }
 
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
                 }
             }
@@ -115,14 +115,14 @@ extension Parser {
                     functionThrowingMarker = .Rethrowing
                 }
 
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingTokens = skipWhitespaces(for: remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
             }
             if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Arrow {
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingTokens = skipWhitespaces(for: remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
 
-                let returnTypeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+                let returnTypeResult = parseType(head: remainingHeadToken, tokens: remainingTokens)
                 if let returnType = returnTypeResult.type {
                     resultType = FunctionType(parameterType: resultType, returnType: returnType, throwingMarker: functionThrowingMarker)
 
@@ -141,27 +141,27 @@ extension Parser {
     // TODO: give a better name, currently it parses type identifier, array type, dictionary type,
     // TODO: tuple type, protocol composition type, and metatype type
     private func parseAtomicType(head: Token?, tokens: [Token]) -> (type: Type?, advancedBy: Int) {
-        let dictTypeResult = parseDictionaryType(head, tokens: tokens)
+        let dictTypeResult = parseDictionaryType(head: head, tokens: tokens)
         if let dictType = dictTypeResult.dictionaryType {
             return (dictType, dictTypeResult.advancedBy)
         }
 
-        let arrayTypeResult = parseArrayType(head, tokens: tokens)
+        let arrayTypeResult = parseArrayType(head: head, tokens: tokens)
         if let arrayType = arrayTypeResult.arrayType {
             return (arrayType, arrayTypeResult.advancedBy)
         }
 
-        let protocolCompositionTypeResult = parseProtocolCompositionType(head, tokens: tokens)
+        let protocolCompositionTypeResult = parseProtocolCompositionType(head: head, tokens: tokens)
         if let protocolCompositionType = protocolCompositionTypeResult.protocolCompositionType {
             return (protocolCompositionType, protocolCompositionTypeResult.advancedBy)
         }
 
-        let tupleTypeResult = parseTupleType(head, tokens: tokens)
+        let tupleTypeResult = parseTupleType(head: head, tokens: tokens)
         if let tupleType = tupleTypeResult.tupleType {
             return (tupleType, tupleTypeResult.advancedBy)
         }
 
-        let typeIdentifierResult = parseTypeIdentifier(head, tokens: tokens)
+        let typeIdentifierResult = parseTypeIdentifier(head: head, tokens: tokens)
         if let typeIdentifier = typeIdentifierResult.typeIdentifier {
             let typeIdentifierOrMetatypeType = convertTypeIdentifierToPotentialMetatypeType(typeIdentifier)
             return (typeIdentifierOrMetatypeType, typeIdentifierResult.advancedBy)
@@ -175,7 +175,7 @@ extension Parser {
     - [x] type-name → identifier
     */
     func parseTypeIdentifier() throws -> TypeIdentifier {
-        let result = parseTypeIdentifier(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseTypeIdentifier(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let typeIdentifier = result.typeIdentifier else {
             throw ParserError.InternalError
@@ -195,10 +195,10 @@ extension Parser {
         guard let typeName = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) else {
             return (nil, 0)
         }
-        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+        remainingTokens = skipWhitespaces(for: remainingTokens)
         remainingHeadToken = remainingTokens.popLast()
 
-        let genericResult = parseGenericArgumentClause(remainingHeadToken, tokens: remainingTokens)
+        let genericResult = parseGenericArgumentClause(head: remainingHeadToken, tokens: remainingTokens)
         for _ in 0..<genericResult.advancedBy {
             remainingHeadToken = remainingTokens.popLast()
         }
@@ -207,15 +207,15 @@ extension Parser {
         namedTypes.append(NamedType(name: typeName, generic: genericResult.genericArgumentClause))
 
         while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Period {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
             guard let subTypeName = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) else {
                 break
             }
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            let subGenericResult = parseGenericArgumentClause(remainingHeadToken, tokens: remainingTokens)
+            let subGenericResult = parseGenericArgumentClause(head: remainingHeadToken, tokens: remainingTokens)
             for _ in 0..<subGenericResult.advancedBy {
                 remainingHeadToken = remainingTokens.popLast()
             }
@@ -230,7 +230,7 @@ extension Parser {
     - [x] array-type → `[` type `]`
     */
     func parseArrayType() throws -> ArrayType {
-        let result = parseArrayType(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseArrayType(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let arrayType = result.arrayType else {
             throw ParserError.InternalError
@@ -248,17 +248,17 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftSquare {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            let typeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+            let typeResult = parseType(head: remainingHeadToken, tokens: remainingTokens)
             if let type = typeResult.type {
                 for _ in 0..<typeResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
                 }
 
                 if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightSquare {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
                     return (ArrayType(type: type), tokens.count - remainingTokens.count)
@@ -273,7 +273,7 @@ extension Parser {
     - [x] dictionary-type → `[` type `:` type `]`
     */
     func parseDictionaryType() throws -> DictionaryType {
-        let result = parseDictionaryType(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseDictionaryType(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let dictionaryType = result.dictionaryType else {
             throw ParserError.InternalError
@@ -291,27 +291,27 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftSquare {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            let keyTypeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+            let keyTypeResult = parseType(head: remainingHeadToken, tokens: remainingTokens)
             if let keyType = keyTypeResult.type {
                 for _ in 0..<keyTypeResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
                 }
 
                 if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Colon {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
-                    let valueTypeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+                    let valueTypeResult = parseType(head: remainingHeadToken, tokens: remainingTokens)
                     if let valueType = valueTypeResult.type {
                         for _ in 0..<valueTypeResult.advancedBy {
                             remainingHeadToken = remainingTokens.popLast()
                         }
 
                         if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightSquare {
-                            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                            remainingTokens = skipWhitespaces(for: remainingTokens)
                             remainingHeadToken = remainingTokens.popLast()
                             return (DictionaryType(keyType: keyType, valueType: valueType), tokens.count - remainingTokens.count)
                         }
@@ -329,7 +329,7 @@ extension Parser {
     - [x] protocol-identifier → type-identifier
     */
     func parseProtocolCompositionType() throws -> ProtocolCompositionType {
-        let result = parseProtocolCompositionType(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseProtocolCompositionType(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let protocolCompositionType = result.protocolCompositionType else {
             throw ParserError.InternalError
@@ -347,15 +347,15 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         if let token = remainingHeadToken, case let .Keyword(keywordName, _) = token where keywordName == "protocol" {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == "<" {
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingTokens = skipWhitespaces(for: remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
 
                 var protocolIdentifiers = [TypeIdentifier]()
-                let firstProtocolIdentifierResult = parseTypeIdentifier(remainingHeadToken, tokens: remainingTokens)
+                let firstProtocolIdentifierResult = parseTypeIdentifier(head: remainingHeadToken, tokens: remainingTokens)
                 if let firstProtocolIdentifier = firstProtocolIdentifierResult.typeIdentifier {
                     protocolIdentifiers.append(firstProtocolIdentifier)
 
@@ -364,10 +364,10 @@ extension Parser {
                     }
 
                     while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Comma {
-                        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                        remainingTokens = skipWhitespaces(for: remainingTokens)
                         remainingHeadToken = remainingTokens.popLast()
 
-                        let protocolIdentifierResult = parseTypeIdentifier(remainingHeadToken, tokens: remainingTokens)
+                        let protocolIdentifierResult = parseTypeIdentifier(head: remainingHeadToken, tokens: remainingTokens)
                         guard let protocolIdentifier = protocolIdentifierResult.typeIdentifier else {
                             break
                         }
@@ -380,7 +380,7 @@ extension Parser {
                 }
 
                 if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == ">" {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
                     return (ProtocolCompositionType(protocols: protocolIdentifiers), tokens.count - remainingTokens.count)
@@ -399,7 +399,7 @@ extension Parser {
     - [x] element-name → identifier
     */
     func parseTupleType() throws -> TupleType {
-        let result = parseTupleType(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseTupleType(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let tupleType = result.tupleType else {
             throw ParserError.InternalError
@@ -417,12 +417,12 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .LeftParen {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             var tupleTypeElements = [TupleTypeElement]()
 
-            let firstElementResult = parseTupleTypeElement(remainingHeadToken, tokens: remainingTokens)
+            let firstElementResult = parseTupleTypeElement(head: remainingHeadToken, tokens: remainingTokens)
             if let firstElement = firstElementResult.element {
                 tupleTypeElements.append(firstElement)
                 for _ in 0..<firstElementResult.advancedBy {
@@ -430,10 +430,10 @@ extension Parser {
                 }
 
                 while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Comma {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
-                    let elementResult = parseTupleTypeElement(remainingHeadToken, tokens: remainingTokens)
+                    let elementResult = parseTupleTypeElement(head: remainingHeadToken, tokens: remainingTokens)
                     guard let element = elementResult.element else {
                         break
                     }
@@ -445,7 +445,7 @@ extension Parser {
             }
 
             if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .RightParen {
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                remainingTokens = skipWhitespaces(for: remainingTokens)
                 remainingHeadToken = remainingTokens.popLast()
 
                 return (TupleType(elements: tupleTypeElements), tokens.count - remainingTokens.count)
@@ -459,7 +459,7 @@ extension Parser {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        let parsingAttributesResult = parseAttributes(remainingHeadToken, tokens: remainingTokens)
+        let parsingAttributesResult = parseAttributes(head: remainingHeadToken, tokens: remainingTokens)
         for _ in 0..<parsingAttributesResult.advancedBy {
             remainingHeadToken = remainingTokens.popLast()
         }
@@ -469,7 +469,7 @@ extension Parser {
         if let token = remainingHeadToken, case let .Keyword(keywordName, keywordType) = token where keywordName == "inout" && keywordType == .Declaration {
             isInOutParameter = true
 
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
         }
 
@@ -477,10 +477,10 @@ extension Parser {
         let checkpointHeadToken: Token? = remainingHeadToken
 
         if let elementName = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            let typeAnnotationResult = parseTypeAnnotation(remainingHeadToken, tokens: remainingTokens)
+            let typeAnnotationResult = parseTypeAnnotation(head: remainingHeadToken, tokens: remainingTokens)
             if let type = typeAnnotationResult.type {
                 for _ in 0..<typeAnnotationResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
@@ -493,7 +493,7 @@ extension Parser {
         remainingTokens = checkpointTokens
         remainingHeadToken = checkpointHeadToken
 
-        let typeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+        let typeResult = parseType(head: remainingHeadToken, tokens: remainingTokens)
         if let type = typeResult.type {
             for _ in 0..<typeResult.advancedBy {
                 remainingHeadToken = remainingTokens.popLast()
@@ -509,7 +509,7 @@ extension Parser {
     - [x] optional-type → type `?`
     */
     func parseOptionalType() throws -> OptionalType {
-        let result = parseType(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseType(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let optionalType = result.type as? OptionalType else {
             throw ParserError.InternalError
@@ -526,7 +526,7 @@ extension Parser {
     - [x] implicitly-unwrapped-optional-type → type `!`
     */
     func parseImplicitlyUnwrappedOptionalType() throws -> ImplicitlyUnwrappedOptionalType {
-        let result = parseType(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseType(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let implicitlyUnwrappedOptionalType = result.type as? ImplicitlyUnwrappedOptionalType else {
             throw ParserError.InternalError
@@ -543,7 +543,7 @@ extension Parser {
     - [x] metatype-type → type `.` `Type` | type `.` `Protocol`
     */
     func parseMetatypeType() throws -> MetatypeType {
-        let result = parseType(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseType(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let metatypeType = result.type as? MetatypeType else {
             throw ParserError.InternalError
@@ -556,7 +556,7 @@ extension Parser {
         return metatypeType
     }
 
-    private func convertTypeIdentifierToPotentialMetatypeType(typeIdentifier: TypeIdentifier) -> Type {
+    private func convertTypeIdentifierToPotentialMetatypeType(_ typeIdentifier: TypeIdentifier) -> Type {
         let namedTypes = typeIdentifier.namedTypes
         if namedTypes.count >= 2 {
             var theFirstIndexForMeta = namedTypes.count
@@ -595,7 +595,7 @@ extension Parser {
     - [x] function-type → type `rethrows` `->` type
     */
     func parseFunctionType() throws -> FunctionType {
-        let result = parseType(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseType(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let functionType = result.type as? FunctionType else {
             throw ParserError.InternalError
@@ -612,7 +612,7 @@ extension Parser {
     - [x] type-annotation → `:` attributes/opt/ type
     */
     func parseTypeAnnotation() throws -> (type: Type, attributes: [Attribute]) {
-        let result = parseTypeAnnotation(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseTypeAnnotation(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let type = result.type else {
             throw ParserError.InternalError
@@ -630,15 +630,15 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         if let token = remainingHeadToken, case let .Punctuator(punctuatorType) = token where punctuatorType == .Colon {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            let parsingAttributesResult = parseAttributes(remainingHeadToken, tokens: remainingTokens)
+            let parsingAttributesResult = parseAttributes(head: remainingHeadToken, tokens: remainingTokens)
             for _ in 0..<parsingAttributesResult.advancedBy {
                 remainingHeadToken = remainingTokens.popLast()
             }
 
-            let typeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+            let typeResult = parseType(head: remainingHeadToken, tokens: remainingTokens)
             if let type = typeResult.type {
                 for _ in 0..<typeResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
@@ -688,7 +688,7 @@ extension Parser {
             return "class"
         }
         else if let typeIdentifier = try? parseTypeIdentifier() {
-            return typeIdentifier.names.joinWithSeparator(".")
+            return typeIdentifier.names.joined(separator: ".")
         }
         else {
             return nil

@@ -32,7 +32,7 @@ extension Parser {
     */
     func parsePostfixExpression() throws -> PostfixExpression {
         return try _parseAndUnwrapParsingResult {
-            self._parsePostfixExpression(self.currentToken, tokens: self.reversedTokens.map { $0.0 })
+            self._parsePostfixExpression(head: self.currentToken, tokens: self.reversedTokens.map { $0.0 })
         }
     }
 
@@ -42,7 +42,7 @@ extension Parser {
 
         var previousUsedToken: Token?
 
-        let parsePrimaryExpressionResult = _parsePrimaryExpression(remainingHeadToken, tokens: remainingTokens)
+        let parsePrimaryExpressionResult = _parsePrimaryExpression(head: remainingHeadToken, tokens: remainingTokens)
         guard parsePrimaryExpressionResult.hasResult else {
             return ParsingResult<PostfixExpression>.makeNoResult()
         }
@@ -56,7 +56,7 @@ extension Parser {
             case .Punctuator(let punctuatorType):
                 switch punctuatorType {
                 case .LeftParen:
-                    let parseParenExprResult = _parseParenthesizedExpression(remainingHeadToken, tokens: remainingTokens)
+                    let parseParenExprResult = _parseParenthesizedExpression(head: remainingHeadToken, tokens: remainingTokens)
                     guard parseParenExprResult.hasResult else {
                         break postfixLoop
                     }
@@ -64,11 +64,11 @@ extension Parser {
                         parseParenExprResult.advancedBy, &remainingTokens, &remainingHeadToken, &previousUsedToken)
                     resultExpression = FunctionCallExpression.makeParenthesizedFunctionCallExpression(resultExpression, parseParenExprResult.result)
                 case .Period:
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
                     let parseDotPostfixExprResult = _parseDotPostfixExpression(
-                        remainingHeadToken, tokens: remainingTokens, postfixExpression: resultExpression)
+                        head: remainingHeadToken, tokens: remainingTokens, postfixExpression: resultExpression)
                     guard parseDotPostfixExprResult.hasResult else {
                         break postfixLoop
                     }
@@ -76,10 +76,10 @@ extension Parser {
                         parseDotPostfixExprResult.advancedBy, &remainingTokens, &remainingHeadToken, &previousUsedToken)
                     resultExpression = parseDotPostfixExprResult.result
                 case .LeftSquare:
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
-                    let parsingExpressionListResult = _parseExpressionList(remainingHeadToken, tokens: remainingTokens)
+                    let parsingExpressionListResult = _parseExpressionList(head: remainingHeadToken, tokens: remainingTokens)
                     guard parsingExpressionListResult.hasResult else {
                         break postfixLoop
                     }
@@ -113,7 +113,7 @@ extension Parser {
                 guard let previousConsumedToken = previousUsedToken where !previousConsumedToken.isWhitespace() else {
                     break postfixLoop
                 }
-                guard __isValidPostfixOperatorExpression(remainingHeadToken, tokens: remainingTokens) else {
+                guard __isValidPostfixOperatorExpression(head: remainingHeadToken, tokens: remainingTokens) else {
                     break postfixLoop
                 }
                 __skipWhitespacesAndPreservePreviousToken(&remainingTokens, &remainingHeadToken, &previousUsedToken)
@@ -127,19 +127,19 @@ extension Parser {
     }
 
     private func __skipWhitespacesAndPreservePreviousToken( // method with side effect
-        inout remainingTokens: [Token], inout _ remainingHeadToken: Token?, inout _ previousUsedToken: Token?) {
+        _ remainingTokens: inout [Token], _ remainingHeadToken: inout Token?, _ previousUsedToken: inout Token?) {
         __advancedTokensAndPreservePreviousToken(
-            remainingTokens.count - skipWhitespacesForTokens(remainingTokens).count + 1,
+            remainingTokens.count - skipWhitespaces(for: remainingTokens).count + 1,
             &remainingTokens,
             &remainingHeadToken,
             &previousUsedToken)
     }
 
     private func __advancedTokensAndPreservePreviousToken( // method with side effect
-        advancedBy: Int,
-        inout _ remainingTokens: [Token],
-        inout _ remainingHeadToken: Token?,
-        inout _ previousUsedToken: Token?) {
+        _ advancedBy: Int,
+        _ remainingTokens: inout [Token],
+        _ remainingHeadToken: inout Token?,
+        _ previousUsedToken: inout Token?) {
         for _ in 0..<advancedBy {
             previousUsedToken = remainingHeadToken
             remainingHeadToken = remainingTokens.popLast()
@@ -154,10 +154,10 @@ extension Parser {
         }
 
         var remainingTokens = tokens
-        remainingTokens.popLast()
-        remainingTokens = skipWhitespacesForTokens(tokens)
+        let _ = remainingTokens.popLast()
+        remainingTokens = skipWhitespaces(for: tokens)
         let remainingHeadToken = remainingTokens.popLast()
-        let parsingPrefixExpressionResult = _parsePrefixExpression(remainingHeadToken, tokens: remainingTokens)
+        let parsingPrefixExpressionResult = _parsePrefixExpression(head: remainingHeadToken, tokens: remainingTokens)
         return !parsingPrefixExpressionResult.hasResult
     }
 
@@ -166,21 +166,22 @@ extension Parser {
         tokens: [Token],
         postfixExpression resultExpression: PostfixExpression) -> ParsingResult<PostfixExpression> {
         let parseDotKeywordPostfixExpressionResult = _parseDotKeywordPostfixExpression(
-            head, tokens: tokens, postfixExpression: resultExpression)
+            head: head, tokens: tokens, postfixExpression: resultExpression)
         if parseDotKeywordPostfixExpressionResult.hasResult {
             return parseDotKeywordPostfixExpressionResult
         }
 
-        return _parseExplicitMemberExpression(head, tokens: tokens, postfixExpression: resultExpression)
+        return _parseExplicitMemberExpression(head: head, tokens: tokens, postfixExpression: resultExpression)
     }
 
-    private func _parseExplicitMemberExpression(head: Token?,
+    private func _parseExplicitMemberExpression(
+        head: Token?,
         tokens: [Token],
         postfixExpression resultExpression: PostfixExpression) -> ParsingResult<PostfixExpression> {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        let parseIdExprResult = _parseIdentifierExpression(remainingHeadToken, tokens: remainingTokens)
+        let parseIdExprResult = _parseIdentifierExpression(head: remainingHeadToken, tokens: remainingTokens)
         if parseIdExprResult.hasResult {
             for _ in 0..<parseIdExprResult.advancedBy {
                 remainingHeadToken = remainingTokens.popLast()
@@ -189,7 +190,7 @@ extension Parser {
                 ExplicitMemberExpression.makeNamedTypeExplicitMemberExpression(resultExpression, parseIdExprResult.result),
                 tokens.count - remainingTokens.count)
         }
-        let parseLiteralExprResult = _parseLiteralExpression(remainingHeadToken, tokens: remainingTokens)
+        let parseLiteralExprResult = _parseLiteralExpression(head: remainingHeadToken, tokens: remainingTokens)
         if let integerLiteralExpr = parseLiteralExprResult.result as? IntegerLiteralExpression
         where parseLiteralExprResult.hasResult && integerLiteralExpr.kind == .Decimal {
             for _ in 0..<parseLiteralExprResult.advancedBy {
@@ -212,7 +213,7 @@ extension Parser {
 
         if let currentHeadToken = remainingHeadToken, case let .Keyword(keywordStr, _) = currentHeadToken
         where keywordStr == "init" || keywordStr == "self" || keywordStr == "dynamicType" {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             if keywordStr == "init" {
@@ -307,7 +308,7 @@ extension Parser {
     }
 
     private func _parsePostfixExpressionAndCastToType<U>() throws -> U {
-        let result = _parsePostfixExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = _parsePostfixExpression(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard result.hasResult else {
             throw ParserError.InternalError // TODO: better error handling

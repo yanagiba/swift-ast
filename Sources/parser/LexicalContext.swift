@@ -21,7 +21,7 @@ typealias TokenWithLocation = (Token, SourceRange)
 class LexicalContext {
   private var _tokens = [TokenWithLocation]()
 
-  func append(token: Token, _ sourceRange: SourceRange) {
+  func append(_ token: Token, _ sourceRange: SourceRange) {
     _tokens.append((token, sourceRange))
   }
 

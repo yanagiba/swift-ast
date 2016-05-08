@@ -33,7 +33,7 @@ extension Parser {
     - [x] same-type-requirement → type-identifier `==` type
     */
     func parseGenericParameterClause() throws -> GenericParameterClause {
-        let result = parseGenericParameterClause(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseGenericParameterClause(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let genericParameterClause = result.genericParameterClause else {
             throw ParserError.InternalError
@@ -51,12 +51,12 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == "<" {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             var genericParameters: [GenericParameterClause.GenericParameter] = []
 
-            let firstGenericParameterResult = parseGenericParameter(remainingHeadToken, tokens: remainingTokens)
+            let firstGenericParameterResult = parseGenericParameter(head: remainingHeadToken, tokens: remainingTokens)
             if let firstGenericParameter = firstGenericParameterResult.genericParameter {
                 genericParameters.append(firstGenericParameter)
 
@@ -65,10 +65,10 @@ extension Parser {
                 }
 
                 while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Comma {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
-                    let genericParameterResult = parseGenericParameter(remainingHeadToken, tokens: remainingTokens)
+                    let genericParameterResult = parseGenericParameter(head: remainingHeadToken, tokens: remainingTokens)
                     guard let genericParameter = genericParameterResult.genericParameter else {
                         // TODO: also throw errors
                         break
@@ -80,13 +80,13 @@ extension Parser {
                     }
                 }
 
-                let requirementClauseResult = parseRequirementClause(remainingHeadToken, tokens: remainingTokens)
+                let requirementClauseResult = parseRequirementClause(head: remainingHeadToken, tokens: remainingTokens)
                 for _ in 0..<requirementClauseResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
                 }
 
                 if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == ">" {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
                     return (GenericParameterClause(parameters: genericParameters, requirements: requirementClauseResult.requirementClause), tokens.count - remainingTokens.count)
@@ -107,14 +107,14 @@ extension Parser {
         guard let typeName = readIdentifier(includeContextualKeywords: true, forToken: remainingHeadToken) else {
             return (nil, 0)
         }
-        remainingTokens = skipWhitespacesForTokens(remainingTokens)
+        remainingTokens = skipWhitespaces(for: remainingTokens)
         remainingHeadToken = remainingTokens.popLast()
 
         if let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Colon {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            let typeIdentifierResult = parseTypeIdentifier(remainingHeadToken, tokens: remainingTokens)
+            let typeIdentifierResult = parseTypeIdentifier(head: remainingHeadToken, tokens: remainingTokens)
             if let typeIdentifier = typeIdentifierResult.typeIdentifier {
                 for _ in 0..<typeIdentifierResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
@@ -122,7 +122,7 @@ extension Parser {
                 return (GenericParameterClause.GenericParameter(typeName: typeName, typeIdentifier: typeIdentifier), tokens.count - remainingTokens.count)
             }
 
-            let protocolCompositionTypeResult = parseProtocolCompositionType(remainingHeadToken, tokens: remainingTokens)
+            let protocolCompositionTypeResult = parseProtocolCompositionType(head: remainingHeadToken, tokens: remainingTokens)
             if let protocolCompositionType = protocolCompositionTypeResult.protocolCompositionType {
                 for _ in 0..<protocolCompositionTypeResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
@@ -141,10 +141,10 @@ extension Parser {
         var requirementList: [GenericParameterClause.Requirement] = []
 
         if let token = remainingHeadToken, case let .Keyword(keywordName, _) = token where keywordName == "where" {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            let firstRequirementResult = parseRequirement(remainingHeadToken, tokens: remainingTokens)
+            let firstRequirementResult = parseRequirement(head: remainingHeadToken, tokens: remainingTokens)
             if let firstRequirement = firstRequirementResult.requirement {
                 requirementList.append(firstRequirement)
 
@@ -153,10 +153,10 @@ extension Parser {
                 }
 
                 while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Comma {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
-                    let requirementResult = parseRequirement(remainingHeadToken, tokens: remainingTokens)
+                    let requirementResult = parseRequirement(head: remainingHeadToken, tokens: remainingTokens)
                     guard let requirement = requirementResult.requirement else {
                         // TODO: also throw errors
                         break
@@ -180,7 +180,7 @@ extension Parser {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        let typeIdentifierResult = parseTypeIdentifier(remainingHeadToken, tokens: remainingTokens)
+        let typeIdentifierResult = parseTypeIdentifier(head: remainingHeadToken, tokens: remainingTokens)
         guard let typeIdentifier = typeIdentifierResult.typeIdentifier else {
             return (nil, 0)
         }
@@ -189,10 +189,10 @@ extension Parser {
         }
 
         if let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Colon {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            let conformanceTypeIdentifierResult = parseTypeIdentifier(remainingHeadToken, tokens: remainingTokens)
+            let conformanceTypeIdentifierResult = parseTypeIdentifier(head: remainingHeadToken, tokens: remainingTokens)
             if let conformanceTypeIdentifier = conformanceTypeIdentifierResult.typeIdentifier {
                 for _ in 0..<conformanceTypeIdentifierResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
@@ -202,7 +202,7 @@ extension Parser {
                 return (requirement, tokens.count - remainingTokens.count)
             }
 
-            let conformanceProtocolCompositionTypeResult = parseProtocolCompositionType(remainingHeadToken, tokens: remainingTokens)
+            let conformanceProtocolCompositionTypeResult = parseProtocolCompositionType(head: remainingHeadToken, tokens: remainingTokens)
             if let conformanceProtocolCompositionType = conformanceProtocolCompositionTypeResult.protocolCompositionType {
                 for _ in 0..<conformanceProtocolCompositionTypeResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
@@ -214,10 +214,10 @@ extension Parser {
         }
 
         if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == "==" {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
-            let sameTypeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+            let sameTypeResult = parseType(head: remainingHeadToken, tokens: remainingTokens)
             guard let sameType = sameTypeResult.type else {
                 return (nil, 0) // TODO: error handling
             }
@@ -240,7 +240,7 @@ extension Parser {
     - [x] generic-argument → type
     */
     func parseGenericArgumentClause() throws -> GenericArgumentClause {
-        let result = parseGenericArgumentClause(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = parseGenericArgumentClause(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard let genericArgumentClause = result.genericArgumentClause else {
             throw ParserError.InternalError
@@ -258,11 +258,11 @@ extension Parser {
         var remainingHeadToken: Token? = head
 
         if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == "<" {
-            remainingTokens = skipWhitespacesForTokens(remainingTokens)
+            remainingTokens = skipWhitespaces(for: remainingTokens)
             remainingHeadToken = remainingTokens.popLast()
 
             var types = [Type]()
-            let firstTypeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+            let firstTypeResult = parseType(head: remainingHeadToken, tokens: remainingTokens)
             if let firstType = firstTypeResult.type {
                 types.append(firstType)
 
@@ -271,10 +271,10 @@ extension Parser {
                 }
 
                 while let token = remainingHeadToken, case let .Punctuator(type) = token where type == .Comma {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
-                    let typeResult = parseType(remainingHeadToken, tokens: remainingTokens)
+                    let typeResult = parseType(head: remainingHeadToken, tokens: remainingTokens)
                     guard let type = typeResult.type else {
                         break
                     }
@@ -286,7 +286,7 @@ extension Parser {
                 }
 
                 if let token = remainingHeadToken, case let .Operator(operatorString) = token where operatorString == ">" {
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
                     remainingHeadToken = remainingTokens.popLast()
 
                     return (GenericArgumentClause(types: types), tokens.count - remainingTokens.count - (remainingHeadToken == nil ? 1 : 0))

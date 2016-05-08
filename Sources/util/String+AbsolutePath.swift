@@ -22,7 +22,7 @@ public extension String {
       return self
     }
 
-    let currentDirectory = NSFileManager.defaultManager().currentDirectoryPath
+    let currentDirectory = NSFileManager.default().currentDirectoryPath
     var pathHead = NSString(string: currentDirectory).pathComponents.filter { $0 != "." }
     if pathHead.count > 1 && pathHead.last == "/" {
       pathHead.removeLast()
@@ -43,7 +43,7 @@ public extension String {
       }
     }
 
-    let absolutePath = pathHead.joinWithSeparator("/") + "/" + pathTail.joinWithSeparator("/")
-    return absolutePath.substringFromIndex(absolutePath.startIndex.successor())
+    let absolutePath = pathHead.joined(separator: "/") + "/" + pathTail.joined(separator: "/")
+    return absolutePath.substring(from: absolutePath.index(absolutePath.startIndex, offsetBy: 1))
   }
 }

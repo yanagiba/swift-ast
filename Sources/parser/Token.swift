@@ -332,36 +332,36 @@ extension Token: CustomStringConvertible {
     }
   }
 
-  private func _stringWithColor(color: TerminalColor = .Default) -> String {
-    return "\(self)".terminalColor(color)
+  private func _terminalString(with color: TerminalColor = .Default) -> String {
+    return "\(self)".toTerminalString(with: color)
   }
 
   var inspect: String {
     switch self {
     case .Invalid(_):
-      return _stringWithColor(.Red)
+      return _terminalString(with: .Red)
     case let .Keyword(_, keywordType):
       switch keywordType {
       case .Contextual(_):
-        return _stringWithColor(.Yellow)
+        return _terminalString(with: .Yellow)
       default:
-        return _stringWithColor(.Magenta)
+        return _terminalString(with: .Magenta)
       }
     case .Punctuator(_):
-      return _stringWithColor(.Yellow)
+      return _terminalString(with: .Yellow)
     case .BinaryIntegerLiteral(_), .OctalIntegerLiteral(_), .DecimalIntegerLiteral(_), .HexadecimalIntegerLiteral(_),
          .DecimalFloatingPointLiteral(_), .HexadecimalFloatingPointLiteral(_):
-      return _stringWithColor(.Cyan)
+      return _terminalString(with: .Cyan)
     case .StaticStringLiteral(_), .InterpolatedStringLiteral(_):
-      return _stringWithColor(.Yellow)
+      return _terminalString(with: .Yellow)
     case .TrueBooleanLiteral, .FalseBooleanLiteral, .NilLiteral:
-      return _stringWithColor(.Magenta)
+      return _terminalString(with: .Magenta)
     case .Comment(_):
-      return _stringWithColor(.Green)
+      return _terminalString(with: .Green)
     case .Operator(_):
-      return _stringWithColor(.Blue)
+      return _terminalString(with: .Blue)
     default:
-      return _stringWithColor()
+      return _terminalString()
     }
   }
 }

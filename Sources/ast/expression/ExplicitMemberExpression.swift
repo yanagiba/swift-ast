@@ -37,7 +37,7 @@ public class ExplicitMemberExpression: PostfixExpression {
   }
 
   public class func makeTupleExplicitMemberExpression(
-    postfixExpression: PostfixExpression,
+    _ postfixExpression: PostfixExpression,
     _ decimalIntegerLiteralExpression: IntegerLiteralExpression) -> ExplicitMemberExpression {
     return ExplicitMemberExpression(
       kind: .Tuple,
@@ -47,7 +47,7 @@ public class ExplicitMemberExpression: PostfixExpression {
   }
 
   public class func makeNamedTypeExplicitMemberExpression(
-    postfixExpression: PostfixExpression,
+    _ postfixExpression: PostfixExpression,
     _ identifierExpression: IdentifierExpression) -> ExplicitMemberExpression {
     return ExplicitMemberExpression(
       kind: .NamedType,

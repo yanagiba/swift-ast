@@ -36,8 +36,8 @@ public class TypeAliasDeclaration: Declaration {
     public override func inspect(indent: Int = 0) -> String {
         var attrs = ""
         if !attrs.isEmpty {
-            attrs = " attribtues=\(attributes.map({ return $0.name }).joinWithSeparator(","))"
+            attrs = " attribtues=\(attributes.map({ return $0.name }).joined(separator: ","))"
         }
-        return "\(getIndentText(indent))(type-alias-declaration '\(name)'\(attrs) access='\(accessLevel)' type='\(type.inspect())' \(getSourceRangeText()))".terminalColor(.Green)
+        return "\(getIndentText(indent))(type-alias-declaration '\(name)'\(attrs) access='\(accessLevel)' type='\(type.inspect())' \(getSourceRangeText()))".toTerminalString(with: .Green)
     }
 }

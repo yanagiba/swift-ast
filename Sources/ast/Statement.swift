@@ -28,7 +28,7 @@ public class Statement: ASTNode {
     }
 
     public func inspect(indent: Int = 0) -> String {
-        return "\(getIndentText(indent))(statement)".terminalColor(.Red)
+        return "\(getIndentText(indent))(statement)".toTerminalString(with: .Red)
     }
 
     func getSourceRangeText() -> String {
@@ -37,7 +37,7 @@ public class Statement: ASTNode {
         return "path=\(sourceRange.start.path) range=\(rangeStr)"
     }
 
-    func getIndentText(indent: Int) -> String {
-        return String(count: (indent * 2), repeatedValue:" " as Character)
+    func getIndentText(_ indent: Int) -> String {
+        return String(repeating: (" " as Character), count: (indent * 2))
     }
 }

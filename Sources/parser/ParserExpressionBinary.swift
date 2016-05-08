@@ -30,7 +30,7 @@ extension Parser {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        let parsingHeadBiOpExprResult = _parseBinaryExpression(remainingHeadToken, tokens: remainingTokens, lhs: lhs)
+        let parsingHeadBiOpExprResult = _parseBinaryExpression(head: remainingHeadToken, tokens: remainingTokens, lhs: lhs)
         guard parsingHeadBiOpExprResult.hasResult else {
             return ParsingResult<BinaryExpression>.makeNoResult()
         }
@@ -38,7 +38,7 @@ extension Parser {
             remainingHeadToken = remainingTokens.popLast()
         }
 
-        let parsingBiExprsResult = _parseBinaryExpressions(remainingHeadToken, tokens: remainingTokens, lhs: parsingHeadBiOpExprResult.result)
+        let parsingBiExprsResult = _parseBinaryExpressions(head: remainingHeadToken, tokens: remainingTokens, lhs: parsingHeadBiOpExprResult.result)
         guard parsingBiExprsResult.hasResult else {
             return parsingHeadBiOpExprResult
         }
@@ -54,110 +54,155 @@ extension Parser {
     - [x] binary-expression → assignment-operator try-operator/opt/ prefix-expression
     - [x] binary-expression → conditional-operator try-operator/opt/ prefix-expression
     - [x] binary-expression → type-casting-operator
+    */
+    func _parseBinaryExpression(head: Token?, tokens: [Token], lhs: Expression) -> ParsingResult<BinaryExpression> {
+        if let currentToken = head {
+            switch currentToken {
+            case .Keyword(_, _):
+                return _parseTypeCastingOperatorExpression(head: head, tokens: tokens, lhs: lhs)
+            case .Punctuator(let punctuatorType):
+                switch punctuatorType {
+                case .Equal:
+                    return _parseAssignmentOperatorExpression(head: head, tokens: tokens, lhs: lhs)
+                case .Question:
+                    return _parseTernaryConditionalOperatorExpression(head: head, tokens: tokens, lhs: lhs)
+                default:
+                    return ParsingResult<BinaryExpression>.makeNoResult()
+                }
+            case .Operator(_):
+                return _parseBinaryOperatorExpression(head: head, tokens: tokens, lhs: lhs)
+            default:
+                return ParsingResult<BinaryExpression>.makeNoResult()
+            }
+        }
 
-    - [x] assignment-operator → `=`
+        return ParsingResult<BinaryExpression>.makeNoResult()
+    }
 
+    private func _parseBinaryOperatorExpression(head: Token?, tokens: [Token], lhs: Expression) -> ParsingResult<BinaryExpression> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let headToken = remainingHeadToken, case let .Operator(operatorString) = headToken {
+            remainingTokens = skipWhitespaces(for: remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let parsingPrefixExprResult = _parsePrefixExpression(head: remainingHeadToken, tokens: remainingTokens)
+            if parsingPrefixExprResult.hasResult {
+                for _ in 0..<parsingPrefixExprResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                let biOpExpr = BinaryOperatorExpression(binaryOperator: operatorString, leftExpression: lhs, rightExpression: parsingPrefixExprResult.result)
+                return ParsingResult<BinaryExpression>.makeResult(biOpExpr, tokens.count - remainingTokens.count)
+            }
+        }
+
+        return ParsingResult<BinaryExpression>.makeNoResult()
+    }
+
+    /*
     - [x] conditional-operator → `?` try-operator/opt/ expression `:`
+    */
+    private func _parseTernaryConditionalOperatorExpression(head: Token?, tokens: [Token], lhs: Expression) -> ParsingResult<BinaryExpression> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
 
+        if let headToken = remainingHeadToken, case let .Punctuator(punctuatorType) = headToken where punctuatorType == .Question {
+            remainingTokens = skipWhitespaces(for: remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let parsingTrueExprResult =
+                _parseAndWrapTryOperatorExpression(head: remainingHeadToken, tokens: remainingTokens) { self._parseExpression(head: $0, tokens: $1) }
+            if parsingTrueExprResult.hasResult {
+                for _ in 0..<parsingTrueExprResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                if let colonToken = remainingHeadToken, case let .Punctuator(colonPunctuator) = colonToken where colonPunctuator == .Colon {
+                    remainingTokens = skipWhitespaces(for: remainingTokens)
+                    remainingHeadToken = remainingTokens.popLast()
+
+                    let parsingFalseExprResult = _parseTryOperatorExpression(head: remainingHeadToken, tokens: remainingTokens)
+                    if parsingFalseExprResult.hasResult {
+                        for _ in 0..<parsingFalseExprResult.advancedBy {
+                            remainingHeadToken = remainingTokens.popLast()
+                        }
+
+                        let ternaryConditionalOpExpr = TernaryConditionalOperatorExpression(
+                            conditionExpression: lhs,
+                            trueExpression: parsingTrueExprResult.result,
+                            falseExpression: parsingFalseExprResult.result)
+                        return ParsingResult<BinaryExpression>.makeResult(ternaryConditionalOpExpr, tokens.count - remainingTokens.count)
+                    }
+                }
+            }
+        }
+
+        return ParsingResult<BinaryExpression>.makeNoResult()
+    }
+
+    /*
+    - [x] assignment-operator → `=`
+    */
+    private func _parseAssignmentOperatorExpression(head: Token?, tokens: [Token], lhs: Expression) -> ParsingResult<BinaryExpression> {
+        var remainingTokens = tokens
+        var remainingHeadToken: Token? = head
+
+        if let headToken = remainingHeadToken, case let .Punctuator(punctuatorType) = headToken where punctuatorType == .Equal {
+            remainingTokens = skipWhitespaces(for: remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let parsingTryOpExprResult = _parseTryOperatorExpression(head: remainingHeadToken, tokens: remainingTokens)
+            if parsingTryOpExprResult.hasResult {
+                for _ in 0..<parsingTryOpExprResult.advancedBy {
+                    remainingHeadToken = remainingTokens.popLast()
+                }
+
+                let assignmentOpExpr = AssignmentOperatorExpression(leftExpression: lhs, rightExpression: parsingTryOpExprResult.result)
+                return ParsingResult<BinaryExpression>.makeResult(assignmentOpExpr, tokens.count - remainingTokens.count)
+            }
+        }
+
+        return ParsingResult<BinaryExpression>.makeNoResult()
+    }
+
+    /*
     - [x] type-casting-operator → `is` type
     - [x] type-casting-operator → `as` type
     - [x] type-casting-operator → `as``?` type
     - [x] type-casting-operator → `as``!` type
     */
-    func _parseBinaryExpression(head: Token?, tokens: [Token], lhs: Expression) -> ParsingResult<BinaryExpression> {
+    private func _parseTypeCastingOperatorExpression(head: Token?, tokens: [Token], lhs: Expression) -> ParsingResult<BinaryExpression> {
         var remainingTokens = tokens
         var remainingHeadToken: Token? = head
 
-        if let currentToken = remainingHeadToken {
-            switch currentToken {
-            case .Keyword(let keywordString, _) where keywordString == "is" || keywordString == "as":
-                var castingKind: TypeCastingOperatorExpression.Kind = .Is
-                if keywordString == "as" {
-                    castingKind = .As
-                    if let nextToken = remainingTokens.last, case let .Punctuator(punctuatorType) = nextToken
-                    where punctuatorType == .Exclaim || punctuatorType == .Question {
-                        remainingHeadToken = remainingTokens.popLast()
-                        if punctuatorType == .Exclaim {
-                            castingKind = .ForcedAs
-                        }
-                        else {
-                            castingKind = .OptionalAs
-                        }
-                    }
-                }
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                remainingHeadToken = remainingTokens.popLast()
-
-                let parsingTypeResult = parseType(remainingHeadToken, tokens: remainingTokens)
-                if let type = parsingTypeResult.type {
-                    for _ in 0..<parsingTypeResult.advancedBy {
-                        remainingHeadToken = remainingTokens.popLast()
-                    }
-
-                    let typeCastingOpExpr = TypeCastingOperatorExpression(kind: castingKind, expression: lhs, type: type)
-                    return ParsingResult<BinaryExpression>.makeResult(typeCastingOpExpr, tokens.count - remainingTokens.count)
-                }
-            case .Punctuator(let punctuatorType):
-                switch punctuatorType {
-                case .Equal:
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+        if let headToken = remainingHeadToken, case let .Keyword(keywordString, _) = headToken where keywordString == "is" || keywordString == "as" {
+            var castingKind: TypeCastingOperatorExpression.Kind = .Is
+            if keywordString == "as" {
+                castingKind = .As
+                if let nextToken = remainingTokens.last, case let .Punctuator(punctuatorType) = nextToken
+                where punctuatorType == .Exclaim || punctuatorType == .Question {
                     remainingHeadToken = remainingTokens.popLast()
-
-                    let parsingTryOpExprResult = _parseTryOperatorExpression(remainingHeadToken, tokens: remainingTokens)
-                    if parsingTryOpExprResult.hasResult {
-                        for _ in 0..<parsingTryOpExprResult.advancedBy {
-                            remainingHeadToken = remainingTokens.popLast()
-                        }
-
-                        let assignmentOpExpr = AssignmentOperatorExpression(leftExpression: lhs, rightExpression: parsingTryOpExprResult.result)
-                        return ParsingResult<BinaryExpression>.makeResult(assignmentOpExpr, tokens.count - remainingTokens.count)
+                    if punctuatorType == .Exclaim {
+                        castingKind = .ForcedAs
                     }
-                case .Question:
-                    remainingTokens = skipWhitespacesForTokens(remainingTokens)
+                    else {
+                        castingKind = .OptionalAs
+                    }
+                }
+            }
+            remainingTokens = skipWhitespaces(for: remainingTokens)
+            remainingHeadToken = remainingTokens.popLast()
+
+            let parsingTypeResult = parseType(head: remainingHeadToken, tokens: remainingTokens)
+            if let type = parsingTypeResult.type {
+                for _ in 0..<parsingTypeResult.advancedBy {
                     remainingHeadToken = remainingTokens.popLast()
-
-                    let parsingTrueExprResult = _parseAndWrapTryOperatorExpression(remainingHeadToken, tokens: remainingTokens) { self._parseExpression($0, tokens: $1) }
-                    if parsingTrueExprResult.hasResult {
-                        for _ in 0..<parsingTrueExprResult.advancedBy {
-                            remainingHeadToken = remainingTokens.popLast()
-                        }
-
-                        if let colonToken = remainingHeadToken, case let .Punctuator(colonPunctuator) = colonToken where colonPunctuator == .Colon {
-                            remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                            remainingHeadToken = remainingTokens.popLast()
-
-                            let parsingFalseExprResult = _parseTryOperatorExpression(remainingHeadToken, tokens: remainingTokens)
-                            if parsingFalseExprResult.hasResult {
-                                for _ in 0..<parsingFalseExprResult.advancedBy {
-                                    remainingHeadToken = remainingTokens.popLast()
-                                }
-
-                                let ternaryConditionalOpExpr = TernaryConditionalOperatorExpression(
-                                    conditionExpression: lhs,
-                                    trueExpression: parsingTrueExprResult.result,
-                                    falseExpression: parsingFalseExprResult.result)
-                                return ParsingResult<BinaryExpression>.makeResult(ternaryConditionalOpExpr, tokens.count - remainingTokens.count)
-                            }
-                        }
-                    }
-                default:
-                    return ParsingResult<BinaryExpression>.makeNoResult()
                 }
-            case .Operator(let operatorString):
-                remainingTokens = skipWhitespacesForTokens(remainingTokens)
-                remainingHeadToken = remainingTokens.popLast()
 
-                let parsingPrefixExprResult = _parsePrefixExpression(remainingHeadToken, tokens: remainingTokens)
-                if parsingPrefixExprResult.hasResult {
-                    for _ in 0..<parsingPrefixExprResult.advancedBy {
-                        remainingHeadToken = remainingTokens.popLast()
-                    }
-
-                    let biOpExpr = BinaryOperatorExpression(binaryOperator: operatorString, leftExpression: lhs, rightExpression: parsingPrefixExprResult.result)
-                    return ParsingResult<BinaryExpression>.makeResult(biOpExpr, tokens.count - remainingTokens.count)
-                }
-            default:
-                return ParsingResult<BinaryExpression>.makeNoResult()
+                let typeCastingOpExpr = TypeCastingOperatorExpression(kind: castingKind, expression: lhs, type: type)
+                return ParsingResult<BinaryExpression>.makeResult(typeCastingOpExpr, tokens.count - remainingTokens.count)
             }
         }
 
@@ -185,7 +230,7 @@ extension Parser {
     }
 
     private func _parseBinaryExpressionAndCastToType<U>() throws -> U {
-        let result = _parseExpression(currentToken, tokens: reversedTokens.map { $0.0 })
+        let result = _parseExpression(head: currentToken, tokens: reversedTokens.map { $0.0 })
 
         guard result.hasResult else {
             throw ParserError.InternalError // TODO: better error handling

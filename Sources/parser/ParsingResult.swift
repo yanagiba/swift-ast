@@ -46,7 +46,7 @@ extension ParsingResult {
 }
 
 extension ParsingResult {
-    class func makeResult(result: T, _ advancedBy: Int) -> ParsingResult<T> {
+    class func makeResult(_ result: T, _ advancedBy: Int) -> ParsingResult<T> {
         return ParsingResult<T>(result: result, advancedBy: advancedBy)
     }
 
@@ -56,7 +56,7 @@ extension ParsingResult {
 }
 
 extension ParsingResult {
-    class func wrap<U>(result: ParsingResult<U>) -> ParsingResult<T> {
+    class func wrap<U>(_ result: ParsingResult<U>) -> ParsingResult<T> {
         if let wrappedResult = result.result as? T {
             return ParsingResult<T>.makeResult(wrappedResult, result.advancedBy)
         }

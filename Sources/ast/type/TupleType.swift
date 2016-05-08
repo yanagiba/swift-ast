@@ -32,7 +32,7 @@ public class TupleTypeElement {
     }
 
     public func inspect() -> String {
-        let attr = attributes.isEmpty ? "" : "\(attributes.map { "@\($0.name)" }.joinWithSeparator(" ")) "
+        let attr = attributes.isEmpty ? "" : "\(attributes.map { "@\($0.name)" }.joined(separator: " ")) "
         let inoutStr = isInOutParameter ? "inout " : ""
         let nameStr = name == nil ? "" : "\(name): "
         return "\(attr)\(inoutStr)\(nameStr)\(type.inspect())"
@@ -51,6 +51,6 @@ public class TupleType: Type {
     }
 
     public func inspect() -> String {
-        return "(\(_elements.map { $0.inspect() }.joinWithSeparator(", ")))"
+        return "(\(_elements.map { $0.inspect() }.joined(separator: ", ")))"
     }
 }

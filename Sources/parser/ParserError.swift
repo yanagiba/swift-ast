@@ -16,7 +16,7 @@
 
 import ast
 
-enum ParserError: ErrorType {
+enum ParserError: ErrorProtocol {
     case InternalError
 
     case InvalidToken

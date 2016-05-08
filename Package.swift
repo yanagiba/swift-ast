@@ -47,9 +47,6 @@ let package = Package(
         ),
     ],
     exclude: [
-        "Integrations"
-    ],
-    testDependencies: [
-        .Package(url: "https://github.com/kylef/Spectre.git", majorVersion: 0),
+        "Integrations", "Spectre"
     ]
 )
