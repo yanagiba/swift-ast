@@ -25,7 +25,7 @@ class ParsingTypeTests: XCTestCase {
   func testParseTypeWithIllBeginningToken() {
     parser.setupTestCode(";")
     do {
-      try parser.parseType()
+      let _ = try parser.parseType()
     } catch {
       return
     }
