@@ -154,7 +154,7 @@ extension Parser {
         }
 
         var remainingTokens = tokens
-        let _ = remainingTokens.popLast()
+        _ = remainingTokens.popLast()
         remainingTokens = skipWhitespaces(for: tokens)
         let remainingHeadToken = remainingTokens.popLast()
         let parsingPrefixExpressionResult = _parsePrefixExpression(head: remainingHeadToken, tokens: remainingTokens)

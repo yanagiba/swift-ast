@@ -165,7 +165,7 @@ class Lexer {
     var next = true
 
     while (!input.isEmpty && next) {
-      let _ = input
+      _ = input
 
       .match(/"^/\\*") { _ in
         let nestedComment = self._lexNestedComment(input[input.index(input.startIndex, offsetBy: 2)..<input.endIndex])
@@ -266,7 +266,7 @@ class Lexer {
       let startColumn = currentColumn
 
       if advanced == 0 && _isPotentialStringLiteral(input) {
-        let _ = input
+        _ = input
 
         /// string literals
         .match(/"^\"((?:(\\\\\\(.*\\))|[^\\\\\"]|\\\\.)*)\"") {
@@ -285,7 +285,7 @@ class Lexer {
       }
 
       if advanced == 0 && _isPotentialNumericLiteral(input) {
-        let _ = input
+        _ = input
 
         // literals
 
@@ -330,7 +330,7 @@ class Lexer {
       }
 
       if advanced == 0 && _isPotentialIdentifierOrKeywords(input) {
-        let _ = input
+        _ = input
 
         /// boolean literals
         .match(/"^true(?!\(identifierRegex))") { _ in
@@ -370,7 +370,7 @@ class Lexer {
       }
 
       if advanced == 0 && _isPotentialComment(input) {
-        let _ = input
+        _ = input
 
         // comments
         .match(/"^//.*\\R") {
@@ -392,7 +392,7 @@ class Lexer {
       }
 
       if advanced == 0 && _isPotentialPunctuation(input) {
-        let _ = input
+        _ = input
 
         // Matches backtick identifier
         .match(/"^`\(identifierRegex)`") {
@@ -505,7 +505,7 @@ class Lexer {
           advanced = 1
           currentColumn += advanced
         default:
-          let _ = input
+          _ = input
 
           /// Matches form feed
           .match(/"^\\u000C") { _ in

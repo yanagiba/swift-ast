@@ -590,7 +590,7 @@ extension Parser {
         }
 
         var remainingTokens = skipWhitespaces(for: tokens)
-        let _ = remainingTokens.popLast()
+        _ = remainingTokens.popLast()
         return ParsingResult<WildcardExpression>.makeResult(WildcardExpression(), tokens.count - remainingTokens.count)
     }
 }
