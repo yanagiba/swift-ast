@@ -22,7 +22,7 @@ public extension String {
       return self
     }
 
-    let currentDirectory = NSFileManager.default().currentDirectoryPath
+    let currentDirectory = FileManager.default().currentDirectoryPath
     var pathHead = NSString(string: currentDirectory).pathComponents.filter { $0 != "." }
     if pathHead.count > 1 && pathHead.last == "/" {
       pathHead.removeLast()

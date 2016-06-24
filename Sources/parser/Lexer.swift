@@ -624,6 +624,6 @@ class Lexer {
 
 prefix operator / {}
 
-prefix func /(regex: String) -> NSRegularExpression {
-    return try! NSRegularExpression(pattern: regex, options: NSRegularExpressionOptions(rawValue: 0))
+prefix func /(regex: String) -> RegularExpression {
+    return try! RegularExpression(pattern: regex, options: RegularExpression.Options(rawValue: 0))
 }

@@ -18,6 +18,6 @@ import Foundation
 
 public extension String {
   func readFile() throws -> String {
-    return try NSString(contentsOfFile: self, encoding: NSUTF8StringEncoding) as String
+    return try String(contentsOfFile: self, encoding: String.Encoding.utf8)
   }
 }

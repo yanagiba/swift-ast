@@ -17,8 +17,8 @@
 import Foundation
 
 public extension String {
-    func match(_ regex: NSRegularExpression, closure: (matches: [String]) -> ()) -> String? {
-        if let match = regex.firstMatch(in: self, options: NSMatchingOptions(rawValue: 0), range: NSMakeRange(0, self.utf16.count)) {
+    func match(_ regex: RegularExpression, closure: (matches: [String]) -> ()) -> String? {
+        if let match = regex.firstMatch(in: self, options: RegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, self.utf16.count)) {
             var groups = [String]()
             for index in 0..<match.numberOfRanges {
                 let rangeAtIndex = match.range(at: index)
