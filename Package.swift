@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Saito, LLC
+   Copyright 2015-2016 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,36 +17,60 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-ast",
-    targets: [
-        Target(
-            name: "source"
-        ),
-        Target(
-            name: "ast",
-            dependencies: [
-                "util",
-                "source",
-            ]
-        ),
-        Target(
-            name: "parser",
-            dependencies: [
-                "util",
-                "source",
-                "ast",
-            ]
-        ),
-        Target(
-            name: "swift-ast",
-            dependencies: [
-                "source",
-                "parser",
-                "util",
-            ]
-        ),
-    ],
-    exclude: [
-        "Integrations", "Spectre"
-    ]
+  name: "swift-ast",
+  targets: [
+    Target(
+      name: "Source"
+    ),
+    Target(
+      name: "Diagnostic",
+      dependencies: [
+        "Source",
+      ]
+    ),
+    Target(
+      name: "AST",
+      dependencies: [
+        "Source",
+        "Diagnostic",
+      ]
+    ),
+    Target(
+      name: "Lexer",
+      dependencies: [
+        "Source",
+        "Diagnostic",
+      ]
+    ),
+    Target(
+      name: "Parser",
+      dependencies: [
+        "Source",
+        "Diagnostic",
+        "AST",
+        "Lexer",
+      ]
+    ),
+    Target(
+      name: "Frontend",
+      dependencies: [
+        "AST",
+        "Lexer",
+        "Parser",
+      ]
+    ),
+    Target(
+      name: "swift-ast",
+      dependencies: [
+        "Frontend",
+      ]
+    ),
+    Target(
+      name: "PlaygroundTests",
+      dependencies: [
+        "ParserTests",
+        "AST",
+      ]
+    )
+  ]
 )

@@ -1,0 +1,162 @@
+/*
+   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+import XCTest
+
+@testable import AST
+@testable import Parser
+
+class ParserConstantDeclarationTests: XCTestCase {
+  func testDefineConstant() {
+    parseDeclarationAndTest("let foo", "let foo", testClosure: { decl in
+      guard let constDecl = decl as? ConstantDeclaration else {
+        XCTFail("Failed in getting a constant declaration.")
+        return
+      }
+
+      XCTAssertTrue(constDecl.attributes.isEmpty)
+      XCTAssertTrue(constDecl.modifiers.isEmpty)
+      XCTAssertEqual(constDecl.initializerList.count, 1)
+      XCTAssertEqual(constDecl.initializerList[0].textDescription, "foo")
+      XCTAssertTrue(constDecl.initializerList[0].pattern is IdentifierPattern)
+      XCTAssertNil(constDecl.initializerList[0].initializerExpression)
+    })
+  }
+
+  func testDefineConstantWithTypeAnnotation() {
+    parseDeclarationAndTest("let foo: Foo", "let foo: Foo", testClosure: { decl in
+      guard let constDecl = decl as? ConstantDeclaration else {
+        XCTFail("Failed in getting a constant declaration.")
+        return
+      }
+
+      XCTAssertTrue(constDecl.attributes.isEmpty)
+      XCTAssertTrue(constDecl.modifiers.isEmpty)
+      XCTAssertEqual(constDecl.initializerList.count, 1)
+      XCTAssertEqual(constDecl.initializerList[0].textDescription, "foo: Foo")
+      XCTAssertTrue(constDecl.initializerList[0].pattern is IdentifierPattern)
+      XCTAssertNil(constDecl.initializerList[0].initializerExpression)
+    })
+  }
+
+  func testDefineConstantWithInitializer() {
+    parseDeclarationAndTest("let foo: Foo = bar", "let foo: Foo = bar", testClosure: { decl in
+      guard let constDecl = decl as? ConstantDeclaration else {
+        XCTFail("Failed in getting a constant declaration.")
+        return
+      }
+
+      XCTAssertTrue(constDecl.attributes.isEmpty)
+      XCTAssertTrue(constDecl.modifiers.isEmpty)
+      XCTAssertEqual(constDecl.initializerList.count, 1)
+      XCTAssertEqual(constDecl.initializerList[0].textDescription, "foo: Foo = bar")
+      XCTAssertTrue(constDecl.initializerList[0].pattern is IdentifierPattern)
+      XCTAssertNotNil(constDecl.initializerList[0].initializerExpression)
+    })
+  }
+
+  func testMultipleDecls() {
+    parseDeclarationAndTest("let foo = bar, a, x = y",
+      "let foo = bar, a, x = y",
+      testClosure: { decl in
+      guard let constDecl = decl as? ConstantDeclaration else {
+        XCTFail("Failed in getting a constant declaration.")
+        return
+      }
+
+      XCTAssertTrue(constDecl.attributes.isEmpty)
+      XCTAssertTrue(constDecl.modifiers.isEmpty)
+      XCTAssertEqual(constDecl.initializerList.count, 3)
+      XCTAssertEqual(constDecl.initializerList[0].textDescription, "foo = bar")
+      XCTAssertTrue(constDecl.initializerList[0].pattern is IdentifierPattern)
+      XCTAssertNotNil(constDecl.initializerList[0].initializerExpression)
+      XCTAssertEqual(constDecl.initializerList[1].textDescription, "a")
+      XCTAssertTrue(constDecl.initializerList[1].pattern is IdentifierPattern)
+      XCTAssertNil(constDecl.initializerList[1].initializerExpression)
+      XCTAssertEqual(constDecl.initializerList[2].textDescription, "x = y")
+      XCTAssertTrue(constDecl.initializerList[2].pattern is IdentifierPattern)
+      XCTAssertNotNil(constDecl.initializerList[2].initializerExpression)
+    })
+  }
+
+  func testAttributes() {
+    parseDeclarationAndTest("@a let foo", "@a let foo", testClosure: { decl in
+      guard let constDecl = decl as? ConstantDeclaration else {
+        XCTFail("Failed in getting a constant declaration.")
+        return
+      }
+
+      XCTAssertEqual(constDecl.attributes.count, 1)
+      XCTAssertEqual(constDecl.attributes[0].name, "a")
+      XCTAssertTrue(constDecl.modifiers.isEmpty)
+      XCTAssertEqual(constDecl.initializerList.count, 1)
+      XCTAssertEqual(constDecl.initializerList[0].textDescription, "foo")
+      XCTAssertTrue(constDecl.initializerList[0].pattern is IdentifierPattern)
+      XCTAssertNil(constDecl.initializerList[0].initializerExpression)
+    })
+  }
+
+  func testModifiers() {
+    parseDeclarationAndTest(
+      "private nonmutating static final let foo = bar",
+      "private nonmutating static final let foo = bar",
+      testClosure: { decl in
+      guard let constDecl = decl as? ConstantDeclaration else {
+        XCTFail("Failed in getting a constant declaration.")
+        return
+      }
+
+      XCTAssertTrue(constDecl.attributes.isEmpty)
+      XCTAssertEqual(constDecl.modifiers.count, 4)
+      XCTAssertEqual(constDecl.modifiers[0], .accessLevel(.private))
+      XCTAssertEqual(constDecl.modifiers[1], .mutation(.nonmutating))
+      XCTAssertEqual(constDecl.modifiers[2], .static)
+      XCTAssertEqual(constDecl.modifiers[3], .final)
+      XCTAssertEqual(constDecl.initializerList.count, 1)
+      XCTAssertEqual(constDecl.initializerList[0].textDescription, "foo = bar")
+      XCTAssertTrue(constDecl.initializerList[0].pattern is IdentifierPattern)
+      XCTAssertNotNil(constDecl.initializerList[0].initializerExpression)
+    })
+  }
+
+  func testAttributeAndModifiers() {
+    parseDeclarationAndTest("@a fileprivate let foo", "@a fileprivate let foo", testClosure: { decl in
+      guard let constDecl = decl as? ConstantDeclaration else {
+        XCTFail("Failed in getting a constant declaration.")
+        return
+      }
+
+      XCTAssertEqual(constDecl.attributes.count, 1)
+      XCTAssertEqual(constDecl.attributes[0].name, "a")
+      XCTAssertEqual(constDecl.modifiers.count, 1)
+      XCTAssertEqual(constDecl.modifiers[0], .accessLevel(.fileprivate))
+      XCTAssertEqual(constDecl.initializerList.count, 1)
+      XCTAssertEqual(constDecl.initializerList[0].textDescription, "foo")
+      XCTAssertTrue(constDecl.initializerList[0].pattern is IdentifierPattern)
+      XCTAssertNil(constDecl.initializerList[0].initializerExpression)
+    })
+  }
+
+  static var allTests = [
+    ("testDefineConstant", testDefineConstant),
+    ("testDefineConstantWithTypeAnnotation", testDefineConstantWithTypeAnnotation),
+    ("testDefineConstantWithInitializer", testDefineConstantWithInitializer),
+    ("testMultipleDecls", testMultipleDecls),
+    ("testAttributes", testAttributes),
+    ("testModifiers", testModifiers),
+    ("testAttributeAndModifiers", testAttributeAndModifiers),
+  ]
+}
