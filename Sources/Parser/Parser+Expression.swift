@@ -329,7 +329,11 @@ extension Parser {
 
     // unit
     if _lexer.match(.rightParen) {
-      if config.parseTrailingClosure && isPotentialTrailingClosure() && _lexer.match(.leftBrace) {
+      if config.parseTrailingClosure &&
+        _lexer.look().kind == .leftBrace &&
+        isPotentialTrailingClosure()
+      {
+        _lexer.advance()
         let trailingClosure = try parseClosureExpression()
         return FunctionCallExpression(
           postfixExpression: expr,
@@ -352,7 +356,11 @@ extension Parser {
       return DynamicTypeExpression(expression: argExpr)
     }
 
-    if config.parseTrailingClosure && isPotentialTrailingClosure() && _lexer.match(.leftBrace) {
+    if config.parseTrailingClosure &&
+      _lexer.look().kind == .leftBrace &&
+      isPotentialTrailingClosure()
+    {
+      _lexer.advance()
       let trailingClosure = try parseClosureExpression()
       return FunctionCallExpression(
         postfixExpression: expr,

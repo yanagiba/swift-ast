@@ -274,6 +274,30 @@ class ParserLiteralExpressionTests: XCTestCase {
     }
   }
 
+  func testInterpolatedStringExpressionsContainFunctionCallExpr() {
+    parseExpressionAndTest(
+      "\"\\(casesText.joined())\"",
+      "\"\\(casesText.joined())\"")
+    parseExpressionAndTest(
+      "\"\\(casesText.joined(separator: \", \"))\"",
+      "\"\\(casesText.joined(separator: \", \"))\"")
+    parseExpressionAndTest(
+      "\"(\\(casesText.joined(separator: \", \")))\"",
+      "\"(\\(casesText.joined(separator: \", \")))\"")
+    parseExpressionAndTest(
+      "\"(\\(casesText.joined(separator: \", \"))foo)\"",
+      "\"(\\(casesText.joined(separator: \", \"))foo)\"")
+    parseExpressionAndTest(
+      "\"(\\(casesText.map { $0.upperCased() }))\"",
+      "\"(\\(casesText.map { $0.upperCased() }))\"")
+    parseExpressionAndTest(
+      "\"(\\(casesText.map { $0.upperCased() }.foo))\"",
+      "\"(\\(casesText.map { $0.upperCased() }.foo))\"")
+    parseExpressionAndTest(
+      "\"(\\(casesText.map { $0.upperCased() }.foo()))\"",
+      "\"(\\(casesText.map { $0.upperCased() }.foo()))\"")
+  }
+
   func testEmptyInterpolatedTextItem() {
     // TODO: "\()"
     // TODO: expected to be an error
@@ -501,6 +525,7 @@ class ParserLiteralExpressionTests: XCTestCase {
     ("testFloatingPointLiteral", testFloatingPointLiteral),
     ("testStaticStringLiteral", testStaticStringLiteral),
     ("testInterpolatedStringLiteral", testInterpolatedStringLiteral),
+    ("testInterpolatedStringExpressionsContainFunctionCallExpr", testInterpolatedStringExpressionsContainFunctionCallExpr),
     ("testEmptyInterpolatedTextItem", testEmptyInterpolatedTextItem),
     ("testEmptyArrayLiteral", testEmptyArrayLiteral),
     ("testSimpleArrayLiteral", testSimpleArrayLiteral),
