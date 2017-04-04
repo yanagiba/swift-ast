@@ -29,14 +29,51 @@ class ZTests: XCTestCase {
   }
 
   func testOne() {
-    lexAndTest("\"\\u{1E11}\\u{1F600}\"") { t in
-      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
-        XCTFail("Cannot lex a string literal.")
+    parseDeclarationAndTest(
+      "let foo = bar { $0 == 0 }",
+      "let foo = bar { $0 == 0 }",
+      testClosure: { decl in
+      guard let constDecl = decl as? ConstantDeclaration else {
+        XCTFail("Failed in getting a constant declaration.")
         return
       }
-      XCTAssertEqual(s, "\u{1E11}😀")
-      XCTAssertEqual(r, "\"\\u{1E11}\\u{1F600}\"")
-    }
+
+      XCTAssertTrue(constDecl.attributes.isEmpty)
+      XCTAssertTrue(constDecl.modifiers.isEmpty)
+      XCTAssertEqual(constDecl.initializerList.count, 1)
+      XCTAssertEqual(constDecl.initializerList[0].textDescription, "foo = bar { $0 == 0 }")
+      XCTAssertTrue(constDecl.initializerList[0].pattern is IdentifierPattern)
+      XCTAssertTrue(constDecl.initializerList[0].initializerExpression is FunctionCallExpression)
+    })
+    parseDeclarationAndTest(
+      "let foo = bar { $0 = 0 }, a = b { _ in true }, x = y { t -> Int in t^2 }",
+      "let foo = bar { $0 = 0 }, a = b { _ in\ntrue\n}, x = y { t -> Int in\nt ^ 2\n}")
+    parseDeclarationAndTest(
+      "var foo = bar { $0 == 0 }",
+      "var foo = bar { $0 == 0 }",
+      testClosure: { decl in
+      guard let varDecl = decl as? VariableDeclaration else {
+        XCTFail("Failed in getting a variable declaration.")
+        return
+      }
+
+      XCTAssertTrue(varDecl.attributes.isEmpty)
+      XCTAssertTrue(varDecl.modifiers.isEmpty)
+      guard case .initializerList(let initializerList) = varDecl.body else {
+        XCTFail("Failed in getting an initializer list for variable declaration.")
+        return
+      }
+      XCTAssertEqual(initializerList.count, 1)
+      XCTAssertEqual(initializerList[0].textDescription, "foo = bar { $0 == 0 }")
+      XCTAssertTrue(initializerList[0].pattern is IdentifierPattern)
+      XCTAssertTrue(initializerList[0].initializerExpression is FunctionCallExpression)
+    })
+    parseDeclarationAndTest(
+      "var foo = bar { $0 = 0 }, a = b { _ in true }, x = y { t -> Int in t^2 }",
+      "var foo = bar { $0 = 0 }, a = b { _ in\ntrue\n}, x = y { t -> Int in\nt ^ 2\n}")
+    parseDeclarationAndTest(
+      "var foo = _foo { $0 = 0 } { willSet(newValue) { print(newValue) } }",
+      "var foo = _foo { $0 = 0 } {\nwillSet(newValue) {\nprint(newValue)\n}\n}")
   }
 
   static var allTests = [

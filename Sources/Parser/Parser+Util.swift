@@ -33,6 +33,10 @@ extension Parser {
     }
   }
 
+  func isPotentialTrailingClosure() -> Bool {
+    return !isWillSetDidSetBlockHead() && !isGetterSetterBlockHead()
+  }
+
   func isWillSetDidSetBlockHead() -> Bool {
     var lookAhead = 1
     while true {
@@ -41,7 +45,9 @@ extension Parser {
       case .willSet, .didSet:
         return true
       case .at:
-        if _lexer.look(ahead: lookAhead + 1).kind.isEqual(toKindOf: .dummyIdentifier) {
+        if _lexer.look(ahead: lookAhead + 1).kind
+          .isEqual(toKindOf: .dummyIdentifier)
+        {
           lookAhead += 2
         } else {
           return false
@@ -60,7 +66,9 @@ extension Parser {
       case .get, .set:
         return true
       case .at:
-        if _lexer.look(ahead: lookAhead + 1).kind.isEqual(toKindOf: .dummyIdentifier) {
+        if _lexer.look(ahead: lookAhead + 1).kind
+          .isEqual(toKindOf: .dummyIdentifier)
+        {
           lookAhead += 2
         } else {
           return false

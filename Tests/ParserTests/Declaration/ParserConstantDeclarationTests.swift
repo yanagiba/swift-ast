@@ -150,6 +150,31 @@ class ParserConstantDeclarationTests: XCTestCase {
     })
   }
 
+  func testFollowedByTailClosure() {
+    parseDeclarationAndTest(
+      "let foo = bar { $0 == 0 }",
+      "let foo = bar { $0 == 0 }",
+      testClosure: { decl in
+      guard let constDecl = decl as? ConstantDeclaration else {
+        XCTFail("Failed in getting a constant declaration.")
+        return
+      }
+
+      XCTAssertTrue(constDecl.attributes.isEmpty)
+      XCTAssertTrue(constDecl.modifiers.isEmpty)
+      XCTAssertEqual(constDecl.initializerList.count, 1)
+      XCTAssertEqual(constDecl.initializerList[0].textDescription, "foo = bar { $0 == 0 }")
+      XCTAssertTrue(constDecl.initializerList[0].pattern is IdentifierPattern)
+      XCTAssertTrue(constDecl.initializerList[0].initializerExpression is FunctionCallExpression)
+    })
+    parseDeclarationAndTest(
+      "let foo = bar { $0 = 0 }, a = b { _ in true }, x = y { t -> Int in t^2 }",
+      "let foo = bar { $0 = 0 }, a = b { _ in\ntrue\n}, x = y { t -> Int in\nt ^ 2\n}")
+    parseDeclarationAndTest(
+      "let foo = bar { $0 == 0 }.joined()",
+      "let foo = bar { $0 == 0 }.joined()")
+  }
+
   static var allTests = [
     ("testDefineConstant", testDefineConstant),
     ("testDefineConstantWithTypeAnnotation", testDefineConstantWithTypeAnnotation),
@@ -158,5 +183,6 @@ class ParserConstantDeclarationTests: XCTestCase {
     ("testAttributes", testAttributes),
     ("testModifiers", testModifiers),
     ("testAttributeAndModifiers", testAttributeAndModifiers),
+    ("testFollowedByTailClosure", testFollowedByTailClosure),
   ]
 }

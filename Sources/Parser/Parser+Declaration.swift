@@ -1071,7 +1071,8 @@ extension Parser {
         break
       }
     }
-    return VariableDeclaration(attributes: attrs, modifiers: modifiers, initializerList: inits)
+    return VariableDeclaration(
+      attributes: attrs, modifiers: modifiers, initializerList: inits)
   }
 
   private func parseWillSetDidSetBlock() throws -> WillSetDidSetBlock {
@@ -1238,8 +1239,7 @@ extension Parser {
     let pttrn = try parsePattern()
     var initExpr: Expression? = nil
     if _lexer.match(.assignmentOperator) {
-      initExpr = try parseExpression(
-        config: ParserExpressionConfig(parseTrailingClosure: false))
+      initExpr = try parseExpression()
     }
     return PatternInitializer(pattern: pttrn, initializerExpression: initExpr)
   }

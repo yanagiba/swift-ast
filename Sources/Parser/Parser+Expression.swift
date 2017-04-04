@@ -196,7 +196,11 @@ extension Parser {
         .postfixExclaim,
         .postfixQuestion,
       ]
-      if config.parseTrailingClosure {
+
+      if self._lexer.look().kind == .leftBrace &&
+        config.parseTrailingClosure &&
+        self.isPotentialTrailingClosure()
+      {
         tokens.append(.leftBrace)
       }
 
@@ -226,7 +230,7 @@ extension Parser {
         resultExpr = ForcedValueExpression(postfixExpression: resultExpr)
       case .postfixQuestion:
         resultExpr = OptionalChainingExpression(postfixExpression: resultExpr)
-      case .leftBrace where config.parseTrailingClosure:
+      case .leftBrace:
         let trailingClosure = try parseClosureExpression()
         resultExpr = FunctionCallExpression(
           postfixExpression: resultExpr, trailingClosure: trailingClosure)
@@ -325,7 +329,7 @@ extension Parser {
 
     // unit
     if _lexer.match(.rightParen) {
-      if config.parseTrailingClosure && _lexer.match(.leftBrace) {
+      if config.parseTrailingClosure && isPotentialTrailingClosure() && _lexer.match(.leftBrace) {
         let trailingClosure = try parseClosureExpression()
         return FunctionCallExpression(
           postfixExpression: expr,
@@ -348,7 +352,7 @@ extension Parser {
       return DynamicTypeExpression(expression: argExpr)
     }
 
-    if config.parseTrailingClosure && _lexer.match(.leftBrace) {
+    if config.parseTrailingClosure && isPotentialTrailingClosure() && _lexer.match(.leftBrace) {
       let trailingClosure = try parseClosureExpression()
       return FunctionCallExpression(
         postfixExpression: expr,

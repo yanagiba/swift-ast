@@ -81,7 +81,8 @@ class ParserVariableDeclarationTests: XCTestCase {
   }
 
   func testMultipleInitializers() {
-    parseDeclarationAndTest("var foo = bar, a, x = y",
+    parseDeclarationAndTest(
+      "var foo = bar, a, x = y",
       "var foo = bar, a, x = y",
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
@@ -1206,6 +1207,38 @@ class ParserVariableDeclarationTests: XCTestCase {
     })
   }
 
+  func testFollowedByTailClosure() {
+    parseDeclarationAndTest(
+      "var foo = bar { $0 == 0 }",
+      "var foo = bar { $0 == 0 }",
+      testClosure: { decl in
+      guard let varDecl = decl as? VariableDeclaration else {
+        XCTFail("Failed in getting a variable declaration.")
+        return
+      }
+
+      XCTAssertTrue(varDecl.attributes.isEmpty)
+      XCTAssertTrue(varDecl.modifiers.isEmpty)
+      guard case .initializerList(let initializerList) = varDecl.body else {
+        XCTFail("Failed in getting an initializer list for variable declaration.")
+        return
+      }
+      XCTAssertEqual(initializerList.count, 1)
+      XCTAssertEqual(initializerList[0].textDescription, "foo = bar { $0 == 0 }")
+      XCTAssertTrue(initializerList[0].pattern is IdentifierPattern)
+      XCTAssertTrue(initializerList[0].initializerExpression is FunctionCallExpression)
+    })
+    parseDeclarationAndTest(
+      "var foo = bar { $0 = 0 }, a = b { _ in true }, x = y { t -> Int in t^2 }",
+      "var foo = bar { $0 = 0 }, a = b { _ in\ntrue\n}, x = y { t -> Int in\nt ^ 2\n}")
+    parseDeclarationAndTest(
+      "var foo = _foo { $0 = 0 } { willSet(newValue) { print(newValue) } }",
+      "var foo = _foo { $0 = 0 } {\nwillSet(newValue) {\nprint(newValue)\n}\n}")
+    parseDeclarationAndTest(
+      "var foo = bar { $0 == 0 }.joined()",
+      "var foo = bar { $0 == 0 }.joined()")
+  }
+
   static var allTests = [
     ("testVariableName", testVariableName),
     ("testTypeAnnotation", testTypeAnnotation),
@@ -1258,6 +1291,8 @@ class ParserVariableDeclarationTests: XCTestCase {
     ("testDidSetWithAttributesAndNameThenWillSetWithAttributesAndName", testDidSetWithAttributesAndNameThenWillSetWithAttributesAndName),
     ("testTypeAnnotationWillSetDidSet", testTypeAnnotationWillSetDidSet),
     ("testTypeAnnotationInitializerWillSetDidSet", testTypeAnnotationInitializerWillSetDidSet),
+    // tail closure
+    ("testFollowedByTailClosure", testFollowedByTailClosure),
     // attributes/modifiers
     ("testAttributes", testAttributes),
     ("testModifiers", testModifiers),
