@@ -337,11 +337,30 @@ extension SubscriptDeclaration : TTYASTPrintRepresentable {
   }
 }
 
+extension PatternInitializer : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
+    let pttrnText = pattern.textDescription
+    guard let initExpr = initializerExpression else {
+      return pttrnText
+    }
+    return "\(pttrnText) = \(initExpr.ttyASTPrint(indentation: indentation))"
+  }
+}
+
+extension ConstantDeclaration : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
+    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
+    let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
+    let initsText = initializerList.map({ $0.ttyASTPrint(indentation: indentation) }).joined(separator: ", ")
+    return String(indentation: indentation) + "\(attrsText)\(modifiersText)let \(initsText)"
+  }
+}
+
 extension VariableDeclaration.Body : TTYASTPrintRepresentable {
   func ttyASTPrint(indentation: Int) -> String {
     switch self {
-    case .initializerList:
-      return textDescription
+    case .initializerList(let inits):
+      return inits.map({ $0.ttyASTPrint(indentation: indentation) }).joined(separator: ", ")
     case let .codeBlock(name, typeAnnotation, codeBlock):
       return "\(name)\(typeAnnotation) \(codeBlock.ttyASTPrint(indentation: indentation))"
     case let .getterSetterBlock(name, typeAnnotation, block):

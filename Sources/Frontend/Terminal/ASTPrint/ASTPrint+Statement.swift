@@ -25,6 +25,8 @@ extension Collection where Iterator.Element == Statement {
 extension Statement {
   func ttyASTPrint(indentation: Int) -> String {
     switch self {
+    case let expr as TTYASTPrintExpression:
+      return String(indentation: indentation) + expr.ttyASTPrint(indentation: indentation)
     case let representable as TTYASTPrintRepresentable:
       return representable.ttyASTPrint(indentation: indentation)
     default:

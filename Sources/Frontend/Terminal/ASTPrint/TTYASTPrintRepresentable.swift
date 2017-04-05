@@ -17,3 +17,6 @@
 protocol TTYASTPrintRepresentable {
   func ttyASTPrint(indentation: Int) -> String
 }
+
+protocol TTYASTPrintExpression : TTYASTPrintRepresentable {
+}
