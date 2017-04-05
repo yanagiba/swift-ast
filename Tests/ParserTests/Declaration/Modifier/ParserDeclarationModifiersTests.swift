@@ -85,7 +85,7 @@ class ParserDeclarationModifiersTests: XCTestCase {
     let declParser = getParser(testStr)
     let modifiers = declParser.parseModifiers()
     XCTAssertEqual(modifiers.count, declModifiers.count)
-    for (index, modifier) in modifiers.enumerated() {
+    for (index, modifier) in zip(modifiers.indices, modifiers) {
       XCTAssertEqual(modifier, declModifiers[index])
     }
   }

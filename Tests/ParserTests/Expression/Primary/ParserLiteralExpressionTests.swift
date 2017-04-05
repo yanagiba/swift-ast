@@ -223,7 +223,7 @@ class ParserLiteralExpressionTests: XCTestCase {
           return
       }
 
-      for (index, e) in exprs.enumerated() {
+      for (index, e) in zip(exprs.indices, exprs) {
         let expectedExpr = expected[index]
         if let literalExpr = expectedExpr as? LiteralExpression {
           switch literalExpr {
