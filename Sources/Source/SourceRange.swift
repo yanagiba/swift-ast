@@ -15,6 +15,7 @@
 */
 
 public struct SourceRange {
+  // Note: range := [start..<end)
   public let start: SourceLocation
   public let end: SourceLocation
 

@@ -16,4 +16,11 @@
 
 public protocol SourceLocatable {
   var sourceLocation: SourceLocation { get }
+  var sourceRange: SourceRange { get }
+}
+
+extension SourceLocatable {
+  public var sourceLocation: SourceLocation {
+    return sourceRange.start
+  }
 }

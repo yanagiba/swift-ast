@@ -107,10 +107,12 @@ public class Lexer {
       } else if p.hasPrefix(startStr) && splitOperator {
         let newKind = Token.Kind.prefixOperator(
           p.substring(from: p.index(after: p.startIndex)))
-        let newLocation = looked.location // TODO:
-        let newRoles: [Role] = [] // TODO:
+        let oldStart = looked.sourceRange.start
+        let newStart = SourceLocation(
+          path: oldStart.path, line: oldStart.line, column: oldStart.column + 1)
+        let newRange = SourceRange(start: newStart, end: looked.sourceRange.end)
         _loadedTokens[0] = Token(
-          kind: newKind, location: newLocation, roles: newRoles)
+          kind: newKind, sourceRange: newRange, roles: [])
         return true
       }
     case .binaryOperator(let p):
@@ -119,10 +121,12 @@ public class Lexer {
       } else if p.hasPrefix(startStr) && splitOperator {
         let newKind = Token.Kind.binaryOperator(
           p.substring(from: p.index(after: p.startIndex)))
-        let newLocation = looked.location // TODO:
-        let newRoles: [Role] = [] // TODO:
+        let oldStart = looked.sourceRange.start
+        let newStart = SourceLocation(
+          path: oldStart.path, line: oldStart.line, column: oldStart.column + 1)
+        let newRange = SourceRange(start: newStart, end: looked.sourceRange.end)
         _loadedTokens[0] = Token(
-          kind: newKind, location: newLocation, roles: newRoles)
+          kind: newKind, sourceRange: newRange, roles: [])
         return true
       }
     case .postfixOperator(let p):
@@ -131,10 +135,12 @@ public class Lexer {
       } else if p.hasPrefix(startStr) && splitOperator {
         let newKind = Token.Kind.postfixOperator(
           p.substring(from: p.index(after: p.startIndex)))
-        let newLocation = looked.location // TODO:
-        let newRoles: [Role] = [] // TODO:
+        let oldStart = looked.sourceRange.start
+        let newStart = SourceLocation(
+          path: oldStart.path, line: oldStart.line, column: oldStart.column + 1)
+        let newRange = SourceRange(start: newStart, end: looked.sourceRange.end)
         _loadedTokens[0] = Token(
-          kind: newKind, location: newLocation, roles: newRoles)
+          kind: newKind, sourceRange: newRange, roles: [])
         return true
       }
     default:
@@ -281,7 +287,8 @@ public class Lexer {
     }
 
     func produce(_ kind: Token.Kind) -> Token {
-      return Token(kind: kind, location: location, roles: loadedRoles)
+      let range = SourceRange(start: location, end: _getCurrentLocation())
+      return Token(kind: kind, sourceRange: range, roles: loadedRoles)
     }
 
     func consumeAndProduce(_ kind: Token.Kind) -> Token {

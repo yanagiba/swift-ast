@@ -26,12 +26,6 @@ public struct SourceLocation {
   }
 }
 
-extension SourceLocation : SourceLocatable {
-  public var sourceLocation: SourceLocation {
-    return self
-  }
-}
-
 extension SourceLocation : Equatable {
   static public func ==(lhs: SourceLocation, rhs: SourceLocation) -> Bool {
     return lhs.path == rhs.path && lhs.line == rhs.line && lhs.column == rhs.column

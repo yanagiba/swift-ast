@@ -49,8 +49,11 @@ extension Lexer /* comment */ {
         }
         depth -= 1
       case .eof:
-        return Token(kind: .invalid(.unexpectedEndOfFile),
-          location: _getCurrentLocation(), roles: [])
+        return Token(
+          kind: .invalid(.unexpectedEndOfFile),
+          sourceRange: SourceRange(
+            start: _getCurrentLocation(), end: _getCurrentLocation()),
+          roles: [])
       default:
         commentContent += char.string
         _consume()

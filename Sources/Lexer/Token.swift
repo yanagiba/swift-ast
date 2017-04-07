@@ -61,12 +61,9 @@ public struct Token {
   }
 
   public let kind: Kind
-  public let location: SourceLocation
+  public let sourceRange: SourceRange
   let roles: [Role] // TODO: wondering if this can be implemented in other ways
 }
 
 extension Token : SourceLocatable {
-  public var sourceLocation: SourceLocation {
-    return location
-  }
 }

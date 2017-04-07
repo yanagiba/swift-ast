@@ -32,8 +32,15 @@ func lexAndTest(_ content: String,
   expectedColumn: Int = 1,
   tokenKindTestClosure: (Token.Kind) -> Void) {
   let token = lex(content, index: index, skipLineFeed: skipLineFeed)
-  XCTAssertEqual(token.location.path, "LexerTests/LexerTests.swift")
-  XCTAssertEqual(token.location.line, expectedLine)
-  XCTAssertEqual(token.location.column, expectedColumn)
+  XCTAssertEqual(token.sourceRange.start.path, "LexerTests/LexerTests.swift")
+  XCTAssertEqual(token.sourceRange.start.line, expectedLine)
+  XCTAssertEqual(token.sourceRange.start.column, expectedColumn)
+  XCTAssertEqual(token.sourceRange.end.path, "LexerTests/LexerTests.swift")
+  if token.sourceRange.end.line == expectedLine {
+    XCTAssertTrue(token.sourceRange.end.column >= expectedColumn)
+  } else {
+    XCTAssertTrue(token.sourceRange.end.line > expectedLine)
+  }
+
   tokenKindTestClosure(token.kind)
 }

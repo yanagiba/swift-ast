@@ -104,7 +104,9 @@ class LexerCommentTests: XCTestCase {
   }
 
   func testUnbalanceMultipleLineComment() {
-    lexAndTest("/* start comment 1 /* start comment 2 end comment 1*/", expectedColumn: 54) {
+    lexAndTest(
+      "/* start comment 1 /* start comment 2 end comment 1*/",
+      expectedColumn: 54) {
       XCTAssertEqual($0, .invalid(.unexpectedEndOfFile))
     }
   }
