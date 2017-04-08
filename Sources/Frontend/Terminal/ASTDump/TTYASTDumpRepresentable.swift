@@ -15,5 +15,8 @@
 */
 
 protocol TTYASTDumpRepresentable {
-  func ttyASTDump(indentation: Int) -> String
+}
+
+protocol TTYASTDumpDeclaration : TTYASTDumpRepresentable {
+  func ttyDeclarationDump(indentation: Int) -> String
 }

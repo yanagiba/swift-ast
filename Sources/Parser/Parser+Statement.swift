@@ -130,22 +130,23 @@ extension Parser {
   }
 
   func parseCompilerControlStatement() throws -> CompilerControlStatement {
+    var kind: CompilerControlStatement.Kind
     switch _lexer.read([.if, .dummyIdentifier, .else]) {
     case .if:
       let condition = _lexer.readUntilEOL()
-      return .if(condition)
+      kind = .if(condition)
     case .identifier(let id):
       switch id {
       case "elseif":
         let condition = _lexer.readUntilEOL()
-        return .elseif(condition)
+        kind = .elseif(condition)
       case "endif":
-        return .endif
+        kind = .endif
       case "sourceLocation":
         guard _lexer.match(.leftParen) else { throw _raiseFatal(.dummy) }
         if _lexer.match(.rightParen) {
           _lexer.readUntilEOL()
-          return .sourceLocation(nil, nil)
+          kind = .sourceLocation(nil, nil)
         }
         var fileName: String? = nil
         var lineNumber: Int? = nil
@@ -164,15 +165,16 @@ extension Parser {
           lineNumber = Int(line)
         }
         _lexer.readUntilEOL()
-        return .sourceLocation(fileName, lineNumber)
+        kind = .sourceLocation(fileName, lineNumber)
       default:
         throw _raiseFatal(.dummy)
       }
     case .else:
-      return .else
+      kind = .else
     default:
       throw _raiseFatal(.dummy)
     }
+    return CompilerControlStatement(kind: kind)
   }
 
   private func parseLabeledStatement(

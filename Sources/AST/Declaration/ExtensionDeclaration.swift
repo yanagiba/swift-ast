@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct ExtensionDeclaration {
+public class ExtensionDeclaration : Declaration{
   public enum Member {
     case declaration(Declaration)
     case compilerControl(CompilerControlStatement)
@@ -56,6 +56,20 @@ public struct ExtensionDeclaration {
     self.genericWhereClause = genericWhereClause
     self.members = members
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
+    let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
+    let headText = "\(attrsText)\(modifierText)extension \(type.textDescription)"
+    let typeInheritanceText = typeInheritanceClause?.textDescription ?? ""
+    let whereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
+    let neckText = "\(typeInheritanceText)\(whereText)"
+    let membersText = members.map({ $0.textDescription }).joined(separator: "\n")
+    let memberText = members.isEmpty ? "" : "\n\(membersText)\n"
+    return "\(headText)\(neckText) {\(memberText)}"
+  }
 }
 
 extension ExtensionDeclaration.Member : ASTTextRepresentable {
@@ -66,19 +80,5 @@ extension ExtensionDeclaration.Member : ASTTextRepresentable {
     case .compilerControl(let stmt):
       return stmt.textDescription
     }
-  }
-}
-
-extension ExtensionDeclaration : Declaration {
-  public var textDescription: String {
-    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
-    let headText = "\(attrsText)\(modifierText)extension \(type.textDescription)"
-    let typeInheritanceText = typeInheritanceClause?.textDescription ?? ""
-    let whereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
-    let neckText = "\(typeInheritanceText)\(whereText)"
-    let membersText = members.map({ $0.textDescription }).joined(separator: "\n")
-    let memberText = members.isEmpty ? "" : "\n\(membersText)\n"
-    return "\(headText)\(neckText) {\(memberText)}"
   }
 }

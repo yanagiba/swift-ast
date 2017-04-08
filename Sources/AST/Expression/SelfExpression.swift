@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,16 +14,24 @@
    limitations under the License.
 */
 
-public enum SelfExpression {
-  case `self`
-  case method(String) // even though this includes functions and properties, but Swift PL reference calls it `self-method-expression`
-  case `subscript`(ExpressionList)
-  case initializer
-}
+public class SelfExpression : PrimaryExpression {
+  public enum Kind {
+    case `self`
+    case method(String) // even though this includes functions and properties, but Swift PL reference calls it `self-method-expression`
+    case `subscript`(ExpressionList)
+    case initializer
+  }
 
-extension SelfExpression : PrimaryExpression {
-  public var textDescription: String {
-    switch self {
+  public let kind: Kind
+
+  public init(kind: Kind) {
+    self.kind = kind
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    switch self.kind {
     case .self:
       return "self"
     case .method(let name):

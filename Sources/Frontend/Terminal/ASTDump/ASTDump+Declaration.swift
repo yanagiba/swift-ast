@@ -26,8 +26,8 @@ extension TopLevelDeclaration : TTYASTDumpRepresentable {
   }
 }
 
-extension ImportDeclaration : TTYASTDumpRepresentable {
-  func ttyASTDump(indentation: Int) -> String {
+extension ImportDeclaration : TTYASTDumpDeclaration {
+  func ttyDeclarationDump(indentation: Int) -> String {
     return String(indentation: indentation) +
       "(".colored(with: .blue) +
       "import_decl".colored(with: .magenta) +

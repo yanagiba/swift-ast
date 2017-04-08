@@ -14,25 +14,32 @@
    limitations under the License.
 */
 
-public enum CompilerControlStatement {
-  // TODO: the struct of this should be similar to an if statement,
+public class CompilerControlStatement : Statement {
+  // TODO: the structure of this should be similar to an if statement,
   // that each clause should contains a list of statements,
   // but for now, each clause will be treated as one statement,
   // and flattly saved along with other statements.
+  public enum Kind {
+    // conditional compilation block
+    case `if`(String)
+    case elseif(String)
+    case `else`
+    case endif
 
-  // conditional compilation block
-  case `if`(String)
-  case elseif(String)
-  case `else`
-  case endif
+    // line control
+    case sourceLocation(String?, Int?)
+  }
 
-  // line control
-  case sourceLocation(String?, Int?)
-}
+  public let kind: Kind
 
-extension CompilerControlStatement : Statement {
-  public var textDescription: String {
-    switch self {
+  public init(kind: Kind) {
+    self.kind = kind
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    switch self.kind {
     case .if(let condition):
       return "#if\(condition)"
     case .elseif(let condition):

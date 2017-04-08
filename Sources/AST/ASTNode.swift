@@ -14,19 +14,27 @@
    limitations under the License.
 */
 
+import Source
 
-public class WhileStatement : Statement {
-  public let conditionList: ConditionList
-  public let codeBlock: CodeBlock
+public class ASTNode {
+  public private(set) var lexicalParent: ASTNode? = nil
+  public private(set) var sourceRange: SourceRange = .INVALID
 
-  public init(conditionList: ConditionList, codeBlock: CodeBlock) {
-    self.conditionList = conditionList
-    self.codeBlock = codeBlock
+  public var textDescription: String {
+    guard sourceRange.isValid else {
+      return "<<invalid>>"
+    }
+    return ""
   }
 
-  // MARK: - ASTTextRepresentable
-
-  override public var textDescription: String {
-    return "while \(conditionList.textDescription) \(codeBlock.textDescription)"
+  public func setLexicalParent(_ node: ASTNode) {
+    lexicalParent = node
   }
+
+  public func setSourceRange(_ sourceRange: SourceRange) {
+    self.sourceRange = sourceRange
+  }
+}
+
+extension ASTNode : ASTNodeContext, ASTTextRepresentable, SourceLocatable {
 }

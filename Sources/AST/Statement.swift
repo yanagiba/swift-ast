@@ -14,5 +14,5 @@
    limitations under the License.
 */
 
-public protocol Statement : ASTTextRepresentable {
+public class Statement : ASTNode {
 }

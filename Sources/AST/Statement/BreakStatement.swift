@@ -15,16 +15,16 @@
 */
 
 
-public struct BreakStatement {
+public class BreakStatement : Statement {
   public let labelName: Identifier?
 
   public init(labelName: Identifier? = nil) {
     self.labelName = labelName
   }
-}
 
-extension BreakStatement : Statement {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     if let labelName = labelName {
       return "break \(labelName)"
     }

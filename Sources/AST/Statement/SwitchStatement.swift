@@ -15,7 +15,7 @@
 */
 
 
-public struct SwitchStatement {
+public class SwitchStatement : Statement {
   public enum Case {
     public struct Item {
       public let pattern: Pattern
@@ -36,6 +36,17 @@ public struct SwitchStatement {
   public init(expression: Expression, cases: [Case] = []) {
     self.expression = expression
     self.cases = cases
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    var casesDescr = "{}"
+    if !cases.isEmpty {
+      let casesText = cases.map({ $0.textDescription }).joined(separator: "\n")
+      casesDescr = "{\n\(casesText)\n}"
+    }
+    return "switch \(expression.textDescription) \(casesDescr)"
   }
 }
 
@@ -58,16 +69,5 @@ extension SwitchStatement.Case : ASTTextRepresentable {
     case .default(let stmts):
       return "default:\n\(stmts.textDescription)"
     }
-  }
-}
-
-extension SwitchStatement : Statement {
-  public var textDescription: String {
-    var casesDescr = "{}"
-    if !cases.isEmpty {
-      let casesText = cases.map({ $0.textDescription }).joined(separator: "\n")
-      casesDescr = "{\n\(casesText)\n}"
-    }
-    return "switch \(expression.textDescription) \(casesDescr)"
   }
 }

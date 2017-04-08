@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,17 +14,25 @@
    limitations under the License.
 */
 
-public enum TryOperatorExpression {
-  case `try`(Expression)
-  case forced(Expression)
-  case optional(Expression)
-}
+public class TryOperatorExpression : Expression {
+  public enum Kind {
+    case `try`(Expression)
+    case forced(Expression)
+    case optional(Expression)
+  }
 
-extension TryOperatorExpression : Expression {
-  public var textDescription: String {
+  public let kind: Kind
+
+  public init(kind: Kind) {
+    self.kind = kind
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     let tryText: String
     let exprText: String
-    switch self {
+    switch self.kind {
     case .try(let expr):
       tryText = "try"
       exprText = expr.textDescription

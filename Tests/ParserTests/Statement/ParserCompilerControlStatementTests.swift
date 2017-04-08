@@ -29,7 +29,7 @@ class ParserCompilerControlStatementTests: XCTestCase {
         XCTFail("Failed in parsing a compiler control statement.")
         return
       }
-      guard case .if(let condition) = compCtrlStmt else {
+      guard case .if(let condition) = compCtrlStmt.kind else {
         XCTFail("Failed in getting an if directive clause.")
         return
       }
@@ -53,7 +53,7 @@ class ParserCompilerControlStatementTests: XCTestCase {
         XCTFail("Failed in parsing a compiler control statement.")
         return
       }
-      guard case .elseif(let condition) = compCtrlStmt else {
+      guard case .elseif(let condition) = compCtrlStmt.kind else {
         XCTFail("Failed in getting an elseif directive clause.")
         return
       }
@@ -74,7 +74,7 @@ class ParserCompilerControlStatementTests: XCTestCase {
         XCTFail("Failed in parsing a compiler control statement.")
         return
       }
-      guard case .else = compCtrlStmt else {
+      guard case .else = compCtrlStmt.kind else {
         XCTFail("Failed in getting an else directive clause.")
         return
       }
@@ -88,7 +88,7 @@ class ParserCompilerControlStatementTests: XCTestCase {
         XCTFail("Failed in parsing a compiler control statement.")
         return
       }
-      guard case .endif = compCtrlStmt else {
+      guard case .endif = compCtrlStmt.kind else {
         XCTFail("Failed in getting an endif directive clause.")
         return
       }
@@ -105,7 +105,7 @@ class ParserCompilerControlStatementTests: XCTestCase {
         XCTFail("Failed in parsing a compiler control statement.")
         return
       }
-      guard case let .sourceLocation(fileName?, lineNumber?) = compCtrlStmt else {
+      guard case let .sourceLocation(fileName?, lineNumber?) = compCtrlStmt.kind else {
         XCTFail("Failed in getting a line control statement.")
         return
       }

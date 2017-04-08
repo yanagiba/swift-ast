@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
    limitations under the License.
 */
 
-public struct ImplicitMemberExpression {
+public class ImplicitMemberExpression : PrimaryExpression {
   public let identifier: Identifier
 
   public init(identifier: Identifier) {
     self.identifier = identifier
   }
-}
 
-extension ImplicitMemberExpression : PrimaryExpression {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return ".\(identifier)"
   }
 }

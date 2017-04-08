@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct InitializerDeclaration {
+public class InitializerDeclaration : Declaration{
   public enum InitKind {
     case nonfailable
     case optionalFailable
@@ -49,6 +49,20 @@ public struct InitializerDeclaration {
     self.genericWhereClause = genericWhereClause
     self.body = body
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
+    let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
+    let headText = "\(attrsText)\(modifiersText)init\(kind.textDescription)"
+    let genericParameterClauseText = genericParameterClause?.textDescription ?? ""
+    let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
+    let throwsKindText = throwsKind.textDescription.isEmpty ? "" : " \(throwsKind.textDescription)"
+    let genericWhereClauseText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
+    let bodyText = body.textDescription
+    return "\(headText)\(genericParameterClauseText)\(parameterText)\(throwsKindText)\(genericWhereClauseText) \(bodyText)"
+  }
 }
 
 extension InitializerDeclaration.InitKind : ASTTextRepresentable {
@@ -61,19 +75,5 @@ extension InitializerDeclaration.InitKind : ASTTextRepresentable {
     case .implicitlyUnwrappedFailable:
       return "!"
     }
-  }
-}
-
-extension InitializerDeclaration : Declaration {
-  public var textDescription: String {
-    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
-    let headText = "\(attrsText)\(modifiersText)init\(kind.textDescription)"
-    let genericParameterClauseText = genericParameterClause?.textDescription ?? ""
-    let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
-    let throwsKindText = throwsKind.textDescription.isEmpty ? "" : " \(throwsKind.textDescription)"
-    let genericWhereClauseText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
-    let bodyText = body.textDescription
-    return "\(headText)\(genericParameterClauseText)\(parameterText)\(throwsKindText)\(genericWhereClauseText) \(bodyText)"
   }
 }

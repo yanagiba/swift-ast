@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct PrecedenceGroupDeclaration {
+public class PrecedenceGroupDeclaration : Declaration{
   public enum Attribute {
     case higherThan(IdentifierList)
     case lowerThan(IdentifierList)
@@ -30,6 +30,14 @@ public struct PrecedenceGroupDeclaration {
   public init(name: Identifier, attributes: [Attribute] = []) {
     self.name = name
     self.attributes = attributes
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    let attrsText = attributes.map({ $0.textDescription }).joined(separator: "\n")
+    let attrsBlockText = attributes.isEmpty ? "{}" : "{\n\(attrsText)\n}"
+    return "precedencegroup \(name) \(attrsBlockText)"
   }
 }
 
@@ -50,13 +58,5 @@ extension PrecedenceGroupDeclaration.Attribute : ASTTextRepresentable {
     case .associativityNone:
       return "associativity: none"
     }
-  }
-}
-
-extension PrecedenceGroupDeclaration : Declaration {
-  public var textDescription: String {
-    let attrsText = attributes.map({ $0.textDescription }).joined(separator: "\n")
-    let attrsBlockText = attributes.isEmpty ? "{}" : "{\n\(attrsText)\n}"
-    return "precedencegroup \(name) \(attrsBlockText)"
   }
 }

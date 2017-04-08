@@ -40,6 +40,12 @@ extension SourceLocation : Hashable {
 
 extension SourceLocation {
   public static let DUMMY = SourceLocation(path: "dummy", line: 0, column: 0)
+  public static let INVALID =
+    SourceLocation(path: "invalid", line: -1, column: -1)
+
+  public var isValid: Bool {
+    return path != "invalid" && path != "dummy" && line > 0 && column > 0
+  }
 }
 
 extension SourceLocation : CustomStringConvertible {

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct ForInStatement {
+public class ForInStatement : Statement {
   public struct Item { // Note: not sure if this additional nesting structure would help in a long run, but I will leave it as it is, and decide this later
     public let isCaseMatching: Bool
     public let matchingPattern: Pattern
@@ -36,10 +36,10 @@ public struct ForInStatement {
     self.collection = collection
     self.codeBlock = codeBlock
   }
-}
 
-extension ForInStatement : Statement {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     var descr = "for"
     if item.isCaseMatching {
       descr += " case"

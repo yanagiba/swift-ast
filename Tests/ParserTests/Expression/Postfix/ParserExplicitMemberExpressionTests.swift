@@ -24,7 +24,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
     for (testStr, expectedIndex) in testMembers {
       parseExpressionAndTest("foo.\(testStr)", "foo.\(expectedIndex)", testClosure: { expr in
         guard let explicitMemberExpr = expr as? ExplicitMemberExpression,
-          case let .tuple(postfixExpr, index) = explicitMemberExpr else {
+          case let .tuple(postfixExpr, index) = explicitMemberExpr.kind else {
           XCTFail("Failed in getting an explicit member expression")
           return
         }
@@ -38,7 +38,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
   func testIdentifier() {
     parseExpressionAndTest("foo.someProperty", "foo.someProperty", testClosure: { expr in
       guard let explicitMemberExpr = expr as? ExplicitMemberExpression,
-        case let .namedType(postfixExpr, identifier) = explicitMemberExpr else {
+        case let .namedType(postfixExpr, identifier) = explicitMemberExpr.kind else {
         XCTFail("Failed in getting an explicit member expression")
         return
       }
@@ -51,7 +51,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
   func testGenericArgumentClause() {
     parseExpressionAndTest("foo.bar<a, b, c>", "foo.bar<a, b, c>", testClosure: { expr in
       guard let explicitMemberExpr = expr as? ExplicitMemberExpression,
-        case let .generic(postfixExpr, identifier, genericArgumentClause) = explicitMemberExpr else {
+        case let .generic(postfixExpr, identifier, genericArgumentClause) = explicitMemberExpr.kind else {
         XCTFail("Failed in getting an explicit member expression")
         return
       }
@@ -65,7 +65,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
   func testArgumentName() {
     parseExpressionAndTest("foo.bar(a:b:c:)", "foo.bar(a:b:c:)", testClosure: { expr in
       guard let explicitMemberExpr = expr as? ExplicitMemberExpression,
-        case let .argument(postfixExpr, identifier, argumentNames) = explicitMemberExpr else {
+        case let .argument(postfixExpr, identifier, argumentNames) = explicitMemberExpr.kind else {
         XCTFail("Failed in getting an explicit member expression")
         return
       }
@@ -79,7 +79,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
   func testUnderscoreAsArgumentName() {
     parseExpressionAndTest("foo.bar(_:)", "foo.bar(_:)", testClosure: { expr in
       guard let explicitMemberExpr = expr as? ExplicitMemberExpression,
-        case let .argument(postfixExpr, identifier, argumentNames) = explicitMemberExpr else {
+        case let .argument(postfixExpr, identifier, argumentNames) = explicitMemberExpr.kind else {
         XCTFail("Failed in getting an explicit member expression")
         return
       }
@@ -93,7 +93,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
   func testNested() {
     parseExpressionAndTest("foo . bar.a< x > \n. 100 . b ( y : ) ", "foo.bar.a<x>.100.b(y:)", testClosure: { expr in
       guard let exprB = expr as? ExplicitMemberExpression,
-        case let .argument(postfixExprB, identifierB, argumentNamesB) = exprB else {
+        case let .argument(postfixExprB, identifierB, argumentNamesB) = exprB.kind else {
         XCTFail("Failed in getting an explicit member expression `foo.bar.a<x>.100.b(y:)`")
         return
       }
@@ -102,7 +102,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
       XCTAssertEqual(argumentNamesB, ["y"])
 
       guard let exprHundred = postfixExprB as? ExplicitMemberExpression,
-        case let .tuple(postfixExprHundred, indexHundred) = exprHundred else {
+        case let .tuple(postfixExprHundred, indexHundred) = exprHundred.kind else {
         XCTFail("Failed in getting an explicit member expression `foo.bar.a<x>.100`")
         return
       }
@@ -110,7 +110,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
       XCTAssertEqual(indexHundred, 100)
 
       guard let exprA = postfixExprHundred as? ExplicitMemberExpression,
-        case let .generic(postfixExprA, identifierA, genericA) = exprA else {
+        case let .generic(postfixExprA, identifierA, genericA) = exprA.kind else {
         XCTFail("Failed in getting an explicit member expression `foo.bar.a<x>`")
         return
       }
@@ -119,7 +119,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
       XCTAssertEqual(genericA.textDescription, "<x>")
 
       guard let exprBar = postfixExprA as? ExplicitMemberExpression,
-        case let .namedType(postfixExprBar, identifierBar) = exprBar else {
+        case let .namedType(postfixExprBar, identifierBar) = exprBar.kind else {
         XCTFail("Failed in getting an explicit member expression `foo.bar`")
         return
       }

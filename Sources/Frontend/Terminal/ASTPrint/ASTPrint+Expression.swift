@@ -16,26 +16,15 @@
 
 import AST
 
-extension Expression {
-  func ttyASTPrint(indentation: Int) -> String {
-    switch self {
-    case let representable as TTYASTPrintRepresentable:
-      return representable.ttyASTPrint(indentation: indentation)
-    default:
-      return textDescription
-    }
-  }
-}
-
 extension AssignmentOperatorExpression : TTYASTPrintExpression {
-  func ttyASTPrint(indentation: Int) -> String {
+  func ttyExpressionPrint(indentation: Int) -> String {
     return "\(leftExpression.textDescription) = " +
       rightExpression.ttyASTPrint(indentation: indentation)
   }
 }
 
-extension ClosureExpression : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension ClosureExpression : TTYASTPrintExpression {
+  func ttyExpressionPrint(indentation: Int) -> String {
     var signatureText = ""
     var stmtsText = ""
 
@@ -66,9 +55,9 @@ extension ClosureExpression : TTYASTPrintRepresentable {
   }
 }
 
-extension ExplicitMemberExpression : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
-    switch self {
+extension ExplicitMemberExpression : TTYASTPrintExpression {
+  func ttyExpressionPrint(indentation: Int) -> String {
+    switch kind {
     case let .tuple(postfixExpr, index):
       return "\(postfixExpr.ttyASTPrint(indentation: indentation)).\(index)"
     case let .namedType(postfixExpr, identifier):
@@ -101,7 +90,7 @@ extension FunctionCallExpression.Argument : TTYASTPrintRepresentable {
 }
 
 extension FunctionCallExpression : TTYASTPrintExpression {
-  func ttyASTPrint(indentation: Int) -> String {
+  func ttyExpressionPrint(indentation: Int) -> String {
     var parameterText = ""
     if let argumentClause = argumentClause {
       let argumentsText = argumentClause
@@ -119,10 +108,10 @@ extension FunctionCallExpression : TTYASTPrintExpression {
 }
 
 extension TryOperatorExpression : TTYASTPrintExpression {
-  func ttyASTPrint(indentation: Int) -> String {
+  func ttyExpressionPrint(indentation: Int) -> String {
     let tryText: String
     let exprText: String
-    switch self {
+    switch kind {
     case .try(let expr):
       tryText = "try"
       exprText = expr.ttyASTPrint(indentation: indentation)

@@ -14,17 +14,17 @@
    limitations under the License.
 */
 
-public protocol Expression : Statement {
+public class Expression : Statement {
 }
 
-public protocol BinaryExpression : Expression {
+public class BinaryExpression : Expression {
 }
 
-public protocol PrefixExpression:  Expression {
+public class PrefixExpression:  Expression {
 }
 
-public protocol PostfixExpression : Expression {
+public class PostfixExpression : Expression {
 }
 
-public protocol PrimaryExpression : PostfixExpression {
+public class PrimaryExpression : PostfixExpression {
 }

@@ -14,16 +14,16 @@
    limitations under the License.
 */
 
-public struct CodeBlock {
+public class CodeBlock : ASTNode {
   public let statements: [Statement]
 
   public init(statements: [Statement] = []) {
     self.statements = statements
   }
-}
 
-extension CodeBlock : ASTTextRepresentable {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     if statements.isEmpty {
       return "{}"
     }

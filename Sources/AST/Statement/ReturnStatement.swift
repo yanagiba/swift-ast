@@ -15,16 +15,16 @@
 */
 
 
-public struct ReturnStatement {
+public class ReturnStatement : Statement {
   public let expression: Expression?
 
   public init(expression: Expression? = nil) {
     self.expression = expression
   }
-}
 
-extension ReturnStatement : Statement {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     if let expression = expression {
       return "return \(expression.textDescription)"
     }

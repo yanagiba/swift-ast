@@ -388,13 +388,14 @@ extension Parser {
       throw _raiseFatal(.dummy)
     }
 
+    let kind: OperatorDeclaration.Kind
     switch modifier {
     case .prefix:
       let op = try parseOperator(modifier: .prefix)
-      return .prefix(op)
+      kind = .prefix(op)
     case .postfix:
       let op = try parseOperator(modifier: .postfix)
-      return .postfix(op)
+      kind = .postfix(op)
     case .infix:
       let op = try parseOperator(modifier: .infix)
       var id: Identifier? = nil
@@ -404,10 +405,11 @@ extension Parser {
         }
         id = name
       }
-      return .infix(op, id)
+      kind = .infix(op, id)
     default:
       throw _raiseFatal(.dummy)
     }
+    return OperatorDeclaration(kind: kind)
   }
 
   private func parseSubscriptDeclaration(

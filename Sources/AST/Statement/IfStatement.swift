@@ -15,7 +15,7 @@
 */
 
 
-public struct IfStatement {
+public class IfStatement : Statement {
   public enum ElseClause {
     case `else`(CodeBlock)
     indirect case elseif(IfStatement)
@@ -34,6 +34,16 @@ public struct IfStatement {
     self.codeBlock = codeBlock
     self.elseClause = elseClause
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    var elseText = ""
+    if let elseClause = elseClause {
+      elseText = " \(elseClause.textDescription)"
+    }
+    return "if \(conditionList.textDescription) \(codeBlock.textDescription)\(elseText)"
+  }
 }
 
 extension IfStatement.ElseClause : ASTTextRepresentable {
@@ -44,15 +54,5 @@ extension IfStatement.ElseClause : ASTTextRepresentable {
     case .elseif(let ifStmt):
       return "else \(ifStmt.textDescription)"
     }
-  }
-}
-
-extension IfStatement : Statement {
-  public var textDescription: String {
-    var elseText = ""
-    if let elseClause = elseClause {
-      elseText = " \(elseClause.textDescription)"
-    }
-    return "if \(conditionList.textDescription) \(codeBlock.textDescription)\(elseText)"
   }
 }

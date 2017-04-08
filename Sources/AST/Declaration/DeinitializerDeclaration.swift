@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct DeinitializerDeclaration {
+public class DeinitializerDeclaration : Declaration{
   public let attributes: Attributes
   public let body: CodeBlock
 
@@ -22,10 +22,10 @@ public struct DeinitializerDeclaration {
     self.attributes = attributes
     self.body = body
   }
-}
 
-extension DeinitializerDeclaration : Declaration {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     return "\(attrsText)deinit \(body.textDescription)"
   }

@@ -15,7 +15,7 @@
 */
 
 
-public struct GuardStatement {
+public class GuardStatement : Statement {
   public let conditionList: ConditionList
   public let codeBlock: CodeBlock
 
@@ -23,10 +23,10 @@ public struct GuardStatement {
     self.conditionList = conditionList
     self.codeBlock = codeBlock
   }
-}
 
-extension GuardStatement : Statement {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "guard \(conditionList.textDescription) else \(codeBlock.textDescription)"
   }
 }

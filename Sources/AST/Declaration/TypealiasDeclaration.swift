@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct TypealiasDeclaration {
+public class TypealiasDeclaration : Declaration{
   public let attributes: Attributes
   public let accessLevelModifier: AccessLevelModifier?
   public let name: Identifier
@@ -34,10 +34,10 @@ public struct TypealiasDeclaration {
     self.generic = generic
     self.assignment = assignment
   }
-}
 
-extension TypealiasDeclaration : Declaration {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
     let genericText = generic?.textDescription ?? ""

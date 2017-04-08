@@ -21,7 +21,8 @@ import XCTest
 class ParserSelfExpressionTests: XCTestCase {
   func testSelfExpression() {
     parseExpressionAndTest("self", "self", testClosure: { expr in
-      guard let selfExpr = expr as? SelfExpression, case .self = selfExpr else {
+      guard let selfExpr = expr as? SelfExpression,
+        case .self = selfExpr.kind else {
         XCTFail("Failed in getting a self expression")
         return
       }
@@ -31,7 +32,7 @@ class ParserSelfExpressionTests: XCTestCase {
   func testSelfMethodExpression() {
     parseExpressionAndTest("self.foo", "self.foo", testClosure: { expr in
       guard let selfExpr = expr as? SelfExpression,
-        case .method(let name) = selfExpr,
+        case .method(let name) = selfExpr.kind,
         name == "foo" else {
         XCTFail("Failed in getting a self expression")
         return
@@ -42,10 +43,10 @@ class ParserSelfExpressionTests: XCTestCase {
   func testSelfSubscriptExpression() {
     parseExpressionAndTest("self[0]", "self[0]", testClosure: { expr in
       guard let selfExpr = expr as? SelfExpression,
-        case .subscript(let exprs) = selfExpr,
+        case .subscript(let exprs) = selfExpr.kind,
         exprs.count == 1,
         let literalExpr = exprs[0] as? LiteralExpression,
-        case .integer(let i, _) = literalExpr,
+        case .integer(let i, _) = literalExpr.kind,
         i == 0 else {
         XCTFail("Failed in getting a self expression")
         return
@@ -56,7 +57,7 @@ class ParserSelfExpressionTests: XCTestCase {
   func testSelfSubscriptExprWithExprList() {
     parseExpressionAndTest("self[0, 1, 5]", "self[0, 1, 5]", testClosure: { expr in
       guard let selfExpr = expr as? SelfExpression,
-        case .subscript(let exprs) = selfExpr,
+        case .subscript(let exprs) = selfExpr.kind,
         exprs.count == 3 else {
         XCTFail("Failed in getting a self expression")
         return
@@ -71,7 +72,7 @@ class ParserSelfExpressionTests: XCTestCase {
   func testSelfSubscriptExprWithVariables() {
     parseExpressionAndTest("self [ foo,   0, bar,1, 5 ] ", "self[foo, 0, bar, 1, 5]", testClosure: { expr in
       guard let selfExpr = expr as? SelfExpression,
-        case .subscript(let exprs) = selfExpr,
+        case .subscript(let exprs) = selfExpr.kind,
         exprs.count == 5 else {
         XCTFail("Failed in getting a self expression")
         return
@@ -87,7 +88,8 @@ class ParserSelfExpressionTests: XCTestCase {
 
   func testSelfInitializerExpression() {
     parseExpressionAndTest("self.init", "self.init", testClosure: { expr in
-      guard let selfExpr = expr as? SelfExpression, case .initializer = selfExpr else {
+      guard let selfExpr = expr as? SelfExpression,
+        case .initializer = selfExpr.kind else {
         XCTFail("Failed in getting a self expression")
         return
       }

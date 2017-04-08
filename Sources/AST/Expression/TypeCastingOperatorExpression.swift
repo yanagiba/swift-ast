@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,19 +14,27 @@
    limitations under the License.
 */
 
-public enum TypeCastingOperatorExpression {
-  case check(Expression, Type) // is
-  case cast(Expression, Type) // as
-  case conditionalCast(Expression, Type) // as?
-  case forcedCast(Expression, Type) // as!
-}
+public class TypeCastingOperatorExpression : BinaryExpression {
+  public enum Kind {
+    case check(Expression, Type) // is
+    case cast(Expression, Type) // as
+    case conditionalCast(Expression, Type) // as?
+    case forcedCast(Expression, Type) // as!
+  }
 
-extension TypeCastingOperatorExpression : BinaryExpression {
-  public var textDescription: String {
+  public let kind: Kind
+
+  public init(kind: Kind) {
+    self.kind = kind
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     var exprText: String
     var operatorText: String
     var typeText: String
-    switch self {
+    switch self.kind {
     case let .check(expr, type):
       exprText = expr.textDescription
       operatorText = "is"

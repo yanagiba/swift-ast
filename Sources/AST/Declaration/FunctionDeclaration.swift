@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct FunctionDeclaration {
+public class FunctionDeclaration : Declaration{
   public let attributes: Attributes
   public let modifiers: DeclarationModifiers
   public let name: Identifier
@@ -40,10 +40,10 @@ public struct FunctionDeclaration {
     self.genericWhereClause = genericWhereClause
     self.body = body
   }
-}
 
-extension FunctionDeclaration : Declaration {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
     let headText = "\(attrsText)\(modifiersText)func"

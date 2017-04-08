@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct ImportDeclaration {
+public class ImportDeclaration : Declaration{
   public enum Kind : String {
     case `typealias`, `struct`, `class`, `enum`, `protocol`, `var`, `func`
   }
@@ -31,10 +31,10 @@ public struct ImportDeclaration {
     self.kind = kind
     self.path = path
   }
-}
 
-extension ImportDeclaration : Declaration {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let kindText = kind.map({ " \($0.rawValue)" }) ?? ""
     let pathText = path.joined(separator: ".")

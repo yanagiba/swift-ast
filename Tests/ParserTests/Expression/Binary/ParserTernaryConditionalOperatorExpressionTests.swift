@@ -52,7 +52,8 @@ class ParserTernaryConditionalOperatorExpressionTests: XCTestCase {
         return
       }
 
-      guard case .optional(let tryExpr) = tryOpExpr, let condExpr = tryExpr as? TernaryConditionalOperatorExpression else {
+      guard case .optional(let tryExpr) = tryOpExpr.kind,
+        let condExpr = tryExpr as? TernaryConditionalOperatorExpression else {
         XCTFail("Failed in getting a conditional operator expression")
         return
       }

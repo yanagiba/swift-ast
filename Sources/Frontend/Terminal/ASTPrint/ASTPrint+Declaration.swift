@@ -105,8 +105,8 @@ extension ClassDeclaration.Member : TTYASTPrintRepresentable {
   }
 }
 
-extension ClassDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension ClassDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
     let finalText = isFinal ? "final " : ""
@@ -123,8 +123,8 @@ extension ClassDeclaration : TTYASTPrintRepresentable {
   }
 }
 
-extension DeinitializerDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension DeinitializerDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     return String(indentation: indentation) +
       "\(attrsText)deinit \(body.ttyASTPrint(indentation: indentation))"
@@ -146,8 +146,8 @@ extension EnumDeclaration.Member : TTYASTPrintRepresentable {
   }
 }
 
-extension EnumDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension EnumDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
     let indirectText = isIndirect ? "indirect " : ""
@@ -175,8 +175,8 @@ extension ExtensionDeclaration.Member : TTYASTPrintRepresentable {
   }
 }
 
-extension ExtensionDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension ExtensionDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
     let headText = "\(attrsText)\(modifierText)extension \(type.textDescription)"
@@ -190,8 +190,8 @@ extension ExtensionDeclaration : TTYASTPrintRepresentable {
   }
 }
 
-extension FunctionDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension FunctionDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
     let headText = "\(attrsText)\(modifiersText)func"
@@ -204,8 +204,8 @@ extension FunctionDeclaration : TTYASTPrintRepresentable {
   }
 }
 
-extension InitializerDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension InitializerDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
     let headText = "\(attrsText)\(modifiersText)init\(kind.textDescription)"
@@ -219,8 +219,8 @@ extension InitializerDeclaration : TTYASTPrintRepresentable {
   }
 }
 
-extension PrecedenceGroupDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension PrecedenceGroupDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.map({ String(indentation: indentation + 1) + $0.textDescription }).joined(separator: "\n")
     let attrsBlockText = attributes.isEmpty ? "{}" : "{\n\(attrsText)\n}"
     return String(indentation: indentation) + "precedencegroup \(name) \(attrsBlockText)"
@@ -269,8 +269,8 @@ extension ProtocolDeclaration.Member : TTYASTPrintRepresentable {
   }
 }
 
-extension ProtocolDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension ProtocolDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
     let headText = "\(attrsText)\(modifierText)protocol \(name)"
@@ -294,8 +294,8 @@ extension StructDeclaration.Member : TTYASTPrintRepresentable {
   }
 }
 
-extension StructDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension StructDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
     let headText = "\(attrsText)\(modifierText)struct \(name)"
@@ -323,8 +323,8 @@ extension SubscriptDeclaration.Body : TTYASTPrintRepresentable {
   }
 }
 
-extension SubscriptDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension SubscriptDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
     let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
@@ -347,8 +347,8 @@ extension PatternInitializer : TTYASTPrintRepresentable {
   }
 }
 
-extension ConstantDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension ConstantDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
     let initsText = initializerList.map({ $0.ttyASTPrint(indentation: indentation) }).joined(separator: ", ")
@@ -375,8 +375,8 @@ extension VariableDeclaration.Body : TTYASTPrintRepresentable {
   }
 }
 
-extension VariableDeclaration : TTYASTPrintRepresentable {
-  func ttyASTPrint(indentation: Int) -> String {
+extension VariableDeclaration : TTYASTPrintDeclaration {
+  func ttyDeclarationPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
     return String(indentation: indentation) + "\(attrsText)\(modifiersText)var \(body.ttyASTPrint(indentation: indentation))"

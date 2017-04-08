@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct VariableDeclaration {
+public class VariableDeclaration : Declaration{
   public enum Body {
     case initializerList([PatternInitializer])
     case codeBlock(Identifier, TypeAnnotation, CodeBlock)
@@ -38,7 +38,7 @@ public struct VariableDeclaration {
     self.body = body
   }
 
-  public init(
+  public convenience init(
     attributes: Attributes = [],
     modifiers: DeclarationModifiers = [],
     initializerList: [PatternInitializer]
@@ -47,7 +47,7 @@ public struct VariableDeclaration {
       modifiers: modifiers, body: .initializerList(initializerList))
   }
 
-  public init(
+  public convenience init(
     attributes: Attributes = [],
     modifiers: DeclarationModifiers = [],
     variableName: Identifier,
@@ -59,7 +59,7 @@ public struct VariableDeclaration {
       body: .codeBlock(variableName, typeAnnotation, codeBlock))
   }
 
-  public init(
+  public convenience init(
     attributes: Attributes = [],
     modifiers: DeclarationModifiers = [],
     variableName: Identifier,
@@ -71,7 +71,7 @@ public struct VariableDeclaration {
       body: .getterSetterBlock(variableName, typeAnnotation, getterSetterBlock))
   }
 
-  public init(
+  public convenience init(
     attributes: Attributes = [],
     modifiers: DeclarationModifiers = [],
     variableName: Identifier,
@@ -84,7 +84,7 @@ public struct VariableDeclaration {
         variableName, typeAnnotation, getterSetterKeywordBlock))
   }
 
-  public init(
+  public convenience init(
     attributes: Attributes = [],
     modifiers: DeclarationModifiers = [],
     variableName: Identifier,
@@ -98,7 +98,7 @@ public struct VariableDeclaration {
         variableName, nil, initializer, willSetDidSetBlock))
   }
 
-  public init(
+  public convenience init(
     attributes: Attributes = [],
     modifiers: DeclarationModifiers = [],
     variableName: Identifier,
@@ -110,6 +110,14 @@ public struct VariableDeclaration {
       modifiers: modifiers,
       body: .willSetDidSetBlock(
         variableName, typeAnnotation, initializer, willSetDidSetBlock))
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
+    let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
+    return "\(attrsText)\(modifiersText)var \(body.textDescription)"
   }
 }
 
@@ -129,13 +137,5 @@ extension VariableDeclaration.Body : ASTTextRepresentable {
       let initStr = initExpr.map({ " = \($0.textDescription)" }) ?? ""
       return "\(name)\(typeAnnoStr)\(initStr) \(block.textDescription)"
     }
-  }
-}
-
-extension VariableDeclaration : Declaration {
-  public var textDescription: String {
-    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
-    return "\(attrsText)\(modifiersText)var \(body.textDescription)"
   }
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct AssignmentOperatorExpression {
+public class AssignmentOperatorExpression : BinaryExpression {
   public let leftExpression: Expression
   public let rightExpression: Expression
 
@@ -22,10 +22,10 @@ public struct AssignmentOperatorExpression {
     self.leftExpression = leftExpression
     self.rightExpression = rightExpression
   }
-}
 
-extension AssignmentOperatorExpression : BinaryExpression {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "\(leftExpression.textDescription) = \(rightExpression.textDescription)"
   }
 }

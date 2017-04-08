@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct ClassDeclaration {
+public class ClassDeclaration : Declaration {
   public enum Member {
     case declaration(Declaration)
     case compilerControl(CompilerControlStatement)
@@ -48,21 +48,10 @@ public struct ClassDeclaration {
     self.genericWhereClause = genericWhereClause
     self.members = members
   }
-}
 
-extension ClassDeclaration.Member : ASTTextRepresentable {
-  public var textDescription: String {
-    switch self {
-    case .declaration(let decl):
-      return decl.textDescription
-    case .compilerControl(let stmt):
-      return stmt.textDescription
-    }
-  }
-}
+  // MARK: - ASTTextRepresentable
 
-extension ClassDeclaration : Declaration {
-  public var textDescription: String {
+  override public var textDescription: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
     let finalText = isFinal ? "final " : ""
@@ -74,5 +63,16 @@ extension ClassDeclaration : Declaration {
     let membersText = members.map({ $0.textDescription }).joined(separator: "\n")
     let memberText = members.isEmpty ? "" : "\n\(membersText)\n"
     return "\(headText)\(neckText) {\(memberText)}"
+  }
+}
+
+extension ClassDeclaration.Member : ASTTextRepresentable {
+  public var textDescription: String {
+    switch self {
+    case .declaration(let decl):
+      return decl.textDescription
+    case .compilerControl(let stmt):
+      return stmt.textDescription
+    }
   }
 }

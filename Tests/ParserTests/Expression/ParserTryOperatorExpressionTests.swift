@@ -22,7 +22,7 @@ class ParserTryOperatorExpressionTests: XCTestCase {
   func testTry() {
     parseExpressionAndTest("try foo", "try foo", testClosure: { expr in
       guard let tryOpExpr = expr as? TryOperatorExpression,
-        case .try(let tryExpr) = tryOpExpr else {
+        case .try(let tryExpr) = tryOpExpr.kind else {
         XCTFail("Failed in getting a try operator expression")
         return
       }
@@ -42,7 +42,7 @@ class ParserTryOperatorExpressionTests: XCTestCase {
   func testTryBinaryExpressions() {
     parseExpressionAndTest("try foo = bar == true", "try foo = bar == true", testClosure: { expr in
       guard let tryOpExpr = expr as? TryOperatorExpression,
-        case .try(let tryExpr) = tryOpExpr else {
+        case .try(let tryExpr) = tryOpExpr.kind else {
         XCTFail("Failed in getting a try operator expression")
         return
       }

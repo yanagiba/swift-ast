@@ -22,7 +22,7 @@ class ParserTypeCastingOperatorExpressionTests: XCTestCase {
   func testCheck() {
     parseExpressionAndTest("foo is bar", "foo is bar", testClosure: { expr in
       guard let typeCastingOpExpr = expr as? TypeCastingOperatorExpression,
-        case let .check(checkExpr, type) = typeCastingOpExpr else {
+        case let .check(checkExpr, type) = typeCastingOpExpr.kind else {
         XCTFail("Failed in getting a type casting operator expression")
         return
       }
@@ -35,7 +35,7 @@ class ParserTypeCastingOperatorExpressionTests: XCTestCase {
   func testCast() {
     parseExpressionAndTest("foo as bar", "foo as bar", testClosure: { expr in
       guard let typeCastingOpExpr = expr as? TypeCastingOperatorExpression,
-        case let .cast(castExpr, type) = typeCastingOpExpr else {
+        case let .cast(castExpr, type) = typeCastingOpExpr.kind else {
         XCTFail("Failed in getting a type casting operator expression")
         return
       }

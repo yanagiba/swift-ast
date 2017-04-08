@@ -15,16 +15,16 @@
 */
 
 
-public struct ContinueStatement {
+public class ContinueStatement : Statement {
   public let labelName: Identifier?
 
   public init(labelName: Identifier? = nil) {
     self.labelName = labelName
   }
-}
 
-extension ContinueStatement : Statement {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     if let labelName = labelName {
       return "continue \(labelName)"
     }

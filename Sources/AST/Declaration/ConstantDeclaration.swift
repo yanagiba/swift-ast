@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct ConstantDeclaration {
+public class ConstantDeclaration : Declaration{
   public let attributes: Attributes
   public let modifiers: DeclarationModifiers
   public let initializerList: [PatternInitializer]
@@ -28,10 +28,10 @@ public struct ConstantDeclaration {
     self.modifiers = modifiers
     self.initializerList = initializerList
   }
-}
 
-extension ConstantDeclaration : Declaration {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
     let initsText = initializerList.map({ $0.textDescription }).joined(separator: ", ")

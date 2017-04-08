@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,14 +14,22 @@
    limitations under the License.
 */
 
-public enum IdentifierExpression {
-  case identifier(Identifier, GenericArgumentClause?)
-  case implicitParameterName(Int, GenericArgumentClause?)
-}
+public class IdentifierExpression : PrimaryExpression {
+  public enum Kind {
+    case identifier(Identifier, GenericArgumentClause?)
+    case implicitParameterName(Int, GenericArgumentClause?)
+  }
 
-extension IdentifierExpression : PrimaryExpression {
-  public var textDescription: String {
-    switch self {
+  public let kind: Kind
+
+  public init(kind: Kind) {
+    self.kind = kind
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    switch self.kind {
     case let .identifier(id, generic):
       return "\(id)\(generic?.textDescription ?? "")"
     case let .implicitParameterName(i, generic):

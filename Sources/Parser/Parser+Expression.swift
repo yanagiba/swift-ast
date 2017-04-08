@@ -58,11 +58,11 @@ extension Parser {
     fileprivate func wrap(expr: Expression) -> Expression {
       switch self {
       case .try:
-        return TryOperatorExpression.try(expr)
+        return TryOperatorExpression(kind: .try(expr))
       case .forcedTry:
-        return TryOperatorExpression.forced(expr)
+        return TryOperatorExpression(kind: .forced(expr))
       case .optionalTry:
-        return TryOperatorExpression.optional(expr)
+        return TryOperatorExpression(kind: .optional(expr))
       default:
         return expr
       }
@@ -127,20 +127,22 @@ extension Parser {
           falseExpression: falseExpr)
       case .is:
         let type = try parseType()
-        resultExpr = TypeCastingOperatorExpression.check(resultExpr, type)
+        resultExpr =
+          TypeCastingOperatorExpression(kind: .check(resultExpr, type))
       case .as:
         switch _lexer.read([.postfixQuestion, .postfixExclaim]) {
         case .postfixQuestion:
           let type = try parseType()
-          resultExpr =
-            TypeCastingOperatorExpression.conditionalCast(resultExpr, type)
+          resultExpr = TypeCastingOperatorExpression(
+            kind: .conditionalCast(resultExpr, type))
         case .postfixExclaim:
           let type = try parseType()
           resultExpr =
-            TypeCastingOperatorExpression.forcedCast(resultExpr, type)
+            TypeCastingOperatorExpression(kind: .forcedCast(resultExpr, type))
         default:
           let type = try parseType()
-          resultExpr = TypeCastingOperatorExpression.cast(resultExpr, type)
+          resultExpr =
+            TypeCastingOperatorExpression(kind: .cast(resultExpr, type))
         }
       default:
         break
@@ -349,7 +351,7 @@ extension Parser {
 
     // handle dynamic type expression
     if let idExpr = expr as? IdentifierExpression,
-      case .identifier("type", _) = idExpr,
+      case .identifier("type", _) = idExpr.kind,
       argumentList.count == 1,
       case let .namedExpression("of", argExpr) = argumentList[0]
     {
@@ -440,7 +442,7 @@ extension Parser {
     }
 
     if let index = getTupleIndex() {
-      return ExplicitMemberExpression.tuple(expr, index)
+      return ExplicitMemberExpression(kind: .tuple(expr, index))
     }
 
     switch _lexer.read([
@@ -455,15 +457,15 @@ extension Parser {
       return InitializerExpression(
         postfixExpression: expr, argumentNames: argumentNames)
     case .integerLiteral(let index, _, true):
-      return ExplicitMemberExpression.tuple(expr, index)
+      return ExplicitMemberExpression(kind: .tuple(expr, index))
     case .floatingPointLiteral(_, let raw):
       guard let (first, second) = splitDoubleRawToTwoIntegers(raw) else {
         throw _raiseFatal(.dummy)
       }
       let firstExplitMemberExpr =
-        ExplicitMemberExpression.tuple(expr, first)
-      return ExplicitMemberExpression.tuple(
-        firstExplitMemberExpr, second)
+        ExplicitMemberExpression(kind: .tuple(expr, first))
+      return ExplicitMemberExpression(
+        kind: .tuple(firstExplitMemberExpr, second))
     case .self:
       return PostfixSelfExpression(postfixExpression: expr)
     case .dynamicType:
@@ -474,13 +476,14 @@ extension Parser {
       }
 
       if let genericArgumentClause = parseGenericArgumentClause() {
-        let memberExpr: ExplicitMemberExpression =
-          .generic(expr, id, genericArgumentClause)
+        let memberExpr = ExplicitMemberExpression(
+          kind: .generic(expr, id, genericArgumentClause))
         return memberExpr
       } else if let argumentNames = try parseArgumentNames() {
-        return ExplicitMemberExpression.argument(expr, id, argumentNames)
+        return ExplicitMemberExpression(
+          kind: .argument(expr, id, argumentNames))
       } else {
-        return ExplicitMemberExpression.namedType(expr, id)
+        return ExplicitMemberExpression(kind: .namedType(expr, id))
       }
     }
   }
@@ -501,15 +504,15 @@ extension Parser {
     switch matched {
     ////// literal expression, selector expression, and key path expression
     case .nil:
-      return LiteralExpression.nil
+      return LiteralExpression(kind: .nil)
     case let .booleanLiteral(b):
-      return LiteralExpression.boolean(b)
+      return LiteralExpression(kind: .boolean(b))
     case let .integerLiteral(i, r, _):
-      return LiteralExpression.integer(i, r)
+      return LiteralExpression(kind: .integer(i, r))
     case let .floatingPointLiteral(d, r):
-      return LiteralExpression.floatingPoint(d, r)
+      return LiteralExpression(kind: .floatingPoint(d, r))
     case let .staticStringLiteral(s, r):
-      return LiteralExpression.staticString(s, r)
+      return LiteralExpression(kind: .staticString(s, r))
     case let .interpolatedStringLiteralHead(s, r):
       return try parseInterpolatedStringLiteral(head: s, raw: r)
     case .leftSquare:
@@ -540,13 +543,14 @@ extension Parser {
     ////// identifier expression
     case let .implicitParameterName(implicitName):
       let generic = parseGenericArgumentClause()
-      return IdentifierExpression.implicitParameterName(implicitName, generic)
+      return IdentifierExpression(
+        kind: .implicitParameterName(implicitName, generic))
     default:
       // keyword used as identifier
       if let id = matched.namedIdentifier {
         _lexer.advance()
         let generic = parseGenericArgumentClause()
-        return IdentifierExpression.identifier(id, generic)
+        return IdentifierExpression(kind: .identifier(id, generic))
       }
       throw _raiseFatal(.dummy)
     }
@@ -595,12 +599,13 @@ extension Parser {
   }
 
   private func parseSuperclassExpression() throws -> SuperclassExpression {
+    let kind: SuperclassExpression.Kind
     switch _lexer.read([.dot, .leftSquare]) {
     case .dot:
       if _lexer.match(.init) {
-        return .initializer
+        kind = .initializer
       } else if let id = _lexer.readNamedIdentifier() {
-        return .method(id)
+        kind = .method(id)
       } else {
         throw _raiseFatal(.dummy)
       }
@@ -609,19 +614,21 @@ extension Parser {
       if !_lexer.match(.rightSquare) {
         try _raiseError(.dummy)
       }
-      return .subscript(expressionList)
+      kind = .subscript(expressionList)
     default:
       throw _raiseFatal(.dummy)
     }
+    return SuperclassExpression(kind: kind)
   }
 
   private func parseSelfExpression() throws -> SelfExpression {
+    let kind: SelfExpression.Kind
     switch _lexer.read([.dot, .leftSquare]) {
     case .dot:
       if _lexer.match(.init) {
-        return .initializer
+        kind = .initializer
       } else if let id = _lexer.readNamedIdentifier() {
-        return .method(id)
+        kind = .method(id)
       } else {
         throw _raiseFatal(.dummy)
       }
@@ -630,10 +637,11 @@ extension Parser {
       if !_lexer.match(.rightSquare) {
           try _raiseError(.dummy)
       }
-      return .subscript(expressionList)
+      kind = .subscript(expressionList)
     default:
-      return .self
+      kind = .self
     }
+    return SelfExpression(kind: kind)
   }
 
   private func parseHashExpression() throws -> PrimaryExpression {
@@ -642,13 +650,13 @@ extension Parser {
     }
     switch magicWord {
     case "file":
-      return LiteralExpression.staticString("TODO", "#file") // TODO: assign correct value
+      return LiteralExpression(kind: .staticString("TODO", "#file")) // TODO: assign correct value
     case "line":
-      return LiteralExpression.integer(-1, "#line") // TODO: assign correct value
+      return LiteralExpression(kind: .integer(-1, "#line")) // TODO: assign correct value
     case "column":
-      return LiteralExpression.integer(-1, "#column") // TODO: assign correct value
+      return LiteralExpression(kind: .integer(-1, "#column")) // TODO: assign correct value
     case "function":
-      return LiteralExpression.staticString("TODO", "#function") // TODO: assign correct value
+      return LiteralExpression(kind: .staticString("TODO", "#function")) // TODO: assign correct value
     case "selector":
       return try parseSelectorExpression()
     case "keyPath":
@@ -702,7 +710,7 @@ extension Parser {
     case .identifier(let selfMemberId):
       if let argNames = parseArgumentNamesAndRightParen()
       {
-        return SelectorExpression.selfMember(selfMemberId, argNames)
+        return SelectorExpression(kind: .selfMember(selfMemberId, argNames))
       }
 
       _lexer.restore(fromCheckpoint: memberIdCp)
@@ -710,10 +718,11 @@ extension Parser {
     case .self:
       do {
         let selfExpr = try parseSelfExpression()
-        if case .method(let methodName) = selfExpr,
+        if case .method(let methodName) = selfExpr.kind,
           let argNames = parseArgumentNamesAndRightParen()
         {
-          return SelectorExpression.selfMember("self.\(methodName)", argNames)
+          return SelectorExpression(
+            kind: .selfMember("self.\(methodName)", argNames))
         }
 
         _lexer.restore(fromCheckpoint: memberIdCp)
@@ -730,27 +739,30 @@ extension Parser {
     guard _lexer.match(.rightParen) else {
       throw _raiseFatal(.dummy)
     }
+
+    let kind: SelectorExpression.Kind
     switch key {
     case "getter":
-      return SelectorExpression.getter(expr)
+      kind = .getter(expr)
     case "setter":
-      return SelectorExpression.setter(expr)
+      kind = .setter(expr)
     default:
-      return SelectorExpression.selector(expr)
+      kind = .selector(expr)
     }
+    return SelectorExpression(kind: kind)
   }
 
   private func parseCollectionLiteral() throws -> LiteralExpression {
     // empty array
     if _lexer.match(.rightSquare) {
-      return .array([])
+      return LiteralExpression(kind: .array([]))
     }
     // empty dictionary
     if _lexer.match(.colon) {
       if !_lexer.match(.rightSquare) {
         try _raiseError(.dummy)
       }
-      return .dictionary([])
+      return LiteralExpression(kind: .dictionary([]))
     }
     let headExpr = try parseExpression()
     if _lexer.match(.colon) {
@@ -779,7 +791,7 @@ extension Parser {
     if !_lexer.match(.rightSquare) {
       try _raiseError(.dummy)
     }
-    return .dictionary(entries)
+    return LiteralExpression(kind: .dictionary(entries))
   }
 
   private func parseArrayLiteral(head: Expression) throws -> LiteralExpression {
@@ -792,7 +804,7 @@ extension Parser {
     if !_lexer.match(.rightSquare) {
       try _raiseError(.dummy)
     }
-    return .array(exprs)
+    return LiteralExpression(kind: .array(exprs))
   }
 
   private func parseInterpolatedStringLiteral(head: String, raw: String) throws -> LiteralExpression {
@@ -800,7 +812,7 @@ extension Parser {
     var rawText = raw
 
     if !head.isEmpty {
-      exprs.append(LiteralExpression.staticString(head, "")) // static strings inside the interpolated string literals do not need to preserve raw representation, because they are what they are
+      exprs.append(LiteralExpression(kind: .staticString(head, ""))) // static strings inside the interpolated string literals do not need to preserve raw representation, because they are what they are
     }
 
     let expr = try parseExpression()
@@ -816,13 +828,13 @@ extension Parser {
     switch _lexer.lexStringLiteral() {
     case let .staticStringLiteral(str, _):
       if !str.isEmpty {
-        exprs.append(LiteralExpression.staticString(str, "")) // static strings inside the interpolated string literals do not need to preserve raw representation, because they are what they are
+        exprs.append(LiteralExpression(kind: .staticString(str, ""))) // static strings inside the interpolated string literals do not need to preserve raw representation, because they are what they are
         rawText += str
       }
     case let .interpolatedStringLiteralHead(headStr, rawStr):
-      if case let .interpolatedString(es, ir) =
+      let nested =
         try parseInterpolatedStringLiteral(head: headStr, raw: rawStr)
-      {
+      if case let .interpolatedString(es, ir) = nested.kind {
         exprs.append(contentsOf: es)
         rawText += ir.substring(
           with: ir.index(after: ir.startIndex)..<ir.index(before: ir.endIndex))
@@ -835,7 +847,7 @@ extension Parser {
 
     rawText += "\""
 
-    return LiteralExpression.interpolatedString(exprs, rawText)
+    return LiteralExpression(kind: .interpolatedString(exprs, rawText))
   }
 
   private func parseClosureExpression() throws -> ClosureExpression {

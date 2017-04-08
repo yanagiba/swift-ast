@@ -15,7 +15,7 @@
 */
 
 
-public struct RepeatWhileStatement {
+public class RepeatWhileStatement : Statement {
   public let conditionExpression: Expression
   public let codeBlock: CodeBlock
 
@@ -23,10 +23,10 @@ public struct RepeatWhileStatement {
     self.conditionExpression = conditionExpression
     self.codeBlock = codeBlock
   }
-}
 
-extension RepeatWhileStatement : Statement {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "repeat \(codeBlock.textDescription) while \(conditionExpression.textDescription)"
   }
 }

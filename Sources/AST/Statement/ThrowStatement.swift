@@ -15,16 +15,16 @@
 */
 
 
-public struct ThrowStatement {
+public class ThrowStatement : Statement {
   public let expression: Expression
 
   public init(expression: Expression) {
     self.expression = expression
   }
-}
 
-extension ThrowStatement : Statement {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "throw \(expression.textDescription)"
   }
 }

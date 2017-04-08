@@ -14,15 +14,23 @@
    limitations under the License.
 */
 
-public enum OperatorDeclaration {
-  case prefix(Operator)
-  case postfix(Operator)
-  case infix(Operator, Identifier?)
-}
+public class OperatorDeclaration : Declaration {
+  public enum Kind {
+    case prefix(Operator)
+    case postfix(Operator)
+    case infix(Operator, Identifier?)
+  }
 
-extension OperatorDeclaration : Declaration {
-  public var textDescription: String {
-    switch self {
+  public let kind: Kind
+
+  public init(kind: Kind) {
+    self.kind = kind
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    switch self.kind {
     case .prefix(let op):
       return "prefix operator \(op)"
     case .postfix(let op):

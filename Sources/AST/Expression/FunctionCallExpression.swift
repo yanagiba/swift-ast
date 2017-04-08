@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct FunctionCallExpression {
+public class FunctionCallExpression : PostfixExpression {
   public enum Argument {
     case expression(Expression)
     case namedExpression(Identifier, Expression)
@@ -47,6 +47,21 @@ public struct FunctionCallExpression {
     self.argumentClause = argumentClause
     self.trailingClosure = trailingClosure
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    var parameterText = ""
+    if let argumentClause = argumentClause {
+      let argumentsText = argumentClause.map({ $0.textDescription }).joined(separator: ", ")
+      parameterText = "(\(argumentsText))"
+    }
+    var trailingText = ""
+    if let trailingClosure = trailingClosure {
+      trailingText = " \(trailingClosure.textDescription)"
+    }
+    return "\(postfixExpression.textDescription)\(parameterText)\(trailingText)"
+  }
 }
 
 extension FunctionCallExpression.Argument : ASTTextRepresentable {
@@ -65,20 +80,5 @@ extension FunctionCallExpression.Argument : ASTTextRepresentable {
     case let .namedOperator(identifier, op):
       return "\(identifier): \(op)"
     }
-  }
-}
-
-extension FunctionCallExpression : PostfixExpression {
-  public var textDescription: String {
-    var parameterText = ""
-    if let argumentClause = argumentClause {
-      let argumentsText = argumentClause.map({ $0.textDescription }).joined(separator: ", ")
-      parameterText = "(\(argumentsText))"
-    }
-    var trailingText = ""
-    if let trailingClosure = trailingClosure {
-      trailingText = " \(trailingClosure.textDescription)"
-    }
-    return "\(postfixExpression.textDescription)\(parameterText)\(trailingText)"
   }
 }

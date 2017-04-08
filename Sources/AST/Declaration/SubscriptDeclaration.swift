@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct SubscriptDeclaration {
+public class SubscriptDeclaration : Declaration{
   public enum Body {
     case codeBlock(CodeBlock)
     case getterSetterBlock(GetterSetterBlock)
@@ -44,7 +44,7 @@ public struct SubscriptDeclaration {
     self.body = body
   }
 
-  public init(
+  public convenience init(
     attributes: Attributes = [],
     modifiers: DeclarationModifiers = [],
     parameterList: [FunctionSignature.Parameter] = [],
@@ -60,7 +60,7 @@ public struct SubscriptDeclaration {
       body: .codeBlock(codeBlock))
   }
 
-  public init(
+  public convenience init(
     attributes: Attributes = [],
     modifiers: DeclarationModifiers = [],
     parameterList: [FunctionSignature.Parameter] = [],
@@ -76,7 +76,7 @@ public struct SubscriptDeclaration {
       body: .getterSetterBlock(getterSetterBlock))
   }
 
-  public init(
+  public convenience init(
     attributes: Attributes = [],
     modifiers: DeclarationModifiers = [],
     parameterList: [FunctionSignature.Parameter] = [],
@@ -91,6 +91,20 @@ public struct SubscriptDeclaration {
       resultType: resultType,
       body: .getterSetterKeywordBlock(getterSetterKeywordBlock))
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
+    let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
+    let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
+    let headText = "\(attrsText)\(modifiersText)subscript\(parameterText)"
+
+    let resultAttrsText = resultAttributes.isEmpty ? "" : "\(resultAttributes.textDescription) "
+    let resultText = "-> \(resultAttrsText)\(resultType.textDescription)"
+
+    return "\(headText) \(resultText) \(body.textDescription)"
+  }
 }
 
 extension SubscriptDeclaration.Body : ASTTextRepresentable {
@@ -103,19 +117,5 @@ extension SubscriptDeclaration.Body : ASTTextRepresentable {
     case .getterSetterKeywordBlock(let block):
       return block.textDescription
     }
-  }
-}
-
-extension SubscriptDeclaration : Declaration {
-  public var textDescription: String {
-    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
-    let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
-    let headText = "\(attrsText)\(modifiersText)subscript\(parameterText)"
-
-    let resultAttrsText = resultAttributes.isEmpty ? "" : "\(resultAttributes.textDescription) "
-    let resultText = "-> \(resultAttrsText)\(resultType.textDescription)"
-
-    return "\(headText) \(resultText) \(body.textDescription)"
   }
 }

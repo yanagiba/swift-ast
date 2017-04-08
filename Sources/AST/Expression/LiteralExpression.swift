@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct DictionaryEntry {
+public class DictionaryEntry {
   public let key: Expression
   public let value: Expression
 
@@ -30,20 +30,28 @@ extension DictionaryEntry : ASTTextRepresentable {
   }
 }
 
-public enum LiteralExpression {
-  case `nil`
-  case boolean(Bool)
-  case integer(Int, String)
-  case floatingPoint(Double, String)
-  case staticString(String, String)
-  case interpolatedString([Expression], String)
-  case array([Expression])
-  case dictionary([DictionaryEntry])
-}
+public class LiteralExpression : PrimaryExpression {
+  public enum Kind {
+    case `nil`
+    case boolean(Bool)
+    case integer(Int, String)
+    case floatingPoint(Double, String)
+    case staticString(String, String)
+    case interpolatedString([Expression], String)
+    case array([Expression])
+    case dictionary([DictionaryEntry])
+  }
 
-extension LiteralExpression : PrimaryExpression {
-  public var textDescription: String {
-    switch self {
+  public let kind: Kind
+
+  public init(kind: Kind) {
+    self.kind = kind
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    switch self.kind {
     case .nil:
       return "nil"
     case .boolean(let bool):

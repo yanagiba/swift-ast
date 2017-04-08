@@ -25,7 +25,8 @@ class ParserOperatorDeclarationTests: XCTestCase {
       "prefix operator <!>",
       "prefix operator <!>",
       testClosure: { decl in
-      guard let opDecl = decl as? OperatorDeclaration, case .prefix(let op) = opDecl else {
+      guard let opDecl = decl as? OperatorDeclaration,
+        case .prefix(let op) = opDecl.kind else {
         XCTFail("Failed in getting an operator declaration.")
         return
       }
@@ -39,7 +40,8 @@ class ParserOperatorDeclarationTests: XCTestCase {
       "infix operator <!>",
       "infix operator <!>",
       testClosure: { decl in
-      guard let opDecl = decl as? OperatorDeclaration, case let .infix(op, id) = opDecl else {
+      guard let opDecl = decl as? OperatorDeclaration,
+        case let .infix(op, id) = opDecl.kind else {
         XCTFail("Failed in getting an operator declaration.")
         return
       }
@@ -54,7 +56,8 @@ class ParserOperatorDeclarationTests: XCTestCase {
       "infix operator <!>:foo",
       "infix operator <!> : foo",
       testClosure: { decl in
-      guard let opDecl = decl as? OperatorDeclaration, case let .infix(op, id) = opDecl else {
+      guard let opDecl = decl as? OperatorDeclaration,
+        case let .infix(op, id) = opDecl.kind else {
         XCTFail("Failed in getting an operator declaration.")
         return
       }
@@ -69,7 +72,8 @@ class ParserOperatorDeclarationTests: XCTestCase {
       "postfix operator <!>",
       "postfix operator <!>",
       testClosure: { decl in
-      guard let opDecl = decl as? OperatorDeclaration, case .postfix(let op) = opDecl else {
+      guard let opDecl = decl as? OperatorDeclaration,
+        case .postfix(let op) = opDecl.kind else {
         XCTFail("Failed in getting an operator declaration.")
         return
       }

@@ -24,3 +24,12 @@ public struct SourceRange {
     self.end = end
   }
 }
+
+extension SourceRange {
+  public static let EMPTY = SourceRange(start: .DUMMY, end: .DUMMY)
+  public static let INVALID = SourceRange(start: .INVALID, end: .INVALID)
+
+  public var isValid: Bool {
+    return start.isValid && end.isValid
+  }
+}

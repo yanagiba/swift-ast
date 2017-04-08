@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct ProtocolDeclaration {
+public class ProtocolDeclaration : Declaration{
   public struct PropertyMember {
     public let attributes: Attributes
     public let modifiers: DeclarationModifiers
@@ -165,6 +165,18 @@ public struct ProtocolDeclaration {
     self.typeInheritanceClause = typeInheritanceClause
     self.members = members
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
+    let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
+    let headText = "\(attrsText)\(modifierText)protocol \(name)"
+    let typeText = typeInheritanceClause?.textDescription ?? ""
+    let membersText = members.map({ $0.textDescription }).joined(separator: "\n")
+    let memberText = members.isEmpty ? "" : "\n\(membersText)\n"
+    return "\(headText)\(typeText) {\(memberText)}"
+  }
 }
 
 extension ProtocolDeclaration.PropertyMember : ASTTextRepresentable {
@@ -241,17 +253,5 @@ extension ProtocolDeclaration.Member : ASTTextRepresentable {
     case .compilerControl(let stmt):
       return stmt.textDescription
     }
-  }
-}
-
-extension ProtocolDeclaration : Declaration {
-  public var textDescription: String {
-    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
-    let headText = "\(attrsText)\(modifierText)protocol \(name)"
-    let typeText = typeInheritanceClause?.textDescription ?? ""
-    let membersText = members.map({ $0.textDescription }).joined(separator: "\n")
-    let memberText = members.isEmpty ? "" : "\n\(membersText)\n"
-    return "\(headText)\(typeText) {\(memberText)}"
   }
 }

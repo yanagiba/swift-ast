@@ -21,7 +21,8 @@ import XCTest
 class ParserIdentifierExpressionTests: XCTestCase {
   func testNameOnly() {
     let testClosure: (String, Expression) -> Void = { identifier, expr in
-      guard let idExpr = expr as? IdentifierExpression, case let .identifier(id, generic) = idExpr else {
+      guard let idExpr = expr as? IdentifierExpression,
+        case let .identifier(id, generic) = idExpr.kind else {
         XCTFail("Failed in getting an identifier expression")
         return
       }
@@ -40,7 +41,8 @@ class ParserIdentifierExpressionTests: XCTestCase {
 
   func testNameWithGeneric() {
     let testClosure: (String, String, Expression) -> Void = { identifier, gnrc, expr in
-      guard let idExpr = expr as? IdentifierExpression, case let .identifier(id, generic) = idExpr else {
+      guard let idExpr = expr as? IdentifierExpression,
+        case let .identifier(id, generic) = idExpr.kind else {
         XCTFail("Failed in getting an identifier expression")
         return
       }
@@ -63,7 +65,8 @@ class ParserIdentifierExpressionTests: XCTestCase {
 
   func testImplicitParameter() {
     let testClosure: (Int, Expression) -> Void = { idx, expr in
-      guard let idExpr = expr as? IdentifierExpression, case let .implicitParameterName(index, generic) = idExpr else {
+      guard let idExpr = expr as? IdentifierExpression,
+        case let .implicitParameterName(index, generic) = idExpr.kind else {
         XCTFail("Failed in getting an identifier expression")
         return
       }
@@ -80,7 +83,8 @@ class ParserIdentifierExpressionTests: XCTestCase {
 
   func testImplicitParameterWithGeneric() {
     let testClosure: (Int, Expression) -> Void = { idx, expr in
-      guard let idExpr = expr as? IdentifierExpression, case let .implicitParameterName(index, generic) = idExpr else {
+      guard let idExpr = expr as? IdentifierExpression,
+        case let .implicitParameterName(index, generic) = idExpr.kind else {
         XCTFail("Failed in getting an identifier expression")
         return
       }

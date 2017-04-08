@@ -15,7 +15,7 @@
 */
 
 
-public struct LabeledStatement {
+public class LabeledStatement : Statement {
   public let labelName: Identifier
   public let statement: Statement
 
@@ -23,10 +23,10 @@ public struct LabeledStatement {
     self.labelName = labelName
     self.statement = statement
   }
-}
 
-extension LabeledStatement : Statement {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "\(labelName): \(statement.textDescription)"
   }
 }

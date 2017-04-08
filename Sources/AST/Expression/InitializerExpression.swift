@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct InitializerExpression {
+public class InitializerExpression : PostfixExpression {
   public let postfixExpression: PostfixExpression
   public let argumentNames: [Identifier]
 
@@ -24,10 +24,10 @@ public struct InitializerExpression {
     self.postfixExpression = postfixExpression
     self.argumentNames = argumentNames
   }
-}
 
-extension InitializerExpression : PostfixExpression {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     var textDesc = "\(postfixExpression.textDescription).init"
     if !argumentNames.isEmpty {
       let argumentNamesDesc = argumentNames.map({ "\($0):" }).joined()

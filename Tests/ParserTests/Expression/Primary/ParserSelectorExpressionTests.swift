@@ -21,7 +21,8 @@ import XCTest
 class ParserSelectorExpressionTests: XCTestCase {
   func testSelectorExpression() {
     parseExpressionAndTest("#selector(foo)", "#selector(foo)", testClosure: { expr in
-      guard let selectorExpr = expr as? SelectorExpression, case .selector(let e) = selectorExpr else {
+      guard let selectorExpr = expr as? SelectorExpression,
+        case .selector(let e) = selectorExpr.kind else {
         XCTFail("Failed in getting a selector expression")
         return
       }
@@ -31,7 +32,8 @@ class ParserSelectorExpressionTests: XCTestCase {
 
   func testContainsSelfExpression() {
     parseExpressionAndTest("#selector   (   self.bar    )", "#selector(self.bar)", testClosure: { expr in
-      guard let selectorExpr = expr as? SelectorExpression, case .selector(let e) = selectorExpr else {
+      guard let selectorExpr = expr as? SelectorExpression,
+        case .selector(let e) = selectorExpr.kind else {
         XCTFail("Failed in getting a selector expression")
         return
       }
@@ -41,7 +43,8 @@ class ParserSelectorExpressionTests: XCTestCase {
 
   func testGetterSelector() {
     parseExpressionAndTest("#selector(getter: bar)", "#selector(getter: bar)", testClosure: { expr in
-      guard let selectorExpr = expr as? SelectorExpression, case .getter(let e) = selectorExpr else {
+      guard let selectorExpr = expr as? SelectorExpression,
+        case .getter(let e) = selectorExpr.kind else {
         XCTFail("Failed in getting a selector expression")
         return
       }
@@ -51,7 +54,8 @@ class ParserSelectorExpressionTests: XCTestCase {
 
   func testSetterSelector() {
     parseExpressionAndTest("#selector(setter: bar)", "#selector(setter: bar)", testClosure: { expr in
-      guard let selectorExpr = expr as? SelectorExpression, case .setter(let e) = selectorExpr else {
+      guard let selectorExpr = expr as? SelectorExpression,
+        case .setter(let e) = selectorExpr.kind else {
         XCTFail("Failed in getting a selector expression")
         return
       }
@@ -65,7 +69,7 @@ class ParserSelectorExpressionTests: XCTestCase {
       "#selector(pillTapped(_:))",
       testClosure: { expr in
       guard let selectorExpr = expr as? SelectorExpression,
-        case let .selfMember(id, names) = selectorExpr else {
+        case let .selfMember(id, names) = selectorExpr.kind else {
         XCTFail("Failed in getting a selector self-member")
         return
       }
@@ -78,7 +82,7 @@ class ParserSelectorExpressionTests: XCTestCase {
       "#selector(self.pillTapped(_:))",
       testClosure: { expr in
       guard let selectorExpr = expr as? SelectorExpression,
-        case let .selfMember(id, names) = selectorExpr else {
+        case let .selfMember(id, names) = selectorExpr.kind else {
         XCTFail("Failed in getting a selector self-member")
         return
       }
@@ -90,7 +94,8 @@ class ParserSelectorExpressionTests: XCTestCase {
       "#selector(SomeClass.doSomething(_:))",
       "#selector(SomeClass.doSomething(_:))",
       testClosure: { expr in
-      guard let selectorExpr = expr as? SelectorExpression, case .selector(let e) = selectorExpr else {
+      guard let selectorExpr = expr as? SelectorExpression,
+        case .selector(let e) = selectorExpr.kind else {
         XCTFail("Failed in getting a selector expression")
         return
       }
@@ -103,7 +108,8 @@ class ParserSelectorExpressionTests: XCTestCase {
       "#selector(SomeClass.doSomething(_:) as (SomeClass) -> (String) -> Void)",
       "#selector(SomeClass.doSomething(_:) as (SomeClass) -> (String) -> Void)",
       testClosure: { expr in
-      guard let selectorExpr = expr as? SelectorExpression, case .selector(let e) = selectorExpr else {
+      guard let selectorExpr = expr as? SelectorExpression,
+        case .selector(let e) = selectorExpr.kind else {
         XCTFail("Failed in getting a selector expression")
         return
       }

@@ -14,16 +14,30 @@
    limitations under the License.
 */
 
-public struct TopLevelDeclaration {
+import Source
+
+public class TopLevelDeclaration : ASTNode {
   public let statements: [Statement]
 
   public init(statements: [Statement] = []) {
     self.statements = statements
   }
-}
 
-extension TopLevelDeclaration : ASTTextRepresentable {
-  public var textDescription: String {
+  // MARK: - ASTNodeContext
+
+  override public var sourceRange: SourceRange {
+    if statements.isEmpty {
+      return .EMPTY
+    }
+    let firstStmt = statements[0]
+    let lastStmt = statements[statements.count - 1]
+    return SourceRange(
+      start: firstStmt.sourceRange.start, end: lastStmt.sourceRange.end)
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return statements.textDescription
   }
 }

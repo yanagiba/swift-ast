@@ -15,13 +15,12 @@
 */
 
 
-public struct FallthroughStatement {
-  public init() {
+public class FallthroughStatement : Statement {
+  public override init() {
   }
-}
+  // MARK: - ASTTextRepresentable
 
-extension FallthroughStatement : Statement {
-  public var textDescription: String {
+  override public var textDescription: String {
     return "fallthrough"
   }
 }

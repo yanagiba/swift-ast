@@ -15,7 +15,7 @@
 */
 
 
-public struct DoStatement {
+public class DoStatement : Statement {
   public struct CatchClause {
     public let pattern: Pattern?
     public let whereExpression: Expression?
@@ -38,6 +38,13 @@ public struct DoStatement {
     self.codeBlock = codeBlock
     self.catchClauses = catchClauses
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    return (["do \(codeBlock.textDescription)"] +
+      catchClauses.map({ $0.textDescription })).joined(separator: " ")
+  }
 }
 
 extension DoStatement.CatchClause : ASTTextRepresentable {
@@ -51,12 +58,5 @@ extension DoStatement.CatchClause : ASTTextRepresentable {
       whereText = " where \(whereExpr.textDescription)"
     }
     return "catch\(patternText)\(whereText) \(codeBlock.textDescription)"
-  }
-}
-
-extension DoStatement : Statement {
-  public var textDescription: String {
-    return (["do \(codeBlock.textDescription)"] +
-      catchClauses.map({ $0.textDescription })).joined(separator: " ")
   }
 }

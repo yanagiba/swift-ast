@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct EnumDeclaration {
+public class EnumDeclaration : Declaration{
   public struct UnionStyleEnumCase {
     public struct Case {
       public let name: Identifier
@@ -101,6 +101,22 @@ public struct EnumDeclaration {
     self.genericWhereClause = genericWhereClause
     self.members = members
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
+    let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
+    let indirectText = isIndirect ? "indirect " : ""
+    let headText = "\(attrsText)\(modifierText)\(indirectText)enum \(name)"
+    let genericParameterClauseText = genericParameterClause?.textDescription ?? ""
+    let typeText = typeInheritanceClause?.textDescription ?? ""
+    let whereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
+    let neckText = "\(genericParameterClauseText)\(typeText)\(whereText)"
+    let membersText = members.map({ $0.textDescription }).joined(separator: "\n")
+    let memberText = members.isEmpty ? "" : "\n\(membersText)\n"
+    return "\(headText)\(neckText) {\(memberText)}"
+  }
 }
 
 extension EnumDeclaration.UnionStyleEnumCase : ASTTextRepresentable {
@@ -149,21 +165,5 @@ extension EnumDeclaration.Member : ASTTextRepresentable {
     case .compilerControl(let stmt):
       return stmt.textDescription
     }
-  }
-}
-
-extension EnumDeclaration : Declaration {
-  public var textDescription: String {
-    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
-    let indirectText = isIndirect ? "indirect " : ""
-    let headText = "\(attrsText)\(modifierText)\(indirectText)enum \(name)"
-    let genericParameterClauseText = genericParameterClause?.textDescription ?? ""
-    let typeText = typeInheritanceClause?.textDescription ?? ""
-    let whereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
-    let neckText = "\(genericParameterClauseText)\(typeText)\(whereText)"
-    let membersText = members.map({ $0.textDescription }).joined(separator: "\n")
-    let memberText = members.isEmpty ? "" : "\n\(membersText)\n"
-    return "\(headText)\(neckText) {\(memberText)}"
   }
 }

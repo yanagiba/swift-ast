@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,16 +14,24 @@
    limitations under the License.
 */
 
-public enum ExplicitMemberExpression {
-  case tuple(PostfixExpression, Int)
-  case namedType(PostfixExpression, Identifier)
-  case generic(PostfixExpression, Identifier, GenericArgumentClause)
-  case argument(PostfixExpression, Identifier, [Identifier])
-}
+public class ExplicitMemberExpression : PostfixExpression {
+  public enum Kind {
+    case tuple(PostfixExpression, Int)
+    case namedType(PostfixExpression, Identifier)
+    case generic(PostfixExpression, Identifier, GenericArgumentClause)
+    case argument(PostfixExpression, Identifier, [Identifier])
+  }
 
-extension ExplicitMemberExpression : PostfixExpression {
-  public var textDescription: String {
-    switch self {
+  public let kind: Kind
+
+  public init(kind: Kind) {
+    self.kind = kind
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    switch self.kind {
     case let .tuple(postfixExpr, index):
       return "\(postfixExpr.textDescription).\(index)"
     case let .namedType(postfixExpr, identifier):

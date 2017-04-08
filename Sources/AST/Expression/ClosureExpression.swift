@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct ClosureExpression {
+public class ClosureExpression : PrimaryExpression {
   public struct Signature {
     public struct CaptureItem {
       public enum Specifier : String {
@@ -86,6 +86,29 @@ public struct ClosureExpression {
     self.signature = signature
     self.statements = statements
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    var signatureText = ""
+    var stmtsText = ""
+
+    if let signature = signature {
+      signatureText = " \(signature.textDescription) in"
+      if statements == nil {
+        stmtsText = " "
+      }
+    }
+
+    if let stmts = statements {
+      if signature == nil && stmts.count == 1 {
+        stmtsText = " \(stmts.textDescription) "
+      } else {
+        stmtsText = "\n\(stmts.textDescription)\n"
+      }
+    }
+    return "{\(signatureText)\(stmtsText)}"
+  }
 }
 
 extension ClosureExpression.Signature.CaptureItem.Specifier : ASTTextRepresentable {
@@ -144,28 +167,5 @@ extension ClosureExpression.Signature : ASTTextRepresentable {
       signatureText.append(funcResult.textDescription)
     }
     return signatureText.joined(separator: " ")
-  }
-}
-
-extension ClosureExpression : PrimaryExpression {
-  public var textDescription: String {
-    var signatureText = ""
-    var stmtsText = ""
-
-    if let signature = signature {
-      signatureText = " \(signature.textDescription) in"
-      if statements == nil {
-        stmtsText = " "
-      }
-    }
-
-    if let stmts = statements {
-      if signature == nil && stmts.count == 1 {
-        stmtsText = " \(stmts.textDescription) "
-      } else {
-        stmtsText = "\n\(stmts.textDescription)\n"
-      }
-    }
-    return "{\(signatureText)\(stmtsText)}"
   }
 }

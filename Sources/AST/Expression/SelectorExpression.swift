@@ -14,20 +14,28 @@
    limitations under the License.
 */
 
-public enum SelectorExpression {
-  case selector(Expression)
-  case getter(Expression)
-  case setter(Expression)
+public class SelectorExpression : PrimaryExpression {
+  public enum Kind {
+    case selector(Expression)
+    case getter(Expression)
+    case setter(Expression)
 
-  // Note: I don't see any defined expression that I can use,
-  // so store this special type of expression inside selector-expression for now
-  // TODO: consider introducing a new expression type
-  case selfMember(Identifier, [Identifier])
-}
+    // Note: I don't see any defined expression that I can use,
+    // so store this special type of expression inside selector-expression for now
+    // TODO: consider introducing a new expression type
+    case selfMember(Identifier, [Identifier])
+  }
 
-extension SelectorExpression : PrimaryExpression {
-  public var textDescription: String {
-    switch self {
+  public let kind: Kind
+
+  public init(kind: Kind) {
+    self.kind = kind
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    switch self.kind {
     case .selector(let expr):
       return "#selector(\(expr.textDescription))"
     case .getter(let expr):

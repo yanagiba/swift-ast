@@ -21,7 +21,8 @@ import XCTest
 class ParserLiteralExpressionTests: XCTestCase {
   func testNilLiteral() {
     parseExpressionAndTest("nil", "nil", testClosure: { expr in
-      guard let nilExpr = expr as? LiteralExpression, case .nil = nilExpr else {
+      guard let nilExpr = expr as? LiteralExpression,
+        case .nil = nilExpr.kind else {
         XCTFail("Failed in getting a nil literal")
         return
       }
@@ -30,7 +31,8 @@ class ParserLiteralExpressionTests: XCTestCase {
 
   func testTrueBooleanLiteral() {
     parseExpressionAndTest("true", "true", testClosure: { expr in
-      guard let boolExpr = expr as? LiteralExpression, case .boolean(let bool) = boolExpr else {
+      guard let boolExpr = expr as? LiteralExpression,
+        case .boolean(let bool) = boolExpr.kind else {
         XCTFail("Failed in getting a boolean literal")
         return
       }
@@ -40,7 +42,8 @@ class ParserLiteralExpressionTests: XCTestCase {
 
   func testFalseBooleanLiteral() {
     parseExpressionAndTest("false", "false", testClosure: { expr in
-      guard let boolExpr = expr as? LiteralExpression, case .boolean(let bool) = boolExpr else {
+      guard let boolExpr = expr as? LiteralExpression,
+        case .boolean(let bool) = boolExpr.kind else {
         XCTFail("Failed in getting a boolean literal")
         return
       }
@@ -61,7 +64,8 @@ class ParserLiteralExpressionTests: XCTestCase {
     ]
     for t in testIntegers {
       parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
-        guard let intExpr = expr as? LiteralExpression, case let .integer(int, rawText) = intExpr else {
+        guard let intExpr = expr as? LiteralExpression,
+          case let .integer(int, rawText) = intExpr.kind else {
           XCTFail("Failed in getting an integer literal")
           return
         }
@@ -80,7 +84,8 @@ class ParserLiteralExpressionTests: XCTestCase {
     ]
     for t in testFloats {
       parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
-        guard let floatExpr = expr as? LiteralExpression, case let .floatingPoint(double, rawText) = floatExpr else {
+        guard let floatExpr = expr as? LiteralExpression,
+          case let .floatingPoint(double, rawText) = floatExpr.kind else {
           XCTFail("Failed in getting a floating point literal")
           return
         }
@@ -100,7 +105,8 @@ class ParserLiteralExpressionTests: XCTestCase {
     ]
     for t in testStrings {
       parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
-        guard let strExpr = expr as? LiteralExpression, case let .staticString(str, raw) = strExpr else {
+        guard let strExpr = expr as? LiteralExpression,
+          case let .staticString(str, raw) = strExpr.kind else {
           XCTFail("Failed in getting a static string literal")
           return
         }
@@ -115,69 +121,69 @@ class ParserLiteralExpressionTests: XCTestCase {
       ( // integer literal
         "\"1 2 \\(3)\"",
         [
-          LiteralExpression.staticString("1 2 ", ""),
-          LiteralExpression.integer(3, "3"),
+          LiteralExpression(kind: .staticString("1 2 ", "")),
+          LiteralExpression(kind: .integer(3, "3")),
         ]),
       ( // static string literal
         "\"1 2 \\(\"3\")\"",
         [
-          LiteralExpression.staticString("1 2 ", ""),
-          LiteralExpression.staticString("3", "\"3\""),
+          LiteralExpression(kind: .staticString("1 2 ", "")),
+          LiteralExpression(kind: .staticString("3", "\"3\"")),
         ]),
       ( // nested interpolated string
         "\"\\(\"\\(3)\")\"",
         [
-          LiteralExpression.interpolatedString([
-            LiteralExpression.integer(3, "3")
-          ], "\"\\(3)\""),
+          LiteralExpression(kind: .interpolatedString([
+            LiteralExpression(kind: .integer(3, "3"))
+          ], "\"\\(3)\"")),
         ]),
       ( // two-level nested interpolated string
         "\"\\(\"\\(\"\\(\"3\")\")\")\"",
         [
-          LiteralExpression.interpolatedString([
-            LiteralExpression.interpolatedString([
-              LiteralExpression.staticString("3", "\"3\"")
-            ], "\"\\(\"3\")\""),
-          ], "\"\\(\"\\(\"3\")\")\""),
+          LiteralExpression(kind: .interpolatedString([
+            LiteralExpression(kind: .interpolatedString([
+              LiteralExpression(kind: .staticString("3", "\"3\""))
+            ], "\"\\(\"3\")\"")),
+          ], "\"\\(\"\\(\"3\")\")\"")),
         ]),
       ( // heading and tailing static strings
         "\"1 2 \\(3) 4 5\"",
         [
-          LiteralExpression.staticString("1 2 ", ""),
-          LiteralExpression.integer(3, "3"),
-          LiteralExpression.staticString(" 4 5", ""),
+          LiteralExpression(kind: .staticString("1 2 ", "")),
+          LiteralExpression(kind: .integer(3, "3")),
+          LiteralExpression(kind: .staticString(" 4 5", "")),
         ]),
       ( // multiple interpolated strings in parallel
         "\"\\(\"helloworld\")a\\(\"foo\")\\(\"bar\")z\"",
         [
-          LiteralExpression.staticString("helloworld", "\"helloworld\""),
-          LiteralExpression.staticString("a", ""),
-          LiteralExpression.staticString("foo", "\"foo\""),
-          LiteralExpression.staticString("bar", "\"bar\""),
-          LiteralExpression.staticString("z", ""),
+          LiteralExpression(kind: .staticString("helloworld", "\"helloworld\"")),
+          LiteralExpression(kind: .staticString("a", "")),
+          LiteralExpression(kind: .staticString("foo", "\"foo\"")),
+          LiteralExpression(kind: .staticString("bar", "\"bar\"")),
+          LiteralExpression(kind: .staticString("z", "")),
         ]),
       (
         "\"1 2 \\(\"1 + 2\")\"",
         [
-          LiteralExpression.staticString("1 2 ", ""),
-          LiteralExpression.staticString("1 + 2", "\"1 + 2\""),
+          LiteralExpression(kind: .staticString("1 2 ", "")),
+          LiteralExpression(kind: .staticString("1 + 2", "\"1 + 2\"")),
         ]),
       (
         "\"1 2 \\(x)\"",
         [
-          LiteralExpression.staticString("1 2 ", ""),
-          IdentifierExpression.identifier("x", nil),
+          LiteralExpression(kind: .staticString("1 2 ", "")),
+          IdentifierExpression(kind: .identifier("x", nil)),
         ]),
       (
         "\"1 2 \\(\"3\") \\(\"1 + 2\") \\(x) 456\"",
         [
-          LiteralExpression.staticString("1 2 ", ""),
-          LiteralExpression.staticString("3", "\"3\""),
-          LiteralExpression.staticString(" ", ""),
-          LiteralExpression.staticString("1 + 2", "\"1 + 2\""),
-          LiteralExpression.staticString(" ", ""),
-          IdentifierExpression.identifier("x", nil),
-          LiteralExpression.staticString(" 456", ""),
+          LiteralExpression(kind: .staticString("1 2 ", "")),
+          LiteralExpression(kind: .staticString("3", "\"3\"")),
+          LiteralExpression(kind: .staticString(" ", "")),
+          LiteralExpression(kind: .staticString("1 + 2", "\"1 + 2\"")),
+          LiteralExpression(kind: .staticString(" ", "")),
+          IdentifierExpression(kind: .identifier("x", nil)),
+          LiteralExpression(kind: .staticString(" 456", "")),
         ]),
       ( // having fun
         "\"\\(\"foo\\(123)()(\\(\"abc\\(\"😂\")xyz)\")\\(789)bar\")\"",
@@ -201,18 +207,18 @@ class ParserLiteralExpressionTests: XCTestCase {
          - bar
          */
         [
-          LiteralExpression.interpolatedString([
-            LiteralExpression.staticString("foo", ""),
-            LiteralExpression.integer(123, "123"),
-            LiteralExpression.staticString("()(", ""),
-            LiteralExpression.interpolatedString([
-              LiteralExpression.staticString("abc", ""),
-              LiteralExpression.staticString("😂", "\"😂\""),
-              LiteralExpression.staticString("xyz)", ""),
-            ], "\"abc\\(\"😂\")xyz)\""),
-            LiteralExpression.integer(789, "789"),
-            LiteralExpression.staticString("bar", ""),
-          ], "\"foo\\(123)()(\\(\"abc\\(\"😂\")xyz)\")\\(789)bar\""),
+          LiteralExpression(kind: .interpolatedString([
+            LiteralExpression(kind: .staticString("foo", "")),
+            LiteralExpression(kind: .integer(123, "123")),
+            LiteralExpression(kind: .staticString("()(", "")),
+            LiteralExpression(kind: .interpolatedString([
+              LiteralExpression(kind: .staticString("abc", "")),
+              LiteralExpression(kind: .staticString("😂", "\"😂\"")),
+              LiteralExpression(kind: .staticString("xyz)", "")),
+            ], "\"abc\\(\"😂\")xyz)\"")),
+            LiteralExpression(kind: .integer(789, "789")),
+            LiteralExpression(kind: .staticString("bar", "")),
+          ], "\"foo\\(123)()(\\(\"abc\\(\"😂\")xyz)\")\\(789)bar\"")),
         ]),
     ]
 
@@ -226,19 +232,22 @@ class ParserLiteralExpressionTests: XCTestCase {
       for (index, e) in zip(exprs.indices, exprs) {
         let expectedExpr = expected[index]
         if let literalExpr = expectedExpr as? LiteralExpression {
-          switch literalExpr {
+          switch literalExpr.kind {
           case let .integer(i, r):
-            guard let ee = e as? LiteralExpression, case let .integer(ei, er) = ee, i == ei, r == er else {
+            guard let ee = e as? LiteralExpression,
+              case let .integer(ei, er) = ee.kind, i == ei, r == er else {
               XCTFail("Failed in parsing a correct integer literal, expected: \(i)")
               return
             }
           case let .staticString(s, r):
-            guard let ee = e as? LiteralExpression, case let .staticString(es, er) = ee, s == es, r == er else {
+            guard let ee = e as? LiteralExpression,
+              case let .staticString(es, er) = ee.kind, s == es, r == er else {
               XCTFail("Failed in parsing a correct static string literal, expected: \(s)")
               return
             }
           case let .interpolatedString(ises, r):
-            guard let ee = e as? LiteralExpression, case let .interpolatedString(ees, er) = ee, r == er else {
+            guard let ee = e as? LiteralExpression,
+              case let .interpolatedString(ees, er) = ee.kind, r == er else {
               XCTFail("Failed in parsing a correct interpolated string literal, expected: \(r)")
               return
             }
@@ -247,9 +256,10 @@ class ParserLiteralExpressionTests: XCTestCase {
             XCTFail("Literal expression case not handled")
           }
         } else if let identifierExpr = expectedExpr as? IdentifierExpression {
-          switch identifierExpr {
+          switch identifierExpr.kind {
           case let .identifier(name, nil):
-            guard let ee = e as? IdentifierExpression, case let .identifier(en, nil) = ee, name == en else {
+            guard let ee = e as? IdentifierExpression,
+              case let .identifier(en, nil) = ee.kind, name == en else {
               XCTFail("Failed in parsing a correct identifier expression, expected: \(name)")
               return
             }
@@ -264,7 +274,8 @@ class ParserLiteralExpressionTests: XCTestCase {
 
     for t in testStrings {
       parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
-        guard let strExpr = expr as? LiteralExpression, case let .interpolatedString(exprs, rawText) = strExpr else {
+        guard let strExpr = expr as? LiteralExpression,
+          case let .interpolatedString(exprs, rawText) = strExpr.kind else {
           XCTFail("Failed in getting an interpolated string literal")
           return
         }
@@ -305,7 +316,8 @@ class ParserLiteralExpressionTests: XCTestCase {
 
   func testEmptyArrayLiteral() {
     parseExpressionAndTest("[   ]", "[]", testClosure: { expr in
-      guard let arrayExpr = expr as? LiteralExpression, case .array(let exprs) = arrayExpr else {
+      guard let arrayExpr = expr as? LiteralExpression,
+        case .array(let exprs) = arrayExpr.kind else {
         XCTFail("Failed in getting an array literal")
         return
       }
@@ -315,7 +327,8 @@ class ParserLiteralExpressionTests: XCTestCase {
 
   func testSimpleArrayLiteral() {
     parseExpressionAndTest("[1, 2, 3]", "[1, 2, 3]", testClosure: { expr in
-      guard let arrayExpr = expr as? LiteralExpression, case .array(let exprs) = arrayExpr else {
+      guard let arrayExpr = expr as? LiteralExpression,
+        case .array(let exprs) = arrayExpr.kind else {
         XCTFail("Failed in getting an array literal")
         return
       }
@@ -324,7 +337,8 @@ class ParserLiteralExpressionTests: XCTestCase {
         return
       }
       for i in 0..<3 {
-        guard let literalExpr = exprs[i] as? LiteralExpression, case .integer(let ei, _) = literalExpr, ei == i + 1 else {
+        guard let literalExpr = exprs[i] as? LiteralExpression,
+          case .integer(let ei, _) = literalExpr.kind, ei == i + 1 else {
           XCTFail("Element in array literal is not correct parsed")
           return
         }
@@ -334,7 +348,8 @@ class ParserLiteralExpressionTests: XCTestCase {
 
   func testArrayEndingWithComma() {
     parseExpressionAndTest("[1, 2, 3, ]", "[1, 2, 3]", testClosure: { expr in
-      guard let arrayExpr = expr as? LiteralExpression, case .array(let exprs) = arrayExpr else {
+      guard let arrayExpr = expr as? LiteralExpression,
+        case .array(let exprs) = arrayExpr.kind else {
         XCTFail("Failed in getting an array literal")
         return
       }
@@ -346,21 +361,27 @@ class ParserLiteralExpressionTests: XCTestCase {
   }
 
   func testArrayWithArrays() {
-    parseExpressionAndTest("[[1, 2, 3], [7, 8, 9]]", "[[1, 2, 3], [7, 8, 9]]", testClosure: { expr in
-      guard let arrayExpr = expr as? LiteralExpression, case .array(let exprs) = arrayExpr else {
-        XCTFail("Failed in getting an array literal")
-        return
+    parseExpressionAndTest(
+      "[[1, 2, 3], [7, 8, 9]]",
+      "[[1, 2, 3], [7, 8, 9]]",
+      testClosure: { expr in
+        guard let arrayExpr = expr as? LiteralExpression,
+          case .array(let exprs) = arrayExpr.kind else {
+          XCTFail("Failed in getting an array literal")
+          return
+        }
+        guard exprs.count == 2 else {
+          XCTFail("Array literal doesn't contain 2 elements")
+          return
+        }
       }
-      guard exprs.count == 2 else {
-        XCTFail("Array literal doesn't contain 2 elements")
-        return
-      }
-    })
+    )
   }
 
   func testArrayWithDictionaries() {
     parseExpressionAndTest("[[\"foo\": true, \"bar\": false]]", "[[\"foo\": true, \"bar\": false]]", testClosure: { expr in
-      guard let arrayExpr = expr as? LiteralExpression, case .array(let exprs) = arrayExpr else {
+      guard let arrayExpr = expr as? LiteralExpression,
+        case .array(let exprs) = arrayExpr.kind else {
         XCTFail("Failed in getting an array literal")
         return
       }
@@ -376,7 +397,8 @@ class ParserLiteralExpressionTests: XCTestCase {
       "[nil, 1, 1.23, \"foo\", \"\\(1)\", true, [1, 2, 3], [1: true, 2: false, 3: true, 4: false], #file]",
       "[nil, 1, 1.23, \"foo\", \"\\(1)\", true, [1, 2, 3], [1: true, 2: false, 3: true, 4: false], #file]",
       testClosure: { expr in
-      guard let arrayExpr = expr as? LiteralExpression, case .array(let exprs) = arrayExpr else {
+      guard let arrayExpr = expr as? LiteralExpression,
+        case .array(let exprs) = arrayExpr.kind else {
         XCTFail("Failed in getting an array literal")
         return
       }
@@ -389,7 +411,8 @@ class ParserLiteralExpressionTests: XCTestCase {
 
   func testEmptyDictionaryLiteral() {
     parseExpressionAndTest("[ : ]", "[:]", testClosure: { expr in
-      guard let dictExpr = expr as? LiteralExpression, case .dictionary(let exprs) = dictExpr else {
+      guard let dictExpr = expr as? LiteralExpression,
+        case .dictionary(let exprs) = dictExpr.kind else {
         XCTFail("Failed in getting a dictionary literal")
         return
       }
@@ -399,7 +422,8 @@ class ParserLiteralExpressionTests: XCTestCase {
 
   func testSimpleDictionaryLiteral() {
     parseExpressionAndTest("[\"foo\": true, \"bar\": false]", "[\"foo\": true, \"bar\": false]", testClosure: { expr in
-      guard let dictExpr = expr as? LiteralExpression, case .dictionary(let exprs) = dictExpr else {
+      guard let dictExpr = expr as? LiteralExpression,
+        case .dictionary(let exprs) = dictExpr.kind else {
         XCTFail("Failed in getting a dictionary literal")
         return
       }
@@ -409,8 +433,8 @@ class ParserLiteralExpressionTests: XCTestCase {
       }
       guard let keyExpr1 = exprs[0].key as? LiteralExpression,
         let valueExpr1 = exprs[0].value as? LiteralExpression,
-        case .staticString(let es1, _) = keyExpr1,
-        case .boolean(let eb1) = valueExpr1,
+        case .staticString(let es1, _) = keyExpr1.kind,
+        case .boolean(let eb1) = valueExpr1.kind,
         es1 == "foo",
         eb1 else {
         XCTFail("First entry in dictinoary literal is not correct parsed")
@@ -418,8 +442,8 @@ class ParserLiteralExpressionTests: XCTestCase {
       }
       guard let keyExpr2 = exprs[1].key as? LiteralExpression,
         let valueExpr2 = exprs[1].value as? LiteralExpression,
-        case .staticString(let es2, _) = keyExpr2,
-        case .boolean(let eb2) = valueExpr2,
+        case .staticString(let es2, _) = keyExpr2.kind,
+        case .boolean(let eb2) = valueExpr2.kind,
         es2 == "bar",
 
         !eb2 else {
@@ -431,7 +455,8 @@ class ParserLiteralExpressionTests: XCTestCase {
 
   func testDictinoaryEndingWithComma() {
     parseExpressionAndTest("[\"foo\": true, \"bar\": false, ]", "[\"foo\": true, \"bar\": false]", testClosure: { expr in
-      guard let dictExpr = expr as? LiteralExpression, case .dictionary(let exprs) = dictExpr else {
+      guard let dictExpr = expr as? LiteralExpression,
+        case .dictionary(let exprs) = dictExpr.kind else {
         XCTFail("Failed in getting a dictionary literal")
         return
       }
@@ -447,7 +472,8 @@ class ParserLiteralExpressionTests: XCTestCase {
       "[[\"foo\": true, \"bar\": false]: 1, 2: [\"foo\": true, \"bar\": false]]",
       "[[\"foo\": true, \"bar\": false]: 1, 2: [\"foo\": true, \"bar\": false]]",
       testClosure: { expr in
-      guard let dictExpr = expr as? LiteralExpression, case .dictionary(let exprs) = dictExpr else {
+      guard let dictExpr = expr as? LiteralExpression,
+        case .dictionary(let exprs) = dictExpr.kind else {
         XCTFail("Failed in getting a dictionary literal")
         return
       }
@@ -463,7 +489,8 @@ class ParserLiteralExpressionTests: XCTestCase {
       "[[1, 2, 3]: \"foo\", \"\\(1 + 2)\": [7, 8, 9]]",
       "[[1, 2, 3]: \"foo\", \"\\(1 + 2)\": [7, 8, 9]]",
       testClosure: { expr in
-      guard let dictExpr = expr as? LiteralExpression, case .dictionary(let exprs) = dictExpr else {
+      guard let dictExpr = expr as? LiteralExpression,
+        case .dictionary(let exprs) = dictExpr.kind else {
         XCTFail("Failed in getting a dictionary literal")
         return
       }
@@ -479,7 +506,8 @@ class ParserLiteralExpressionTests: XCTestCase {
       "[nil: 1, 1.23: \"foo\", \"\\(1 + 2)\": true, [1, 2, 3]: [1: true, 2: false, 3: true, 4: false], #line: [1: true]]",
       "[nil: 1, 1.23: \"foo\", \"\\(1 + 2)\": true, [1, 2, 3]: [1: true, 2: false, 3: true, 4: false], #line: [1: true]]",
       testClosure: { expr in
-      guard let dictExpr = expr as? LiteralExpression, case .dictionary(let exprs) = dictExpr else {
+      guard let dictExpr = expr as? LiteralExpression,
+        case .dictionary(let exprs) = dictExpr.kind else {
         XCTFail("Failed in getting a dictionary literal")
         return
       }
@@ -491,7 +519,7 @@ class ParserLiteralExpressionTests: XCTestCase {
   }
 
   func testMagicLiterals() {
-    let testStrings: [(testString: String, expectedExpr: LiteralExpression)] = [
+    let testStrings: [(testString: String, expectedExpr: LiteralExpression.Kind)] = [
       ("#file", .staticString("TODO", "#file")),
       ("#line", .integer(-1, "#line")),
       ("#column", .integer(-1, "#column")),
@@ -501,12 +529,14 @@ class ParserLiteralExpressionTests: XCTestCase {
       parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
         switch t.expectedExpr {
         case let .integer(i, r):
-          guard let ee = expr as? LiteralExpression, case let .integer(ei, er) = ee, i == ei, r == er else {
+          guard let ee = expr as? LiteralExpression,
+            case let .integer(ei, er) = ee.kind, i == ei, r == er else {
             XCTFail("Failed in parsing a correct integer literal, expected: \(i)")
             return
           }
         case let .staticString(s, r):
-          guard let ee = expr as? LiteralExpression, case let .staticString(es, er) = ee, s == es, r == er else {
+          guard let ee = expr as? LiteralExpression,
+            case let .staticString(es, er) = ee.kind, s == es, r == er else {
             XCTFail("Failed in parsing a correct static string literal, expected: \(s)")
             return
           }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct PostfixOperatorExpression {
+public class PostfixOperatorExpression : PostfixExpression {
   public let postfixOperator: Operator
   public let postfixExpression: PostfixExpression
 
@@ -22,10 +22,10 @@ public struct PostfixOperatorExpression {
     self.postfixOperator = postfixOperator
     self.postfixExpression = postfixExpression
   }
-}
 
-extension PostfixOperatorExpression : PostfixExpression {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "\(postfixExpression.textDescription)\(postfixOperator)"
   }
 }

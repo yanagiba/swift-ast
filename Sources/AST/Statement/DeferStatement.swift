@@ -15,16 +15,16 @@
 */
 
 
-public struct DeferStatement {
+public class DeferStatement : Statement {
   public let codeBlock: CodeBlock
 
   public init(codeBlock: CodeBlock) {
     self.codeBlock = codeBlock
   }
-}
 
-extension DeferStatement : Statement {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "defer \(codeBlock.textDescription)"
   }
 }
