@@ -33,3 +33,9 @@ extension SourceRange {
     return start.isValid && end.isValid
   }
 }
+
+extension SourceRange : CustomStringConvertible {
+  public var description: String {
+    return "\(start.path):\(start.line):\(start.column)-\(end.line).\(end.column)"
+  }
+}

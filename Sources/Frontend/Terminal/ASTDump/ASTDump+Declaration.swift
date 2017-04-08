@@ -20,6 +20,8 @@ extension TopLevelDeclaration : TTYASTDumpRepresentable {
   func ttyASTDump(indentation: Int) -> String {
     return "(".colored(with: .blue) +
       "top_level_decl".colored(with: .magenta) +
+      " " +
+      "<range: \(sourceRange)>".colored(with: .yellow) +
       "\n" +
       statements.ttyASTDump(indentation: indentation + 1) +
       ")".colored(with: .blue)
@@ -31,6 +33,8 @@ extension ImportDeclaration : TTYASTDumpDeclaration {
     return String(indentation: indentation) +
       "(".colored(with: .blue) +
       "import_decl".colored(with: .magenta) +
+      " " +
+      "<range: \(sourceRange)>".colored(with: .yellow) +
       " " +
       (attributes.isEmpty ? "" : "\(attributes.textDescription) ") +
       (kind.map({ " \($0.rawValue)" }) ?? "") +

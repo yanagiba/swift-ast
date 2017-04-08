@@ -18,7 +18,9 @@ import AST
 
 extension Collection where Iterator.Element == Statement {
   func ttyASTDump(indentation: Int) -> String {
-    return self.map({ $0.ttyASTDump(indentation: indentation) }).joined(separator: "\n")
+    return self
+      .map({ $0.ttyASTDump(indentation: indentation) })
+      .joined(separator: "\n")
   }
 }
 
@@ -28,7 +30,14 @@ extension Statement {
     case let decl as TTYASTDumpDeclaration:
       return decl.ttyDeclarationDump(indentation: indentation)
     default:
-      return String(indentation: indentation) + textDescription
+      return String(indentation: indentation) +
+        "(".colored(with: .blue) +
+        "statement".colored(with: .magenta) +
+        " " +
+        "<range: \(sourceRange)>".colored(with: .yellow) +
+        "\n" +
+        textDescription +
+        ")".colored(with: .blue)
     }
   }
 }
