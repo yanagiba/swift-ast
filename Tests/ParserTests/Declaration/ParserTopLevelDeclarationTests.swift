@@ -36,7 +36,34 @@ class ParserTopLevelDeclarationTests: XCTestCase {
     }
   }
 
+  func testSourceRange() {
+    let declParser = getParser("import A\nimport B")
+    do {
+      let topLevel = try declParser.parseTopLevelDeclaration()
+      XCTAssertEqual(topLevel.textDescription, "import A\nimport B")
+      XCTAssertEqual(topLevel.sourceRange, getRange(1, 1, 2, 9))
+    } catch {
+      XCTFail("Failed in parsing a top level declaration.")
+    }
+  }
+
+  func testLexicalParent() {
+    let declParser = getParser("import A\nimport B")
+    do {
+      let topLevel = try declParser.parseTopLevelDeclaration()
+      XCTAssertEqual(topLevel.textDescription, "import A\nimport B")
+      XCTAssertNil(topLevel.lexicalParent)
+      for stmt in topLevel.statements {
+        XCTAssertTrue(stmt.lexicalParent === topLevel)
+      }
+    } catch {
+      XCTFail("Failed in parsing a top level declaration.")
+    }
+  }
+
   static var allTests = [
     ("testSimpleCase", testSimpleCase),
+    ("testSourceRange", testSourceRange),
+    ("testLexicalParent", testLexicalParent),
   ]
 }

@@ -21,9 +21,19 @@ import XCTest
 @testable import Lexer
 @testable import AST
 
+let sourcePath = "ParserTests/ParserTests.swift"
+
+func getRange(
+  _ startLine: Int, _ startColumn: Int, _ endLine: Int, _ endColumn: Int
+) -> SourceRange {
+  return SourceRange(
+    start: SourceLocation(path: sourcePath, line: startLine, column: startColumn),
+    end: SourceLocation(path: sourcePath, line: endLine, column: endColumn))
+}
+
 func parse(_ lines: String...) -> TopLevelDeclaration {
   let content = lines.joined(separator: "\n")
-  let source = SourceFile(path: "ParserTests/ParserTests.swift", content: content)
+  let source = SourceFile(path: sourcePath, content: content)
   do {
     return try Parser(source: source).parse()
   } catch {

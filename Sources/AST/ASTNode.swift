@@ -31,6 +31,13 @@ public class ASTNode {
     lexicalParent = node
   }
 
+  public func setSourceRange(
+    _ startLocation: SourceLocation, _ endLocation: SourceLocation
+  ) {
+    let range = SourceRange(start: startLocation, end: endLocation)
+    setSourceRange(range)
+  }
+
   public func setSourceRange(_ sourceRange: SourceRange) {
     self.sourceRange = sourceRange
   }

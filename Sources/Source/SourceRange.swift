@@ -25,6 +25,18 @@ public struct SourceRange {
   }
 }
 
+extension SourceRange : Equatable {
+  static public func ==(lhs: SourceRange, rhs: SourceRange) -> Bool {
+    return lhs.start == rhs.start && lhs.end == rhs.end
+  }
+}
+
+extension SourceRange : Hashable {
+  public var hashValue: Int {
+    return start.hashValue ^ end.hashValue
+  }
+}
+
 extension SourceRange {
   public static let EMPTY = SourceRange(start: .DUMMY, end: .DUMMY)
   public static let INVALID = SourceRange(start: .INVALID, end: .INVALID)

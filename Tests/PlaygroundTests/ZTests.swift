@@ -17,6 +17,7 @@
 import XCTest
 
 @testable import AST
+@testable import Parser
 @testable import LexerTests
 @testable import ParserTests
 
@@ -29,27 +30,17 @@ class ZTests: XCTestCase {
   }
 
   func testOne() {
-    parseExpressionAndTest(
-      "\"\\(casesText.joined())\"",
-      "\"\\(casesText.joined())\"")
-    parseExpressionAndTest(
-      "\"\\(casesText.joined(separator: \", \"))\"",
-      "\"\\(casesText.joined(separator: \", \"))\"")
-    parseExpressionAndTest(
-      "\"(\\(casesText.joined(separator: \", \")))\"",
-      "\"(\\(casesText.joined(separator: \", \")))\"")
-    parseExpressionAndTest(
-      "\"(\\(casesText.joined(separator: \", \"))foo)\"",
-      "\"(\\(casesText.joined(separator: \", \"))foo)\"")
-    parseExpressionAndTest(
-      "\"(\\(casesText.map { $0.upperCased() }))\"",
-      "\"(\\(casesText.map { $0.upperCased() }))\"")
-    parseExpressionAndTest(
-      "\"(\\(casesText.map { $0.upperCased() }.foo))\"",
-      "\"(\\(casesText.map { $0.upperCased() }.foo))\"")
-    parseExpressionAndTest(
-      "\"(\\(casesText.map { $0.upperCased() }.foo()))\"",
-      "\"(\\(casesText.map { $0.upperCased() }.foo()))\"")
+    let declParser = getParser("import A\nimport B")
+    do {
+      let topLevel = try declParser.parseTopLevelDeclaration()
+      XCTAssertEqual(topLevel.textDescription, "import A\nimport B")
+      XCTAssertNil(topLevel.lexicalParent)
+      for stmt in topLevel.statements {
+        XCTAssertTrue(stmt.lexicalParent === topLevel)
+      }
+    } catch {
+      XCTFail("Failed in parsing a top level declaration.")
+    }
   }
 
   static var allTests = [

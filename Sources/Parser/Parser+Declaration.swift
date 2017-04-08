@@ -22,7 +22,11 @@ import Diagnostic
 extension Parser {
   func parseTopLevelDeclaration() throws -> TopLevelDeclaration {
     let stmts = try parseStatements()
-    return TopLevelDeclaration(statements: stmts)
+    let topLevelDecl = TopLevelDeclaration(statements: stmts)
+    for stmt in stmts {
+      stmt.setLexicalParent(topLevelDecl)
+    }
+    return topLevelDecl
   }
 
   func parseCodeBlock() throws -> CodeBlock {
@@ -40,13 +44,15 @@ extension Parser {
     let attrs = try parseAttributes()
     let modifiers = parseModifiers()
 
+    let startLocation = _lexer.look().sourceLocation
     let declHeadTokens: [Token.Kind] = [
       .import, .let, .var, .typealias, .func, .enum, .indirect, .struct,
       .init, .deinit, .extension, .subscript, .operator, .protocol
     ]
     switch _lexer.read(declHeadTokens) {
     case .import:
-      return try parseImportDeclaration(withAttributes: attrs)
+      return try parseImportDeclaration(
+        withAttributes: attrs, startLocation: startLocation)
     case .let:
       return try parseConstantDeclaration(
         withAttributes: attrs, modifiers: modifiers)
@@ -1247,7 +1253,7 @@ extension Parser {
   }
 
   private func parseImportDeclaration(
-    withAttributes attrs: Attributes
+    withAttributes attrs: Attributes, startLocation: SourceLocation
   ) throws -> ImportDeclaration {
     var kind: ImportDeclaration.Kind? = nil
     let importTypeTokens: [Token.Kind] = [
@@ -1285,7 +1291,10 @@ extension Parser {
       .dummyBinaryOperator,
       .dummyPostfixOperator,
     ]
+
+    var endLocation: SourceLocation
     repeat {
+      endLocation = _lexer.look().sourceRange.end
       switch _lexer.read(pathIdentifierTokens) {
       case .identifier(let name):
         path.append(name)
@@ -1298,6 +1307,9 @@ extension Parser {
       }
     } while _lexer.match(.dot)
 
-    return ImportDeclaration(attributes: attrs, kind: kind, path: path)
+    let importDecl = ImportDeclaration(
+      attributes: attrs, kind: kind, path: path)
+    importDecl.setSourceRange(startLocation, endLocation)
+    return importDecl
   }
 }
