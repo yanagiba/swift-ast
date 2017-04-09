@@ -439,6 +439,23 @@ class ParserInitializerDeclarationTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "init() throws { self.foo = nil }",
+      "init() throws {\nself.foo = nil\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 33))
+      }
+    )
+    parseDeclarationAndTest(
+      "init?<A>() where A == Foo {}",
+      "init?<A>() where A == Foo {}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 29))
+      }
+    )
+  }
+
   static var allTests = [
     ("testNonfailable", testNonfailable),
     ("testOptionalFailable", testOptionalFailable),
@@ -457,5 +474,6 @@ class ParserInitializerDeclarationTests: XCTestCase {
     ("testInitializerThatThrows", testInitializerThatThrows),
     ("testInitializerThatRethrows", testInitializerThatRethrows),
     ("testGenericWhereClause", testGenericWhereClause),
+    ("testSourceRange", testSourceRange),
   ]
 }

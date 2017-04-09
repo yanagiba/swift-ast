@@ -829,6 +829,30 @@ class ParserEnumDeclarationTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "@a enum Foo {}",
+      "@a enum Foo {}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 15))
+      }
+    )
+    parseDeclarationAndTest(
+      "enum Foo: Int { let a = 1 case a let b = 2 case b = 1 let c = 3 case c = 999 let d = 4 }",
+      "enum Foo: Int {\nlet a = 1\ncase a\nlet b = 2\ncase b = 1\nlet c = 3\ncase c = 999\nlet d = 4\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 89))
+      }
+    )
+    parseDeclarationAndTest(
+      "enum Foo { #if a\ncase a(A)\n#elseif b \ncase b\n#else\ncase c(A, B, C)\n#endif\n}",
+      "enum Foo {\n#if a\ncase a(A)\n#elseif b \ncase b\n#else\ncase c(A, B, C)\n#endif\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+      }
+    )
+  }
+
   static var allTests = [
     ("testName", testName),
     ("testAttributes", testAttributes),
@@ -857,5 +881,6 @@ class ParserEnumDeclarationTests: XCTestCase {
     ("testMultipleRawValueStyleMembersAndDeclarations", testMultipleRawValueStyleMembersAndDeclarations),
     ("testErrorCases", testErrorCases),
     ("testCompilerControlMember", testCompilerControlMember),
+    ("testSourceRange", testSourceRange),
   ]
 }

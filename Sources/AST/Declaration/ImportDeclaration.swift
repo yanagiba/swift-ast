@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class ImportDeclaration : Declaration{
+public class ImportDeclaration : Declaration {
   public enum Kind : String {
     case `typealias`, `struct`, `class`, `enum`, `protocol`, `var`, `func`
   }

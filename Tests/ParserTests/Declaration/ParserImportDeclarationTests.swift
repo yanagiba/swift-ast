@@ -96,6 +96,22 @@ class ParserImportDeclarationTests: XCTestCase {
     }
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "import foo",
+      "import foo",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 11))
+      }
+    )
+    parseDeclarationAndTest(
+      "import A.B.C.<<=",
+      "import A.B.C.<<=",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 17))
+      }
+    )
+  }
 
   static var allTests = [
     ("testImportModule", testImportModule),
@@ -103,5 +119,6 @@ class ParserImportDeclarationTests: XCTestCase {
     ("testNestedPath", testNestedPath),
     ("testAttribute", testAttribute),
     ("testImportKinds", testImportKinds),
+    ("testSourceRange", testSourceRange),
   ]
 }

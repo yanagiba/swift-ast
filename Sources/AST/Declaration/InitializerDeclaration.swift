@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class InitializerDeclaration : Declaration{
+public class InitializerDeclaration : Declaration {
   public enum InitKind {
     case nonfailable
     case optionalFailable

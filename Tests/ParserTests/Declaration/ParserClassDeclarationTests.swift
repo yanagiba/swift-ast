@@ -341,6 +341,30 @@ class ParserClassDeclarationTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "@a public class Foo {}",
+      "@a public class Foo {}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 23))
+      }
+    )
+    parseDeclarationAndTest(
+      "class Foo { let a = 1 var b = 2  }",
+      "class Foo {\nlet a = 1\nvar b = 2\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 35))
+      }
+    )
+    parseDeclarationAndTest(
+      "class Foo { #if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
+      "class Foo {\n#if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+      }
+    )
+  }
+
   static var allTests = [
     ("testName", testName),
     ("testAttributes", testAttributes),
@@ -357,5 +381,6 @@ class ParserClassDeclarationTests: XCTestCase {
     ("testMultipleDeclarationMembers", testMultipleDeclarationMembers),
     ("testNestedClassDecl", testNestedClassDecl),
     ("testCompilerControlMember", testCompilerControlMember),
+    ("testSourceRange", testSourceRange),
   ]
 }

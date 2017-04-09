@@ -678,6 +678,70 @@ class ParserFunctionDeclarationTests: XCTestCase {
       "func chooseStepFunction(backward: Bool) -> (Int) -> Int {}")
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "func greet(person: String) -> String { return \"Hello, \" + person + \"!\"}",
+      "func greet(person: String) -> String {\nreturn \"Hello, \" + person + \"!\"\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 72))
+      }
+    )
+    parseDeclarationAndTest(
+      "func printAndCount(string: String) -> Int {print(string)\nreturn string.characters.count\n}",
+      "func printAndCount(string: String) -> Int {\nprint(string)\nreturn string.characters.count\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 3, 2))
+      }
+    )
+    parseDeclarationAndTest(
+      "func chooseStepFunction(backward: Bool) -> (Int) -> Int",
+      "func chooseStepFunction(backward: Bool) -> (Int) -> Int",
+      testClosure: { decl in
+        // TODO: need to assign source range for these:
+        // XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+      }
+    )
+    parseDeclarationAndTest(
+      "func foo<A>() where A == Foo",
+      "func foo<A>() where A == Foo",
+      testClosure: { decl in
+        // TODO: need to assign source range for these:
+        // XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+      }
+    )
+    parseDeclarationAndTest(
+      "func foo() throws",
+      "func foo() throws",
+      testClosure: { decl in
+        // TODO: need to assign source range for these:
+        // XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+      }
+    )
+    parseDeclarationAndTest(
+      "func foo()",
+      "func foo()",
+      testClosure: { decl in
+        // TODO: need to assign source range for these:
+        // XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+      }
+    )
+    parseDeclarationAndTest(
+      "func foo() {}",
+      "func foo() {}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 14))
+      }
+    )
+    parseDeclarationAndTest(
+      "@a @b @c private prefix func √()",
+      "@a @b @c private prefix func √()",
+      testClosure: { decl in
+        // TODO: need to assign source range for these:
+        // XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+      }
+    )
+  }
+
   static var allTests = [
     ("testNameIdentifier", testNameIdentifier),
     ("testNameOperator", testNameOperator),
@@ -704,5 +768,6 @@ class ParserFunctionDeclarationTests: XCTestCase {
     ("testArgumentCanHaveNoInternalName", testArgumentCanHaveNoInternalName),
     ("testArgumentAsFunctionType", testArgumentAsFunctionType),
     ("testOthers", testOthers),
+    ("testSourceRange", testSourceRange),
   ]
 }

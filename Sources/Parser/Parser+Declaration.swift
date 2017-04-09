@@ -48,10 +48,11 @@ extension Parser {
   }
 
   func parseDeclaration() throws -> Declaration {
+    let startLocation = getStartLocation()
+
     let attrs = try parseAttributes()
     let modifiers = parseModifiers()
 
-    let startLocation = getStartLocation()
     let declHeadTokens: [Token.Kind] = [
       .import, .let, .var, .typealias, .func, .enum, .indirect, .struct,
       .init, .deinit, .extension, .subscript, .operator, .protocol
@@ -62,50 +63,78 @@ extension Parser {
         withAttributes: attrs, startLocation: startLocation)
     case .let:
       return try parseConstantDeclaration(
-        withAttributes: attrs, modifiers: modifiers)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        startLocation: startLocation)
     case .var:
       return try parseVariableDeclaration(
-        withAttributes: attrs, modifiers: modifiers)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        startLocation: startLocation)
     case .typealias:
       return try parseTypealiasDeclaration(
-        withAttributes: attrs, modifiers: modifiers)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        startLocation: startLocation)
     case .func:
       return try parseFunctionDeclaration(
-        withAttributes: attrs, modifiers: modifiers)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        startLocation: startLocation)
     case .enum:
       return try parseEnumDeclaration(
-        withAttributes: attrs, modifiers: modifiers, isIndirect: false)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        isIndirect: false,
+        startLocation: startLocation)
     case .indirect:
       guard _lexer.match(.enum) else {
         throw _raiseFatal(.enumExpectedAfterIndirect)
       }
       return try parseEnumDeclaration(
-        withAttributes: attrs, modifiers: modifiers, isIndirect: true)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        isIndirect: true,
+        startLocation: startLocation)
     case .struct:
       return try parseStructDeclaration(
-        withAttributes: attrs, modifiers: modifiers)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        startLocation: startLocation)
     case .init:
       return try parseInitializerDeclaration(
-        withAttributes: attrs, modifiers: modifiers)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        startLocation: startLocation)
     case .deinit where modifiers.isEmpty:
-      return try parseDeinitializerDeclaration(withAttributes: attrs)
+      return try parseDeinitializerDeclaration(
+        withAttributes: attrs, startLocation: startLocation)
     case .extension:
       return try parseExtensionDeclaration(
-        withAttributes: attrs, modifiers: modifiers)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        startLocation: startLocation)
     case .subscript:
       return try parseSubscriptDeclaration(
-        withAttributes: attrs, modifiers: modifiers)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        startLocation: startLocation)
     case .operator where attrs.isEmpty:
-      return try parseOperatorDeclaration(withModifiers: modifiers)
+      return try parseOperatorDeclaration(
+        withModifiers: modifiers, startLocation: startLocation)
     case .protocol:
       return try parseProtocolDeclaration(
-        withAttributes: attrs, modifiers: modifiers)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        startLocation: startLocation)
     default:
       // try parsing class declaration
       if let lastModifier = modifiers.last, lastModifier == .class {
         let otherModifiers = Array(modifiers.dropLast())
         return try parseClassDeclaration(
-          withAttributes: attrs, modifiers: otherModifiers)
+          withAttributes: attrs,
+          modifiers: otherModifiers,
+          startLocation: startLocation)
       }
 
       // try parsing precedence group declaration
@@ -115,7 +144,7 @@ extension Parser {
         keyword == "precedencegroup"
       {
         _lexer.advance()
-        return try parsePrecedenceGroupDeclaration()
+        return try parsePrecedenceGroupDeclaration(startLocation: startLocation)
       }
 
       // tried very hard and failed, throw exception
@@ -124,7 +153,9 @@ extension Parser {
   }
 
   private func parseProtocolDeclaration(
-    withAttributes attrs: Attributes, modifiers: DeclarationModifiers
+    withAttributes attrs: Attributes,
+    modifiers: DeclarationModifiers,
+    startLocation: SourceLocation
   ) throws -> ProtocolDeclaration {
     func parsePropertyMember(
       withAttributes attrs: Attributes, modifiers: DeclarationModifiers
@@ -138,7 +169,7 @@ extension Parser {
       guard isGetterSetterBlockHead() else {
         throw _raiseFatal(.dummy)
       }
-      let (getterSetterBlock, hasCodeBlock) = try parseGetterSetterBlock()
+      let (getterSetterBlock, hasCodeBlock, _) = try parseGetterSetterBlock()
       guard !hasCodeBlock else {
         throw _raiseFatal(.dummy)
       }
@@ -166,7 +197,7 @@ extension Parser {
       withAttributes attrs: Attributes, modifiers: DeclarationModifiers
     ) throws -> ProtocolDeclaration.Member {
       let funcDecl = try parseFunctionDeclaration(
-        withAttributes: attrs, modifiers: modifiers)
+        withAttributes: attrs, modifiers: modifiers, startLocation: .DUMMY)
       guard funcDecl.body == nil else {
         throw _raiseFatal(.dummy)
       }
@@ -186,7 +217,10 @@ extension Parser {
       withAttributes attrs: Attributes, modifiers: DeclarationModifiers
     ) throws -> ProtocolDeclaration.Member {
       let initDecl = try parseInitializerDeclaration(
-        withAttributes: attrs, modifiers: modifiers, forProtocolMember: true)
+        withAttributes: attrs,
+        modifiers: modifiers,
+        forProtocolMember: true,
+        startLocation: .DUMMY)
 
       let member = ProtocolDeclaration.InitializerMember(
         attributes: attrs,
@@ -204,7 +238,7 @@ extension Parser {
       withAttributes attrs: Attributes, modifiers: DeclarationModifiers
     ) throws -> ProtocolDeclaration.Member {
       let subscriptDecl = try parseSubscriptDeclaration(
-        withAttributes: attrs, modifiers: modifiers)
+      withAttributes: attrs, modifiers: modifiers, startLocation: .DUMMY)
       guard case .getterSetterKeywordBlock(let getterSetterKeywordBlock) =
         subscriptDecl.body else
       {
@@ -296,21 +330,25 @@ extension Parser {
       throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
     }
 
+    var endLocation = getEndLocation()
     var members: [ProtocolDeclaration.Member] = []
     while !_lexer.match(.rightBrace) {
       let member = try parseMember()
       members.append(member)
+      endLocation = getEndLocation()
     }
 
-    return ProtocolDeclaration(
+    let protocolDecl = ProtocolDeclaration(
       attributes: attrs,
       accessLevelModifier: accessLevelModifier,
       name: name,
       typeInheritanceClause: typeInheritanceClause,
       members: members)
+    protocolDecl.setSourceRange(startLocation, endLocation)
+    return protocolDecl
   }
 
-  private func parsePrecedenceGroupDeclaration()
+  private func parsePrecedenceGroupDeclaration(startLocation: SourceLocation)
     throws -> PrecedenceGroupDeclaration
   {
     func parseAttribute() throws -> PrecedenceGroupDeclaration.Attribute {
@@ -378,16 +416,22 @@ extension Parser {
     guard _lexer.match(.leftBrace) else {
       throw _raiseFatal(.dummy)
     }
+
+    var endLocation = getEndLocation()
     while !_lexer.match(.rightBrace) {
       let attr = try parseAttribute()
       attrs.append(attr)
+      endLocation = getEndLocation()
     }
 
-    return PrecedenceGroupDeclaration(name: name, attributes: attrs)
+    let precedenceGroupDecl =
+      PrecedenceGroupDeclaration(name: name, attributes: attrs)
+    precedenceGroupDecl.setSourceRange(startLocation, endLocation)
+    return precedenceGroupDecl
   }
 
   private func parseOperatorDeclaration(
-    withModifiers modifiers: DeclarationModifiers
+    withModifiers modifiers: DeclarationModifiers, startLocation: SourceLocation
   ) throws -> OperatorDeclaration {
     func parseOperator(modifier kind: DeclarationModifier) throws -> Operator {
       guard let op = parseVerifiedOperator(againstModifier: kind) else {
@@ -401,6 +445,7 @@ extension Parser {
       throw _raiseFatal(.dummy)
     }
 
+    var endLocation = getEndLocation()
     let kind: OperatorDeclaration.Kind
     switch modifier {
     case .prefix:
@@ -413,6 +458,7 @@ extension Parser {
       let op = try parseOperator(modifier: .infix)
       var id: Identifier? = nil
       if _lexer.match(.colon) {
+        endLocation = getEndLocation()
         guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
           throw _raiseFatal(.dummy)
         }
@@ -422,11 +468,15 @@ extension Parser {
     default:
       throw _raiseFatal(.dummy)
     }
-    return OperatorDeclaration(kind: kind)
+    let opDecl = OperatorDeclaration(kind: kind)
+    opDecl.setSourceRange(startLocation, endLocation)
+    return opDecl
   }
 
   private func parseSubscriptDeclaration(
-    withAttributes attrs: Attributes, modifiers: DeclarationModifiers
+    withAttributes attrs: Attributes,
+    modifiers: DeclarationModifiers,
+    startLocation: SourceLocation
   ) throws -> SubscriptDeclaration {
     let params = try parseParameterClause()
     guard _lexer.match(.arrow) else {
@@ -435,10 +485,11 @@ extension Parser {
     let resultAttributes = try parseAttributes()
     let type = try parseType()
 
+    let subscriptDecl: SubscriptDeclaration
     if isGetterSetterBlockHead() {
-      let (getterSetterBlock, hasCodeBlock) = try parseGetterSetterBlock()
+      let (getterSetterBlock, hasCodeBlock, endLocation) = try parseGetterSetterBlock()
       if hasCodeBlock {
-        return SubscriptDeclaration(
+        subscriptDecl = SubscriptDeclaration(
           attributes: attrs,
           modifiers: modifiers,
           parameterList: params,
@@ -455,7 +506,7 @@ extension Parser {
           }
         let getterSetterKeywordBlock =
           GetterSetterKeywordBlock(getter: getter, setter: setter)
-        return SubscriptDeclaration(
+        subscriptDecl = SubscriptDeclaration(
           attributes: attrs,
           modifiers: modifiers,
           parameterList: params,
@@ -463,20 +514,25 @@ extension Parser {
           resultType: type,
           getterSetterKeywordBlock: getterSetterKeywordBlock)
       }
+      subscriptDecl.setSourceRange(startLocation, endLocation)
     } else {
       let codeBlock = try parseCodeBlock()
-      return SubscriptDeclaration(
+      subscriptDecl = SubscriptDeclaration(
         attributes: attrs,
         modifiers: modifiers,
         parameterList: params,
         resultAttributes: resultAttributes,
         resultType: type,
         codeBlock: codeBlock)
+      subscriptDecl.setSourceRange(startLocation, codeBlock.sourceRange.end)
     }
+    return subscriptDecl
   }
 
   private func parseExtensionDeclaration(
-    withAttributes attrs: Attributes, modifiers: DeclarationModifiers
+    withAttributes attrs: Attributes,
+    modifiers: DeclarationModifiers,
+    startLocation: SourceLocation
   ) throws -> ExtensionDeclaration {
     var accessLevelModifier: AccessLevelModifier? = nil
     if modifiers.count == 1, case .accessLevel(let modifier) = modifiers[0] {
@@ -496,6 +552,7 @@ extension Parser {
       throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
     }
 
+    var endLocation = getEndLocation()
     var members: [ExtensionDeclaration.Member] = []
     while !_lexer.match(.rightBrace) {
       if _lexer.match(.hash) {
@@ -505,36 +562,43 @@ extension Parser {
         let decl = try parseDeclaration()
         members.append(.declaration(decl))
       }
+      endLocation = getEndLocation()
     }
 
+    let extDecl: ExtensionDeclaration
     if let whereClause = genericWhereClause {
-      return ExtensionDeclaration(
+      extDecl = ExtensionDeclaration(
         attributes: attrs,
         accessLevelModifier: accessLevelModifier,
         type: type,
         genericWhereClause: whereClause,
         members: members)
     } else {
-      return ExtensionDeclaration(
+      extDecl = ExtensionDeclaration(
         attributes: attrs,
         accessLevelModifier: accessLevelModifier,
         type: type,
         typeInheritanceClause: typeInheritanceClause,
         members: members)
     }
+    extDecl.setSourceRange(startLocation, endLocation)
+    return extDecl
   }
 
   private func parseDeinitializerDeclaration(
-    withAttributes attrs: Attributes
+    withAttributes attrs: Attributes, startLocation: SourceLocation
   ) throws -> DeinitializerDeclaration {
     let body = try parseCodeBlock()
-    return DeinitializerDeclaration(attributes: attrs, body: body)
+    let deinitDecl = DeinitializerDeclaration(attributes: attrs, body: body)
+    deinitDecl.setSourceRange(startLocation, body.sourceRange.end)
+    return deinitDecl
   }
 
   private func parseInitializerDeclaration(
     withAttributes attrs: Attributes,
     modifiers: DeclarationModifiers,
-    forProtocolMember: Bool = false
+    forProtocolMember: Bool = false,
+    startLocation: SourceLocation
   ) throws -> InitializerDeclaration {
     let initKind: InitializerDeclaration.InitKind
     if _lexer.matchUnicodeScalar("?", immediateFollow: true) {
@@ -554,7 +618,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
     let body = forProtocolMember ? CodeBlock() : try parseCodeBlock()
 
-    return InitializerDeclaration(
+    let initDecl = InitializerDeclaration(
       attributes: attrs,
       modifiers: modifiers,
       kind: initKind,
@@ -563,10 +627,14 @@ extension Parser {
       throwsKind: throwsKind,
       genericWhereClause: genericWhereClause,
       body: body)
+    initDecl.setSourceRange(startLocation, body.sourceRange.end)
+    return initDecl
   }
 
   private func parseClassDeclaration(
-    withAttributes attrs: Attributes, modifiers: DeclarationModifiers
+    withAttributes attrs: Attributes,
+    modifiers: DeclarationModifiers,
+    startLocation: SourceLocation
   ) throws -> ClassDeclaration {
     var accessLevelModifier: AccessLevelModifier? = nil
     var isFinal = false
@@ -600,6 +668,7 @@ extension Parser {
       throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
     }
 
+    var endLocation = getEndLocation()
     var members: [ClassDeclaration.Member] = []
     while !_lexer.match(.rightBrace) {
       if _lexer.match(.hash) {
@@ -609,9 +678,10 @@ extension Parser {
         let decl = try parseDeclaration()
         members.append(.declaration(decl))
       }
+      endLocation = getEndLocation()
     }
 
-    return ClassDeclaration(
+    let classDecl = ClassDeclaration(
       attributes: attrs,
       accessLevelModifier: accessLevelModifier,
       isFinal: isFinal,
@@ -620,10 +690,14 @@ extension Parser {
       typeInheritanceClause: typeInheritanceClause,
       genericWhereClause: genericWhereClause,
       members: members)
+    classDecl.setSourceRange(startLocation, endLocation)
+    return classDecl
   }
 
   private func parseStructDeclaration(
-    withAttributes attrs: Attributes, modifiers: DeclarationModifiers
+    withAttributes attrs: Attributes,
+    modifiers: DeclarationModifiers,
+    startLocation: SourceLocation
   ) throws -> StructDeclaration {
     var accessLevelModifier: AccessLevelModifier? = nil
     if modifiers.count == 1, case .accessLevel(let modifier) = modifiers[0] {
@@ -643,6 +717,7 @@ extension Parser {
       throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
     }
 
+    var endLocation = getEndLocation()
     var members: [StructDeclaration.Member] = []
     while !_lexer.match(.rightBrace) {
       if _lexer.match(.hash) {
@@ -652,9 +727,10 @@ extension Parser {
         let decl = try parseDeclaration()
         members.append(.declaration(decl))
       }
+      endLocation = getEndLocation()
     }
 
-    return StructDeclaration(
+    let structDecl = StructDeclaration(
       attributes: attrs,
       accessLevelModifier: accessLevelModifier,
       name: name,
@@ -662,13 +738,16 @@ extension Parser {
       typeInheritanceClause: typeInheritanceClause,
       genericWhereClause: genericWhereClause,
       members: members)
+    structDecl.setSourceRange(startLocation, endLocation)
+    return structDecl
   }
 
   private func parseEnumDeclaration(
     withAttributes attrs: Attributes,
     modifiers: DeclarationModifiers,
-    isIndirect: Bool) throws -> EnumDeclaration
-  {
+    isIndirect: Bool,
+    startLocation: SourceLocation
+  ) throws -> EnumDeclaration {
     func isCaseMemberHead() -> Bool {
       var lookAhead = 0
       while true {
@@ -835,15 +914,17 @@ extension Parser {
       throw _raiseFatal(.leftBraceExpectedForEnumCase)
     }
 
+    var endLocation = getEndLocation()
     var rawMembers: [EnumDeclaration.Member] = []
     while !_lexer.match(.rightBrace) {
       let member = try parseMember()
       rawMembers.append(member)
+      endLocation = getEndLocation()
     }
     let members = try polishMembers(isIndirect: isIndirect,
       hasTypeInheritance: (typeInheritanceClause != nil), members: rawMembers)
 
-    return EnumDeclaration(
+    let enumDecl = EnumDeclaration(
       attributes: attrs,
       accessLevelModifier: accessLevelModifier,
       isIndirect: isIndirect,
@@ -852,6 +933,8 @@ extension Parser {
       typeInheritanceClause: typeInheritanceClause,
       genericWhereClause: genericWhereClause,
       members: members)
+    enumDecl.setSourceRange(startLocation, endLocation)
+    return enumDecl
   }
 
   private func parseParameterClause() throws -> [FunctionSignature.Parameter] {
@@ -924,7 +1007,9 @@ extension Parser {
   }
 
   private func parseFunctionDeclaration(
-    withAttributes attrs: Attributes, modifiers: DeclarationModifiers
+    withAttributes attrs: Attributes,
+    modifiers: DeclarationModifiers,
+    startLocation: SourceLocation
   ) throws -> FunctionDeclaration {
     func parseName() throws -> Identifier {
       var kind: DeclarationModifier? = nil
@@ -974,7 +1059,7 @@ extension Parser {
       body = try parseCodeBlock()
     }
 
-    return FunctionDeclaration(
+    let funcDecl = FunctionDeclaration(
       attributes: attrs,
       modifiers: modifiers,
       name: name,
@@ -982,10 +1067,16 @@ extension Parser {
       signature: signature,
       genericWhereClause: genericWhereClause,
       body: body)
+    if let endLocation = body?.sourceRange.end {
+      funcDecl.setSourceRange(startLocation, endLocation)
+    }
+    return funcDecl
   }
 
   private func parseTypealiasDeclaration(
-    withAttributes attrs: Attributes, modifiers: DeclarationModifiers
+    withAttributes attrs: Attributes,
+    modifiers: DeclarationModifiers,
+    startLocation: SourceLocation
   ) throws -> TypealiasDeclaration {
     var accessLevelModifier: AccessLevelModifier? = nil
     if modifiers.count == 1, case .accessLevel(let modifier) = modifiers[0] {
@@ -1008,7 +1099,9 @@ extension Parser {
   }
 
   private func parseVariableDeclaration(
-    withAttributes attrs: Attributes, modifiers: DeclarationModifiers
+    withAttributes attrs: Attributes,
+    modifiers: DeclarationModifiers,
+    startLocation: SourceLocation
   ) throws -> VariableDeclaration {
     let inits = try parsePatternInitializerList()
     if _lexer.look().kind == .leftBrace, inits.count == 1,
@@ -1017,7 +1110,7 @@ extension Parser {
       switch (idPattern.typeAnnotation, inits[0].initializerExpression) {
       case (let typeAnnotation?, nil):
         if isGetterSetterBlockHead() {
-          let (getterSetterBlock, hasCodeBlock) = try parseGetterSetterBlock()
+          let (getterSetterBlock, hasCodeBlock, _) = try parseGetterSetterBlock()
           if hasCodeBlock {
             return VariableDeclaration(
               attributes: attrs,
@@ -1157,7 +1250,9 @@ extension Parser {
     }
   }
 
-  private func parseGetterSetterBlock() throws -> (GetterSetterBlock, Bool) {
+  private func parseGetterSetterBlock() throws ->
+    (GetterSetterBlock, Bool, SourceLocation)
+  {
     var hasCodeBlock = false
 
     func parseGetter(
@@ -1221,6 +1316,7 @@ extension Parser {
       }
     }
 
+    let endLocation = getEndLocation()
     guard _lexer.match(.rightBrace) else {
       throw _raiseFatal(.dummy)
     }
@@ -1229,12 +1325,17 @@ extension Parser {
       throw _raiseFatal(.dummy)
     }
 
-    return (GetterSetterBlock(
-      getter: getter, setter: setterClause), hasCodeBlock)
+    return (
+      GetterSetterBlock(getter: getter, setter: setterClause),
+      hasCodeBlock,
+      endLocation
+    )
   }
 
   private func parseConstantDeclaration(
-    withAttributes attrs: Attributes, modifiers: DeclarationModifiers
+    withAttributes attrs: Attributes,
+    modifiers: DeclarationModifiers,
+    startLocation: SourceLocation
   ) throws -> ConstantDeclaration {
     let inits = try parsePatternInitializerList()
     return ConstantDeclaration(

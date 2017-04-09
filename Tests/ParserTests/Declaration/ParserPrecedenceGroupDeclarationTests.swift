@@ -235,6 +235,23 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "precedencegroup foo {}",
+      "precedencegroup foo {}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 23))
+      }
+    )
+    parseDeclarationAndTest(
+      "precedencegroup foo { higherThan: bar higherThan: a, b, c lowerThan: bar lowerThan: a, b, c assignment: true assignment: false associativity: left associativity: right associativity: none }",
+      "precedencegroup foo {\nhigherThan: bar\nhigherThan: a, b, c\nlowerThan: bar\nlowerThan: a, b, c\nassignment: true\nassignment: false\nassociativity: left\nassociativity: right\nassociativity: none\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 190))
+      }
+    )
+  }
+
   static var allTests = [
     ("testName", testName),
     ("testHigherThanSingle", testHigherThanSingle),
@@ -247,5 +264,6 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
     ("testAssociativityRight", testAssociativityRight),
     ("testAssociativityNone", testAssociativityNone),
     ("testCombination", testCombination),
+    ("testSourceRange", testSourceRange),
   ]
 }

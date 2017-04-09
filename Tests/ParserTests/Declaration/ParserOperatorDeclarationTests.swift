@@ -82,10 +82,28 @@ class ParserOperatorDeclarationTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "postfix operator <!>",
+      "postfix operator <!>",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 21))
+      }
+    )
+    parseDeclarationAndTest(
+      "infix operator <!>:foo",
+      "infix operator <!> : foo",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 23))
+      }
+    )
+  }
+
   static var allTests = [
     ("testPrefixOperator", testPrefixOperator),
     ("testInfixOperator", testInfixOperator),
     ("testInfixOperatorWithPrecedenceGroupName", testInfixOperatorWithPrecedenceGroupName),
     ("testPostfixOperator", testPostfixOperator),
+    ("testSourceRange", testSourceRange),
   ]
 }

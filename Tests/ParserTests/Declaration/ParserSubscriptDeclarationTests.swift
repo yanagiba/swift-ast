@@ -281,6 +281,23 @@ class ParserSubscriptDeclarationTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "subscript() -> Self {}",
+      "subscript() -> Self {}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 23))
+      }
+    )
+    parseDeclarationAndTest(
+      "@x @y @z subscript() -> Self { @a @b @c mutating get @x @y @z nonmutating set }",
+      "@x @y @z subscript() -> Self {\n@a @b @c mutating get\n@x @y @z nonmutating set\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 80))
+      }
+    )
+  }
+
   static var allTests = [
     ("testSubscriptDecl", testSubscriptDecl),
     // attributes/modifiers
@@ -291,11 +308,13 @@ class ParserSubscriptDeclarationTests: XCTestCase {
     ("testSingleParameter", testSingleParameter),
     ("testMultipleParameters", testMultipleParameters),
     ("testResultAttributes", testResultAttributes),
-    // // code block
+    // code block
     ("testCodeBlock", testCodeBlock),
-    // // getter-setter block
+    // getter-setter block
     ("testGetterSetterBlock", testGetterSetterBlock),
-    // // getter-setter-keyword block
+    // getter-setter-keyword block
     ("testGetterSetterKeywordBlock", testGetterSetterKeywordBlock),
+    // context
+    ("testSourceRange", testSourceRange),
   ]
 }

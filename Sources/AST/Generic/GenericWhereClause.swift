@@ -14,6 +14,8 @@
    limitations under the License.
 */
 
+import Source
+
 public struct GenericWhereClause {
   public enum Requirement {
     case typeConformance(TypeIdentifier, TypeIdentifier)
@@ -22,6 +24,7 @@ public struct GenericWhereClause {
   }
 
   public let requirementList: [Requirement]
+  public var sourceRange: SourceRange = .EMPTY
 
   public init(requirementList: [Requirement]) {
     self.requirementList = requirementList
@@ -45,4 +48,7 @@ extension GenericWhereClause : ASTTextRepresentable {
   public var textDescription: String {
     return "where \(requirementList.map({ $0.textDescription }).joined(separator: ", "))"
   }
+}
+
+extension GenericWhereClause : SourceLocatable {
 }

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class ConstantDeclaration : Declaration{
+public class ConstantDeclaration : Declaration {
   public let attributes: Attributes
   public let modifiers: DeclarationModifiers
   public let initializerList: [PatternInitializer]

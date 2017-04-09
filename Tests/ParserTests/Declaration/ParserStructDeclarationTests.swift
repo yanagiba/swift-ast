@@ -276,6 +276,30 @@ class ParserStructDeclarationTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "@a public struct Foo {}",
+      "@a public struct Foo {}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 24))
+      }
+    )
+    parseDeclarationAndTest(
+      "struct Foo { let a = 1 var b = 2  }",
+      "struct Foo {\nlet a = 1\nvar b = 2\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 36))
+      }
+    )
+    parseDeclarationAndTest(
+      "struct Foo { #if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
+      "struct Foo {\n#if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+      }
+    )
+  }
+
   static var allTests = [
     ("testName", testName),
     ("testAttributes", testAttributes),
@@ -289,5 +313,6 @@ class ParserStructDeclarationTests: XCTestCase {
     ("testMultipleDeclarationMembers", testMultipleDeclarationMembers),
     ("testNestedStructDecl", testNestedStructDecl),
     ("testCompilerControlMember", testCompilerControlMember),
+    ("testSourceRange", testSourceRange),
   ]
 }

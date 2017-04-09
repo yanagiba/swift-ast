@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class ExtensionDeclaration : Declaration{
+public class ExtensionDeclaration : Declaration {
   public enum Member {
     case declaration(Declaration)
     case compilerControl(CompilerControlStatement)

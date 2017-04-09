@@ -1239,6 +1239,18 @@ class ParserVariableDeclarationTests: XCTestCase {
       "var foo = bar { $0 == 0 }.joined()")
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "var foo",
+      "var foo",
+      testClosure: { decl in
+        // TODO: need to assign source range for these:
+        // XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+      }
+    )
+    // TODO: need to work on other cases
+  }
+
   static var allTests = [
     ("testVariableName", testVariableName),
     ("testTypeAnnotation", testTypeAnnotation),
@@ -1297,5 +1309,7 @@ class ParserVariableDeclarationTests: XCTestCase {
     ("testAttributes", testAttributes),
     ("testModifiers", testModifiers),
     ("testAttributeAndModifiers", testAttributeAndModifiers),
+    // context
+    ("testSourceRange", testSourceRange),
   ]
 }

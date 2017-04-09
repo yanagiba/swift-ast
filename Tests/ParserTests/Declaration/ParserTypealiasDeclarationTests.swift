@@ -133,6 +133,17 @@ class ParserTypealiasDeclarationTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "@a public typealias Foo<A> = Bar",
+      "@a public typealias Foo<A> = Bar",
+      testClosure: { decl in
+        // TODO: need to assign source range for these:
+        // XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+      }
+    )
+  }
+
   static var allTests = [
     ("testTypealias", testTypealias),
     ("testAttributes", testAttributes),
@@ -140,5 +151,6 @@ class ParserTypealiasDeclarationTests: XCTestCase {
     ("testAttributesAndModifier", testAttributesAndModifier),
     ("testGeneric", testGeneric),
     ("testAttributesAndModifierAndGeneric", testAttributesAndModifierAndGeneric),
+    ("testSourceRange", testSourceRange),
   ]
 }

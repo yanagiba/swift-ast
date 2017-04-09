@@ -223,6 +223,30 @@ class ParserExtensionDeclarationTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "private extension Foo {}",
+      "private extension Foo {}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 25))
+      }
+    )
+    parseDeclarationAndTest(
+      "extension Foo { #if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
+      "extension Foo {\n#if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+      }
+    )
+    parseDeclarationAndTest(
+      "extension Foo { let a = 1 var b = 2  }",
+      "extension Foo {\nlet a = 1\nvar b = 2\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 39))
+      }
+    )
+  }
+
   static var allTests = [
     ("testName", testName),
     ("testAttributes", testAttributes),
@@ -234,5 +258,6 @@ class ParserExtensionDeclarationTests: XCTestCase {
     ("testDeclarationMember", testDeclarationMember),
     ("testMultipleDeclarationMembers", testMultipleDeclarationMembers),
     ("testCompilerControlMember", testCompilerControlMember),
+    ("testSourceRange", testSourceRange),
   ]
 }

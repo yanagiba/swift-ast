@@ -323,6 +323,23 @@ class ParserProtocolDeclarationTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "protocol Foo { var a:A{get} @a func b(c: C) -> B init!(d: D) subscript(i: Int) -> E {set get} public associatedtype f: F = g }",
+      "protocol Foo {\nvar a: A {\nget\n}\n@a func b(c: C) -> B\ninit!(d: D)\nsubscript(i: Int) -> E {\nget\nset\n}\npublic associatedtype f: F = g\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 127))
+      }
+    )
+    parseDeclarationAndTest(
+      "@a public protocol Foo {}",
+      "@a public protocol Foo {}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 26))
+      }
+    )
+  }
+
   static var allTests = [
     ("testName", testName),
     ("testAttributes", testAttributes),
@@ -346,5 +363,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
     ("testCompilerControlMember", testCompilerControlMember),
     // combinations
     ("testMembers", testMembers),
+    // context
+    ("testSourceRange", testSourceRange),
   ]
 }

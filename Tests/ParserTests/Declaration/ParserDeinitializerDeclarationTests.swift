@@ -51,8 +51,26 @@ class ParserDeinitializerDeclarationTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseDeclarationAndTest(
+      "deinit { NSNotificationCenter.removeObserver(self) }",
+      "deinit {\nNSNotificationCenter.removeObserver(self)\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 53))
+      }
+    )
+    parseDeclarationAndTest(
+      "@a @b @c deinit {}",
+      "@a @b @c deinit {}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 19))
+      }
+    )
+  }
+
   static var allTests = [
     ("testDeinit", testDeinit),
     ("testAttributes", testAttributes),
+    ("testSourceRange", testSourceRange),
   ]
 }
