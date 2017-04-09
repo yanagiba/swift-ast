@@ -36,7 +36,34 @@ class ParserCodeBlockTests: XCTestCase {
     }
   }
 
+  func testSourceRange() {
+    let declParser = getParser("{import A\nimport B}")
+    do {
+      let codeBlock = try declParser.parseCodeBlock()
+      XCTAssertEqual(codeBlock.textDescription, "{\nimport A\nimport B\n}")
+      XCTAssertEqual(codeBlock.sourceRange, getRange(1, 1, 2, 10))
+    } catch {
+      XCTFail("Failed in parsing a code block declaration.")
+    }
+  }
+
+  func testLexicalParent() {
+    let declParser = getParser("{import A\nimport B}")
+    do {
+      let codeBlock = try declParser.parseCodeBlock()
+      XCTAssertEqual(codeBlock.textDescription, "{\nimport A\nimport B\n}")
+      XCTAssertNil(codeBlock.lexicalParent)
+      for stmt in codeBlock.statements {
+        XCTAssertTrue(stmt.lexicalParent === codeBlock)
+      }
+    } catch {
+      XCTFail("Failed in parsing a code block declaration.")
+    }
+  }
+
   static var allTests = [
     ("testSimpleCase", testSimpleCase),
+    ("testSourceRange", testSourceRange),
+    ("testLexicalParent", testLexicalParent),
   ]
 }

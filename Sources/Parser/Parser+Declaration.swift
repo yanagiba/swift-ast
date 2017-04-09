@@ -30,21 +30,28 @@ extension Parser {
   }
 
   func parseCodeBlock() throws -> CodeBlock {
+    let startLocation = getStartLocation()
     guard _lexer.match(.leftBrace) else {
       throw _raiseFatal(.leftBraceExpectedForCodeBlock)
     }
     let stmts = try parseStatements()
+    let endLocation = getEndLocation()
     guard _lexer.match(.rightBrace) else {
       throw _raiseFatal(.rightBraceExpectedForCodeBlock)
     }
-    return CodeBlock(statements: stmts)
+    let codeBlock = CodeBlock(statements: stmts)
+    codeBlock.setSourceRange(startLocation, endLocation)
+    for stmt in stmts {
+      stmt.setLexicalParent(codeBlock)
+    }
+    return codeBlock
   }
 
   func parseDeclaration() throws -> Declaration {
     let attrs = try parseAttributes()
     let modifiers = parseModifiers()
 
-    let startLocation = _lexer.look().sourceLocation
+    let startLocation = getStartLocation()
     let declHeadTokens: [Token.Kind] = [
       .import, .let, .var, .typealias, .func, .enum, .indirect, .struct,
       .init, .deinit, .extension, .subscript, .operator, .protocol
@@ -1294,7 +1301,7 @@ extension Parser {
 
     var endLocation: SourceLocation
     repeat {
-      endLocation = _lexer.look().sourceRange.end
+      endLocation = getEndLocation()
       switch _lexer.read(pathIdentifierTokens) {
       case .identifier(let name):
         path.append(name)

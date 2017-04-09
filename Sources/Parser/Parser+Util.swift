@@ -15,6 +15,7 @@
 */
 
 import AST
+import Source
 
 extension Parser {
   func checkOperatorReservation(
@@ -133,5 +134,13 @@ extension Parser {
       return nil
     }
     return (first, second)
+  }
+
+  func getStartLocation() -> SourceLocation {
+    return _lexer.look().sourceLocation
+  }
+
+  func getEndLocation() -> SourceLocation {
+    return _lexer.look().sourceRange.end
   }
 }
