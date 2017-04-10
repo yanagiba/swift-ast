@@ -10,3 +10,5 @@ install:
 script:
 - make test
 - ./dogFooding.sh -diagnostics-only
+after_success:
+- eval "$(curl -sL https://swift.vapor.sh/codecov)"
