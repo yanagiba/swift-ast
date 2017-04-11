@@ -18,8 +18,6 @@ import XCTest
 
 @testable import AST
 @testable import Parser
-@testable import LexerTests
-@testable import ParserTests
 
 class ZTests: XCTestCase {
   // Note: tests in this file should always run last,

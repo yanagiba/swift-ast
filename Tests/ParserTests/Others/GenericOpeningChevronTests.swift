@@ -17,7 +17,6 @@
 import XCTest
 
 @testable import AST
-@testable import ParserTests
 
 class GenericOpeningChevronTests: XCTestCase {
   func testArgumentOpeningChevronImmediatelyFollow() {

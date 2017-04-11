@@ -19,11 +19,9 @@ import XCTest
 import CanaryTests
 import LexerTests
 import ParserTests
-import PlaygroundTests
 
 var tests = [XCTestCaseEntry]()
 tests += CanaryTests.allTests()
 tests += LexerTests.allTests()
 tests += ParserTests.allTests()
-tests += PlaygroundTests.allTests()
 XCTMain(tests)

@@ -65,12 +65,5 @@ let package = Package(
         "Frontend",
       ]
     ),
-    Target(
-      name: "PlaygroundTests",
-      dependencies: [
-        "ParserTests",
-        "AST",
-      ]
-    )
   ]
 )
