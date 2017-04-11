@@ -16,7 +16,7 @@
 
 import Source
 
-public protocol Type : ASTTextRepresentable {
+public protocol Type : ASTTextRepresentable, SourceLocatable {
 }
 
 public class TypeBase {
@@ -41,5 +41,5 @@ public class TypeBase {
   }
 }
 
-extension TypeBase : Type, SourceLocatable {
+extension TypeBase : Type {
 }

@@ -28,8 +28,15 @@ class ParserSelfTypeTests: XCTestCase {
     parseTypeAndTest("Self.Protocol", "Protocol<Self>")
   }
 
+  func testSourceRange() {
+    parseTypeAndTest("Self", "Self", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 5))
+    })
+  }
+
   static var allTests = [
     ("testSelf", testSelf),
     ("testMixedWithOtherTypes", testMixedWithOtherTypes),
+    ("testSourceRange", testSourceRange),
   ]
 }

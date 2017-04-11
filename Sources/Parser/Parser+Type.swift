@@ -45,6 +45,7 @@ extension Parser {
   }
 
   private func parseAtomicType() throws -> Type {
+    let looked = _lexer.look()
     let matched = _lexer.read([
       .leftSquare,
       .leftParen,
@@ -60,9 +61,13 @@ extension Parser {
     case .protocol:
       return try parseOldSyntaxProtocolCompositionType()
     case .Any:
-      return AnyType()
+      let anyType = AnyType()
+      anyType.setSourceRange(looked.sourceRange)
+      return anyType
     case .Self:
-      return SelfType()
+      let selfType = SelfType()
+      selfType.setSourceRange(looked.sourceRange)
+      return selfType
     default:
       if let idHead = _lexer.readNamedIdentifier() {
         return try parseIdentifierType(idHead)
@@ -401,6 +406,8 @@ fileprivate class ParenthesizedType : Type {
   fileprivate var textDescription: String {
     return ""
   }
+
+  fileprivate var sourceRange: SourceRange = .EMPTY
 
   fileprivate func toTupleType() -> TupleType? {
     var tupleElements: [TupleType.Element] = []

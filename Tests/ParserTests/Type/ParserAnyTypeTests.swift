@@ -28,8 +28,15 @@ class ParserAnyTypeTests: XCTestCase {
     parseTypeAndTest("Any.Type", "Type<Any>")
   }
 
+  func testSourceRange() {
+    parseTypeAndTest("Any", "Any", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 4))
+    })
+  }
+
   static var allTests = [
     ("testAny", testAny),
     ("testMixedWithOtherTypes", testMixedWithOtherTypes),
+    ("testSourceRange", testSourceRange),
   ]
 }
