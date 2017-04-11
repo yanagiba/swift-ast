@@ -14,12 +14,12 @@
    limitations under the License.
 */
 
-public struct AnyType {
-  public init() {}
-}
+public class AnyType : TypeBase {
+  override public init() {}
 
-extension AnyType : Type {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "Any"
   }
 }

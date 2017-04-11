@@ -14,12 +14,12 @@
    limitations under the License.
 */
 
-public struct SelfType {
-  public init() {}
-}
+public class SelfType : TypeBase {
+  override public init() {}
 
-extension SelfType : Type {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "Self"
   }
 }

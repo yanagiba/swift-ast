@@ -14,16 +14,16 @@
    limitations under the License.
 */
 
-public struct ProtocolCompositionType {
+public class ProtocolCompositionType : TypeBase {
   public let protocolTypes: [Type]
 
   public init(protocolTypes: [Type]) {
     self.protocolTypes = protocolTypes
   }
-}
 
-extension ProtocolCompositionType : Type {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "protocol<\(protocolTypes.map({ $0.textDescription }).joined(separator: ", "))>"
   }
 }

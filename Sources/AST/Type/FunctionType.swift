@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct FunctionType {
+public class FunctionType : TypeBase {
   public struct Argument {
     public let externalName: String?
     public let localName: String?
@@ -56,6 +56,15 @@ public struct FunctionType {
     self.returnType = returnType
     self.throwsKind = throwsKind
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
+    let argsText = "(\(arguments.map({ $0.textDescription }).joined(separator: ", ")))"
+    let throwsText = throwsKind.textDescription.isEmpty ? "" : " \(throwsKind.textDescription)"
+    return "\(attrsText)\(argsText)\(throwsText) -> \(returnType.textDescription)"
+  }
 }
 
 extension FunctionType.Argument : ASTTextRepresentable {
@@ -68,14 +77,5 @@ extension FunctionType.Argument : ASTTextRepresentable {
     }
     let variadicDots = isVariadic ? "..." : ""
     return "\(nameStr)\(attr)\(inoutStr)\(type.textDescription)\(variadicDots)"
-  }
-}
-
-extension FunctionType : Type {
-  public var textDescription: String {
-    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    let argsText = "(\(arguments.map({ $0.textDescription }).joined(separator: ", ")))"
-    let throwsText = throwsKind.textDescription.isEmpty ? "" : " \(throwsKind.textDescription)"
-    return "\(attrsText)\(argsText)\(throwsText) -> \(returnType.textDescription)"
   }
 }

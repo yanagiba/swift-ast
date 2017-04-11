@@ -14,16 +14,16 @@
    limitations under the License.
 */
 
-public struct OptionalType {
+public class OptionalType : TypeBase {
   public let wrappedType: Type
 
   public init(wrappedType: Type) {
     self.wrappedType = wrappedType
   }
-}
 
-extension OptionalType : Type {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "Optional<\(wrappedType.textDescription)>"
   }
 }

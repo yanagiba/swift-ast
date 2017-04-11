@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct TupleType {
+public class TupleType : TypeBase {
   public struct Element {
     public let type: Type
     public let name: String?
@@ -46,6 +46,12 @@ public struct TupleType {
   public init(elements: [Element]) {
     self.elements = elements
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    return "(\(elements.map({ $0.textDescription }).joined(separator: ", ")))"
+  }
 }
 
 extension TupleType.Element : ASTTextRepresentable {
@@ -57,11 +63,5 @@ extension TupleType.Element : ASTTextRepresentable {
       nameStr = "\(name): "
     }
     return "\(nameStr)\(attr)\(inoutStr)\(type.textDescription)"
-  }
-}
-
-extension TupleType : Type {
-  public var textDescription: String {
-    return "(\(elements.map({ $0.textDescription }).joined(separator: ", ")))"
   }
 }

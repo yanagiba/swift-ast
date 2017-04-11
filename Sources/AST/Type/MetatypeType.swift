@@ -14,12 +14,12 @@
    limitations under the License.
 */
 
-public struct MetatypeType {
+public class MetatypeType : TypeBase {
   public enum Kind: String {
     case type
     case `protocol`
   }
-  
+
   public let referenceType: Type
   public let kind: Kind
 
@@ -27,10 +27,10 @@ public struct MetatypeType {
     self.referenceType = referenceType
     self.kind = kind
   }
-}
 
-extension MetatypeType : Type {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     switch kind {
     case .type:
       return "Type<\(referenceType.textDescription)>"

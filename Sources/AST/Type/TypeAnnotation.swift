@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct TypeAnnotation {
+public class TypeAnnotation : TypeBase {
   public let type: Type
   public let attributes: Attributes
   public let isInOutParameter: Bool
@@ -28,10 +28,10 @@ public struct TypeAnnotation {
     self.attributes = attributes
     self.isInOutParameter = isInOutParameter
   }
-}
 
-extension TypeAnnotation : ASTTextRepresentable {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     let attr = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let inoutStr = isInOutParameter ? "inout " : ""
     return ": \(attr)\(inoutStr)\(type.textDescription)"

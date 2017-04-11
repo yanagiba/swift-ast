@@ -16,7 +16,7 @@
 
 
 public class FallthroughStatement : Statement {
-  public override init() {
+  override public init() {
   }
   // MARK: - ASTTextRepresentable
 

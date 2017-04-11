@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct DictionaryType {
+public class DictionaryType : TypeBase {
   public let keyType: Type
   public let valueType: Type
 
@@ -22,10 +22,10 @@ public struct DictionaryType {
     self.keyType = keyType
     self.valueType = valueType
   }
-}
 
-extension DictionaryType : Type {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "Dictionary<\(keyType.textDescription), \(valueType.textDescription)>"
   }
 }

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct TypeIdentifier {
+public class TypeIdentifier : TypeBase {
   public struct TypeName {
     public let name: String
     public let genericArgumentClause: GenericArgumentClause?
@@ -32,10 +32,10 @@ public struct TypeIdentifier {
   public init(names: [TypeName] = []) {
     self.names = names
   }
-}
 
-extension TypeIdentifier : Type {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return names
       .map({ "\($0.name)\($0.genericArgumentClause?.textDescription ?? "")" })
       .joined(separator: ".")

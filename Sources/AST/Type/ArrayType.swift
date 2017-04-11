@@ -14,16 +14,16 @@
    limitations under the License.
 */
 
-public struct ArrayType {
+public class ArrayType : TypeBase {
   public let elementType: Type
 
   public init(elementType: Type) {
     self.elementType = elementType
   }
-}
 
-extension ArrayType : Type {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "Array<\(elementType.textDescription)>"
   }
 }

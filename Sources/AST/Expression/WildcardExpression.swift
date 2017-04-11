@@ -15,7 +15,7 @@
 */
 
 public class WildcardExpression : PrimaryExpression {
-  public override init() {
+  override public init() {
   }
   // MARK: - ASTTextRepresentable
 
