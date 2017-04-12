@@ -55,7 +55,7 @@ extension Parser {
     ])
     switch matched {
     case .leftSquare:
-      return try parseCollectionType()
+      return try parseCollectionType(looked.sourceLocation)
     case .leftParen:
       return try parseParenthesizedType()
     case .protocol:
@@ -96,17 +96,25 @@ extension Parser {
     return TypeIdentifier(names: names)
   }
 
-  private func parseCollectionType() throws -> Type {
+  private func parseCollectionType(
+    _ startLocation: SourceLocation
+  ) throws -> Type {
     let type = try parseType()
+    var endLocation = getEndLocation()
     switch _lexer.read([.rightSquare, .colon]) {
     case .rightSquare:
-      return ArrayType(elementType: type)
+      let arrayType = ArrayType(elementType: type)
+      arrayType.setSourceRange(startLocation, endLocation)
+      return arrayType
     case .colon:
       let valueType = try parseType()
+      endLocation = getEndLocation()
       guard _lexer.match(.rightSquare) else {
         throw _raiseFatal(.dummy)
       }
-      return DictionaryType(keyType: type, valueType: valueType)
+      let dictType = DictionaryType(keyType: type, valueType: valueType)
+      dictType.setSourceRange(startLocation, endLocation)
+      return dictType
     default:
       throw _raiseFatal(.dummy)
     }

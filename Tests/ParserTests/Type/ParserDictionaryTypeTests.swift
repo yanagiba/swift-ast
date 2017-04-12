@@ -29,9 +29,20 @@ class ParserDictinoaryTypeTests: XCTestCase {
     parseTypeAndTest("[[a]: [b]]", "Dictionary<Array<a>, Array<b>>")
   }
 
+  func testSourceRange() {
+    parseTypeAndTest(
+      "[foo: bar]",
+      "Dictionary<foo, bar>",
+      testClosure: { type in
+        XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 11))
+      }
+    )
+  }
+
   static var allTests = [
     ("testDictionaryType", testDictionaryType),
     ("testDictionaryTypeAsKeyTypeAndValueType", testDictionaryTypeAsKeyTypeAndValueType),
     ("testArrayTypeAsKeyTypeAndValueType", testArrayTypeAsKeyTypeAndValueType),
+    ("testSourceRange", testSourceRange),
   ]
 }

@@ -33,10 +33,17 @@ class ParserArrayTypeTests: XCTestCase {
     parseTypeAndTest("[[a: b]]", "Array<Dictionary<a, b>>")
   }
 
+  func testSourceRange() {
+    parseTypeAndTest("[foo.bar]", "Array<foo.bar>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 10))
+    })
+  }
+
   static var allTests = [
     ("testOneDimension", testOneDimension),
     ("testTwoDimensions", testTwoDimensions),
     ("testThreeDimensions", testThreeDimensions),
     ("testElementAsDictionaryType", testElementAsDictionaryType),
+    ("testSourceRange", testSourceRange),
   ]
 }
