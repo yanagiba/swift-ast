@@ -14,7 +14,9 @@
    limitations under the License.
 */
 
-public class TypeAnnotation : TypeBase {
+import Source
+
+public class TypeAnnotation : LocatableNode {
   public let type: Type
   public let attributes: Attributes
   public let isInOutParameter: Bool
@@ -36,4 +38,7 @@ public class TypeAnnotation : TypeBase {
     let inoutStr = isInOutParameter ? "inout " : ""
     return ": \(attr)\(inoutStr)\(type.textDescription)"
   }
+}
+
+extension TypeAnnotation : ASTTextRepresentable, SourceLocatable {
 }

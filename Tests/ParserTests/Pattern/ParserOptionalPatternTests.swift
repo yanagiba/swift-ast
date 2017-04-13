@@ -30,7 +30,19 @@ class ParserOptionalPatternTests: XCTestCase {
     })
   }
 
+  func testWildcardOptional() {
+    parsePatternAndTest("_?", "_?", forPatternMatching: true, testClosure: { pttrn in
+      guard let optionalPattern = pttrn as? OptionalPattern else {
+        XCTFail("Failed in parsing an optional pattern.")
+        return
+      }
+
+      XCTAssertEqual(optionalPattern.identifier, "_")
+    })
+  }
+
   static var allTests = [
     ("testOptional", testOptional),
+    ("testWildcardOptional", testWildcardOptional),
   ]
 }

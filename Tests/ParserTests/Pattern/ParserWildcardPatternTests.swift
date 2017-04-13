@@ -41,8 +41,18 @@ class ParserWildcardPatternTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parsePatternAndTest("_", "_", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 2))
+    })
+    parsePatternAndTest("_   :   Foo", "_: Foo", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 12))
+    })
+  }
+
   static var allTests = [
     ("testParseWildcardPattern", testParseWildcardPattern),
     ("testTypeAnnotation", testTypeAnnotation),
+    ("testSourceRange", testSourceRange),
   ]
 }

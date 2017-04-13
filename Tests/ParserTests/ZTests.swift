@@ -28,17 +28,9 @@ class ZTests: XCTestCase {
   }
 
   func testOne() {
-    let declParser = getParser("import A\nimport B")
-    do {
-      let topLevel = try declParser.parseTopLevelDeclaration()
-      XCTAssertEqual(topLevel.textDescription, "import A\nimport B")
-      XCTAssertNil(topLevel.lexicalParent)
-      for stmt in topLevel.statements {
-        XCTAssertTrue(stmt.lexicalParent === topLevel)
-      }
-    } catch {
-      XCTFail("Failed in parsing a top level declaration.")
-    }
+    parsePatternAndTest("_   :   Foo", "_: Foo", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 12))
+    })
   }
 
   static var allTests = [

@@ -95,7 +95,7 @@ extension Parser {
   }
 
   private func parsePatternCore(config: ParserPatternConfig) throws -> Pattern {
-    let idHeadedPatternRange = getLookedRange()
+    let lookedRange = getLookedRange()
     switch _lexer.read(config.tokenKinds) {
     case .var where !config.onlyIdWildCardOptional:
       let pattern = try parsePattern(config: config)
@@ -109,36 +109,32 @@ extension Parser {
       let type = try parseType()
       return TypeCastingPattern(kind: .is(type))
     case .underscore:
-      if config.forPatternMatching, _lexer.match(.postfixQuestion) {
-        return OptionalPattern(identifier: "_")
-      }
-      let typeAnnotation =
-        config.parseTypeAnnotation ? try parseTypeAnnotation() : nil
-      return WildcardPattern(typeAnnotation: typeAnnotation)
+      return try parseUnderscoreHeadedPattern(
+        config: config, startRange: lookedRange)
     case .identifier(let id):
       return try parseIdentifierHeadedPattern(
-        id, config: config, range: idHeadedPatternRange)
+        id, config: config, startRange: lookedRange)
     case .Any:
       return try parseIdentifierHeadedPattern(
-        "Any", config: config, range: idHeadedPatternRange)
+        "Any", config: config, startRange: lookedRange)
     case .Self:
       return try parseIdentifierHeadedPattern(
-        "Self", config: config, range: idHeadedPatternRange)
+        "Self", config: config, startRange: lookedRange)
     case .get:
       return try parseIdentifierHeadedPattern(
-        "get", config: config, range: idHeadedPatternRange)
+        "get", config: config, startRange: lookedRange)
     case .set:
       return try parseIdentifierHeadedPattern(
-        "set", config: config, range: idHeadedPatternRange)
+        "set", config: config, startRange: lookedRange)
     case .left:
       return try parseIdentifierHeadedPattern(
-        "left", config: config, range: idHeadedPatternRange)
+        "left", config: config, startRange: lookedRange)
     case .right:
       return try parseIdentifierHeadedPattern(
-        "right", config: config, range: idHeadedPatternRange)
+        "right", config: config, startRange: lookedRange)
     case .open:
       return try parseIdentifierHeadedPattern(
-        "open", config: config, range: idHeadedPatternRange)
+        "open", config: config, startRange: lookedRange)
     case .leftParen:
       let tuplePattern = try parseTuplePattern(config: config)
       if config.parseTypeAnnotation,
@@ -159,12 +155,29 @@ extension Parser {
     }
   }
 
+  private func parseUnderscoreHeadedPattern(
+    config: ParserPatternConfig, startRange: SourceRange
+  ) throws -> Pattern {
+    var endLocation = startRange.end
+    if config.forPatternMatching, _lexer.match(.postfixQuestion) {
+      return OptionalPattern(identifier: "_")
+    }
+    let typeAnnotation =
+      config.parseTypeAnnotation ? try parseTypeAnnotation() : nil
+    if let explicitType = typeAnnotation {
+      endLocation = explicitType.sourceRange.end
+    }
+    let wildcardPttrn = WildcardPattern(typeAnnotation: typeAnnotation)
+    wildcardPttrn.setSourceRange(startRange.start, endLocation)
+    return wildcardPttrn
+  }
+
   private func parseIdentifierHeadedPattern(
-    _ id: Identifier, config: ParserPatternConfig, range: SourceRange
+    _ id: Identifier, config: ParserPatternConfig, startRange: SourceRange
   ) throws -> Pattern {
     if config.shouldParseTypeIdentifier(tokenKind: _lexer.look().kind) {
       return try parseIdentifierHeadedEnumCasePattern(
-        id, config: config, range: range)
+        id, config: config, startRange: startRange)
     }
     if _lexer.match(.postfixQuestion) {
       return OptionalPattern(identifier: id)
@@ -188,9 +201,9 @@ extension Parser {
   }
 
   private func parseIdentifierHeadedEnumCasePattern(
-    _ id: Identifier, config: ParserPatternConfig, range: SourceRange
+    _ id: Identifier, config: ParserPatternConfig, startRange: SourceRange
   ) throws -> EnumCasePattern {
-    let typeIdentifier = try parseIdentifierType(id, range)
+    let typeIdentifier = try parseIdentifierType(id, startRange)
     var typeIds = typeIdentifier.names
     let lastId = typeIds.removeLast()
     let newName = lastId.name

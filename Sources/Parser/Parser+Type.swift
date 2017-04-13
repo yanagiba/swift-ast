@@ -20,6 +20,7 @@ import Source
 
 extension Parser {
   func parseTypeAnnotation() throws -> TypeAnnotation? {
+    let startLocation = getStartLocation()
     guard _lexer.match(.colon) else {
       return nil
     }
@@ -34,8 +35,10 @@ extension Parser {
     }
 
     let type = try parseType()
-    return TypeAnnotation(
+    let typeAnnotation = TypeAnnotation(
       type: type, attributes: attrs, isInOutParameter: isInOutParameter)
+    typeAnnotation.setSourceRange(startLocation, type.sourceRange.end)
+    return typeAnnotation
   }
 
   func parseType() throws -> Type {
