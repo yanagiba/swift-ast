@@ -95,6 +95,7 @@ extension Parser {
   }
 
   private func parsePatternCore(config: ParserPatternConfig) throws -> Pattern {
+    let idHeadedPatternRange = getLookedRange()
     switch _lexer.read(config.tokenKinds) {
     case .var where !config.onlyIdWildCardOptional:
       let pattern = try parsePattern(config: config)
@@ -115,21 +116,29 @@ extension Parser {
         config.parseTypeAnnotation ? try parseTypeAnnotation() : nil
       return WildcardPattern(typeAnnotation: typeAnnotation)
     case .identifier(let id):
-      return try parseIdentifierHeadedPattern(id, config: config)
+      return try parseIdentifierHeadedPattern(
+        id, config: config, range: idHeadedPatternRange)
     case .Any:
-      return try parseIdentifierHeadedPattern("Any", config: config)
+      return try parseIdentifierHeadedPattern(
+        "Any", config: config, range: idHeadedPatternRange)
     case .Self:
-      return try parseIdentifierHeadedPattern("Self", config: config)
+      return try parseIdentifierHeadedPattern(
+        "Self", config: config, range: idHeadedPatternRange)
     case .get:
-      return try parseIdentifierHeadedPattern("get", config: config)
+      return try parseIdentifierHeadedPattern(
+        "get", config: config, range: idHeadedPatternRange)
     case .set:
-      return try parseIdentifierHeadedPattern("set", config: config)
+      return try parseIdentifierHeadedPattern(
+        "set", config: config, range: idHeadedPatternRange)
     case .left:
-      return try parseIdentifierHeadedPattern("left", config: config)
+      return try parseIdentifierHeadedPattern(
+        "left", config: config, range: idHeadedPatternRange)
     case .right:
-      return try parseIdentifierHeadedPattern("right", config: config)
+      return try parseIdentifierHeadedPattern(
+        "right", config: config, range: idHeadedPatternRange)
     case .open:
-      return try parseIdentifierHeadedPattern("open", config: config)
+      return try parseIdentifierHeadedPattern(
+        "open", config: config, range: idHeadedPatternRange)
     case .leftParen:
       let tuplePattern = try parseTuplePattern(config: config)
       if config.parseTypeAnnotation,
@@ -151,10 +160,11 @@ extension Parser {
   }
 
   private func parseIdentifierHeadedPattern(
-    _ id: Identifier, config: ParserPatternConfig
+    _ id: Identifier, config: ParserPatternConfig, range: SourceRange
   ) throws -> Pattern {
     if config.shouldParseTypeIdentifier(tokenKind: _lexer.look().kind) {
-      return try parseIdentifierHeadedEnumCasePattern(id, config: config)
+      return try parseIdentifierHeadedEnumCasePattern(
+        id, config: config, range: range)
     }
     if _lexer.match(.postfixQuestion) {
       return OptionalPattern(identifier: id)
@@ -178,9 +188,9 @@ extension Parser {
   }
 
   private func parseIdentifierHeadedEnumCasePattern(
-    _ id: Identifier, config: ParserPatternConfig
+    _ id: Identifier, config: ParserPatternConfig, range: SourceRange
   ) throws -> EnumCasePattern {
-    let typeIdentifier = try parseIdentifierType(id)
+    let typeIdentifier = try parseIdentifierType(id, range)
     var typeIds = typeIdentifier.names
     let lastId = typeIds.removeLast()
     let newName = lastId.name

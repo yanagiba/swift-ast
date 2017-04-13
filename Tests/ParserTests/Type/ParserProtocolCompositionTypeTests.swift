@@ -40,9 +40,19 @@ class ParserProtocolCompositionTypeTests: XCTestCase {
     parseTypeAndTest("protocol<X, A<B<C>>>", "protocol<X, A<B<C>>>")
   }
 
+  func testSourceRange() {
+    parseTypeAndTest("X & A<B<C>>", "protocol<X, A<B<C>>>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 12))
+    })
+    parseTypeAndTest("protocol<X, A<B<C>>>", "protocol<X, A<B<C>>>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 21))
+    })
+  }
+
   static var allTests = [
     ("testProtocolCompositionTypes", testProtocolCompositionTypes),
     ("testOldSyntax", testOldSyntax),
     ("testAmpAsPrefix", testAmpAsPrefix),
+    ("testSourceRange", testSourceRange),
   ]
 }

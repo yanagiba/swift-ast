@@ -33,8 +33,25 @@ class ParserTupleTypeTests: XCTestCase {
       "(p1: @a foo, p2: Optional<bar>, p3: @x @y @z Dictionary<key, value>, p4: (a) -> b, p5: inout ())")
   }
 
+  func testSourceRange() {
+    parseTypeAndTest("()", "()", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 3))
+    })
+    parseTypeAndTest("(foo, bar)", "(foo, bar)", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 11))
+    })
+    parseTypeAndTest(
+      "(p1: @a foo, p2:bar?, p3   :   @x @y @z [key: value], p4    :(a) -> b, p5: inout ())",
+      "(p1: @a foo, p2: Optional<bar>, p3: @x @y @z Dictionary<key, value>, p4: (a) -> b, p5: inout ())",
+      testClosure: { type in
+        XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 85))
+      }
+    )
+  }
+
   static var allTests = [
     ("testElementsWithTypeOnly", testElementsWithTypeOnly),
     ("testElementsWithName", testElementsWithName),
+    ("testSourceRange", testSourceRange),
   ]
 }

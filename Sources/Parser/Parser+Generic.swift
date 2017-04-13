@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+import Source
 import AST
 import Lexer
 
@@ -42,9 +43,10 @@ extension Parser {
     guard _lexer.match(.colon) else {
       return .identifier(name)
     }
+    let typeTokenRange = getLookedRange()
     switch _lexer.read([.dummyIdentifier, .protocol, .Any]) {
     case .identifier(let idTypeName):
-      let firstType = try parseIdentifierType(idTypeName)
+      let firstType = try parseIdentifierType(idTypeName, typeTokenRange)
       if testAmp() {
         let type = try parseProtocolCompositionType(firstType)
         return .protocolConformance(name, type)
@@ -52,7 +54,7 @@ extension Parser {
         return .typeConformance(name, firstType)
       }
     case .protocol:
-      let type = try parseOldSyntaxProtocolCompositionType()
+      let type = try parseOldSyntaxProtocolCompositionType(typeTokenRange.start)
       return .protocolConformance(name, type)
     case .Any:
       // TODO: should we do it this way,
@@ -78,6 +80,7 @@ extension Parser {
   }
 
   private func parseRequirement() throws -> GenericWhereClause.Requirement {
+    let idTypeRange = getLookedRange()
     let idTypeName: String
     switch _lexer.read([.dummyIdentifier, .Self]) {
     case .identifier(let id):
@@ -88,11 +91,12 @@ extension Parser {
       throw _raiseFatal(.dummy)
     }
 
-    let idType = try parseIdentifierType(idTypeName)
+    let idType = try parseIdentifierType(idTypeName, idTypeRange)
     switch _lexer.read([.colon, .dummyBinaryOperator]) {
     case .colon:
+      let typeStartLocation = getStartLocation()
       if case let .identifier(s) = _lexer.read(.dummyIdentifier) {
-        let firstType = try parseIdentifierType(s)
+        let firstType = try parseIdentifierType(s, idTypeRange)
         if testAmp() {
           let type = try parseProtocolCompositionType(firstType)
           return .protocolConformance(idType, type)
@@ -100,7 +104,7 @@ extension Parser {
           return .typeConformance(idType, firstType)
         }
       } else if _lexer.match(.protocol) {
-        let type = try parseOldSyntaxProtocolCompositionType()
+        let type = try parseOldSyntaxProtocolCompositionType(typeStartLocation)
         return .protocolConformance(idType, type)
       } else {
         throw _raiseFatal(.dummy)
@@ -116,9 +120,12 @@ extension Parser {
   func parseGenericArgumentClause() -> GenericArgumentClause? {
     let openChevronCp = _lexer.checkPoint()
     let openChevronDiagnosticCp = _diagnosticPool.checkPoint()
+
+    let startLocation = getStartLocation()
     guard _matchLeftChevron() else {
       return nil
     }
+
     var types: [Type] = []
     repeat {
       do {
@@ -130,12 +137,17 @@ extension Parser {
         return nil
       }
     } while _lexer.match(.comma)
+
+    let endLocation = getEndLocation()
     guard _matchRightChevron() else {
       _lexer.restore(fromCheckpoint: openChevronCp)
       _diagnosticPool.restore(fromCheckpoint: openChevronDiagnosticCp)
       return nil
     }
-    return GenericArgumentClause(argumentList: types)
+
+    var genericArg = GenericArgumentClause(argumentList: types)
+    genericArg.sourceRange = SourceRange(start: startLocation, end: endLocation)
+    return genericArg
   }
 
   private func _matchLeftChevron() -> Bool {

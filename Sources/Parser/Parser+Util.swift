@@ -136,11 +136,21 @@ extension Parser {
     return (first, second)
   }
 
+  func getLookedRange() -> SourceRange {
+    return _lexer.look().sourceRange
+  }
+
   func getStartLocation() -> SourceLocation {
-    return _lexer.look().sourceLocation
+    return getLookedRange().start
   }
 
   func getEndLocation() -> SourceLocation {
-    return _lexer.look().sourceRange.end
+    return getLookedRange().end
+  }
+}
+
+extension SourceLocation {
+  var nextColumn: SourceLocation {
+    return SourceLocation(path: path, line: line, column: column + 1)
   }
 }

@@ -32,9 +32,25 @@ class ParserTypeIdentifierTests: XCTestCase {
     parseTypeAndTest("A<B>.C<D<X<Y<Z>>>>.E<F>", "A<B>.C<D<X<Y<Z>>>>.E<F>")
   }
 
+  func testSourceRange() {
+    parseTypeAndTest("foo", "foo", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 4))
+    })
+    parseTypeAndTest("foo    .     bar.a    .    b      .    c", "foo.bar.a.b.c", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 41))
+    })
+    parseTypeAndTest("A<B>", "A<B>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 5))
+    })
+    parseTypeAndTest("A<B>.C<D<X<Y<Z>>>>.E<F>", "A<B>.C<D<X<Y<Z>>>>.E<F>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 24))
+    })
+  }
+
   static var allTests = [
     ("testOneName", testOneName),
     ("testMultipleNames", testMultipleNames),
     ("testGenericArgumentClause", testGenericArgumentClause),
+    ("testSourceRange", testSourceRange),
   ]
 }

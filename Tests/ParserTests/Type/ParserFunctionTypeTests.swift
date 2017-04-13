@@ -87,6 +87,15 @@ class ParserFunctionTypeTests: XCTestCase {
     parseTypeAndTest("(_ i: foo, _ j: bar) -> bar", "(_ i: foo, _ j: bar) -> bar")
   }
 
+  func testSourceRange() {
+    parseTypeAndTest("(foo) -> bar", "(foo) -> bar", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 13))
+    })
+    parseTypeAndTest("(a, a) -> (b) -> (c)", "(a, a) -> (b) -> (c)", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 21))
+    })
+  }
+
   static var allTests = [
     ("testFunctionTypes", testFunctionTypes),
     ("testThrowsException", testThrowsException),
@@ -99,5 +108,6 @@ class ParserFunctionTypeTests: XCTestCase {
     ("testArgumentVariadic", testArgumentVariadic),
     ("testAttributedFuncType", testAttributedFuncType),
     ("testOuterName", testOuterName),
+    ("testSourceRange", testSourceRange),
   ]
 }

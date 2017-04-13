@@ -33,10 +33,23 @@ class ParserOptionalTypeTests: XCTestCase {
     parseTypeAndTest("foo !", "foo")
   }
 
+  func testSourceRange() {
+    parseTypeAndTest("foo?", "Optional<foo>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 5))
+    })
+    parseTypeAndTest("foo??", "Optional<Optional<foo>>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 6))
+    })
+    parseTypeAndTest("foo!?", "Optional<ImplicitlyUnwrappedOptional<foo>>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 6))
+    })
+  }
+
   static var allTests = [
     ("testOptionalType", testOptionalType),
     ("testTwoOptionalTypes", testTwoOptionalTypes),
     ("testWrappingAnImplicitlyUnwrappedOptionalType", testWrappingAnImplicitlyUnwrappedOptionalType),
     ("testQuestionMarkDoesNotFollowTheTypeImmeidately", testQuestionMarkDoesNotFollowTheTypeImmeidately),
+    ("testSourceRange", testSourceRange),
   ]
 }

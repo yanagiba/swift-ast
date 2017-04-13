@@ -36,7 +36,22 @@ class ParserMetatypeTypeTests: XCTestCase {
 
   func testEmbedded() {
     parseTypeAndTest("foo.Type.Protocol.Type.Protocol", "Protocol<Type<Protocol<Type<foo>>>>")
-    // parseTypeAndTest("protocol<foo, bar>.Type.Protocol.Type.Protocol", "Protocol<Type<Protocol<Type<protocol<foo, bar>>>>>")
+    parseTypeAndTest("protocol<foo, bar>.Type.Protocol.Type.Protocol", "Protocol<Type<Protocol<Type<protocol<foo, bar>>>>>")
+  }
+
+  func testSourceRange() {
+    parseTypeAndTest("foo.Type", "Type<foo>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 9))
+    })
+    parseTypeAndTest("[foo: bar].Protocol", "Protocol<Dictionary<foo, bar>>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 20))
+    })
+    parseTypeAndTest("foo?!.Type", "Type<ImplicitlyUnwrappedOptional<Optional<foo>>>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 11))
+    })
+    parseTypeAndTest("foo.Type.Protocol.Type.Protocol", "Protocol<Type<Protocol<Type<foo>>>>", testClosure: { type in
+      XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 32))
+    })
   }
 
   static var allTests = [
@@ -44,5 +59,6 @@ class ParserMetatypeTypeTests: XCTestCase {
     ("testWithContainerTypes", testWithContainerTypes),
     ("testWithOptionalTypes", testWithOptionalTypes),
     ("testEmbedded", testEmbedded),
+    ("testSourceRange", testSourceRange),
   ]
 }

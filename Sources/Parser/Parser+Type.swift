@@ -45,7 +45,7 @@ extension Parser {
   }
 
   private func parseAtomicType() throws -> Type {
-    let looked = _lexer.look()
+    let lookedRange = getLookedRange()
     let matched = _lexer.read([
       .leftSquare,
       .leftParen,
@@ -55,45 +55,57 @@ extension Parser {
     ])
     switch matched {
     case .leftSquare:
-      return try parseCollectionType(looked.sourceLocation)
+      return try parseCollectionType(lookedRange.start)
     case .leftParen:
-      return try parseParenthesizedType()
+      return try parseParenthesizedType(lookedRange.start)
     case .protocol:
-      return try parseOldSyntaxProtocolCompositionType()
+      return try parseOldSyntaxProtocolCompositionType(lookedRange.start)
     case .Any:
       let anyType = AnyType()
-      anyType.setSourceRange(looked.sourceRange)
+      anyType.setSourceRange(lookedRange)
       return anyType
     case .Self:
       let selfType = SelfType()
-      selfType.setSourceRange(looked.sourceRange)
+      selfType.setSourceRange(lookedRange)
       return selfType
     default:
       if let idHead = _lexer.readNamedIdentifier() {
-        return try parseIdentifierType(idHead)
+        return try parseIdentifierType(idHead, lookedRange)
       } else {
         throw _raiseFatal(.dummy)
       }
     }
   }
 
-  func parseIdentifierType(_ headName: String) throws -> TypeIdentifier {
+  func parseIdentifierType(
+    _ headName: String, _ startRange: SourceRange
+  ) throws -> TypeIdentifier {
+    var endLocation = startRange.end
     let headGenericArgumentClause = parseGenericArgumentClause()
+    if let headGenericArg = headGenericArgumentClause {
+      endLocation = headGenericArg.sourceRange.end
+    }
     var names = [
       TypeIdentifier.TypeName(
         name: headName, genericArgumentClause: headGenericArgumentClause)
     ]
 
     while _lexer.look().kind == .dot,
-    case let .identifier(name) = _lexer.readNext(.dummyIdentifier)
+      case let .identifier(name) = _lexer.readNext(.dummyIdentifier)
     {
+      endLocation = getStartLocation()
       let genericArgumentClause = parseGenericArgumentClause()
+      if let genericArg = genericArgumentClause {
+        endLocation = genericArg.sourceRange.end
+      }
       let typeIdentifierName = TypeIdentifier.TypeName(
         name: name, genericArgumentClause: genericArgumentClause)
-        names.append(typeIdentifierName)
+      names.append(typeIdentifierName)
     }
 
-    return TypeIdentifier(names: names)
+    let idType = TypeIdentifier(names: names)
+    idType.setSourceRange(startRange.start, endLocation)
+    return idType
   }
 
   private func parseCollectionType(
@@ -120,23 +132,35 @@ extension Parser {
     }
   }
 
-  private func parseParenthesizedType() throws -> ParenthesizedType {
+  private func parseParenthesizedType(
+    _ startLocation: SourceLocation
+  ) throws -> ParenthesizedType {
+    var endLocation = getEndLocation()
     if _lexer.match(.rightParen) {
-      return ParenthesizedType(elements: [])
+      let parenType = ParenthesizedType(elements: [])
+      parenType.sourceRange =
+        SourceRange(start: startLocation, end: endLocation)
+      return parenType
     }
+
     var elements: [ParenthesizedType.Element] = []
     repeat {
       let element = try parseParenthesizedTypeElement()
       elements.append(element)
     } while _lexer.match(.comma)
+
+    endLocation = getEndLocation()
     if !_lexer.match(.rightParen) {
       try _raiseError(.dummy)
     }
-    return ParenthesizedType(elements: elements)
+
+    let parenType = ParenthesizedType(elements: elements)
+    parenType.sourceRange = SourceRange(start: startLocation, end: endLocation)
+    return parenType
   }
 
-  func parseTupleType() throws -> TupleType {
-    let parenthesizedType = try parseParenthesizedType()
+  func parseTupleType(_ startLocation: SourceLocation) throws -> TupleType {
+    let parenthesizedType = try parseParenthesizedType(startLocation)
     guard let tupleType = parenthesizedType.toTupleType() else {
       throw _raiseFatal(.dummy)
     }
@@ -222,18 +246,27 @@ extension Parser {
   func parseProtocolCompositionType(_ type: Type)
     throws -> ProtocolCompositionType
   {
+    var endLocation = type.sourceRange.end
     var protocolTypes = [type]
+
     repeat {
+      let idTypeRange = getLookedRange()
       guard case let .identifier(idHead) = _lexer.read(.dummyIdentifier) else {
         throw _raiseFatal(.dummy)
       }
-      let type = try parseIdentifierType(idHead)
-      protocolTypes.append(type)
+      let idType = try parseIdentifierType(idHead, idTypeRange)
+      protocolTypes.append(idType)
+      endLocation = idType.sourceRange.end
     } while testAmp()
-    return ProtocolCompositionType(protocolTypes: protocolTypes)
+
+    let protoType = ProtocolCompositionType(protocolTypes: protocolTypes)
+    protoType.setSourceRange(type.sourceLocation, endLocation)
+    return protoType
   }
 
-  func parseOldSyntaxProtocolCompositionType() throws -> ProtocolCompositionType {
+  func parseOldSyntaxProtocolCompositionType(
+    _ startLocation: SourceLocation
+  ) throws -> ProtocolCompositionType {
     if !_lexer.matchUnicodeScalar("<") {
       try _raiseError(.dummy)
     }
@@ -244,17 +277,21 @@ extension Parser {
 
     var protocolTypes: [Type] = []
     repeat {
+      let nestedRange = getLookedRange()
       guard case let .identifier(idHead) = _lexer.read(.dummyIdentifier) else {
         throw _raiseFatal(.dummy)
       }
-      protocolTypes.append(try parseIdentifierType(idHead))
+      protocolTypes.append(try parseIdentifierType(idHead, nestedRange))
     } while _lexer.match(.comma)
 
+    let endLocation = getEndLocation()
     if !_lexer.matchUnicodeScalar(">") {
       try _raiseError(.dummy)
     }
 
-    return ProtocolCompositionType(protocolTypes: protocolTypes)
+    let protoType = ProtocolCompositionType(protocolTypes: protocolTypes)
+    protoType.setSourceRange(startLocation, endLocation)
+    return protoType
   }
 
   private func parseContainerType(
@@ -270,6 +307,8 @@ extension Parser {
     if _lexer.matchUnicodeScalar("?", immediateFollow: true) {
       let atomicType = try getAtomicType()
       let containerType = OptionalType(wrappedType: atomicType)
+      containerType.setSourceRange(
+        atomicType.sourceLocation, atomicType.sourceRange.end.nextColumn)
       return try parseContainerType(containerType)
     }
 
@@ -277,6 +316,8 @@ extension Parser {
       let atomicType = try getAtomicType()
       let containerType =
         ImplicitlyUnwrappedOptionalType(wrappedType: atomicType)
+      containerType.setSourceRange(
+        atomicType.sourceLocation, atomicType.sourceRange.end.nextColumn)
       return try parseContainerType(containerType)
     }
 
@@ -317,14 +358,18 @@ extension Parser {
       parsedType = ImplicitlyUnwrappedOptionalType(wrappedType: atomicType)
     case .dot:
       let atomicType = try getAtomicType()
+      let metatypeEndLocation = getEndLocation()
+      let metatypeType: MetatypeType
       switch _lexer.read([.Type, .Protocol]) {
       case .Type:
-        parsedType = MetatypeType(referenceType: atomicType, kind: .type)
+        metatypeType = MetatypeType(referenceType: atomicType, kind: .type)
       case .Protocol:
-        parsedType = MetatypeType(referenceType: atomicType, kind: .protocol)
+        metatypeType = MetatypeType(referenceType: atomicType, kind: .protocol)
       default:
         throw _raiseFatal(.dummy)
       }
+      metatypeType.setSourceRange(type.sourceLocation, metatypeEndLocation)
+      parsedType = metatypeType
     default:
       return try getAtomicType()
     }
@@ -346,11 +391,13 @@ extension Parser {
         isVariadic: $0.isVariadic)
     }
     let returnType = try parseType()
-    return FunctionType(
+    let funcType = FunctionType(
       attributes: attrs,
       arguments: funcArguments,
       returnType: returnType,
       throwsKind: throwKind)
+    funcType.setSourceRange(type.sourceLocation, returnType.sourceRange.end)
+    return funcType
   }
 
   func parseTypeInheritanceClause() throws -> TypeInheritanceClause? {
@@ -366,10 +413,11 @@ extension Parser {
     }
     var types = [TypeIdentifier]()
     repeat {
+      let typeSourceRange = getLookedRange()
       if _lexer.match(.class) {
         try _raiseError(.dummy)
       } else if let idHead = _lexer.readNamedIdentifier() {
-        let type = try parseIdentifierType(idHead)
+        let type = try parseIdentifierType(idHead, typeSourceRange)
         types.append(type)
       } else {
         try _raiseError(.dummy)
@@ -434,7 +482,9 @@ fileprivate class ParenthesizedType : Type {
         tupleElements.append(tupleElement)
       }
     }
-    return TupleType(elements: tupleElements)
+    let tupleType = TupleType(elements: tupleElements)
+    tupleType.setSourceRange(sourceRange)
+    return tupleType
   }
 }
 

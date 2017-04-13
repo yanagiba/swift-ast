@@ -14,8 +14,11 @@
    limitations under the License.
 */
 
+import Source
+
 public struct GenericArgumentClause {
   public let argumentList: [Type]
+  public var sourceRange: SourceRange = .EMPTY
 
   public init(argumentList: [Type]) {
     self.argumentList = argumentList
@@ -26,4 +29,7 @@ extension GenericArgumentClause : ASTTextRepresentable {
   public var textDescription: String {
     return "<\(argumentList.map({ $0.textDescription }).joined(separator: ", "))>"
   }
+}
+
+extension GenericArgumentClause : SourceLocatable {
 }

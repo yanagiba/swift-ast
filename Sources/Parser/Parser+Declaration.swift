@@ -539,11 +539,12 @@ extension Parser {
       accessLevelModifier = modifier
     }
 
+    let idTypeStartRange = getLookedRange()
     guard let name = _lexer.look().kind.structName else {
       throw _raiseFatal(.missingExtensionName)
     }
     _lexer.advance()
-    let type = try parseIdentifierType(name)
+    let type = try parseIdentifierType(name, idTypeStartRange)
 
     let typeInheritanceClause = try parseTypeInheritanceClause()
     let genericWhereClause = try parseGenericWhereClause()
@@ -848,9 +849,10 @@ extension Parser {
         guard let s = _lexer.readNamedIdentifier() else {
           throw _raiseFatal(.dummy)
         }
+        let startLocation = getStartLocation()
         switch _lexer.read([.leftParen, .assignmentOperator]) {
         case .leftParen:
-          let tupleType = try parseTupleType()
+          let tupleType = try parseTupleType(startLocation)
           caseComponents.append((s, tupleType, nil))
         case .assignmentOperator:
           let literalTokens: [Token.Kind] = [
