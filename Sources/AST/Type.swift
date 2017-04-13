@@ -19,26 +19,7 @@ import Source
 public protocol Type : ASTTextRepresentable, SourceLocatable {
 }
 
-public class TypeBase {
-  public private(set) var sourceRange: SourceRange = .INVALID
-
-  public var textDescription: String {
-    guard sourceRange.isValid else {
-      return "<<invalid>>"
-    }
-    return ""
-  }
-
-  public func setSourceRange(
-    _ startLocation: SourceLocation, _ endLocation: SourceLocation
-  ) {
-    let range = SourceRange(start: startLocation, end: endLocation)
-    setSourceRange(range)
-  }
-
-  public func setSourceRange(_ sourceRange: SourceRange) {
-    self.sourceRange = sourceRange
-  }
+public class TypeBase : LocatableNode {
 }
 
 extension TypeBase : Type {

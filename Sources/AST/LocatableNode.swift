@@ -16,13 +16,24 @@
 
 import Source
 
-public class ASTNode : LocatableNode {
-  public private(set) var lexicalParent: ASTNode? = nil
+public class LocatableNode {
+  public private(set) var sourceRange: SourceRange = .INVALID
 
-  public func setLexicalParent(_ node: ASTNode) {
-    lexicalParent = node
+  public var textDescription: String {
+    guard sourceRange.isValid else {
+      return "<<invalid>>"
+    }
+    return ""
   }
-}
 
-extension ASTNode : ASTNodeContext, ASTTextRepresentable, SourceLocatable {
+  public func setSourceRange(
+    _ startLocation: SourceLocation, _ endLocation: SourceLocation
+  ) {
+    let range = SourceRange(start: startLocation, end: endLocation)
+    setSourceRange(range)
+  }
+
+  public func setSourceRange(_ sourceRange: SourceRange) {
+    self.sourceRange = sourceRange
+  }
 }
