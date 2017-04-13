@@ -43,7 +43,7 @@ class ParserExpressionPatternTests: XCTestCase {
   func testInVarDecl() {
     parsePatternAndTest("let (x, y?, nil)", "let (x, y?, nil)", forPatternMatching: true, testClosure: { pttrn in
       guard let valueBindingPattern = pttrn as? ValueBindingPattern,
-        case .let(let pattern) = valueBindingPattern else {
+    case .let(let pattern) = valueBindingPattern.kind else {
         XCTFail("Failed in parsing a value-binding pattern.")
         return
       }

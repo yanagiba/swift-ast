@@ -14,5 +14,13 @@
    limitations under the License.
 */
 
-public protocol Pattern : ASTTextRepresentable {
+import Source
+
+public protocol Pattern : ASTTextRepresentable, SourceLocatable {
+}
+
+public class PatternBase : LocatableNode {
+}
+
+extension PatternBase : Pattern {
 }

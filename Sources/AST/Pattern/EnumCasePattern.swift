@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct EnumCasePattern {
+public class EnumCasePattern : PatternBase {
   public let typeIdentifier: TypeIdentifier?
   public let name: String
   public let tuplePattern: TuplePattern?
@@ -28,10 +28,10 @@ public struct EnumCasePattern {
     self.name = name
     self.tuplePattern = tuplePattern
   }
-}
 
-extension EnumCasePattern : Pattern {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "\(typeIdentifier?.textDescription ?? "").\(name)\(tuplePattern?.textDescription ?? "")"
   }
 }

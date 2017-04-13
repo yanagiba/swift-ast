@@ -14,14 +14,22 @@
    limitations under the License.
 */
 
-public enum ValueBindingPattern {
-  case `var`(Pattern)
-  case `let`(Pattern)
-}
+public class ValueBindingPattern : PatternBase {
+  public enum Kind {
+    case `var`(Pattern)
+    case `let`(Pattern)
+  }
 
-extension ValueBindingPattern : Pattern {
-  public var textDescription: String {
-    switch self {
+  public let kind: Kind
+
+  public init(kind: Kind) {
+    self.kind = kind
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    switch kind {
     case .var(let pattern):
       return "var \(pattern.textDescription)"
     case .let(let pattern):

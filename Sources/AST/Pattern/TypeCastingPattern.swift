@@ -14,14 +14,22 @@
    limitations under the License.
 */
 
-public enum TypeCastingPattern {
-  case `is`(Type)
-  case `as`(Pattern, Type)
-}
+public class TypeCastingPattern : PatternBase {
+  public enum Kind {
+    case `is`(Type)
+    case `as`(Pattern, Type)
+  }
 
-extension TypeCastingPattern : Pattern {
-  public var textDescription: String {
-    switch self {
+  public let kind: Kind
+
+  public init(kind: Kind) {
+    self.kind = kind
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    switch kind {
     case .is(let type):
       return "is \(type.textDescription)"
     case let .as(pattern, type):

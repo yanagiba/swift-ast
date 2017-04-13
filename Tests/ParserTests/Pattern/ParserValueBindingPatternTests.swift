@@ -22,7 +22,7 @@ class ParserValueBindingPatternTests: XCTestCase {
   func testConstant() {
     parsePatternAndTest("let  foo", "let foo", testClosure: { pttrn in
       guard let valueBindingPattern = pttrn as? ValueBindingPattern,
-        case .let(let pattern) = valueBindingPattern else {
+        case .let(let pattern) = valueBindingPattern.kind else {
         XCTFail("Failed in parsing a value-binding pattern.")
         return
       }
@@ -34,7 +34,7 @@ class ParserValueBindingPatternTests: XCTestCase {
   func testVariable() {
     parsePatternAndTest("var    foo   :   Bar", "var foo: Bar", testClosure: { pttrn in
       guard let valueBindingPattern = pttrn as? ValueBindingPattern,
-        case .var(let pattern) = valueBindingPattern else {
+        case .var(let pattern) = valueBindingPattern.kind else {
         XCTFail("Failed in parsing a value-binding pattern.")
         return
       }

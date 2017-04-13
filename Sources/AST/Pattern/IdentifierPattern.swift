@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct IdentifierPattern {
+public class IdentifierPattern : PatternBase {
   public let identifier: Identifier
   public let typeAnnotation: TypeAnnotation?
 
@@ -22,10 +22,10 @@ public struct IdentifierPattern {
     self.identifier = identifier
     self.typeAnnotation = typeAnnotation
   }
-}
 
-extension IdentifierPattern : Pattern {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "\(identifier)\(typeAnnotation?.textDescription ?? "")"
   }
 }

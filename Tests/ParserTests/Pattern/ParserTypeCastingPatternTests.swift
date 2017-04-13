@@ -22,7 +22,7 @@ class ParserTypeCastingPatternTests: XCTestCase {
   func testIsPattern() {
     parsePatternAndTest("is Foo", "is Foo", forPatternMatching: true, testClosure: { pttrn in
       guard let typeCastingPattern = pttrn as? TypeCastingPattern,
-        case .is(let type) = typeCastingPattern else {
+        case .is(let type) = typeCastingPattern.kind else {
         XCTFail("Failed in parsing a type-casting pattern.")
         return
       }
@@ -43,7 +43,7 @@ class ParserTypeCastingPatternTests: XCTestCase {
   func testAsPattern() {
     parsePatternAndTest("foo   as   Bar", "foo as Bar", testClosure: { pttrn in
       guard let typeCastingPattern = pttrn as? TypeCastingPattern,
-        case let .as(pattern, type) = typeCastingPattern else {
+        case let .as(pattern, type) = typeCastingPattern.kind else {
         XCTFail("Failed in parsing a type-casting pattern.")
         return
       }

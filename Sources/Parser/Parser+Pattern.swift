@@ -89,7 +89,7 @@ extension Parser {
     var resultPattern = try parsePatternCore(config: config)
     if !config.onlyIdWildCardOptional && _lexer.match(.as) {
       let type = try parseType()
-      resultPattern = TypeCastingPattern.as(resultPattern, type)
+      resultPattern = TypeCastingPattern(kind: .as(resultPattern, type))
     }
     return resultPattern
   }
@@ -99,15 +99,15 @@ extension Parser {
     switch _lexer.read(config.tokenKinds) {
     case .var where !config.onlyIdWildCardOptional:
       let pattern = try parsePattern(config: config)
-      return ValueBindingPattern.var(pattern)
+      return ValueBindingPattern(kind: .var(pattern))
     case .let where !config.onlyIdWildCardOptional:
       let pattern = try parsePattern(config: config)
-      return ValueBindingPattern.let(pattern)
+      return ValueBindingPattern(kind: .let(pattern))
     case .dot where !config.onlyIdWildCardOptional:
       return try parseDotHeadedEnumCasePattern(config: config)
     case .is where !config.onlyIdWildCardOptional && config.forPatternMatching:
       let type = try parseType()
-      return TypeCastingPattern.is(type)
+      return TypeCastingPattern(kind: .is(type))
     case .underscore:
       if config.forPatternMatching, _lexer.match(.postfixQuestion) {
         return OptionalPattern(identifier: "_")

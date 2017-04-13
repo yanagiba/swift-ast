@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct TuplePattern {
+public class TuplePattern : PatternBase {
   public enum Element {
     case pattern(Pattern)
     case namedPattern(Identifier, Pattern)
@@ -29,6 +29,14 @@ public struct TuplePattern {
     self.elementList = elementList
     self.typeAnnotation = typeAnnotation
   }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    let elemStr = elementList.map({ $0.textDescription }).joined(separator: ", ")
+    let annotationStr = typeAnnotation?.textDescription ?? ""
+    return "(\(elemStr))\(annotationStr)"
+  }
 }
 
 extension TuplePattern.Element {
@@ -39,13 +47,5 @@ extension TuplePattern.Element {
     case let .namedPattern(name, pattern):
       return "\(name): \(pattern.textDescription)"
     }
-  }
-}
-
-extension TuplePattern : Pattern {
-  public var textDescription: String {
-    let elemStr = elementList.map({ $0.textDescription }).joined(separator: ", ")
-    let annotationStr = typeAnnotation?.textDescription ?? ""
-    return "(\(elemStr))\(annotationStr)"
   }
 }

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct OptionalPattern {
+public class OptionalPattern : PatternBase {
   // Note: per definition, optional-pattern -> identifier-pattern?
   // in this case, identifier-pattern won't have a type annotation,
   // so it is equivalent to an identifier. So here, instead of wrapping
@@ -24,10 +24,10 @@ public struct OptionalPattern {
   public init(identifier: Identifier) {
     self.identifier = identifier
   }
-}
 
-extension OptionalPattern : Pattern {
-  public var textDescription: String {
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
     return "\(identifier)?"
   }
 }
