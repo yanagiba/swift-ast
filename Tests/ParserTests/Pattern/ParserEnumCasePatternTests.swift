@@ -113,6 +113,21 @@ class ParserEnumCasePatternTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parsePatternAndTest(".foo", ".foo", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 5))
+    })
+    parsePatternAndTest(".foo()", ".foo()", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 7))
+    })
+    parsePatternAndTest("a.b", "a.b", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 4))
+    })
+    parsePatternAndTest("YNGA.Foo<String>.bar(i)", "YNGA.Foo<String>.bar(i)", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 24))
+    })
+  }
+
   static var allTests = [
     ("testEnumCaseName", testEnumCaseName),
     ("testEmptyTuple", testEmptyTuple),
@@ -121,5 +136,6 @@ class ParserEnumCasePatternTests: XCTestCase {
     ("testBasicTypeIdentifier", testBasicTypeIdentifier),
     ("testTypeIdentifierWithGeneric", testTypeIdentifierWithGeneric),
     ("testBothTypeIdentifierAndTuple", testBothTypeIdentifierAndTuple),
+    ("testSourceRange", testSourceRange),
   ]
 }

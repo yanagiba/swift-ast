@@ -85,6 +85,11 @@ class ParserExpressionPatternTests: XCTestCase {
     parsePatternAndTest("self.foo()", "self.foo()", forPatternMatching: true)
   }
 
+  func testSourceRange() {
+    XCTAssertTrue(true)
+    // TODO: come back to this when the source range of Expression is assigned
+  }
+
   static var allTests = [
     ("testNotInMatchingPattern", testNotInMatchingPattern),
     ("testRawValues", testRawValues),
@@ -92,5 +97,6 @@ class ParserExpressionPatternTests: XCTestCase {
     ("testInVarDecl", testInVarDecl),
     ("testCastRawValue", testCastRawValue),
     ("testSelfExpr", testSelfExpr),
+    ("testSourceRange", testSourceRange),
   ]
 }

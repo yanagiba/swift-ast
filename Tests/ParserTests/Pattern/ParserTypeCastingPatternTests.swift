@@ -55,9 +55,19 @@ class ParserTypeCastingPatternTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parsePatternAndTest("is Foo", "is Foo", forPatternMatching: true, testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 7))
+    })
+    parsePatternAndTest("foo   as   Bar", "foo as Bar", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 15))
+    })
+  }
+
   static var allTests = [
     ("testIsPattern", testIsPattern),
     ("testIsPatternOnlyAvilableInSwitchCase", testIsPatternOnlyAvilableInSwitchCase),
     ("testAsPattern", testAsPattern),
+    ("testSourceRange", testSourceRange),
   ]
 }

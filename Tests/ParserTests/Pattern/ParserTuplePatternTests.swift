@@ -128,6 +128,18 @@ class ParserTuplePatternTests: XCTestCase {
     parsePatternAndTest("(foo, bar): (Foo, Bar)", "(foo, bar): (Foo, Bar)")
   }
 
+  func testSourceRange() {
+    parsePatternAndTest("()", "()", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 3))
+    })
+    parsePatternAndTest("(a: foo, b: _, bar)", "(a: foo, b: _, bar)", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 20))
+    })
+    parsePatternAndTest("(): Void", "(): Void", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 9))
+    })
+  }
+
   static var allTests = [
     ("testEmptyTuple", testEmptyTuple),
     ("testMultipleElements", testMultipleElements),
@@ -136,5 +148,6 @@ class ParserTuplePatternTests: XCTestCase {
     ("testOptional", testOptional),
     ("testFromForInOrVarDecl", testFromForInOrVarDecl),
     ("testTypeAnnotation", testTypeAnnotation),
+    ("testSourceRange", testSourceRange),
   ]
 }

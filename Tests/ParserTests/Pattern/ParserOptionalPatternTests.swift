@@ -41,8 +41,18 @@ class ParserOptionalPatternTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parsePatternAndTest("foo?", "foo?", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 5))
+    })
+    parsePatternAndTest("_?", "_?", forPatternMatching: true, testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 3))
+    })
+  }
+
   static var allTests = [
     ("testOptional", testOptional),
     ("testWildcardOptional", testWildcardOptional),
+    ("testSourceRange", testSourceRange),
   ]
 }

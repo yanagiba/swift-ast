@@ -47,9 +47,22 @@ class ParserValueBindingPatternTests: XCTestCase {
     parsePatternAndTest("let x?", "let x?")
   }
 
+  func testSourceRange() {
+    parsePatternAndTest("let  foo", "let foo", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 9))
+    })
+    parsePatternAndTest("var    foo   :   Bar", "var foo: Bar", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 21))
+    })
+    parsePatternAndTest("let x?", "let x?", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 7))
+    })
+  }
+
   static var allTests = [
     ("testConstant", testConstant),
     ("testVariable", testVariable),
     ("testOptional", testOptional),
+    ("testSourceRange", testSourceRange),
   ]
 }

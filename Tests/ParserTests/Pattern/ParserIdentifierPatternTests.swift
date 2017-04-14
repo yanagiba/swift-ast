@@ -43,8 +43,18 @@ class ParserIdentifierPatternTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parsePatternAndTest("foo", "foo", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 4))
+    })
+    parsePatternAndTest("foo   :   Bar", "foo: Bar", testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 14))
+    })
+  }
+
   static var allTests = [
     ("testParseIdentifierPattern", testParseIdentifierPattern),
     ("testTypeAnnotation", testTypeAnnotation),
+    ("testSourceRange", testSourceRange),
   ]
 }
