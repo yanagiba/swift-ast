@@ -16,15 +16,26 @@
 
 import AST
 
+extension Expression {
+  func ttyASTPrint(indentation: Int) -> String {
+    switch self {
+    case let representable as TTYASTPrintRepresentable:
+      return representable.ttyASTPrint(indentation: indentation)
+    default:
+      return textDescription
+    }
+  }
+}
+
 extension AssignmentOperatorExpression : TTYASTPrintExpression {
-  func ttyExpressionPrint(indentation: Int) -> String {
+  func ttyASTPrint(indentation: Int) -> String {
     return "\(leftExpression.textDescription) = " +
       rightExpression.ttyASTPrint(indentation: indentation)
   }
 }
 
-extension ClosureExpression : TTYASTPrintExpression {
-  func ttyExpressionPrint(indentation: Int) -> String {
+extension ClosureExpression : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
     var signatureText = ""
     var stmtsText = ""
 
@@ -55,8 +66,8 @@ extension ClosureExpression : TTYASTPrintExpression {
   }
 }
 
-extension ExplicitMemberExpression : TTYASTPrintExpression {
-  func ttyExpressionPrint(indentation: Int) -> String {
+extension ExplicitMemberExpression : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
     switch kind {
     case let .tuple(postfixExpr, index):
       return "\(postfixExpr.ttyASTPrint(indentation: indentation)).\(index)"
@@ -90,7 +101,7 @@ extension FunctionCallExpression.Argument : TTYASTPrintRepresentable {
 }
 
 extension FunctionCallExpression : TTYASTPrintExpression {
-  func ttyExpressionPrint(indentation: Int) -> String {
+  func ttyASTPrint(indentation: Int) -> String {
     var parameterText = ""
     if let argumentClause = argumentClause {
       let argumentsText = argumentClause
@@ -108,7 +119,7 @@ extension FunctionCallExpression : TTYASTPrintExpression {
 }
 
 extension TryOperatorExpression : TTYASTPrintExpression {
-  func ttyExpressionPrint(indentation: Int) -> String {
+  func ttyASTPrint(indentation: Int) -> String {
     let tryText: String
     let exprText: String
     switch kind {

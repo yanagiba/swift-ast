@@ -25,29 +25,24 @@ extension Collection where Iterator.Element == Statement {
 extension Statement {
   func ttyASTPrint(indentation: Int) -> String {
     switch self {
-    case let decl as TTYASTPrintDeclaration:
-      return decl.ttyDeclarationPrint(indentation: indentation)
     case let expr as TTYASTPrintExpression:
-      return String(indentation: indentation) +
-        expr.ttyExpressionPrint(indentation: indentation)
-    case let stmt as TTYASTPrintStatement:
-      return stmt.ttyStatementPrint(indentation: indentation)
-    case let expr as Expression:
-      return expr.textDescription
+      return String(indentation: indentation) + expr.ttyASTPrint(indentation: indentation)
+    case let representable as TTYASTPrintRepresentable:
+      return representable.ttyASTPrint(indentation: indentation)
     default:
       return String(indentation: indentation) + textDescription
     }
   }
 }
 
-extension CompilerControlStatement : TTYASTPrintStatement {
-  func ttyStatementPrint(indentation: Int) -> String {
+extension CompilerControlStatement : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
     return textDescription
   }
 }
 
-extension DeferStatement : TTYASTPrintStatement {
-  func ttyStatementPrint(indentation: Int) -> String {
+extension DeferStatement : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
     return String(indentation: indentation) +
       "defer \(codeBlock.ttyASTPrint(indentation: indentation))"
   }
@@ -67,16 +62,16 @@ extension DoStatement.CatchClause : TTYASTPrintRepresentable {
   }
 }
 
-extension DoStatement : TTYASTPrintStatement {
-  func ttyStatementPrint(indentation: Int) -> String {
+extension DoStatement : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
     return String(indentation: indentation) +
       (["do \(codeBlock.ttyASTPrint(indentation: indentation))"] +
         catchClauses.map({ $0.ttyASTPrint(indentation: indentation) })).joined(separator: " ")
   }
 }
 
-extension ForInStatement : TTYASTPrintStatement {
-  func ttyStatementPrint(indentation: Int) -> String {
+extension ForInStatement : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
     var descr = "for"
     if item.isCaseMatching {
       descr += " case"
@@ -90,8 +85,8 @@ extension ForInStatement : TTYASTPrintStatement {
   }
 }
 
-extension GuardStatement : TTYASTPrintStatement {
-  func ttyStatementPrint(indentation: Int) -> String {
+extension GuardStatement : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
     return String(indentation: indentation) + "guard \(conditionList.textDescription) else \(codeBlock.ttyASTPrint(indentation: indentation))"
   }
 }
@@ -107,8 +102,8 @@ extension IfStatement.ElseClause : TTYASTPrintRepresentable {
   }
 }
 
-extension IfStatement : TTYASTPrintStatement {
-  func ttyStatementPrint(indentation: Int) -> String {
+extension IfStatement : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
     return String(indentation: indentation) + ttyASTPrintWithoutHeadIndentation(indentation: indentation)
   }
 
@@ -121,8 +116,8 @@ extension IfStatement : TTYASTPrintStatement {
   }
 }
 
-extension RepeatWhileStatement : TTYASTPrintStatement {
-  func ttyStatementPrint(indentation: Int) -> String {
+extension RepeatWhileStatement : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
     return String(indentation: indentation) +
       "repeat \(codeBlock.ttyASTPrint(indentation: indentation)) while \(conditionExpression.textDescription)"
   }
@@ -140,8 +135,8 @@ extension SwitchStatement.Case : TTYASTPrintRepresentable {
   }
 }
 
-extension SwitchStatement : TTYASTPrintStatement {
-  func ttyStatementPrint(indentation: Int) -> String {
+extension SwitchStatement : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
     var casesDescr = "{}"
     if !cases.isEmpty {
       let casesText = cases.map({ $0.ttyASTPrint(indentation: indentation) }).joined(separator: "\n")
@@ -152,8 +147,8 @@ extension SwitchStatement : TTYASTPrintStatement {
   }
 }
 
-extension WhileStatement : TTYASTPrintStatement {
-  func ttyStatementPrint(indentation: Int) -> String {
+extension WhileStatement : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
     return String(indentation: indentation) +
       "while \(conditionList.textDescription) \(codeBlock.ttyASTPrint(indentation: indentation))"
   }

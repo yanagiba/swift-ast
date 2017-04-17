@@ -15,16 +15,8 @@
 */
 
 protocol TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String
 }
 
 protocol TTYASTPrintExpression : TTYASTPrintRepresentable {
-  func ttyExpressionPrint(indentation: Int) -> String
-}
-
-protocol TTYASTPrintDeclaration : TTYASTPrintRepresentable {
-  func ttyDeclarationPrint(indentation: Int) -> String
-}
-
-protocol TTYASTPrintStatement : TTYASTPrintRepresentable {
-  func ttyStatementPrint(indentation: Int) -> String
 }
