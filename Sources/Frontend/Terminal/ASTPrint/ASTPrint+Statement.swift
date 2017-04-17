@@ -153,3 +153,10 @@ extension WhileStatement : TTYASTPrintRepresentable {
       "while \(conditionList.textDescription) \(codeBlock.ttyASTPrint(indentation: indentation))"
   }
 }
+
+extension LabeledStatement : TTYASTPrintRepresentable {
+  func ttyASTPrint(indentation: Int) -> String {
+    return String(indentation: indentation) +
+      "\(labelName): \(statement.ttyASTPrint(indentation: indentation))"
+  }
+}
