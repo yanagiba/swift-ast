@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class ClosureExpression : PrimaryExpression {
+public class ClosureExpression : ASTNode, PrimaryExpression {
   public struct Signature {
     public struct CaptureItem {
       public enum Specifier : String {

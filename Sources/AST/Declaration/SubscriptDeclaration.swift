@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class SubscriptDeclaration : Declaration {
+public class SubscriptDeclaration : ASTNode, Declaration {
   public enum Body {
     case codeBlock(CodeBlock)
     case getterSetterBlock(GetterSetterBlock)

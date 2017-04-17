@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class PrecedenceGroupDeclaration : Declaration {
+public class PrecedenceGroupDeclaration : ASTNode, Declaration {
   public enum Attribute {
     case higherThan(IdentifierList)
     case lowerThan(IdentifierList)

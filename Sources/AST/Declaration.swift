@@ -14,5 +14,5 @@
    limitations under the License.
 */
 
-public class Declaration : Statement {
+public protocol Declaration : Statement {
 }

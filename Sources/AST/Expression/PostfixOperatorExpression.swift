@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class PostfixOperatorExpression : PostfixExpression {
+public class PostfixOperatorExpression : ASTNode, PostfixExpression {
   public let postfixOperator: Operator
   public let postfixExpression: PostfixExpression
 

@@ -15,7 +15,7 @@
 */
 
 
-public class RepeatWhileStatement : Statement {
+public class RepeatWhileStatement : ASTNode, Statement {
   public let conditionExpression: Expression
   public let codeBlock: CodeBlock
 

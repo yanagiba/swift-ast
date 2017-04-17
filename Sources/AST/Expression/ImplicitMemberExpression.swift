@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class ImplicitMemberExpression : PrimaryExpression {
+public class ImplicitMemberExpression : ASTNode, PrimaryExpression {
   public let identifier: Identifier
 
   public init(identifier: Identifier) {

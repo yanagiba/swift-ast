@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class StructDeclaration : Declaration {
+public class StructDeclaration : ASTNode, Declaration {
   public enum Member {
     case declaration(Declaration)
     case compilerControl(CompilerControlStatement)

@@ -16,7 +16,7 @@
 
 // Merry Christmas 2016! -Ryuichi
 
-public class PostfixSelfExpression : PostfixExpression {
+public class PostfixSelfExpression : ASTNode, PostfixExpression {
   public let postfixExpression: PostfixExpression
 
   public init(postfixExpression: PostfixExpression) {

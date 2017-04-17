@@ -15,7 +15,7 @@
 */
 
 
-public class IfStatement : Statement {
+public class IfStatement : ASTNode, Statement {
   public enum ElseClause {
     case `else`(CodeBlock)
     indirect case elseif(IfStatement)

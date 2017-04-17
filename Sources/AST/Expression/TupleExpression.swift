@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class TupleExpression : PrimaryExpression {
+public class TupleExpression : ASTNode, PrimaryExpression {
   public struct Element {
     public let identifier: Identifier?
     public let expression: Expression

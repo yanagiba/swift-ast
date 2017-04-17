@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class DeinitializerDeclaration : Declaration {
+public class DeinitializerDeclaration : ASTNode, Declaration {
   public let attributes: Attributes
   public let body: CodeBlock
 

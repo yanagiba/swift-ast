@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class DynamicTypeExpression : PostfixExpression {
+public class DynamicTypeExpression : ASTNode, PostfixExpression {
   let expression: Expression
 
   public init(expression: Expression) {

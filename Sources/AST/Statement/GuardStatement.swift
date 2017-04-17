@@ -15,7 +15,7 @@
 */
 
 
-public class GuardStatement : Statement {
+public class GuardStatement : ASTNode, Statement {
   public let conditionList: ConditionList
   public let codeBlock: CodeBlock
 

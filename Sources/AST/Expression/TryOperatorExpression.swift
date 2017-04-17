@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class TryOperatorExpression : Expression {
+public class TryOperatorExpression : ASTNode, Expression {
   public enum Kind {
     case `try`(Expression)
     case forced(Expression)

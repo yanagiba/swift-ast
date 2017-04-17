@@ -15,7 +15,7 @@
 */
 
 
-public class DoStatement : Statement {
+public class DoStatement : ASTNode, Statement {
   public struct CatchClause {
     public let pattern: Pattern?
     public let whereExpression: Expression?

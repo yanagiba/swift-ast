@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class TernaryConditionalOperatorExpression : BinaryExpression {
+public class TernaryConditionalOperatorExpression : ASTNode, BinaryExpression {
   public let conditionExpression: Expression
   public let trueExpression: Expression
   public let falseExpression: Expression

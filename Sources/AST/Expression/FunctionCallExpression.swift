@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class FunctionCallExpression : PostfixExpression {
+public class FunctionCallExpression : ASTNode, PostfixExpression {
   public enum Argument {
     case expression(Expression)
     case namedExpression(Identifier, Expression)

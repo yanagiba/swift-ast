@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class SelectorExpression : PrimaryExpression {
+public class SelectorExpression : ASTNode, PrimaryExpression {
   public enum Kind {
     case selector(Expression)
     case getter(Expression)

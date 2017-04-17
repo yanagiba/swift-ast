@@ -15,7 +15,7 @@
 */
 
 
-public class DeferStatement : Statement {
+public class DeferStatement : ASTNode, Statement {
   public let codeBlock: CodeBlock
 
   public init(codeBlock: CodeBlock) {

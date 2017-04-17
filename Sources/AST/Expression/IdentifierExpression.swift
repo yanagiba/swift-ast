@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class IdentifierExpression : PrimaryExpression {
+public class IdentifierExpression : ASTNode, PrimaryExpression {
   public enum Kind {
     case identifier(Identifier, GenericArgumentClause?)
     case implicitParameterName(Int, GenericArgumentClause?)

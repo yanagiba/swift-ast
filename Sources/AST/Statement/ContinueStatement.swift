@@ -15,7 +15,7 @@
 */
 
 
-public class ContinueStatement : Statement {
+public class ContinueStatement : ASTNode, Statement {
   public let labelName: Identifier?
 
   public init(labelName: Identifier? = nil) {

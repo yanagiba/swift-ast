@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class EnumDeclaration : Declaration {
+public class EnumDeclaration : ASTNode, Declaration {
   public struct UnionStyleEnumCase {
     public struct Case {
       public let name: Identifier

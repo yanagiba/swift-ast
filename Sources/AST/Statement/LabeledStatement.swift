@@ -15,7 +15,7 @@
 */
 
 
-public class LabeledStatement : Statement {
+public class LabeledStatement : ASTNode, Statement {
   public let labelName: Identifier
   public let statement: Statement
 

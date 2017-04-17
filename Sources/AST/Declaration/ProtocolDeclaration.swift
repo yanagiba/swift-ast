@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class ProtocolDeclaration : Declaration {
+public class ProtocolDeclaration : ASTNode, Declaration {
   public struct PropertyMember {
     public let attributes: Attributes
     public let modifiers: DeclarationModifiers

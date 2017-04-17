@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class CompilerControlStatement : Statement {
+public class CompilerControlStatement : ASTNode, Statement {
   // TODO: the structure of this should be similar to an if statement,
   // that each clause should contains a list of statements,
   // but for now, each clause will be treated as one statement,

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class AssignmentOperatorExpression : BinaryExpression {
+public class AssignmentOperatorExpression : ASTNode, BinaryExpression {
   public let leftExpression: Expression
   public let rightExpression: Expression
 

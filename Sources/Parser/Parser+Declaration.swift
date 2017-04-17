@@ -24,7 +24,9 @@ extension Parser {
     let stmts = try parseStatements()
     let topLevelDecl = TopLevelDeclaration(statements: stmts)
     for stmt in stmts {
-      stmt.setLexicalParent(topLevelDecl)
+      if let node = stmt as? ASTNode {
+        node.setLexicalParent(topLevelDecl)
+      }
     }
     return topLevelDecl
   }
@@ -42,7 +44,9 @@ extension Parser {
     let codeBlock = CodeBlock(statements: stmts)
     codeBlock.setSourceRange(startLocation, endLocation)
     for stmt in stmts {
-      stmt.setLexicalParent(codeBlock)
+      if let node = stmt as? ASTNode {
+        node.setLexicalParent(codeBlock)
+      }
     }
     return codeBlock
   }

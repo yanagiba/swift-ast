@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class InOutExpression : PrefixExpression {
+public class InOutExpression : ASTNode, PrefixExpression {
   public let identifier: Identifier
 
   public init(identifier: Identifier) {

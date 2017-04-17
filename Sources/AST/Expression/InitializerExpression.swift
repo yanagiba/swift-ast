@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class InitializerExpression : PostfixExpression {
+public class InitializerExpression : ASTNode, PostfixExpression {
   public let postfixExpression: PostfixExpression
   public let argumentNames: [Identifier]
 

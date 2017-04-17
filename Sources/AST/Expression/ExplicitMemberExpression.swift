@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class ExplicitMemberExpression : PostfixExpression {
+public class ExplicitMemberExpression : ASTNode, PostfixExpression {
   public enum Kind {
     case tuple(PostfixExpression, Int)
     case namedType(PostfixExpression, Identifier)

@@ -15,7 +15,7 @@
 */
 
 
-public class ThrowStatement : Statement {
+public class ThrowStatement : ASTNode, Statement {
   public let expression: Expression
 
   public init(expression: Expression) {

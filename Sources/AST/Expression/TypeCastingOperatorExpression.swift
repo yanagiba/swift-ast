@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class TypeCastingOperatorExpression : BinaryExpression {
+public class TypeCastingOperatorExpression : ASTNode, BinaryExpression {
   public enum Kind {
     case check(Expression, Type) // is
     case cast(Expression, Type) // as

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class ConstantDeclaration : Declaration {
+public class ConstantDeclaration : ASTNode, Declaration {
   public let attributes: Attributes
   public let modifiers: DeclarationModifiers
   public let initializerList: [PatternInitializer]

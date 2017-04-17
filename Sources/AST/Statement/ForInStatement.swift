@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class ForInStatement : Statement {
+public class ForInStatement : ASTNode, Statement {
   public struct Item { // Note: not sure if this additional nesting structure would help in a long run, but I will leave it as it is, and decide this later
     public let isCaseMatching: Bool
     public let matchingPattern: Pattern

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class OptionalChainingExpression : PostfixExpression {
+public class OptionalChainingExpression : ASTNode, PostfixExpression {
   public let postfixExpression: PostfixExpression
 
   public init(postfixExpression: PostfixExpression) {

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class ParenthesizedExpression : PrimaryExpression {
+public class ParenthesizedExpression : ASTNode, PrimaryExpression {
   let expression: Expression
 
   public init(expression: Expression) {

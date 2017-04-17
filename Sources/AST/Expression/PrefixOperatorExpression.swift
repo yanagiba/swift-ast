@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class PrefixOperatorExpression : PrefixExpression {
+public class PrefixOperatorExpression : ASTNode, PrefixExpression {
   public let prefixOperator: Operator
   public let postfixExpression: PostfixExpression
 

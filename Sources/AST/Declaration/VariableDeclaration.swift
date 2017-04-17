@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class VariableDeclaration : Declaration {
+public class VariableDeclaration : ASTNode, Declaration {
   public enum Body {
     case initializerList([PatternInitializer])
     case codeBlock(Identifier, TypeAnnotation, CodeBlock)

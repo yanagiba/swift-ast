@@ -15,7 +15,7 @@
 */
 
 
-public class ReturnStatement : Statement {
+public class ReturnStatement : ASTNode, Statement {
   public let expression: Expression?
 
   public init(expression: Expression? = nil) {

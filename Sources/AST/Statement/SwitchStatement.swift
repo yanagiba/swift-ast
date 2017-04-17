@@ -15,7 +15,7 @@
 */
 
 
-public class SwitchStatement : Statement {
+public class SwitchStatement : ASTNode, Statement {
   public enum Case {
     public struct Item {
       public let pattern: Pattern

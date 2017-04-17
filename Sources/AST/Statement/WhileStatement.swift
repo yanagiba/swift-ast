@@ -15,7 +15,7 @@
 */
 
 
-public class WhileStatement : Statement {
+public class WhileStatement : ASTNode, Statement {
   public let conditionList: ConditionList
   public let codeBlock: CodeBlock
 

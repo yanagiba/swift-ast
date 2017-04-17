@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class OperatorDeclaration : Declaration {
+public class OperatorDeclaration : ASTNode, Declaration {
   public enum Kind {
     case prefix(Operator)
     case postfix(Operator)

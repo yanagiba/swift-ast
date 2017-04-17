@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class WildcardExpression : PrimaryExpression {
+public class WildcardExpression : ASTNode, PrimaryExpression {
   override public init() {
   }
   // MARK: - ASTTextRepresentable

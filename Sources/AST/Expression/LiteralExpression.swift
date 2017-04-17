@@ -30,7 +30,7 @@ extension DictionaryEntry : ASTTextRepresentable {
   }
 }
 
-public class LiteralExpression : PrimaryExpression {
+public class LiteralExpression : ASTNode, PrimaryExpression {
   public enum Kind {
     case `nil`
     case boolean(Bool)

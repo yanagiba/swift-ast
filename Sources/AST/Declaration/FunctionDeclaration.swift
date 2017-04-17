@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class FunctionDeclaration : Declaration {
+public class FunctionDeclaration : ASTNode, Declaration {
   public let attributes: Attributes
   public let modifiers: DeclarationModifiers
   public let name: Identifier

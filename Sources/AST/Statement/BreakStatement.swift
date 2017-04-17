@@ -15,7 +15,7 @@
 */
 
 
-public class BreakStatement : Statement {
+public class BreakStatement : ASTNode, Statement {
   public let labelName: Identifier?
 
   public init(labelName: Identifier? = nil) {

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class SuperclassExpression : PrimaryExpression {
+public class SuperclassExpression : ASTNode, PrimaryExpression {
   public enum Kind {
     case method(String) // even though this includes functions and properties, but Swift PL reference calls it `self-method-expression`
     case `subscript`(ExpressionList)

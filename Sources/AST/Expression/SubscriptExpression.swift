@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class SubscriptExpression : PostfixExpression {
+public class SubscriptExpression : ASTNode, PostfixExpression {
   public let postfixExpression: PostfixExpression
   public let expressionList: ExpressionList
 

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class ForcedValueExpression : PostfixExpression {
+public class ForcedValueExpression : ASTNode, PostfixExpression {
   public let postfixExpression: PostfixExpression
 
   public init(postfixExpression: PostfixExpression) {

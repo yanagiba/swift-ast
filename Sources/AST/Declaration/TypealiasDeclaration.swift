@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class TypealiasDeclaration : Declaration {
+public class TypealiasDeclaration : ASTNode, Declaration {
   public let attributes: Attributes
   public let accessLevelModifier: AccessLevelModifier?
   public let name: Identifier
