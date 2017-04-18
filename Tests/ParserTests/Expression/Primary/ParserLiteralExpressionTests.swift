@@ -547,6 +547,37 @@ class ParserLiteralExpressionTests: XCTestCase {
     }
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("nil", 4),
+      ("true", 5),
+      ("false", 6),
+      ("0b0", 4),
+      ("0o01_67_24_35", 14),
+      ("-0xFF_eb_ca_DA", 15),
+      ("10_0.000_3", 11),
+      ("-0xa_1.eaP-1_5", 15),
+      ("\"\"", 3),
+      ("\"The quick brown fox jumps over the lazy dog\"", 46),
+      ("\"\\0\\\\\\t\\n\\r\\\"\\\'\"", 17),
+      ("\"\\(\"helloworld\")a\\(\"foo\")\\(\"bar\")z\"", 36),
+      ("\"1 2 \\(\"1 + 2\")\"", 17),
+      ("[]", 3),
+      ("[1, 2, 3]", 10),
+      ("[:]", 4),
+      ("[\"foo\": true, \"bar\": false]", 28),
+      ("#file", 6),
+      ("#line", 6),
+      ("#column", 8),
+      ("#function", 10),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testNilLiteral", testNilLiteral),
     ("testTrueBooleanLiteral", testTrueBooleanLiteral),
@@ -570,5 +601,6 @@ class ParserLiteralExpressionTests: XCTestCase {
     ("testDictionaryWithArrays", testDictionaryWithArrays),
     ("testDictionaryLiteralContainsAllLiterals", testDictionaryLiteralContainsAllLiterals),
     ("testMagicLiterals", testMagicLiterals),
+    ("testSourceRange", testSourceRange),
   ]
 }

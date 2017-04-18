@@ -57,7 +57,7 @@ public class Lexer {
     _scanner.advance(by: numerOfUnicodeScalar)
   }
 
-  func _getCurrentLocation() -> SourceLocation {
+  public func _getCurrentLocation() -> SourceLocation {
     return SourceLocation(path: _source.path,
       line: _scanner.line, column: _scanner.column)
   }

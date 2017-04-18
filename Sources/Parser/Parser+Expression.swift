@@ -489,8 +489,8 @@ extension Parser {
   }
 
   private func parsePrimaryExpression() throws -> PrimaryExpression {
+    let lookedRange = getLookedRange()
     let matched = _lexer.read([
-      .dummyBinaryOperator,
       .dummyImplicitParameterName,
       .dummyIntegerLiteral,
       .dummyFloatingPointLiteral,
@@ -504,21 +504,32 @@ extension Parser {
     switch matched {
     ////// literal expression, selector expression, and key path expression
     case .nil:
-      return LiteralExpression(kind: .nil)
+      let nilExpr = LiteralExpression(kind: .nil)
+      nilExpr.setSourceRange(lookedRange)
+      return nilExpr
     case let .booleanLiteral(b):
-      return LiteralExpression(kind: .boolean(b))
+      let boolExpr = LiteralExpression(kind: .boolean(b))
+      boolExpr.setSourceRange(lookedRange)
+      return boolExpr
     case let .integerLiteral(i, r, _):
-      return LiteralExpression(kind: .integer(i, r))
+      let intExpr = LiteralExpression(kind: .integer(i, r))
+      intExpr.setSourceRange(lookedRange)
+      return intExpr
     case let .floatingPointLiteral(d, r):
-      return LiteralExpression(kind: .floatingPoint(d, r))
+      let floatExpr = LiteralExpression(kind: .floatingPoint(d, r))
+      floatExpr.setSourceRange(lookedRange)
+      return floatExpr
     case let .staticStringLiteral(s, r):
-      return LiteralExpression(kind: .staticString(s, r))
+      let strExpr = LiteralExpression(kind: .staticString(s, r))
+      strExpr.setSourceRange(lookedRange)
+      return strExpr
     case let .interpolatedStringLiteralHead(s, r):
-      return try parseInterpolatedStringLiteral(head: s, raw: r)
+      return try parseInterpolatedStringLiteral(
+        head: s, raw: r, startLocation: lookedRange.start)
     case .leftSquare:
-      return try parseCollectionLiteral()
+      return try parseCollectionLiteral(startLocation: lookedRange.start)
     case .hash:
-      return try parseHashExpression()
+      return try parseHashExpression(startLocation: lookedRange.start)
     ////// self expression
     case .self:
       return try parseSelfExpression()
@@ -644,19 +655,30 @@ extension Parser {
     return SelfExpression(kind: kind)
   }
 
-  private func parseHashExpression() throws -> PrimaryExpression {
+  private func parseHashExpression(
+    startLocation: SourceLocation
+  ) throws -> PrimaryExpression {
+    let endLocation = getEndLocation()
     guard case let .identifier(magicWord) = _lexer.read(.dummyIdentifier) else {
       throw _raiseFatal(.dummy)
     }
     switch magicWord {
     case "file":
-      return LiteralExpression(kind: .staticString("TODO", "#file")) // TODO: assign correct value
+      let magicExpr = LiteralExpression(kind: .staticString("TODO", "#file")) // TODO: assign correct value
+      magicExpr.setSourceRange(startLocation, endLocation)
+      return magicExpr
     case "line":
-      return LiteralExpression(kind: .integer(-1, "#line")) // TODO: assign correct value
+      let magicExpr = LiteralExpression(kind: .integer(-1, "#line")) // TODO: assign correct value
+      magicExpr.setSourceRange(startLocation, endLocation)
+      return magicExpr
     case "column":
-      return LiteralExpression(kind: .integer(-1, "#column")) // TODO: assign correct value
+      let magicExpr = LiteralExpression(kind: .integer(-1, "#column")) // TODO: assign correct value
+      magicExpr.setSourceRange(startLocation, endLocation)
+      return magicExpr
     case "function":
-      return LiteralExpression(kind: .staticString("TODO", "#function")) // TODO: assign correct value
+      let magicExpr = LiteralExpression(kind: .staticString("TODO", "#function")) // TODO: assign correct value
+      magicExpr.setSourceRange(startLocation, endLocation)
+      return magicExpr
     case "selector":
       return try parseSelectorExpression()
     case "keyPath":
@@ -752,28 +774,37 @@ extension Parser {
     return SelectorExpression(kind: kind)
   }
 
-  private func parseCollectionLiteral() throws -> LiteralExpression {
+  private func parseCollectionLiteral(
+    startLocation: SourceLocation
+  ) throws -> LiteralExpression {
     // empty array
+    var endLocation = getEndLocation()
     if _lexer.match(.rightSquare) {
-      return LiteralExpression(kind: .array([]))
+      let arrayExpr = LiteralExpression(kind: .array([]))
+      arrayExpr.setSourceRange(startLocation, endLocation)
+      return arrayExpr
     }
     // empty dictionary
     if _lexer.match(.colon) {
+      endLocation = getEndLocation()
       if !_lexer.match(.rightSquare) {
         try _raiseError(.dummy)
       }
-      return LiteralExpression(kind: .dictionary([]))
+      let dictExpr = LiteralExpression(kind: .dictionary([]))
+      dictExpr.setSourceRange(startLocation, endLocation)
+      return dictExpr
     }
     let headExpr = try parseExpression()
     if _lexer.match(.colon) {
-      return try parseDictionaryLiteral(head: headExpr)
+      return try parseDictionaryLiteral(
+        head: headExpr, startLocation: startLocation)
     } else {
-      return try parseArrayLiteral(head: headExpr)
+      return try parseArrayLiteral(head: headExpr, startLocation: startLocation)
     }
   }
 
   private func parseDictionaryLiteral(
-    head: Expression
+    head: Expression, startLocation: SourceLocation
   ) throws -> LiteralExpression {
     var entries: [DictionaryEntry] = []
     // complete first entry
@@ -788,26 +819,36 @@ extension Parser {
       let value = try parseExpression()
       entries.append(DictionaryEntry(key: key, value: value))
     }
+    let endLocation = getEndLocation()
     if !_lexer.match(.rightSquare) {
       try _raiseError(.dummy)
     }
-    return LiteralExpression(kind: .dictionary(entries))
+    let dictExpr = LiteralExpression(kind: .dictionary(entries))
+    dictExpr.setSourceRange(startLocation, endLocation)
+    return dictExpr
   }
 
-  private func parseArrayLiteral(head: Expression) throws -> LiteralExpression {
+  private func parseArrayLiteral(
+    head: Expression, startLocation: SourceLocation
+  ) throws -> LiteralExpression {
     var exprs: [Expression] = [head]
     // parse the rest of the array
     while _lexer.match(.comma) && _lexer.look().kind != .rightSquare {
       let expr = try parseExpression()
       exprs.append(expr)
     }
+    let endLocation = getEndLocation()
     if !_lexer.match(.rightSquare) {
       try _raiseError(.dummy)
     }
-    return LiteralExpression(kind: .array(exprs))
+    let arrayExpr = LiteralExpression(kind: .array(exprs))
+    arrayExpr.setSourceRange(startLocation, endLocation)
+    return arrayExpr
   }
 
-  private func parseInterpolatedStringLiteral(head: String, raw: String) throws -> LiteralExpression {
+  private func parseInterpolatedStringLiteral(
+    head: String, raw: String, startLocation: SourceLocation
+  ) throws -> LiteralExpression {
     var exprs: [Expression] = []
     var rawText = raw
 
@@ -825,29 +866,33 @@ extension Parser {
       throw _raiseFatal(.dummy)
     }
 
+    var endLocation: SourceLocation
     switch _lexer.lexStringLiteral() {
     case let .staticStringLiteral(str, _):
       if !str.isEmpty {
         exprs.append(LiteralExpression(kind: .staticString(str, ""))) // static strings inside the interpolated string literals do not need to preserve raw representation, because they are what they are
         rawText += str
       }
+      endLocation = _lexer._getCurrentLocation() // TODO: need to find a better to do it
     case let .interpolatedStringLiteralHead(headStr, rawStr):
-      let nested =
-        try parseInterpolatedStringLiteral(head: headStr, raw: rawStr)
-      if case let .interpolatedString(es, ir) = nested.kind {
-        exprs.append(contentsOf: es)
-        rawText += ir.substring(
-          with: ir.index(after: ir.startIndex)..<ir.index(before: ir.endIndex))
-      } else {
+      let nested = try parseInterpolatedStringLiteral(
+        head: headStr, raw: rawStr, startLocation: .DUMMY)
+      guard case let .interpolatedString(es, ir) = nested.kind else {
         throw _raiseFatal(.dummy)
       }
+      exprs.append(contentsOf: es)
+      rawText += ir.substring(
+        with: ir.index(after: ir.startIndex)..<ir.index(before: ir.endIndex))
+      endLocation = nested.sourceRange.end
     default:
       throw _raiseFatal(.dummy)
     }
 
     rawText += "\""
 
-    return LiteralExpression(kind: .interpolatedString(exprs, rawText))
+    let strExpr = LiteralExpression(kind: .interpolatedString(exprs, rawText))
+    strExpr.setSourceRange(startLocation, endLocation)
+    return strExpr
   }
 
   private func parseClosureExpression() throws -> ClosureExpression {
