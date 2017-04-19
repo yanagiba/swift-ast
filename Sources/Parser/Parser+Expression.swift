@@ -157,16 +157,22 @@ extension Parser {
   private func parsePrefixExpression(
     config: ParserExpressionConfig
   ) throws -> Expression {
+    let startLocation = getStartLocation()
     switch _lexer.read([.dummyPrefixOperator, .prefixAmp]) {
     case let .prefixOperator(op):
       let postfixExpr = try parsePostfixExpression(config: config)
-      return PrefixOperatorExpression(
+      let prefixOpExpr = PrefixOperatorExpression(
         prefixOperator: op, postfixExpression: postfixExpr)
+      prefixOpExpr.setSourceRange(startLocation, postfixExpr.sourceRange.end)
+      return prefixOpExpr
     case .prefixAmp:
+      let endLocation = getEndLocation()
       guard case let .identifier(name) = _lexer.read(.dummyIdentifier) else {
         throw _raiseFatal(.dummy)
       }
-      return InOutExpression(identifier: name)
+      let inoutExpr = InOutExpression(identifier: name)
+      inoutExpr.setSourceRange(startLocation, endLocation)
+      return inoutExpr
     default:
       return try parsePostfixExpression(config: config)
     }
