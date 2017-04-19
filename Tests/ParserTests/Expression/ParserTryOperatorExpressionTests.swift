@@ -63,11 +63,25 @@ class ParserTryOperatorExpressionTests: XCTestCase {
     parseExpressionAndTest("(try someThrowingFunction()) + anotherThrowingFunction()", "(try someThrowingFunction()) + anotherThrowingFunction()")
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("try foo", 8),
+      ("try? foo", 9),
+      ("try! foo", 9),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testTry", testTry),
     ("testForcedTry", testForcedTry),
     ("testOptionalTry", testOptionalTry),
     ("testTryBinaryExpressions", testTryBinaryExpressions),
     ("testTryScopes", testTryScopes),
+    ("testSourceRange", testSourceRange),
   ]
 }

@@ -50,19 +50,25 @@ extension Parser {
   }
 
   private enum TryKind {
-    case `try`
-    case forcedTry
-    case optionalTry
+    case `try`(SourceLocation)
+    case forcedTry(SourceLocation)
+    case optionalTry(SourceLocation)
     case noTry
 
     fileprivate func wrap(expr: Expression) -> Expression {
       switch self {
-      case .try:
-        return TryOperatorExpression(kind: .try(expr))
-      case .forcedTry:
-        return TryOperatorExpression(kind: .forced(expr))
-      case .optionalTry:
-        return TryOperatorExpression(kind: .optional(expr))
+      case .try(let startLocation):
+        let tryOpExpr = TryOperatorExpression(kind: .try(expr))
+        tryOpExpr.setSourceRange(startLocation, expr.sourceRange.end)
+        return tryOpExpr
+      case .forcedTry(let startLocation):
+        let tryOpExpr = TryOperatorExpression(kind: .forced(expr))
+        tryOpExpr.setSourceRange(startLocation, expr.sourceRange.end)
+        return tryOpExpr
+      case .optionalTry(let startLocation):
+        let tryOpExpr = TryOperatorExpression(kind: .optional(expr))
+        tryOpExpr.setSourceRange(startLocation, expr.sourceRange.end)
+        return tryOpExpr
       default:
         return expr
       }
@@ -70,15 +76,16 @@ extension Parser {
   }
 
   private func parseTryKind() -> TryKind {
+    let startLocation = getStartLocation()
     guard _lexer.match(.try) else {
       return .noTry
     }
     if _lexer.match(.postfixExclaim) {
-      return .forcedTry
+      return .forcedTry(startLocation)
     } else if _lexer.match(.postfixQuestion) {
-      return .optionalTry
+      return .optionalTry(startLocation)
     } else {
-      return .try
+      return .try(startLocation)
     }
   }
 
@@ -103,14 +110,20 @@ extension Parser {
       switch examined.1 {
       case .binaryOperator(let op):
         let rhs = try parsePrefixExpression(config: config)
-        resultExpr = BinaryOperatorExpression(
+        let biOpExpr = BinaryOperatorExpression(
           binaryOperator: op, leftExpression: resultExpr, rightExpression: rhs)
+        biOpExpr.setSourceRange(
+          resultExpr.sourceRange.start, rhs.sourceRange.end)
+        resultExpr = biOpExpr
       case .assignmentOperator:
         let tryKind = parseTryKind()
         let prefixExpr = try parsePrefixExpression(config: config)
         let rhs = tryKind.wrap(expr: prefixExpr)
-        resultExpr = AssignmentOperatorExpression(
+        let assignOpExpr = AssignmentOperatorExpression(
           leftExpression: resultExpr, rightExpression: rhs)
+        assignOpExpr.setSourceRange(
+          resultExpr.sourceRange.start, prefixExpr.sourceRange.end)
+        resultExpr = assignOpExpr
       case .binaryQuestion:
         let trueTryKind = parseTryKind()
         var trueExpr = try parseExpression(config: config)
@@ -121,28 +134,43 @@ extension Parser {
         let falseTryKind = parseTryKind()
         var falseExpr: Expression = try parsePrefixExpression(config: config)
         falseExpr = falseTryKind.wrap(expr: falseExpr)
-        resultExpr = TernaryConditionalOperatorExpression(
+        let ternaryOpExpr = TernaryConditionalOperatorExpression(
           conditionExpression: resultExpr,
           trueExpression: trueExpr,
           falseExpression: falseExpr)
+        ternaryOpExpr.setSourceRange(
+          resultExpr.sourceRange.start, falseExpr.sourceRange.end)
+        resultExpr = ternaryOpExpr
       case .is:
         let type = try parseType()
-        resultExpr =
+        let typeCastingOpExpr =
           TypeCastingOperatorExpression(kind: .check(resultExpr, type))
+        typeCastingOpExpr.setSourceRange(
+          resultExpr.sourceRange.start, type.sourceRange.end)
+        resultExpr = typeCastingOpExpr
       case .as:
         switch _lexer.read([.postfixQuestion, .postfixExclaim]) {
         case .postfixQuestion:
           let type = try parseType()
-          resultExpr = TypeCastingOperatorExpression(
+          let typeCastingOpExpr = TypeCastingOperatorExpression(
             kind: .conditionalCast(resultExpr, type))
+          typeCastingOpExpr.setSourceRange(
+            resultExpr.sourceRange.start, type.sourceRange.end)
+          resultExpr = typeCastingOpExpr
         case .postfixExclaim:
           let type = try parseType()
-          resultExpr =
+          let typeCastingOpExpr =
             TypeCastingOperatorExpression(kind: .forcedCast(resultExpr, type))
+          typeCastingOpExpr.setSourceRange(
+            resultExpr.sourceRange.start, type.sourceRange.end)
+          resultExpr = typeCastingOpExpr
         default:
           let type = try parseType()
-          resultExpr =
+          let typeCastingOpExpr =
             TypeCastingOperatorExpression(kind: .cast(resultExpr, type))
+          typeCastingOpExpr.setSourceRange(
+            resultExpr.sourceRange.start, type.sourceRange.end)
+          resultExpr = typeCastingOpExpr
         }
       default:
         break

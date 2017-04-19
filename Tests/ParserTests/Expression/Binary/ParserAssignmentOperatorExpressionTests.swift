@@ -68,10 +68,23 @@ class ParserAssignmentOperatorExpressionTests: XCTestCase {
     parseExpressionAndTest("(a, _, (b, c)) = (\"test\", 9.45, (12, 3))", "(a, _, (b, c)) = (\"test\", 9.45, (12, 3))")
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("foo = bar", 10),
+      ("(a, b) = (1, 2)", 16),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testAssignment", testAssignment),
     ("testRhsIsTryOperator", testRhsIsTryOperator),
     ("testAssignments", testAssignments),
     ("testTupleAssignment", testTupleAssignment),
+    ("testSourceRange", testSourceRange),
   ]
 }

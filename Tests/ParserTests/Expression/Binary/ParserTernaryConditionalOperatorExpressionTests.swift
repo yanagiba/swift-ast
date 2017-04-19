@@ -103,10 +103,17 @@ class ParserTernaryConditionalOperatorExpressionTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseExpressionAndTest("condition ? true : false", "condition ? true : false", testClosure: { expr in
+      XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 25))
+    })
+  }
+
   static var allTests = [
     ("testConditional", testConditional),
     ("testFunctions", testFunctions),
     ("testTryOperators", testTryOperators),
     ("testNested", testNested),
+    ("testSourceRange", testSourceRange),
   ]
 }
