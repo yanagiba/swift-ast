@@ -14,11 +14,17 @@
    limitations under the License.
 */
 
+import Source
+
 public class ExpressionPattern : PatternBase {
   public let expression: Expression
 
   public init(expression: Expression) {
     self.expression = expression
+  }
+
+  override public var sourceRange: SourceRange {
+    return expression.sourceRange
   }
 
   // MARK: - ASTTextRepresentable

@@ -43,7 +43,7 @@ class ParserExpressionPatternTests: XCTestCase {
   func testInVarDecl() {
     parsePatternAndTest("let (x, y?, nil)", "let (x, y?, nil)", forPatternMatching: true, testClosure: { pttrn in
       guard let valueBindingPattern = pttrn as? ValueBindingPattern,
-    case .let(let pattern) = valueBindingPattern.kind else {
+        case .let(let pattern) = valueBindingPattern.kind else {
         XCTFail("Failed in parsing a value-binding pattern.")
         return
       }
@@ -86,8 +86,12 @@ class ParserExpressionPatternTests: XCTestCase {
   }
 
   func testSourceRange() {
-    XCTAssertTrue(true)
-    // TODO: come back to this when the source range of Expression is assigned
+    parsePatternAndTest("0", "0", forPatternMatching: true, testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 2))
+    })
+    parsePatternAndTest("0 as CGFloat", "0 as CGFloat", forPatternMatching: true, testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 13))
+    })
   }
 
   static var allTests = [
