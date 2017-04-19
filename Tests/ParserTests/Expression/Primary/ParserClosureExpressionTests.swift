@@ -631,6 +631,19 @@ class ParserClosureExpressionTests: XCTestCase {
     parseExpressionAndTest("{ ($0, .region) }", "{ ($0, .region) }")
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("{}", 3),
+      ("{ (foo) in }", 13),
+      ("{ (.region, $0) }", 18),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testEmptyClosure", testEmptyClosure),
     ("testSingleStatement", testSingleStatement),
@@ -657,5 +670,6 @@ class ParserClosureExpressionTests: XCTestCase {
     ("testStatementStartWithLeftSquare", testStatementStartWithLeftSquare),
     ("testStatementsStartWithIdentifier", testStatementsStartWithIdentifier),
     ("testImplicitlyReturnTuple", testImplicitlyReturnTuple),
+    ("testSourceRange", testSourceRange),
   ]
 }

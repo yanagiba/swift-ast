@@ -117,11 +117,27 @@ class ParserSelectorExpressionTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("#selector(foo)", 15),
+      ("#selector(self.bar)", 20),
+      ("#selector(getter: SomeClass.property)", 38),
+      ("#selector(pillTapped(_:))", 26),
+      ("#selector(self.pillTapped(_:))", 31),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testSelectorExpression", testSelectorExpression),
     ("testContainsSelfExpression", testContainsSelfExpression),
     ("testGetterSelector", testGetterSelector),
     ("testSetterSelector", testSetterSelector),
     ("testSelectorForMethods", testSelectorForMethods),
+    ("testSourceRange", testSourceRange),
   ]
 }

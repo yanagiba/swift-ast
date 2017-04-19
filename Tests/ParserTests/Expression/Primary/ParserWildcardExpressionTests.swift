@@ -25,7 +25,14 @@ class ParserWildcardExpressionTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseExpressionAndTest("_", "_", testClosure: { expr in
+      XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 2))
+    })
+  }
+
   static var allTests = [
     ("testParseWildcardExpression", testParseWildcardExpression),
+    ("testSourceRange", testSourceRange),
   ]
 }

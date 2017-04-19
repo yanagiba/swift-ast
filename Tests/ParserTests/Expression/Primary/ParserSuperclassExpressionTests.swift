@@ -86,11 +86,25 @@ class ParserSuperclassExpressionTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("super.foo", 10),
+      ("super.init", 11),
+      ("super[foo]", 11),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testSuperclassMethodExpression", testSuperclassMethodExpression),
     ("testSuperclassSubscriptExpression", testSuperclassSubscriptExpression),
     ("testSuperclassSubscriptExprWithExprList", testSuperclassSubscriptExprWithExprList),
     ("testSuperclassSubscriptExprWithVariables", testSuperclassSubscriptExprWithVariables),
     ("testSuperclassInitializerExpression", testSuperclassInitializerExpression),
+    ("testSourceRange", testSourceRange),
   ]
 }

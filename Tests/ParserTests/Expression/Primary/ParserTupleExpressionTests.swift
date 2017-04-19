@@ -115,6 +115,19 @@ class ParserTupleExpressionTests: XCTestCase {
       "(foo, ba?.r, [key: value, _: 1 + 2]!, f(x), ())")
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("()", 3),
+      ("(foo, bar)", 11),
+      ("(foo: 1, bar: 2)", 17),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testEmptyTuple", testEmptyTuple),
     ("testMultipleElements", testMultipleElements),
@@ -123,5 +136,6 @@ class ParserTupleExpressionTests: XCTestCase {
     ("testSpaces", testSpaces),
     ("testSpacesForEmptyTuple", testSpacesForEmptyTuple),
     ("testPostfixQuestionAndExlaims", testPostfixQuestionAndExlaims),
+    ("testSourceRange", testSourceRange),
   ]
 }

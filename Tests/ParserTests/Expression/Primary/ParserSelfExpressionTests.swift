@@ -96,6 +96,20 @@ class ParserSelfExpressionTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("self", 5),
+      ("self.foo", 9),
+      ("self.init", 10),
+      ("self[foo]", 10),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testSelfExpression", testSelfExpression),
     ("testSelfMethodExpression", testSelfMethodExpression),
@@ -103,5 +117,6 @@ class ParserSelfExpressionTests: XCTestCase {
     ("testSelfSubscriptExprWithExprList", testSelfSubscriptExprWithExprList),
     ("testSelfSubscriptExprWithVariables", testSelfSubscriptExprWithVariables),
     ("testSelfInitializerExpression", testSelfInitializerExpression),
+    ("testSourceRange", testSourceRange),
   ]
 }

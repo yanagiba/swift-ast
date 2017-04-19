@@ -39,8 +39,15 @@ class ParserImplicitMemberExpressionTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseExpressionAndTest(".foo", ".foo", testClosure: { expr in
+      XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 5))
+    })
+  }
+
   static var allTests = [
     ("testImplicitMember", testImplicitMember),
     ("testSpacesBetweenDotAndIdentifier", testSpacesBetweenDotAndIdentifier),
+    ("testSourceRange", testSourceRange),
   ]
 }

@@ -99,10 +99,27 @@ class ParserIdentifierExpressionTests: XCTestCase {
     }
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedString: String, expectedEndColumn: Int)] = [
+      ("foo", "foo", 4),
+      ("foo<T>", "foo<T>", 7),
+      ("`class`", "class", 8),
+      ("`class`<P>", "class<P>", 11),
+      ("$0", "$0", 3),
+      ("$0<A>", "$0<A>", 6),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.expectedString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testNameOnly", testNameOnly),
     ("testNameWithGeneric", testNameWithGeneric),
     ("testImplicitParameter", testImplicitParameter),
     ("testImplicitParameterWithGeneric", testImplicitParameterWithGeneric),
+    ("testSourceRange", testSourceRange),
   ]
 }

@@ -39,8 +39,15 @@ class ParserKeyPathExpressionTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseExpressionAndTest("#keyPath(foo)", "#keyPath(foo)", testClosure: { expr in
+      XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 14))
+    })
+  }
+
   static var allTests = [
     ("testKeyPathExpression", testKeyPathExpression),
     ("testContainsSelfExpression", testContainsSelfExpression),
+    ("testSourceRange", testSourceRange),
   ]
 }
