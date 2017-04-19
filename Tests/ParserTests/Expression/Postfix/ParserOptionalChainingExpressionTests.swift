@@ -58,11 +58,25 @@ class ParserOptionalChainingExpressionTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("foo?", 5),
+      ("foo??", 6),
+      ("foo!?", 6),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testOptional", testOptional),
     ("testTwoOptional", testTwoOptional),
     ("testOptionalForced", testOptionalForced),
     ("testNotImmediateFollow", testNotImmediateFollow),
     ("testQuestionInTheMiddle", testQuestionInTheMiddle),
+    ("testSourceRange", testSourceRange),
   ]
 }

@@ -434,6 +434,21 @@ class ParserFunctionCallExpressionTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("foo()", 6),
+      ("foo(0)", 7),
+      ("foo() { self.foo = $0 }", 24),
+      ("foo(0) { self.foo = $0 }", 25),
+      ("foo { self.foo = $0 }", 22),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testEmptyParameter", testEmptyParameter),
     ("testArgumentAsExpression", testArgumentAsExpression),
@@ -453,5 +468,6 @@ class ParserFunctionCallExpressionTests: XCTestCase {
     ("testNamedMemoryReference", testNamedMemoryReference),
     ("testArgumentAsFunctionCallExprWithTrailingClosure", testArgumentAsFunctionCallExprWithTrailingClosure),
     ("testArgumentAsEmptyDictionary", testArgumentAsEmptyDictionary),
+    ("testSourceRange", testSourceRange),
   ]
 }

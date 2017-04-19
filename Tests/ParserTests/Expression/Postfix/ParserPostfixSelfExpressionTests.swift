@@ -39,8 +39,15 @@ class ParserPostfixSelfExpressionTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseExpressionAndTest("foo.self", "foo.self", testClosure: { expr in
+      XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 9))
+    })
+  }
+
   static var allTests = [
     ("testPostfixSelfExpression", testPostfixSelfExpression),
     ("testTwoSelf", testTwoSelf),
+    ("testSourceRange", testSourceRange),
   ]
 }

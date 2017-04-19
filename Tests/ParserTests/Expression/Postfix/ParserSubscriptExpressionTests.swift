@@ -37,9 +37,22 @@ class ParserSubscriptExpressionTests: XCTestCase {
     parseExpressionAndTest("foo [try bar()]", "foo[try bar()]")
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("foo[0]", 7),
+      ("foo[0, 1, 2]", 13),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testSingleExpr", testSingleExpr),
     ("testMultipleExprs", testMultipleExprs),
     ("testVariables", testVariables),
+    ("testSourceRange", testSourceRange),
   ]
 }

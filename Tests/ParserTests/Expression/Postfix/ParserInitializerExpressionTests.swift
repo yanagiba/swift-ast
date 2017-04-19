@@ -84,11 +84,25 @@ class ParserInitializerExpressionTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("foo.init", 9),
+      ("foo.init(bar:)", 15),
+      ("foo.init(a:b:c:)", 17),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+  }
+
   static var allTests = [
     ("testInitExpression", testInitExpression),
     ("testArgumentName", testArgumentName),
     ("testUnderscoreAsArgumentName", testUnderscoreAsArgumentName),
     ("testMultipleArgumentNames", testMultipleArgumentNames),
     ("testNestedInitExpression", testNestedInitExpression),
+    ("testSourceRange", testSourceRange),
   ]
 }

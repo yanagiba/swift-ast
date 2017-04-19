@@ -144,6 +144,53 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
     }
   }
 
+  func testSourceRange() {
+    let testExprs: [(testString: String, expectedEndColumn: Int)] = [
+      ("foo.0", 6),
+      ("foo.bar", 8),
+      ("foo.bar<a, b, c>", 17),
+      ("foo.bar(a:b:c:)", 16),
+      ("foo.bar.a<x>.100.b(y:)", 23),
+    ]
+    for t in testExprs {
+      parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, t.expectedEndColumn))
+      })
+    }
+
+    parseExpressionAndTest("foo.0.bar", "foo.0.bar", testClosure: { expr in
+      XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 10))
+
+      guard let explicitMemberExpr = expr as? ExplicitMemberExpression,
+        case let .namedType(postfixExpr, _) = explicitMemberExpr.kind else {
+        XCTFail("Failed in getting an explicit member expression")
+        return
+      }
+
+      XCTAssertEqual(postfixExpr.sourceRange, getRange(1, 1, 1, 6))
+    })
+
+    parseExpressionAndTest("$0.1.2.3", "$0.1.2.3", testClosure: { expr in
+      XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 9))
+
+      guard let explicitMemberExpr3 = expr as? ExplicitMemberExpression,
+        case let .tuple(postfixExpr2, _) = explicitMemberExpr3.kind else {
+        XCTFail("Failed in getting an explicit member expression")
+        return
+      }
+
+      XCTAssertEqual(postfixExpr2.sourceRange, getRange(1, 1, 1, 7))
+
+      guard let explicitMemberExpr2 = postfixExpr2 as? ExplicitMemberExpression,
+        case let .tuple(postfixExpr1, _) = explicitMemberExpr2.kind else {
+        XCTFail("Failed in getting an explicit member expression")
+        return
+      }
+
+      XCTAssertEqual(postfixExpr1.sourceRange, getRange(1, 1, 1, 5))
+    })
+  }
+
   static var allTests = [
     ("testTupleMember", testTupleMember),
     ("testIdentifier", testIdentifier),
@@ -152,5 +199,6 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
     ("testUnderscoreAsArgumentName", testUnderscoreAsArgumentName),
     ("testNested", testNested),
     ("testImplicitParameterName", testImplicitParameterName),
+    ("testSourceRange", testSourceRange),
   ]
 }

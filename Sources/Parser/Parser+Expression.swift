@@ -182,10 +182,18 @@ extension Parser {
       if !allQnE.isEmpty {
         for p in allQnE {
           if p == "!" {
-            resultExpr = ForcedValueExpression(postfixExpression: resultExpr)
+            let vlExpr = ForcedValueExpression(postfixExpression: resultExpr)
+            vlExpr.setSourceRange(
+              resultExpr.sourceRange.start,
+              resultExpr.sourceRange.end.nextColumn)
+            resultExpr = vlExpr
           } else if p == "?" {
-            resultExpr =
+            let optExpr =
               OptionalChainingExpression(postfixExpression: resultExpr)
+            optExpr.setSourceRange(
+              resultExpr.sourceRange.start,
+              resultExpr.sourceRange.end.nextColumn)
+            resultExpr = optExpr
           }
         }
       }
@@ -209,12 +217,15 @@ extension Parser {
       return self._lexer.examine(tokens)
     }
 
+    var tokenRange = getLookedRange()
     var examined = examine()
     while examined.0 {
       switch examined.1 {
       case .postfixOperator(let op):
-        resultExpr = PostfixOperatorExpression(
+        let postfixOpExpr = PostfixOperatorExpression(
           postfixOperator: op, postfixExpression: resultExpr)
+        postfixOpExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
+        resultExpr = postfixOpExpr
       case .leftParen:
         resultExpr = try parseFunctionCallExpression(
           postfixExpression: resultExpr, config: config)
@@ -223,23 +234,35 @@ extension Parser {
           try parsePostfixMemberExpression(postfixExpression: resultExpr)
       case .leftSquare:
         let exprList = try parseExpressionList()
+        let endLocation = getEndLocation()
         if !_lexer.match(.rightSquare) {
             try _raiseError(.dummy)
         }
-        resultExpr = SubscriptExpression(
+        let subscriptExpr = SubscriptExpression(
           postfixExpression: resultExpr, expressionList: exprList)
+        subscriptExpr.setSourceRange(resultExpr.sourceRange.start, endLocation)
+        resultExpr = subscriptExpr
       case .postfixExclaim:
-        resultExpr = ForcedValueExpression(postfixExpression: resultExpr)
+        let vlExpr = ForcedValueExpression(postfixExpression: resultExpr)
+        vlExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
+        resultExpr = vlExpr
       case .postfixQuestion:
-        resultExpr = OptionalChainingExpression(postfixExpression: resultExpr)
+        let optExpr =
+          OptionalChainingExpression(postfixExpression: resultExpr)
+        optExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
+        resultExpr = optExpr
       case .leftBrace:
-        let trailingClosure = try parseClosureExpression(startLocation: .DUMMY) // TODO:
-        resultExpr = FunctionCallExpression(
+        let trailingClosure = try parseClosureExpression(startLocation: tokenRange.start)
+        let funcCallExpr = FunctionCallExpression(
           postfixExpression: resultExpr, trailingClosure: trailingClosure)
+        funcCallExpr.setSourceRange(
+          resultExpr.sourceRange.start, trailingClosure.sourceRange.end)
+        resultExpr = funcCallExpr
       default:
         break
       }
 
+      tokenRange = getLookedRange()
       examined = examine()
     }
 
@@ -323,31 +346,39 @@ extension Parser {
           }
         }
       } while _lexer.match(.comma)
-      if !_lexer.match(.rightParen) {
-          try _raiseError(.dummy)
-      }
       return arguments
     }
 
-    // unit
+    var endLocation = getEndLocation()
     if _lexer.match(.rightParen) {
+      let funcCallExpr: FunctionCallExpression
       if config.parseTrailingClosure &&
         _lexer.look().kind == .leftBrace &&
         isPotentialTrailingClosure()
       {
+        let closureStartLocation = getStartLocation()
         _lexer.advance()
-        let trailingClosure = try parseClosureExpression(startLocation: .DUMMY) // TODO:
-        return FunctionCallExpression(
+        let trailingClosure =
+          try parseClosureExpression(startLocation: closureStartLocation)
+        endLocation = trailingClosure.sourceRange.end
+        funcCallExpr = FunctionCallExpression(
           postfixExpression: expr,
           argumentClause: [],
           trailingClosure: trailingClosure)
       } else {
-        return FunctionCallExpression(
+        funcCallExpr = FunctionCallExpression(
           postfixExpression: expr, argumentClause: [])
       }
+      funcCallExpr.setSourceRange(expr.sourceRange.start, endLocation)
+      return funcCallExpr
     }
 
     let argumentList = try parseArgumentList()
+
+    endLocation = getEndLocation()
+    if !_lexer.match(.rightParen) {
+        try _raiseError(.dummy)
+    }
 
     // handle dynamic type expression
     if let idExpr = expr as? IdentifierExpression,
@@ -355,23 +386,31 @@ extension Parser {
       argumentList.count == 1,
       case let .namedExpression("of", argExpr) = argumentList[0]
     {
-      return DynamicTypeExpression(expression: argExpr)
+      let dynTypeExpr = DynamicTypeExpression(expression: argExpr)
+      dynTypeExpr.setSourceRange(expr.sourceRange.start, endLocation)
+      return dynTypeExpr
     }
 
+    let funcCallExpr: FunctionCallExpression
     if config.parseTrailingClosure &&
       _lexer.look().kind == .leftBrace &&
       isPotentialTrailingClosure()
     {
+      let closureStartLocation = getStartLocation()
       _lexer.advance()
-      let trailingClosure = try parseClosureExpression(startLocation: .DUMMY) // TODO:
-      return FunctionCallExpression(
+      let trailingClosure =
+        try parseClosureExpression(startLocation: closureStartLocation)
+      endLocation = trailingClosure.sourceRange.end
+      funcCallExpr = FunctionCallExpression(
         postfixExpression: expr,
         argumentClause: argumentList,
         trailingClosure: trailingClosure)
     } else {
-      return FunctionCallExpression(
+      funcCallExpr = FunctionCallExpression(
         postfixExpression: expr, argumentClause: argumentList)
     }
+    funcCallExpr.setSourceRange(expr.sourceRange.start, endLocation)
+    return funcCallExpr
   }
 
   private func isArgumentNames() -> Bool {
@@ -396,10 +435,15 @@ extension Parser {
     }
   }
 
-  private func parseArgumentNames() throws -> [String]? {
-    guard isArgumentNames(), _lexer.match(.leftParen) else {
+  private func parseArgumentNames() throws -> ([String], SourceRange)? {
+    guard isArgumentNames() else {
       return nil
     }
+    let startLocation = getStartLocation()
+    guard _lexer.match(.leftParen) else {
+      return nil
+    }
+    var endLocation: SourceLocation
     var argumentNames = [String]()
     repeat {
       guard let argumentName = _lexer.readNamedIdentifierOrWildcard() else {
@@ -409,14 +453,15 @@ extension Parser {
         throw _raiseFatal(.dummy)
       }
       argumentNames.append(argumentName)
+      endLocation = getEndLocation()
     } while !_lexer.match(.rightParen)
-    return argumentNames
+    return (argumentNames, SourceRange(start: startLocation, end: endLocation))
   }
 
   private func parsePostfixMemberExpression(
     postfixExpression expr: PostfixExpression
   ) throws -> PostfixExpression {
-    func getTupleIndex() -> Int? {
+    func getTupleIndex() -> (Int, Int)? {
       let digitCp = _lexer.checkPoint()
       var digitStr = ""
       while let look = _lexer.lookUnicodeScalar() {
@@ -426,7 +471,7 @@ extension Parser {
           _lexer.advanceChar()
         case ".":
           if let index = Int(digitStr) {
-            return index
+            return (index, digitStr.characters.count)
           } else {
             _lexer.restore(fromCheckpoint: digitCp)
             return nil
@@ -441,10 +486,19 @@ extension Parser {
       return nil
     }
 
-    if let index = getTupleIndex() {
-      return ExplicitMemberExpression(kind: .tuple(expr, index))
+    let startLocation = expr.sourceRange.start
+    var endLocation = expr.sourceRange.end
+
+    if let (index, advancedBy) = getTupleIndex() {
+      for _ in 0...advancedBy {
+        endLocation = endLocation.nextColumn
+      }
+      let memberExpr = ExplicitMemberExpression(kind: .tuple(expr, index))
+      memberExpr.setSourceRange(startLocation, endLocation)
+      return memberExpr
     }
 
+    endLocation = getEndLocation()
     switch _lexer.read([
       .init,
       .self,
@@ -453,11 +507,19 @@ extension Parser {
       .dummyFloatingPointLiteral,
     ]) {
     case .init:
-      let argumentNames = (try parseArgumentNames()) ?? []
-      return InitializerExpression(
+      var argumentNames: [String] = []
+      if let (argNames, argSrcRange) = try parseArgumentNames() {
+        argumentNames = argNames
+        endLocation = argSrcRange.end
+      }
+      let initExpr = InitializerExpression(
         postfixExpression: expr, argumentNames: argumentNames)
+      initExpr.setSourceRange(expr.sourceRange.start, endLocation)
+      return initExpr
     case .integerLiteral(let index, _, true):
-      return ExplicitMemberExpression(kind: .tuple(expr, index))
+      let memberExpr = ExplicitMemberExpression(kind: .tuple(expr, index))
+      memberExpr.setSourceRange(startLocation, endLocation)
+      return memberExpr
     case .floatingPointLiteral(_, let raw):
       guard let (first, second) = splitDoubleRawToTwoIntegers(raw) else {
         throw _raiseFatal(.dummy)
@@ -467,24 +529,33 @@ extension Parser {
       return ExplicitMemberExpression(
         kind: .tuple(firstExplitMemberExpr, second))
     case .self:
-      return PostfixSelfExpression(postfixExpression: expr)
+      let postfixSelfExpr = PostfixSelfExpression(postfixExpression: expr)
+      postfixSelfExpr.setSourceRange(expr.sourceRange.start, endLocation)
+      return postfixSelfExpr
     case .dynamicType:
-      return DynamicTypeExpression(expression: expr)
+      let dynTypeExpr = DynamicTypeExpression(expression: expr)
+      dynTypeExpr.setSourceRange(startLocation, endLocation)
+      return dynTypeExpr
     default:
+      endLocation = getEndLocation()
       guard let id = _lexer.readNamedIdentifier() else {
         throw _raiseFatal(.dummy)
       }
 
+      let memberExpr: ExplicitMemberExpression
       if let genericArgumentClause = parseGenericArgumentClause() {
-        let memberExpr = ExplicitMemberExpression(
+        endLocation = genericArgumentClause.sourceRange.end
+        memberExpr = ExplicitMemberExpression(
           kind: .generic(expr, id, genericArgumentClause))
-        return memberExpr
-      } else if let argumentNames = try parseArgumentNames() {
-        return ExplicitMemberExpression(
+      } else if let (argumentNames, argRange) = try parseArgumentNames() {
+        endLocation = argRange.end
+        memberExpr = ExplicitMemberExpression(
           kind: .argument(expr, id, argumentNames))
       } else {
-        return ExplicitMemberExpression(kind: .namedType(expr, id))
+        memberExpr = ExplicitMemberExpression(kind: .namedType(expr, id))
       }
+      memberExpr.setSourceRange(startLocation, endLocation)
+      return memberExpr
     }
   }
 
@@ -743,7 +814,7 @@ extension Parser {
   ) throws -> SelectorExpression {
     func parseArgumentNamesAndRightParen() -> ([String], SourceLocation)? {
       do {
-        if let argNames = try parseArgumentNames(), !argNames.isEmpty {
+        if let (argNames, _) = try parseArgumentNames(), !argNames.isEmpty {
           let endLocation = getEndLocation()
           if _lexer.match(.rightParen) {
             return (argNames, endLocation)
@@ -775,10 +846,10 @@ extension Parser {
     let memberIdDiagnosticCp = _diagnosticPool.checkPoint()
     switch _lexer.read([.dummyIdentifier, .self]) {
     case .identifier(let selfMemberId):
-      if let argNames = parseArgumentNamesAndRightParen() {
+      if let (argNames, endLocation) = parseArgumentNamesAndRightParen() {
         let selExpr = SelectorExpression(
-          kind: .selfMember(selfMemberId, argNames.0))
-        selExpr.setSourceRange(startLocation, argNames.1)
+          kind: .selfMember(selfMemberId, argNames))
+        selExpr.setSourceRange(startLocation, endLocation)
         return selExpr
       }
 
@@ -788,11 +859,11 @@ extension Parser {
       do {
         let selfExpr = try parseSelfExpression(startRange: .EMPTY)
         if case .method(let methodName) = selfExpr.kind,
-          let argNames = parseArgumentNamesAndRightParen()
+          let (argNames, endLocation) = parseArgumentNamesAndRightParen()
         {
           let selExpr = SelectorExpression(
-            kind: .selfMember("self.\(methodName)", argNames.0))
-          selExpr.setSourceRange(startLocation, argNames.1)
+            kind: .selfMember("self.\(methodName)", argNames))
+          selExpr.setSourceRange(startLocation, endLocation)
           return selExpr
         }
 
