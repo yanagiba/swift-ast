@@ -482,7 +482,7 @@ extension Parser {
     modifiers: DeclarationModifiers,
     startLocation: SourceLocation
   ) throws -> SubscriptDeclaration {
-    let params = try parseParameterClause()
+    let (params, _) = try parseParameterClause()
     guard _lexer.match(.arrow) else {
       throw _raiseFatal(.dummy)
     }
@@ -616,9 +616,9 @@ extension Parser {
 
     let genericParameterClause = try parseGenericParameterClause()
 
-    let params = try parseParameterClause()
+    let (params, _) = try parseParameterClause()
 
-    let throwsKind = parseThrowsKind()
+    let (throwsKind, _) = parseThrowsKind()
 
     let genericWhereClause = try parseGenericWhereClause()
     let body = forProtocolMember ? CodeBlock() : try parseCodeBlock()
@@ -943,7 +943,9 @@ extension Parser {
     return enumDecl
   }
 
-  private func parseParameterClause() throws -> [FunctionSignature.Parameter] {
+  private func parseParameterClause() throws ->
+    ([FunctionSignature.Parameter], SourceRange)
+  {
     func parseParameter() throws -> FunctionSignature.Parameter {
       var externalName: Identifier? = nil
       var internalName: Identifier? = nil
@@ -995,21 +997,27 @@ extension Parser {
       }
     }
 
+    let startLocation = getStartLocation()
     guard _lexer.match(.leftParen) else {
       throw _raiseFatal(.dummy)
     }
+
+    var endLocation = getEndLocation()
     if _lexer.match(.rightParen) {
-      return []
+      return ([], SourceRange(start: startLocation, end: endLocation))
     }
+
     var params: [FunctionSignature.Parameter] = []
     repeat {
       let param = try parseParameter()
       params.append(param)
     } while _lexer.match(.comma)
+
+    endLocation = getEndLocation()
     guard _lexer.match(.rightParen) else {
       throw _raiseFatal(.dummy)
     }
-    return params
+    return (params, SourceRange(start: startLocation, end: endLocation))
   }
 
   private func parseFunctionDeclaration(
@@ -1048,21 +1056,44 @@ extension Parser {
       return name
     }
 
-    func parseSignature() throws -> FunctionSignature {
-      let params = try parseParameterClause()
-      let throwsKind = parseThrowsKind()
+    func parseSignature() throws -> (FunctionSignature, SourceLocation) {
+      let (params, paramsSrcRange) = try parseParameterClause()
+      let (throwsKind, throwsEndLocation) = parseThrowsKind()
       let result = try parseFunctionResult()
 
-      return FunctionSignature(parameterList: params, throwsKind: throwsKind, result: result)
+      let funcSign = FunctionSignature(
+        parameterList: params, throwsKind: throwsKind, result: result)
+      if let resultEndLocation = result?.type.sourceRange.end {
+        return (funcSign, resultEndLocation)
+      } else if let throwsEndLocation = throwsEndLocation {
+        return (funcSign, throwsEndLocation)
+      } else {
+        return (funcSign, paramsSrcRange.end)
+      }
     }
 
     let name = try parseName()
     let genericParameterClause = try parseGenericParameterClause()
-    let signature = try parseSignature()
+    let (signature, signEndLocation) = try parseSignature()
     let genericWhereClause = try parseGenericWhereClause()
     var body: CodeBlock? = nil
     if _lexer.look().kind == .leftBrace {
       body = try parseCodeBlock()
+    }
+
+    var endLocation = signEndLocation
+    if let lastGenericReq = genericWhereClause?.requirementList.last {
+      switch lastGenericReq {
+      case .typeConformance(_, let type):
+        endLocation = type.sourceRange.end
+      case .protocolConformance(_, let type):
+        endLocation = type.sourceRange.end
+      case .sameType(_, let type):
+        endLocation = type.sourceRange.end
+      }
+    }
+    if let bodyEndLocation = body?.sourceRange.end {
+      endLocation = bodyEndLocation
     }
 
     let funcDecl = FunctionDeclaration(
@@ -1073,9 +1104,7 @@ extension Parser {
       signature: signature,
       genericWhereClause: genericWhereClause,
       body: body)
-    if let endLocation = body?.sourceRange.end {
-      funcDecl.setSourceRange(startLocation, endLocation)
-    }
+    funcDecl.setSourceRange(startLocation, endLocation)
     return funcDecl
   }
 
@@ -1096,12 +1125,14 @@ extension Parser {
       throw _raiseFatal(.dummy)
     }
     let assignment = try parseType()
-    return TypealiasDeclaration(
+    let typealiasDecl = TypealiasDeclaration(
       attributes: attrs,
       accessLevelModifier: accessLevelModifier,
       name: name,
       generic: genericParameterClause,
       assignment: assignment)
+    typealiasDecl.setSourceRange(startLocation, assignment.sourceRange.end)
+    return typealiasDecl
   }
 
   private func parseVariableDeclaration(
@@ -1116,14 +1147,16 @@ extension Parser {
       switch (idPattern.typeAnnotation, inits[0].initializerExpression) {
       case (let typeAnnotation?, nil):
         if isGetterSetterBlockHead() {
-          let (getterSetterBlock, hasCodeBlock, _) = try parseGetterSetterBlock()
+          let (getterSetterBlock, hasCodeBlock, endLocation) = try parseGetterSetterBlock()
           if hasCodeBlock {
-            return VariableDeclaration(
+            let varDecl = VariableDeclaration(
               attributes: attrs,
               modifiers: modifiers,
               variableName: idPattern.identifier,
               typeAnnotation: typeAnnotation,
               getterSetterBlock: getterSetterBlock)
+            varDecl.setSourceRange(startLocation, endLocation)
+            return varDecl
           } else {
             let getter = GetterSetterKeywordBlock.GetterKeywordClause(
               attributes: getterSetterBlock.getter.attributes,
@@ -1136,60 +1169,77 @@ extension Parser {
             let getterSetterKeywordBlock =
               GetterSetterKeywordBlock(getter: getter, setter: setter)
               // TODO: duplication alert: I think this pattern also shows up a lot
-            return VariableDeclaration(
+            let varDecl = VariableDeclaration(
               attributes: attrs,
               modifiers: modifiers,
               variableName: idPattern.identifier,
               typeAnnotation: typeAnnotation,
               getterSetterKeywordBlock: getterSetterKeywordBlock)
+            varDecl.setSourceRange(startLocation, endLocation)
+            return varDecl
           }
         } else if isWillSetDidSetBlockHead() {
-          let willSetDidSetBlock = try parseWillSetDidSetBlock()
-          return VariableDeclaration(
+          let (willSetDidSetBlock, endLocation) = try parseWillSetDidSetBlock()
+          let varDecl = VariableDeclaration(
             attributes: attrs,
             modifiers: modifiers,
             variableName: idPattern.identifier,
             typeAnnotation: typeAnnotation,
             willSetDidSetBlock: willSetDidSetBlock)
+          varDecl.setSourceRange(startLocation, endLocation)
+          return varDecl
         } else {
           let codeBlock = try parseCodeBlock()
-          return VariableDeclaration(
+          let varDecl = VariableDeclaration(
             attributes: attrs,
             modifiers: modifiers,
             variableName: idPattern.identifier,
             typeAnnotation: typeAnnotation,
             codeBlock: codeBlock)
+          varDecl.setSourceRange(startLocation, codeBlock.sourceRange.end)
+          return varDecl
         }
       case (nil, let initExpr?):
         if isWillSetDidSetBlockHead() {
-          let willSetDidSetBlock = try parseWillSetDidSetBlock()
-          return VariableDeclaration(
+          let (willSetDidSetBlock, endLocation) = try parseWillSetDidSetBlock()
+          let varDecl = VariableDeclaration(
             attributes: attrs,
             modifiers: modifiers,
             variableName: idPattern.identifier,
             initializer: initExpr,
             willSetDidSetBlock: willSetDidSetBlock)
+          varDecl.setSourceRange(startLocation, endLocation)
+          return varDecl
         }
       case let (typeAnnotation?, initExpr):
         if isWillSetDidSetBlockHead() {
-          let willSetDidSetBlock = try parseWillSetDidSetBlock()
-          return VariableDeclaration(
+          let (willSetDidSetBlock, endLocation) = try parseWillSetDidSetBlock()
+          let varDecl = VariableDeclaration(
             attributes: attrs,
             modifiers: modifiers,
             variableName: idPattern.identifier,
             typeAnnotation: typeAnnotation,
             initializer: initExpr,
             willSetDidSetBlock: willSetDidSetBlock)
+          varDecl.setSourceRange(startLocation, endLocation)
+          return varDecl
         }
       default:
         break
       }
     }
-    return VariableDeclaration(
+
+    let varDecl = VariableDeclaration(
       attributes: attrs, modifiers: modifiers, initializerList: inits)
+    if let lastInit = inits.last {
+      varDecl.setSourceRange(startLocation, lastInit.sourceRange.end)
+    }
+    return varDecl
   }
 
-  private func parseWillSetDidSetBlock() throws -> WillSetDidSetBlock {
+  private func parseWillSetDidSetBlock() throws ->
+    (WillSetDidSetBlock, SourceLocation)
+  {
     func parseSet() throws -> (Identifier?, CodeBlock) {
       var setterName: String? = nil
       if _lexer.match(.leftParen) {
@@ -1242,15 +1292,22 @@ extension Parser {
       }
     }
 
+    let endLocation = getEndLocation()
     guard _lexer.match(.rightBrace) else {
       throw _raiseFatal(.dummy)
     }
 
     switch (willSetClause, didSetClause) {
     case let (wS?, dS):
-      return WillSetDidSetBlock(willSetClause: wS, didSetClause: dS)
+      return (
+        WillSetDidSetBlock(willSetClause: wS, didSetClause: dS),
+        endLocation
+      )
     case let (wS, dS?):
-      return WillSetDidSetBlock(didSetClause: dS, willSetClause: wS)
+      return (
+        WillSetDidSetBlock(didSetClause: dS, willSetClause: wS),
+        endLocation
+      )
     default:
       throw _raiseFatal(.dummy)
     }
@@ -1344,8 +1401,12 @@ extension Parser {
     startLocation: SourceLocation
   ) throws -> ConstantDeclaration {
     let inits = try parsePatternInitializerList()
-    return ConstantDeclaration(
+    let letDecl = ConstantDeclaration(
       attributes: attrs, modifiers: modifiers, initializerList: inits)
+    if let lastInit = inits.last {
+      letDecl.setSourceRange(startLocation, lastInit.sourceRange.end)
+    }
+    return letDecl
   }
 
   private func parsePatternInitializerList() throws -> [PatternInitializer] {

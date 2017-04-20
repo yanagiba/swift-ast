@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+import Source
 import AST
 import Lexer
 
@@ -26,14 +27,15 @@ extension Parser {
     return FunctionResult(attributes: attrs, type: type)
   }
 
-  func parseThrowsKind() -> ThrowsKind {
+  func parseThrowsKind() -> (ThrowsKind, SourceLocation?) {
+    let endLocation = getEndLocation()
     switch _lexer.read([.throws, .rethrows]) {
     case .throws:
-      return .throwing
+      return (.throwing, endLocation)
     case .rethrows:
-      return .rethrowing
+      return (.rethrowing, endLocation)
     default:
-      return .nothrowing
+      return (.nothrowing, nil)
     }
   }
 

@@ -138,8 +138,7 @@ class ParserTypealiasDeclarationTests: XCTestCase {
       "@a public typealias Foo<A> = Bar",
       "@a public typealias Foo<A> = Bar",
       testClosure: { decl in
-        // TODO: need to assign source range for these:
-        // XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 33))
       }
     )
   }

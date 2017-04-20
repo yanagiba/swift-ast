@@ -176,15 +176,18 @@ class ParserConstantDeclarationTests: XCTestCase {
   }
 
   func testSourceRange() {
-    parseDeclarationAndTest(
-      "let foo",
-      "let foo",
-      testClosure: { decl in
-        // TODO: need to assign source range for these:
-        // XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
-      }
-    )
-    // TODO: need to work on other cases
+    parseDeclarationAndTest("let foo", "let foo", testClosure: { decl in
+      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 8))
+    })
+    parseDeclarationAndTest("@a let foo = bar, a, x = y", "@a let foo = bar, a, x = y", testClosure: { decl in
+      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 27))
+    })
+    parseDeclarationAndTest("private let foo, bar", "private let foo, bar", testClosure: { decl in
+      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 21))
+    })
+    parseDeclarationAndTest("let foo = bar { $0 == 0 }", "let foo = bar { $0 == 0 }", testClosure: { decl in
+      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 26))
+    })
   }
 
   static var allTests = [

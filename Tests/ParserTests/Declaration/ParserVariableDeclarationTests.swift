@@ -1240,15 +1240,48 @@ class ParserVariableDeclarationTests: XCTestCase {
   }
 
   func testSourceRange() {
+    parseDeclarationAndTest("var foo", "var foo", testClosure: { decl in
+      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 8))
+    })
+    parseDeclarationAndTest("@a var foo = bar, a, x = y", "@a var foo = bar, a, x = y", testClosure: { decl in
+      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 27))
+    })
+    parseDeclarationAndTest("private var foo, bar", "private var foo, bar", testClosure: { decl in
+      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 21))
+    })
+    parseDeclarationAndTest("var foo = bar { $0 == 0 }", "var foo = bar { $0 == 0 }", testClosure: { decl in
+      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 26))
+    })
+    parseDeclarationAndTest("var foo: Foo { return _foo }", "var foo: Foo {\nreturn _foo\n}", testClosure: { decl in
+      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 29))
+    })
+    parseDeclarationAndTest("var foo: Foo { get set }", "var foo: Foo {\nget\nset\n}", testClosure: { decl in
+      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 25))
+    })
+    parseDeclarationAndTest("var foo: Foo { get { return _foo } }", "var foo: Foo {\nget {\nreturn _foo\n}\n}", testClosure: { decl in
+      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 37))
+    })
     parseDeclarationAndTest(
-      "var foo",
-      "var foo",
+      "var foo: Foo { didSet { print(newValue) } willSet { print(newValue) } }",
+      "var foo: Foo {\nwillSet {\nprint(newValue)\n}\ndidSet {\nprint(newValue)\n}\n}",
       testClosure: { decl in
-        // TODO: need to assign source range for these:
-        // XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 72))
       }
     )
-    // TODO: need to work on other cases
+    parseDeclarationAndTest(
+      "var foo = _foo { didSet { print(newValue) } willSet { print(newValue) } }",
+      "var foo = _foo {\nwillSet {\nprint(newValue)\n}\ndidSet {\nprint(newValue)\n}\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 74))
+      }
+    )
+    parseDeclarationAndTest(
+      "var foo: Foo = _foo { didSet { print(newValue) } willSet { print(newValue) } }",
+      "var foo: Foo = _foo {\nwillSet {\nprint(newValue)\n}\ndidSet {\nprint(newValue)\n}\n}",
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 79))
+      }
+    )
   }
 
   static var allTests = [

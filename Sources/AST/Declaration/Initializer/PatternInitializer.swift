@@ -14,6 +14,8 @@
    limitations under the License.
 */
 
+import Source
+
 public struct PatternInitializer { // TODO: this might become a wrong place to put it
   public let pattern: Pattern
   public let initializerExpression: Expression?
@@ -21,6 +23,16 @@ public struct PatternInitializer { // TODO: this might become a wrong place to p
   public init(pattern: Pattern, initializerExpression: Expression? = nil) {
     self.pattern = pattern
     self.initializerExpression = initializerExpression
+  }
+}
+
+extension PatternInitializer : SourceLocatable {
+  public var sourceRange: SourceRange {
+    guard let initExpr = initializerExpression else {
+      return pattern.sourceRange
+    }
+    return SourceRange(
+      start: pattern.sourceLocation, end: initExpr.sourceRange.end)
   }
 }
 
