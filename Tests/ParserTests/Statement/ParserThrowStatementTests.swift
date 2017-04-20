@@ -32,7 +32,14 @@ class ParserThrowStatementTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("throw foo", "throw foo", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 10))
+    })
+  }
+
   static var allTests = [
     ("testThrow", testThrow),
+    ("testSourceRange", testSourceRange),
   ]
 }

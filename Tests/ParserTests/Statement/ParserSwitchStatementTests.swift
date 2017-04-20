@@ -170,6 +170,12 @@ class ParserSwitchStatementTests: XCTestCase {
     "}")
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("switch foo {}", "switch foo {}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 14))
+    })
+  }
+
   static var allTests = [
     ("testEmptySwitch", testEmptySwitch),
     ("testDefault", testDefault),
@@ -177,5 +183,6 @@ class ParserSwitchStatementTests: XCTestCase {
     ("testCaseWithWhereCondition", testCaseWithWhereCondition),
     ("testCaseItems", testCaseItems),
     ("testCasesAndDefault", testCasesAndDefault),
+    ("testSourceRange", testSourceRange),
   ]
 }

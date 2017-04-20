@@ -94,10 +94,26 @@ class ParserIfStatementTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("if true {}", "if true {}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 11))
+    })
+    parseStatementAndTest("if foo {} else {}", "if foo {} else {}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 18))
+    })
+    parseStatementAndTest("if foo {} else if bar {}", "if foo {} else if bar {}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 25))
+    })
+    parseStatementAndTest("if foo {} else if bar {} else {}", "if foo {} else if bar {} else {}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 33))
+    })
+  }
+
   static var allTests = [
     ("testIf", testIf),
     ("testElse", testElse),
     ("testElseIf", testElseIf),
     ("testIfElseIfElse", testIfElseIfElse),
+    ("testSourceRange", testSourceRange),
   ]
 }

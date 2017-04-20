@@ -41,8 +41,18 @@ class ParserReturnStatementTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("return", "return", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 7))
+    })
+    parseStatementAndTest("return foo", "return foo", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 11))
+    })
+  }
+
   static var allTests = [
     ("testReturn", testReturn),
     ("testReturnWithExpression", testReturnWithExpression),
+    ("testSourceRange", testSourceRange),
   ]
 }

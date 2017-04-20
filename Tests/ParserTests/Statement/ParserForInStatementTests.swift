@@ -113,11 +113,22 @@ class ParserForInStatementTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseStatementAndTest(
+      "for i in aCollection { print(i) }",
+      "for i in aCollection {\nprint(i)\n}",
+      testClosure: { stmt in
+        XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 34))
+      }
+    )
+  }
+
   static var allTests = [
     ("testItemInCollection", testItemInCollection),
     ("testCaseMatching", testCaseMatching),
     ("testWhereClause", testWhereClause),
     ("testEnumerate", testEnumerate),
     ("testRange", testRange),
+    ("testSourceRange", testSourceRange),
   ]
 }

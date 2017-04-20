@@ -126,11 +126,28 @@ class ParserCompilerControlStatementTests: XCTestCase {
       "#sourceLocation()")
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("#if os(macOS)\nreturn", "#if os(macOS)", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 14))
+    })
+    parseStatementAndTest("#elseif os(macOS)\nreturn", "#elseif os(macOS)", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 18))
+    })
+    parseStatementAndTest("#endif\nreturn", "#endif", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 7))
+    })
+    parseStatementAndTest("#sourceLocation(foobar)\nreturn", "#sourceLocation()", testClosure: { stmt in
+      // XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 24))
+      // TODO: we will come back to this once the source location is parsed correctly
+    })
+  }
+
   static var allTests = [
     ("testIf", testIf),
     ("testElseif", testElseif),
     ("testElse", testElse),
     ("testEndif", testEndif),
     ("testSourceLocation", testSourceLocation),
+    ("testSourceRange", testSourceRange), // ^ interesting coincidence
   ]
 }

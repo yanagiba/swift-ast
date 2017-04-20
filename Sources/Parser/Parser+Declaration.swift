@@ -292,6 +292,7 @@ extension Parser {
     func parseMember() throws -> ProtocolDeclaration.Member {
       let attrs = try parseAttributes()
       let modifiers = parseModifiers()
+      let startLocation = getStartLocation()
       switch _lexer.read([.var, .func, .init, .subscript, .hash]) {
       case .var:
         return try parsePropertyMember(
@@ -306,7 +307,8 @@ extension Parser {
         return try parseSubscriptMember(
           withAttributes: attrs, modifiers: modifiers)
       case .hash:
-        let compCtrlStmt = try parseCompilerControlStatement()
+        let compCtrlStmt =
+          try parseCompilerControlStatement(startLocation: startLocation)
         return .compilerControl(compCtrlStmt)
       default:
         if _lexer.look().kind == .identifier("associatedtype") {
@@ -560,8 +562,10 @@ extension Parser {
     var endLocation = getEndLocation()
     var members: [ExtensionDeclaration.Member] = []
     while !_lexer.match(.rightBrace) {
+      let hashStartLocation = getStartLocation()
       if _lexer.match(.hash) {
-        let compCtrlStmt = try parseCompilerControlStatement()
+        let compCtrlStmt =
+          try parseCompilerControlStatement(startLocation: hashStartLocation)
         members.append(.compilerControl(compCtrlStmt))
       } else {
         let decl = try parseDeclaration()
@@ -676,8 +680,10 @@ extension Parser {
     var endLocation = getEndLocation()
     var members: [ClassDeclaration.Member] = []
     while !_lexer.match(.rightBrace) {
+      let hashStartLocation = getStartLocation()
       if _lexer.match(.hash) {
-        let compCtrlStmt = try parseCompilerControlStatement()
+        let compCtrlStmt =
+          try parseCompilerControlStatement(startLocation: hashStartLocation)
         members.append(.compilerControl(compCtrlStmt))
       } else {
         let decl = try parseDeclaration()
@@ -725,8 +731,10 @@ extension Parser {
     var endLocation = getEndLocation()
     var members: [StructDeclaration.Member] = []
     while !_lexer.match(.rightBrace) {
+      let hashStartLocation = getStartLocation()
       if _lexer.match(.hash) {
-        let compCtrlStmt = try parseCompilerControlStatement()
+        let compCtrlStmt =
+          try parseCompilerControlStatement(startLocation: hashStartLocation)
         members.append(.compilerControl(compCtrlStmt))
       } else {
         let decl = try parseDeclaration()
@@ -825,8 +833,10 @@ extension Parser {
     }
 
     func parseMember() throws -> EnumDeclaration.Member {
+      let hashStartLocation = getStartLocation()
       if _lexer.match(.hash) {
-        let compilerCtrlStmt = try parseCompilerControlStatement()
+        let compilerCtrlStmt =
+          try parseCompilerControlStatement(startLocation: hashStartLocation)
         return .compilerControl(compilerCtrlStmt)
       }
 

@@ -32,7 +32,14 @@ class ParserGuardStatementTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("guard foo else {}", "guard foo else {}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 18))
+    })
+  }
+
   static var allTests = [
     ("testGuardStmt", testGuardStmt),
+    ("testSourceRange", testSourceRange),
   ]
 }

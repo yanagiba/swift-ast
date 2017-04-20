@@ -40,8 +40,18 @@ class ParserContinueStatementTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("continue", "continue", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 9))
+    })
+    parseStatementAndTest("continue foo", "continue foo", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 13))
+    })
+  }
+
   static var allTests = [
     ("testContinue", testContinue),
     ("testContinueWithLabelName", testContinueWithLabelName),
+    ("testSourceRange", testSourceRange),
   ]
 }

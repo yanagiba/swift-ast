@@ -86,6 +86,27 @@ class ParserLabeledStatementTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("foo: for _ in 0..<10 {}", "foo: for _ in 0 ..< 10 {}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 24))
+    })
+    parseStatementAndTest("foo: while true {}", "foo: while true {}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 19))
+    })
+    parseStatementAndTest("foo: repeat {} while true", "foo: repeat {} while true", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 26))
+    })
+    parseStatementAndTest("foo: if x {}", "foo: if x {}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 13))
+    })
+    parseStatementAndTest("foo: switch bar {}", "foo: switch bar {}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 19))
+    })
+    parseStatementAndTest("foo: do { try bar() }", "foo: do {\ntry bar()\n}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 22))
+    })
+  }
+
   static var allTests = [
     ("testLabeledFor", testLabeledFor),
     ("testLabeledWhile", testLabeledWhile),
@@ -93,5 +114,6 @@ class ParserLabeledStatementTests: XCTestCase {
     ("testLabeledIf", testLabeledIf),
     ("testLabeledSwitch", testLabeledSwitch),
     ("testLabeledDo", testLabeledDo),
+    ("testSourceRange", testSourceRange),
   ]
 }

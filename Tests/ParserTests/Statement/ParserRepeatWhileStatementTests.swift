@@ -32,7 +32,14 @@ class ParserRepeatWhileStatementTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("repeat {} while true", "repeat {} while true", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 21))
+    })
+  }
+
   static var allTests = [
     ("testInfiniteLoop", testInfiniteLoop),
+    ("testSourceRange", testSourceRange),
   ]
 }

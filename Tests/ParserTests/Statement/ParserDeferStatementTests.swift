@@ -43,8 +43,15 @@ class ParserDeferStatementTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("defer {}", "defer {}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 9))
+    })
+  }
+
   static var allTests = [
     ("testDefer", testDefer),
     ("testDeferNothing", testDeferNothing),
+    ("testSourceRange", testSourceRange),
   ]
 }

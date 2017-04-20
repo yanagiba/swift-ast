@@ -26,7 +26,14 @@ class ParserFallthroughStatementTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("fallthrough", "fallthrough", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 12))
+    })
+  }
+
   static var allTests = [
     ("testFallthrough", testFallthrough),
+    ("testSourceRange", testSourceRange),
   ]
 }

@@ -148,6 +148,19 @@ class ParserDoStatementTests: XCTestCase {
     "}")
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("do { try foo() }", "do {\ntry foo()\n}", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 17))
+    })
+    parseStatementAndTest(
+      "do { try foo() } catch { print(\"bar\") }",
+      "do {\ntry foo()\n} catch {\nprint(\"bar\")\n}",
+      testClosure: { stmt in
+        XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 40))
+      }
+    )
+  }
+
   static var allTests = [
     ("testNoCatch", testNoCatch),
     ("testCatchAll", testCatchAll),
@@ -155,5 +168,6 @@ class ParserDoStatementTests: XCTestCase {
     ("testCatchWhere", testCatchWhere),
     ("testCatchPatternAndWhere", testCatchPatternAndWhere),
     ("testMultipleCatches", testMultipleCatches),
+    ("testSourceRange", testSourceRange),
   ]
 }

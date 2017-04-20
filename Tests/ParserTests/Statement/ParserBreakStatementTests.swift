@@ -40,8 +40,18 @@ class ParserBreakStatementTests: XCTestCase {
     })
   }
 
+  func testSourceRange() {
+    parseStatementAndTest("break", "break", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 6))
+    })
+    parseStatementAndTest("break foo", "break foo", testClosure: { stmt in
+      XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 10))
+    })
+  }
+
   static var allTests = [
     ("testBreak", testBreak),
     ("testBreakWithLabelName", testBreakWithLabelName),
+    ("testSourceRange", testSourceRange),
   ]
 }
