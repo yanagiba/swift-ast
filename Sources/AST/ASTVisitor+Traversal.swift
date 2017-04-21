@@ -19,21 +19,13 @@ extension ASTVisitor {
   public func traverse(_ topLevelDecl: TopLevelDeclaration) throws -> Bool {
     guard try visit(topLevelDecl) else { return false }
 
-    for stmt in topLevelDecl.statements {
-      guard try traverse(stmt) else { return false }
-    }
-
-    return true
+    return try traverse(topLevelDecl.statements)
   }
 
   public func traverse(_ codeBlock: CodeBlock) throws -> Bool {
     guard try visit(codeBlock) else { return false }
 
-    for stmt in codeBlock.statements {
-      guard try traverse(stmt) else { return false }
-    }
-
-    return true
+    return try traverse(codeBlock.statements)
   }
 
   // Declarations
@@ -323,6 +315,13 @@ extension ASTVisitor {
     }
   }
 
+  private func traverse(_ statements: Statements) throws -> Bool {
+    for stmt in statements {
+      guard try traverse(stmt) else { return false }
+    }
+    return true
+  }
+
   public func traverse(_ stmt: BreakStatement) throws -> Bool {
     return try visit(stmt)
   }
@@ -336,11 +335,22 @@ extension ASTVisitor {
   }
 
   public func traverse(_ stmt: DeferStatement) throws -> Bool {
-    return try visit(stmt)
+    guard try visit(stmt) else { return false }
+    return try traverse(stmt.codeBlock)
   }
 
   public func traverse(_ stmt: DoStatement) throws -> Bool {
-    return try visit(stmt)
+    guard try visit(stmt) else { return false }
+
+    guard try traverse(stmt.codeBlock) else { return false }
+    for catchBlock in stmt.catchClauses {
+      if let expr = catchBlock.whereExpression {
+        guard try traverse(expr) else { return false }
+      }
+      guard try traverse(catchBlock.codeBlock) else { return false }
+    }
+
+    return true
   }
 
   public func traverse(_ stmt: FallthroughStatement) throws -> Bool {
@@ -348,39 +358,109 @@ extension ASTVisitor {
   }
 
   public func traverse(_ stmt: ForInStatement) throws -> Bool {
-    return try visit(stmt)
+    guard try visit(stmt) else { return false }
+
+    guard try traverse(stmt.collection) else { return false }
+    if let expr = stmt.item.whereClause {
+      guard try traverse(expr) else { return false }
+    }
+    return try traverse(stmt.codeBlock)
+  }
+
+  private func traverse(_ condition: Condition) throws -> Bool {
+    switch condition {
+    case .expression(let expr):
+      return try traverse(expr)
+    case .case(_, let expr):
+      return try traverse(expr)
+    case .let(_, let expr):
+      return try traverse(expr)
+    case .var(_, let expr):
+      return try traverse(expr)
+    default:
+      return true
+    }
+  }
+
+  private func traverse(_ conditionList: ConditionList) throws -> Bool {
+    for condition in conditionList {
+      guard try traverse(condition) else { return false }
+    }
+
+    return true
   }
 
   public func traverse(_ stmt: GuardStatement) throws -> Bool {
-    return try visit(stmt)
+    guard try visit(stmt) else { return false }
+
+    guard try traverse(stmt.conditionList) else { return false }
+    return try traverse(stmt.codeBlock)
   }
 
   public func traverse(_ stmt: IfStatement) throws -> Bool {
-    return try visit(stmt)
+    guard try visit(stmt) else { return false }
+
+    guard try traverse(stmt.conditionList) else { return false }
+    guard try traverse(stmt.codeBlock) else { return false }
+    if let elseClause = stmt.elseClause {
+      switch elseClause {
+      case .else(let codeBlock):
+        return try traverse(codeBlock)
+      case .elseif(let ifStmt):
+        return try traverse(ifStmt)
+      }
+    }
+    return true
   }
 
   public func traverse(_ stmt: LabeledStatement) throws -> Bool {
-    return try visit(stmt)
+    guard try visit(stmt) else { return false }
+    return try traverse(stmt.statement)
   }
 
   public func traverse(_ stmt: RepeatWhileStatement) throws -> Bool {
-    return try visit(stmt)
+    guard try visit(stmt) else { return false }
+    guard try traverse(stmt.codeBlock) else { return false }
+    return try traverse(stmt.conditionExpression)
   }
 
   public func traverse(_ stmt: ReturnStatement) throws -> Bool {
-    return try visit(stmt)
+    guard try visit(stmt) else { return false }
+    if let expr = stmt.expression {
+      guard try traverse(expr) else { return false }
+    }
+    return true
   }
 
   public func traverse(_ stmt: SwitchStatement) throws -> Bool {
-    return try visit(stmt)
+    guard try visit(stmt) else { return false }
+
+    for eachCase in stmt.cases {
+      switch eachCase {
+      case let .case(items, statements):
+        for item in items {
+          if let expr = item.whereExpression {
+            guard try traverse(expr) else { return false }
+          }
+        }
+        guard try traverse(statements) else { return false }
+      case .default(let statements):
+        guard try traverse(statements) else { return false }
+      }
+    }
+
+    return true
   }
 
   public func traverse(_ stmt: ThrowStatement) throws -> Bool {
-    return try visit(stmt)
+    guard try visit(stmt) else { return false }
+    return try traverse(stmt.expression)
   }
 
   public func traverse(_ stmt: WhileStatement) throws -> Bool {
-    return try visit(stmt)
+    guard try visit(stmt) else { return false }
+    guard try traverse(stmt.conditionList) else { return false }
+    return try traverse(stmt.codeBlock)
   }
 
   // Expressions
