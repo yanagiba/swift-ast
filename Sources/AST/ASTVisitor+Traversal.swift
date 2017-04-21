@@ -76,27 +76,84 @@ extension ASTVisitor {
   }
 
   public func traverse(_ decl: ClassDeclaration) throws -> Bool {
-    return try visit(decl)
+    guard try visit(decl) else { return false }
+
+    for member in decl.members {
+      switch member {
+      case .declaration(let decl):
+        guard try traverse(decl) else { return false }
+      case .compilerControl(let stmt):
+        guard try traverse(stmt) else { return false }
+      }
+    }
+
+    return true
   }
 
   public func traverse(_ decl: ConstantDeclaration) throws -> Bool {
-    return try visit(decl)
+    guard try visit(decl) else { return false }
+
+    for initializer in decl.initializerList {
+      if let expr = initializer.initializerExpression {
+        guard try traverse(expr) else { return false }
+      }
+    }
+
+    return true
   }
 
   public func traverse(_ decl: DeinitializerDeclaration) throws -> Bool {
-    return try visit(decl)
+    guard try visit(decl) else { return false }
+
+    return try traverse(decl.body)
   }
 
   public func traverse(_ decl: EnumDeclaration) throws -> Bool {
-    return try visit(decl)
+    guard try visit(decl) else { return false }
+
+    for member in decl.members {
+      switch member {
+      case .declaration(let decl):
+        guard try traverse(decl) else { return false }
+      case .compilerControl(let stmt):
+        guard try traverse(stmt) else { return false }
+      default:
+        continue // we don't traverse `union` and `rawValue` cases for now
+      }
+    }
+
+    return true
   }
 
   public func traverse(_ decl: ExtensionDeclaration) throws -> Bool {
-    return try visit(decl)
+    guard try visit(decl) else { return false }
+
+    for member in decl.members {
+      switch member {
+      case .declaration(let decl):
+        guard try traverse(decl) else { return false }
+      case .compilerControl(let stmt):
+        guard try traverse(stmt) else { return false }
+      }
+    }
+
+    return true
   }
 
   public func traverse(_ decl: FunctionDeclaration) throws -> Bool {
-    return try visit(decl)
+    guard try visit(decl) else { return false }
+
+    for param in decl.signature.parameterList {
+      if let defaultArg = param.defaultArgumentClause {
+        guard try traverse(defaultArg) else { return false }
+      }
+    }
+
+    if let body = decl.body {
+      guard try traverse(body) else { return false }
+    }
+
+    return true
   }
 
   public func traverse(_ decl: ImportDeclaration) throws -> Bool {
@@ -116,15 +173,75 @@ extension ASTVisitor {
   }
 
   public func traverse(_ decl: ProtocolDeclaration) throws -> Bool {
-    return try visit(decl)
+    guard try visit(decl) else { return false }
+
+    for member in decl.members {
+      switch member {
+      case .method(let method):
+        for param in method.signature.parameterList {
+          if let defaultArg = param.defaultArgumentClause {
+            guard try traverse(defaultArg) else { return false }
+          }
+        }
+      case .initializer(let initializer):
+        for param in initializer.parameterList {
+          if let defaultArg = param.defaultArgumentClause {
+            guard try traverse(defaultArg) else { return false }
+          }
+        }
+      case .subscript(let member):
+        for param in member.parameterList {
+          if let defaultArg = param.defaultArgumentClause {
+            guard try traverse(defaultArg) else { return false }
+          }
+        }
+      case .compilerControl(let stmt):
+        guard try traverse(stmt) else { return false }
+      default:
+        continue
+      }
+    }
+
+    return true
   }
 
   public func traverse(_ decl: StructDeclaration) throws -> Bool {
-    return try visit(decl)
+    guard try visit(decl) else { return false }
+
+    for member in decl.members {
+      switch member {
+      case .declaration(let decl):
+        guard try traverse(decl) else { return false }
+      case .compilerControl(let stmt):
+        guard try traverse(stmt) else { return false }
+      }
+    }
+
+    return true
   }
 
   public func traverse(_ decl: SubscriptDeclaration) throws -> Bool {
-    return try visit(decl)
+    guard try visit(decl) else { return false }
+
+    for param in decl.parameterList {
+      if let defaultArg = param.defaultArgumentClause {
+        guard try traverse(defaultArg) else { return false }
+      }
+    }
+
+    switch decl.body {
+    case .codeBlock(let codeBlock):
+      return try traverse(codeBlock)
+    case .getterSetterBlock(let block):
+      guard try traverse(block.getter.codeBlock) else { return false }
+      if let setterBlock = block.setter?.codeBlock {
+        guard try traverse(setterBlock) else { return false }
+      }
+    default:
+      return true
+    }
+
+    return true
   }
 
   public func traverse(_ decl: TypealiasDeclaration) throws -> Bool {
@@ -132,7 +249,35 @@ extension ASTVisitor {
   }
 
   public func traverse(_ decl: VariableDeclaration) throws -> Bool {
-    return try visit(decl)
+    guard try visit(decl) else { return false }
+
+    switch decl.body {
+    case .initializerList(let initializerList):
+      for initializer in initializerList {
+        if let expr = initializer.initializerExpression {
+          guard try traverse(expr) else { return false }
+        }
+      }
+    case .codeBlock(_, _, let codeBlock):
+      return try traverse(codeBlock)
+    case .getterSetterBlock(_, _, let block):
+      guard try traverse(block.getter.codeBlock) else { return false }
+      if let setterBlock = block.setter?.codeBlock {
+        guard try traverse(setterBlock) else { return false }
+      }
+    case let .willSetDidSetBlock(_, _, expr?, block):
+      guard try traverse(expr) else { return false }
+      if let willSetBlock = block.willSetClause?.codeBlock {
+        guard try traverse(willSetBlock) else { return false }
+      }
+      if let didSetBlock = block.didSetClause?.codeBlock {
+        guard try traverse(didSetBlock) else { return false }
+      }
+    default:
+      return true
+    }
+
+    return true
   }
 
   // Statements
