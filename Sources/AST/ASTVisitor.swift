@@ -84,3 +84,247 @@ public protocol ASTVisitor {
   func visit(_: TypeCastingOperatorExpression) throws -> Bool
   func visit(_: WildcardExpression) throws -> Bool
 }
+
+extension ASTVisitor {
+  public func visit(_: TopLevelDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: CodeBlock) throws -> Bool {
+    return true
+  }
+
+  // Declarations
+
+  public func visit(_: ClassDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ConstantDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: DeinitializerDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: EnumDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ExtensionDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: FunctionDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ImportDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: InitializerDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: OperatorDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: PrecedenceGroupDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ProtocolDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: StructDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: SubscriptDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: TypealiasDeclaration) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: VariableDeclaration) throws -> Bool {
+    return true
+  }
+
+  // Statements
+
+  public func visit(_: BreakStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: CompilerControlStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ContinueStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: DeferStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: DoStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: FallthroughStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ForInStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: GuardStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: IfStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: LabeledStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: RepeatWhileStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ReturnStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: SwitchStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ThrowStatement) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: WhileStatement) throws -> Bool {
+    return true
+  }
+
+  // Expressions
+
+  public func visit(_: AssignmentOperatorExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: BinaryOperatorExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ClosureExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: DynamicTypeExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ExplicitMemberExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ForcedValueExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: FunctionCallExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: IdentifierExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ImplicitMemberExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: InOutExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: InitializerExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: KeyPathExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: LiteralExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: OptionalChainingExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: ParenthesizedExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: PostfixOperatorExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: PostfixSelfExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: PrefixOperatorExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: SelectorExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: SelfExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: SubscriptExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: SuperclassExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: TernaryConditionalOperatorExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: TryOperatorExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: TupleExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: TypeCastingOperatorExpression) throws -> Bool {
+    return true
+  }
+
+  public func visit(_: WildcardExpression) throws -> Bool {
+    return true
+  }
+}
