@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-// extends AST traverseor with preordor depth-first traversal
+// extends AST visitor with pre-ordor depth-first traversal
 extension ASTVisitor {
   public func traverse(_ topLevelDecl: TopLevelDeclaration) throws -> Bool {
     guard try visit(topLevelDecl) else { return false }
@@ -526,32 +526,90 @@ extension ASTVisitor {
     }
   }
 
+  private func traverse(_ exprs: ExpressionList) throws -> Bool {
+    for expr in exprs {
+      guard try traverse(expr) else { return false }
+    }
+    return true
+  }
+
   public func traverse(_ expr: AssignmentOperatorExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+    guard try traverse(expr.leftExpression) else { return false }
+    return try traverse(expr.rightExpression)
   }
 
   public func traverse(_ expr: BinaryOperatorExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+    guard try traverse(expr.leftExpression) else { return false }
+    return try traverse(expr.rightExpression)
   }
 
   public func traverse(_ expr: ClosureExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    if let captureList = expr.signature?.captureList {
+      for captureItem in captureList {
+        guard try traverse(captureItem.expression) else { return false }
+      }
+    }
+    if let stmts = expr.statements {
+      guard try traverse(stmts) else { return false }
+    }
+
+    return true
   }
 
   public func traverse(_ expr: DynamicTypeExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+    return try traverse(expr.expression)
   }
 
   public func traverse(_ expr: ExplicitMemberExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    switch expr.kind {
+    case .tuple(let postfixExpr, _):
+      return try traverse(postfixExpr)
+    case .namedType(let postfixExpr, _):
+      return try traverse(postfixExpr)
+    case .generic(let postfixExpr, _, _):
+      return try traverse(postfixExpr)
+    case .argument(let postfixExpr, _, _):
+      return try traverse(postfixExpr)
+    }
   }
 
   public func traverse(_ expr: ForcedValueExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+    return try traverse(expr.postfixExpression)
   }
 
   public func traverse(_ expr: FunctionCallExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    guard try traverse(expr.postfixExpression) else { return false }
+    if let argumentList = expr.argumentClause {
+      for argument in argumentList {
+        switch argument {
+        case .expression(let argExpr):
+          guard try traverse(argExpr) else { return false }
+        case .namedExpression(_, let argExpr):
+          guard try traverse(argExpr) else { return false }
+        case .memoryReference(let argExpr):
+          guard try traverse(argExpr) else { return false }
+        case .namedMemoryReference(_, let argExpr):
+          guard try traverse(argExpr) else { return false }
+        default:
+          continue
+        }
+      }
+    }
+    if let closureExpr = expr.trailingClosure {
+      guard try traverse(closureExpr) else { return false }
+    }
+
+    return true
   }
 
   public func traverse(_ expr: IdentifierExpression) throws -> Bool {
@@ -567,67 +625,144 @@ extension ASTVisitor {
   }
 
   public func traverse(_ expr: InitializerExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+    return try traverse(expr.postfixExpression)
   }
 
   public func traverse(_ expr: KeyPathExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+    return try traverse(expr.expression)
   }
 
   public func traverse(_ expr: LiteralExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    switch expr.kind {
+    case .interpolatedString(let exprs, _):
+      return try traverse(exprs)
+    case .array(let exprs):
+      return try traverse(exprs)
+    case .dictionary(let dictEntries):
+      for entry in dictEntries {
+        guard try traverse(entry.key) else { return false }
+        guard try traverse(entry.value) else { return false }
+      }
+      return true
+    default:
+      return true
+    }
   }
 
   public func traverse(_ expr: OptionalChainingExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+    return try traverse(expr.postfixExpression)
   }
 
   public func traverse(_ expr: ParenthesizedExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+    return try traverse(expr.expression)
   }
 
   public func traverse(_ expr: PostfixOperatorExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+    return try traverse(expr.postfixExpression)
   }
 
   public func traverse(_ expr: PostfixSelfExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+    return try traverse(expr.postfixExpression)
   }
 
   public func traverse(_ expr: PrefixOperatorExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+    return try traverse(expr.postfixExpression)
   }
 
   public func traverse(_ expr: SelectorExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    switch expr.kind {
+    case .selector(let expression):
+      return try traverse(expression)
+    case .getter(let expression):
+      return try traverse(expression)
+    case .setter(let expression):
+      return try traverse(expression)
+    default:
+      return true
+    }
   }
 
   public func traverse(_ expr: SelfExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    switch expr.kind {
+    case .subscript(let exprs):
+      return try traverse(exprs)
+    default:
+      return true
+    }
   }
 
   public func traverse(_ expr: SubscriptExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    guard try traverse(expr.postfixExpression) else { return false }
+    return try traverse(expr.expressionList)
   }
 
   public func traverse(_ expr: SuperclassExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    switch expr.kind {
+    case .subscript(let exprs):
+      return try traverse(exprs)
+    default:
+      return true
+    }
   }
 
   public func traverse(_ expr: TernaryConditionalOperatorExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    guard try traverse(expr.conditionExpression) else { return false }
+    guard try traverse(expr.trueExpression) else { return false }
+    return try traverse(expr.falseExpression)
   }
 
   public func traverse(_ expr: TryOperatorExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    switch expr.kind {
+    case .try(let expression):
+      return try traverse(expression)
+    case .forced(let expression):
+      return try traverse(expression)
+    case .optional(let expression):
+      return try traverse(expression)
+    }
   }
 
   public func traverse(_ expr: TupleExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    let exprs = expr.elementList.map({ $0.expression })
+    return try traverse(exprs)
   }
 
   public func traverse(_ expr: TypeCastingOperatorExpression) throws -> Bool {
-    return try visit(expr)
+    guard try visit(expr) else { return false }
+
+    switch expr.kind {
+    case .check(let expression, _):
+      return try traverse(expression)
+    case .cast(let expression, _):
+      return try traverse(expression)
+    case .conditionalCast(let expression, _):
+      return try traverse(expression)
+    case .forcedCast(let expression, _):
+      return try traverse(expression)
+    }
   }
 
   public func traverse(_ expr: WildcardExpression) throws -> Bool {
