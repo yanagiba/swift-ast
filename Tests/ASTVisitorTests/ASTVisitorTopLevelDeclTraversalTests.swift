@@ -15,7 +15,8 @@
 */
 
 import XCTest
-import AST
+
+@testable import AST
 
 class ASTVisitorTopLevelDeclTraversalTests : XCTestCase {
   private let topLevelDecl = TopLevelDeclaration(statements: [
