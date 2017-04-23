@@ -153,7 +153,9 @@ extension ASTVisitor {
   }
 
   public func traverse(_ decl: InitializerDeclaration) throws -> Bool {
-    return try visit(decl)
+    guard try visit(decl) else { return false }
+
+    return try traverse(decl.body)
   }
 
   public func traverse(_ decl: OperatorDeclaration) throws -> Bool {
