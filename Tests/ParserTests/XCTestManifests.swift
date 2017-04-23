@@ -120,7 +120,6 @@ public func allTests() -> [XCTestCaseEntry] {
     ///////// Others
     testCase(KeywordUsedAsIdentifierTests.allTests),
     testCase(GenericOpeningChevronTests.allTests),
-    testCase(ZTests.allTests),
   ]
 }
 #endif

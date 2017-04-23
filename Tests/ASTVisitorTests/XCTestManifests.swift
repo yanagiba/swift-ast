@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,25 +16,10 @@
 
 import XCTest
 
-@testable import AST
-@testable import Parser
+#if !os(macOS)
+public func allTests() -> [XCTestCaseEntry] {
+  return [
 
-class ZTests: XCTestCase {
-  // Note: tests in this file should always run last,
-  // so that we can debug individual tests easily
-
-  func testCanary() {
-    XCTAssertTrue(true)
-  }
-
-  func testOne() {
-    parsePatternAndTest("_   :   Foo", "_: Foo", testClosure: { pttrn in
-      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 12))
-    })
-  }
-
-  static var allTests = [
-    ("testCanary", testCanary),
-    ("testOne", testOne),
   ]
 }
+#endif

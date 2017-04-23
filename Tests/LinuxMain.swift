@@ -19,9 +19,11 @@ import XCTest
 import CanaryTests
 import LexerTests
 import ParserTests
+import ASTVisitorTests
 
 var tests = [XCTestCaseEntry]()
 tests += CanaryTests.allTests()
 tests += LexerTests.allTests()
 tests += ParserTests.allTests()
+tests += ASTVisitorTests.allTests()
 XCTMain(tests)
