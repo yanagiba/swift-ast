@@ -2,3 +2,4 @@
 .build
 Packages/
 swift-ast.xcodeproj/
+build/

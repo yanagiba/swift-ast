@@ -65,5 +65,29 @@ let package = Package(
         "Frontend",
       ]
     ),
+
+    // MARK: Tests
+
+    Target(
+      name: "CanaryTests"
+    ),
+    Target(
+      name: "LexerTests",
+      dependencies: [
+        "Lexer",
+      ]
+    ),
+    Target(
+      name: "ParserTests",
+      dependencies: [
+        "Parser",
+      ]
+    ),
+    Target(
+      name: "ASTVisitorTests",
+      dependencies: [
+        "AST",
+      ]
+    ),
   ]
 )
