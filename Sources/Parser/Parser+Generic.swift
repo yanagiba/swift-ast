@@ -95,8 +95,8 @@ extension Parser {
     switch _lexer.read([.colon, .dummyBinaryOperator]) {
     case .colon:
       let typeStartLocation = getStartLocation()
-      if case let .identifier(s) = _lexer.read(.dummyIdentifier) {
-        let firstType = try parseIdentifierType(s, idTypeRange)
+      if case let .identifier(name) = _lexer.read(.dummyIdentifier) {
+        let firstType = try parseIdentifierType(name, idTypeRange)
         if testAmp() {
           let type = try parseProtocolCompositionType(firstType)
           return .protocolConformance(idType, type)

@@ -20,6 +20,7 @@ import XCTest
 public func allTests() -> [XCTestCaseEntry] {
   return [
     testCase(ASTVisitorTopLevelDeclTraversalTests.allTests),
+    testCase(ASTVisitorCodeBlockTraversalTests.allTests),
   ]
 }
 #endif
