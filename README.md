@@ -1,6 +1,12 @@
 # Swift Abstract Syntax Tree
 
 [![Travis CI Status](https://api.travis-ci.org/yanagiba/swift-ast.svg?branch=master)](https://travis-ci.org/yanagiba/swift-ast)
+[![codecov](https://codecov.io/gh/yanagiba/swift-ast/branch/master/graph/badge.svg)](https://codecov.io/gh/yanagiba/swift-ast)
+![Swift 3.1](https://img.shields.io/badge/swift-3.1-brightgreen.svg)
+![Swift Package Manager](https://img.shields.io/badge/SPM-ready-orange.svg)
+![Platforms](https://img.shields.io/badge/platform-%20Linux%20|%20macOS%20-red.svg)
+![License](https://img.shields.io/github/license/yanagiba/swift-ast.svg)
+
 
 The Swift Abstract Syntax Tree is an initiative to parse
 [Swift Programming Language](https://swift.org/about/) in Swift itself.
@@ -51,7 +57,7 @@ git clone https://github.com/yanagiba/swift-ast
 Go to the repository folder, run the following command:
 
 ```bash
-make
+swift build
 ```
 
 ### Embed Into Your Project
@@ -96,11 +102,9 @@ providing the following option:
 - `-dump-ast`: in a tree structure
 - `-diagnostics-only`: no output other than the diagnostics information
 
-### Retrieve AST in Your Code
+### Use AST in Your Code
 
 #### Loop Through AST Nodes
-
-Import the two modules, and then parse the code for AST:
 
 ```swift
 import AST
@@ -122,7 +126,26 @@ do {
 
 #### Traverse AST Nodes
 
-This is a pending feature under development.
+We provide a pre-order depth-first traversal implementation on all AST nodes.
+In order to use this, simply write your visitor by conforming `ASTVisitor`
+protocol with the `visit` methods for the AST nodes that are interested to you.
+You can also write your own traversal implementations
+to override the default behaviors.
+
+Returning `false` from `traverse` and `visit` methods will stop the traverse.
+
+```swift
+class MyVisitor : ASTVisitor {
+  func visit(_ ifStmt: IfStatement) throws -> Bool {
+    // visit this if statement
+
+    return true
+  }
+}
+let myVisitor = MyVisitor()
+let topLevelDecl = MyParse.parse()
+myVisitor.traverse(topLevelDecl)
+```
 
 ## Development
 

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-// extends AST visitor with pre-ordor depth-first traversal
+// extends AST visitor with pre-order depth-first traversal
 extension ASTVisitor {
   public func traverse(_ topLevelDecl: TopLevelDeclaration) throws -> Bool {
     guard try visit(topLevelDecl) else { return false }
