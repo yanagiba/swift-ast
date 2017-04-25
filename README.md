@@ -1,6 +1,12 @@
 # Swift Abstract Syntax Tree
 
 [![Travis CI Status](https://api.travis-ci.org/yanagiba/swift-ast.svg?branch=master)](https://travis-ci.org/yanagiba/swift-ast)
+[![codecov](https://codecov.io/gh/yanagiba/swift-ast/branch/master/graph/badge.svg)](https://codecov.io/gh/yanagiba/swift-ast)
+![Swift 3.1](https://img.shields.io/badge/swift-3.1-brightgreen.svg)
+![Swift Package Manager](https://img.shields.io/badge/SPM-ready-orange.svg)
+![Platforms](https://img.shields.io/badge/platform-%20Linux%20|%20macOS%20-red.svg)
+![License](https://img.shields.io/github/license/yanagiba/swift-ast.svg)
+
 
 The Swift Abstract Syntax Tree is an initiative to parse
 [Swift Programming Language](https://swift.org/about/) in Swift itself.
@@ -9,11 +15,10 @@ The output of this utility is the corresponding
 of the source code.
 
 The AST produced in this tool is intended to be consumed in various scenarios.
-For example, linting tools like [swift-lint](https://github.com/yanagiba/swift-lint)
-can traverse the AST and find patterns of
-[code smells](https://en.wikipedia.org/wiki/Code_smell).
+For example, formatting tools like [swift-format](https://github.com/yanagiba/swift-format)
+and linting tools like [swift-lint](https://github.com/yanagiba/swift-lint).
 
-Refactoring and code manipulation can leverage this AST as well.
+Refactoring, code manipulation and optimization can leverage this AST as well.
 
 Other ideas could be llvm-codegen or jvm-codegen (thinking about JSwift) that
 consumes the AST and converts them into binary or bytecode, which will make it
@@ -24,19 +29,20 @@ link to ryuichi@ryuichisaito.com.)
 
 ## A Work In Progress
 
-The Swift Abstract Syntax Tree is still in early design and development. Many
-features are incomplete or partially implemented. Some with technical limitations.
+The Swift Abstract Syntax Tree is still in early design and development.
+Many features are incomplete or partially implemented.
+Some with technical limitations.
 
 However, the framework of the project is set up already, so pull requests for
 new features, issues and comments for existing implementations are welcomed.
 
-Please also be advised that the Swift language is under rapid development, its
-syntax is not stable. So the details are subject to change in order to
+Please also be advised that the Swift language is under rapid development,
+its syntax is not stable. So the details are subject to change in order to
 catch up as Swift evolves.
 
 ## Requirements
 
-- [Swift Development Snapshot](https://swift.org/download/)
+- [Swift 3.1](https://swift.org/download/)
 
 ## Installing
 
@@ -51,22 +57,18 @@ git clone https://github.com/yanagiba/swift-ast
 Go to the repository folder, run the following command:
 
 ```bash
-make && make install
+swift build
 ```
-
-For Mac users, it will prompt for `sudo` passcode. This will automatically finds
-the path for the current swift you are using, and install the executable to
-the correct location.
 
 ### Embed Into Your Project
 
-Add the swift-ast dependency to your SPM dependencies in Package.swift:
+Add the swift-ast dependency to `Package.swift`:
 
 ```swift
 import PackageDescription
 
 let package = Package(
-  name: "ASTVisitor",
+  name: "MyProject",
   dependencies: [
     .Package(url: "https://github.com/yanagiba/swift-ast.git", majorVersion: 0)
   ]
@@ -90,36 +92,60 @@ Multiple files can be parsed with one call:
 swift-ast path1/to1/foo.swift path2/to2/bar.swift ... path3/to3/main.swift
 ```
 
-When `swift-ast` is installed along with the `swift` binary, then it can also
-be triggered like:
+#### CLI Options
 
-```bash
-swift ast path/to/foobar.swift
-```
+By default, the AST output is in a plain text format without indentation
+nor color highlight to the keywords. The output format can be changed by
+providing the following option:
 
-### Retrieve AST in Your Code
+- `-print-ast`: with indentation and color highlight
+- `-dump-ast`: in a tree structure
+- `-diagnostics-only`: no output other than the diagnostics information
+
+### Use AST in Your Code
 
 #### Loop Through AST Nodes
 
-Import the two modules, and then parse the code for AST:
-
 ```swift
-import ast
-import parser
+import AST
+import Parser
+import Source
 
-let parser = Parser()
-let (astContext, errors) = parser.parse(fileContent)
-for error in errors {
-  // output errors
-}
-for node in astContext.topLevelDeclaration.statements {
-  // consume nodes
+do {
+  let sourceFile = try SourceReader.read(at: filePath)
+  let parser = Parser(source: sourceFile)
+  let topLevelDecl = try parser.parse()
+
+  for stmt in topLevelDecl.statements {
+    // consume statement
+  }
+} catch {
+  // handle errors
 }
 ```
 
 #### Traverse AST Nodes
 
-This is a pending feature under development.
+We provide a pre-order depth-first traversal implementation on all AST nodes.
+In order to use this, simply write your visitor by conforming `ASTVisitor`
+protocol with the `visit` methods for the AST nodes that are interested to you.
+You can also write your own traversal implementations
+to override the default behaviors.
+
+Returning `false` from `traverse` and `visit` methods will stop the traverse.
+
+```swift
+class MyVisitor : ASTVisitor {
+  func visit(_ ifStmt: IfStatement) throws -> Bool {
+    // visit this if statement
+
+    return true
+  }
+}
+let myVisitor = MyVisitor()
+let topLevelDecl = MyParse.parse()
+myVisitor.traverse(topLevelDecl)
+```
 
 ## Development
 
@@ -150,27 +176,6 @@ Compile and run the entire tests by:
 ```bash
 make test
 ```
-
-### Running Integration Tests
-
-All integration tests files can be found under
-[Integrations](Integrations) folder. In addition,
-a utility script `run_integrations.sh` can help to run integration tests easily:
-
-```bash
-./run_integrations.sh Integrations/a.swift Integrations/b.swift
-```
-
-## Known Limitations
-
-- Linux is not supported due to the
-  [Foundation](https://github.com/apple/swift-corelibs-foundation)
-  is not complete, check out Apple's
-  [status page](https://github.com/apple/swift-corelibs-foundation/blob/master/Docs/Status.md)
-  for updates.
-- Emoji, many Asian language characters, and some European special characters
-  won't be parsed correctly. Major features have higher priority, and we will
-  come back to address this later.
 
 ## Contact
 

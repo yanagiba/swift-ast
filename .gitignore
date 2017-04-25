@@ -1,3 +1,5 @@
 .DS_Store
 .build
 Packages/
+swift-ast.xcodeproj/
+build/

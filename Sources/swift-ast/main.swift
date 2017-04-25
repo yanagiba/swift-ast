@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Saito, LLC
+   Copyright 2015-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,38 +14,24 @@
    limitations under the License.
 */
 
-import CoreFoundation
 import Foundation
+import Frontend
 
-import source
-import parser
-import util
-
-var filePaths = Process.arguments
+var filePaths = CommandLine.arguments
 filePaths.remove(at: 0)
 
-for filePath in filePaths {
-  let absolutePath = filePath.absolutePath()
-  guard let fileContent = try? absolutePath.readFile() else {
-    print("Error in reading file \(absolutePath)")
-    continue
-  }
-
-  let sourceFile = SourceFile(path: "\(absolutePath)", content: fileContent)
-
-  let parser = Parser()
-  let parserStartTime = CFAbsoluteTimeGetCurrent()
-  let (astContext, errors) = parser.parse(source: sourceFile)
-  let parserTimeElapsed = CFAbsoluteTimeGetCurrent() - parserStartTime
-
-  for error in errors {
-    print("Parser error: \(error)")
-  }
-  print("")
-  print(astContext.inspect())
-  print("")
-  print("----------")
-  print("File contains \(fileContent.characters.count) chars, and it takes \(parserTimeElapsed) seconds to parse.")
-  print("----------")
+let exitCode: Int32
+if filePaths.first == "-dump-ast" {
+  filePaths.remove(at: 0)
+  exitCode = terminalMain(filePaths: filePaths, ttyType: .astDump)
+} else if filePaths.first == "-print-ast" {
+  filePaths.remove(at: 0)
+  exitCode = terminalMain(filePaths: filePaths, ttyType: .astPrint)
+} else if filePaths.first == "-diagnostics-only" {
+  filePaths.remove(at: 0)
+  exitCode = terminalMain(filePaths: filePaths, ttyType: .diagnosticsOnly)
+} else {
+  exitCode = terminalMain(filePaths: filePaths)
 }
 
+exit(exitCode)
