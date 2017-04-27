@@ -3,9 +3,9 @@ GEM
   specs:
     coderay (1.1.1)
     colored (1.2)
-    ffi (1.9.14)
+    ffi (1.9.18)
     formatador (0.2.5)
-    guard (2.14.0)
+    guard (2.14.1)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
       lumberjack (~> 1.0)
@@ -22,7 +22,7 @@ GEM
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
-    lumberjack (1.0.10)
+    lumberjack (1.0.11)
     method_source (0.8.2)
     nenv (0.3.0)
     notiffany (0.1.1)
@@ -33,8 +33,9 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     rb-fsevent (0.9.8)
-    rb-inotify (0.9.7)
+    rb-inotify (0.9.8)
       ffi (>= 0.5.0)
+    rb-readline (0.5.4)
     ruby_dep (1.5.0)
     shellany (0.0.1)
     slop (3.6.0)
@@ -46,6 +47,7 @@ PLATFORMS
 DEPENDENCIES
   colored
   guard-shell
+  rb-readline
 
 BUNDLED WITH
-   1.13.6
+   1.14.6
