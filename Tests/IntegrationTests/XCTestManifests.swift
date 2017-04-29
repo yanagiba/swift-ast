@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,16 +16,10 @@
 
 import XCTest
 
-import CanaryTests
-import LexerTests
-import ParserTests
-import ASTVisitorTests
-import IntegrationTests
-
-var tests = [XCTestCaseEntry]()
-tests += CanaryTests.allTests()
-tests += LexerTests.allTests()
-tests += ParserTests.allTests()
-tests += ASTVisitorTests.allTests()
-tests += IntegrationTests.allTests()
-XCTMain(tests)
+#if !os(macOS)
+public func allTests() -> [XCTestCaseEntry] {
+  return [
+    testCase(ASTDumpPresenterTests.allTests),
+  ]
+}
+#endif

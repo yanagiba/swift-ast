@@ -1,0 +1,4 @@
+top_level_decl <range: ASTDumpPresenterTestResources/BreakStatementTests.swift:17:1-18.6>
+  break_stmt <range: ASTDumpPresenterTestResources/BreakStatementTests.swift:17:1-17.10>
+      label_name: `foo`
+  break_stmt <range: ASTDumpPresenterTestResources/BreakStatementTests.swift:18:1-18.6>

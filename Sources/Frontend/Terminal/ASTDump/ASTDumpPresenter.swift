@@ -61,13 +61,32 @@ class ASTDumpPresenter : ASTVisitor {
   public func visit(_ classDecl: ClassDeclaration) throws -> Bool {
     append("class_decl", classDecl.sourceRange)
 
-    return true
+    _nested += 1
+    for member in classDecl.members {
+      switch member {
+      case .declaration(let decl):
+        _ = try traverse(decl)
+      case .compilerControl(let stmt):
+        _ = try traverse(stmt)
+      }
+    }
+    _nested -= 1
+
+    return false
   }
 
   public func visit(_ constDecl: ConstantDeclaration) throws -> Bool {
     append("const_decl", constDecl.sourceRange)
 
-    return true
+    _nested += 1
+    for initializer in constDecl.initializerList {
+      if let expr = initializer.initializerExpression {
+        guard try traverse(expr) else { return false }
+      }
+    }
+    _nested -= 1
+
+    return false
   }
 
   public func visit(_ deinitDecl: DeinitializerDeclaration) throws -> Bool {
@@ -79,19 +98,51 @@ class ASTDumpPresenter : ASTVisitor {
   public func visit(_ enumDecl: EnumDeclaration) throws -> Bool {
     append("enum_decl", enumDecl.sourceRange)
 
-    return true
+    _nested += 1
+    for member in enumDecl.members {
+      switch member {
+      case .declaration(let decl):
+        _ = try traverse(decl)
+      case .compilerControl(let stmt):
+        _ = try traverse(stmt)
+      case .union:
+        presentation += String(indentation: _nested)
+        presentation += "<union_case> TODO" + "\n"
+      case .rawValue:
+        presentation += String(indentation: _nested)
+        presentation += "<raw_value_case> TODO" + "\n"
+      }
+    }
+    _nested -= 1
+
+    return false
   }
 
   public func visit(_ extDecl: ExtensionDeclaration) throws -> Bool {
     append("ext_decl", extDecl.sourceRange)
 
-    return true
+    _nested += 1
+    for member in extDecl.members {
+      switch member {
+      case .declaration(let decl):
+        _ = try traverse(decl)
+      case .compilerControl(let stmt):
+        _ = try traverse(stmt)
+      }
+    }
+    _nested -= 1
+
+    return false
   }
 
   public func visit(_ funcDecl: FunctionDeclaration) throws -> Bool {
     append("func_decl", funcDecl.sourceRange)
 
-    return true
+    if let body = funcDecl.body {
+      _ = try traverse(body)
+    }
+
+    return false
   }
 
   public func visit(_ importDecl: ImportDeclaration) throws -> Bool {
@@ -103,7 +154,9 @@ class ASTDumpPresenter : ASTVisitor {
   public func visit(_ initDecl: InitializerDeclaration) throws -> Bool {
     append("init_decl", initDecl.sourceRange)
 
-    return true
+    _ = try traverse(initDecl.body)
+
+    return false
   }
 
   public func visit(_ opDecl: OperatorDeclaration) throws -> Bool {
@@ -123,17 +176,61 @@ class ASTDumpPresenter : ASTVisitor {
   public func visit(_ protoDecl: ProtocolDeclaration) throws -> Bool {
     append("proto_decl", protoDecl.sourceRange)
 
-    return true
+    _nested += 1
+    for member in protoDecl.members {
+      presentation += String(indentation: _nested)
+      presentation += "<protocol_decl_member> TODO" + "\n"
+      // switch member {
+      // case .method(let method):
+      //   for param in method.signature.parameterList {
+      //     if let defaultArg = param.defaultArgumentClause {
+      //       guard try traverse(defaultArg) else { return false }
+      //     }
+      //   }
+      // case .initializer(let initializer):
+      //   for param in initializer.parameterList {
+      //     if let defaultArg = param.defaultArgumentClause {
+      //       guard try traverse(defaultArg) else { return false }
+      //     }
+      //   }
+      // case .subscript(let member):
+      //   for param in member.parameterList {
+      //     if let defaultArg = param.defaultArgumentClause {
+      //       guard try traverse(defaultArg) else { return false }
+      //     }
+      //   }
+      // case .compilerControl(let stmt):
+      //   guard try traverse(stmt) else { return false }
+      // default:
+      //   continue
+      // }
+    }
+    _nested -= 1
+
+    return false
   }
 
   public func visit(_ structDecl: StructDeclaration) throws -> Bool {
     append("struct_decl", structDecl.sourceRange)
 
-    return true
+    _nested += 1
+    for member in structDecl.members {
+      switch member {
+      case .declaration(let decl):
+        _ = try traverse(decl)
+      case .compilerControl(let stmt):
+        _ = try traverse(stmt)
+      }
+    }
+    _nested -= 1
+
+    return false
   }
 
   public func visit(_ subscriptDecl: SubscriptDeclaration) throws -> Bool {
     append("subscript_decl", subscriptDecl.sourceRange)
+
+    // TODO: handle block properly
 
     return true
   }
@@ -147,6 +244,8 @@ class ASTDumpPresenter : ASTVisitor {
   public func visit(_ varDecl: VariableDeclaration) throws -> Bool {
     append("var_decl", varDecl.sourceRange)
 
+    // TODO: handle block properly
+
     return true
   }
 
@@ -154,6 +253,10 @@ class ASTDumpPresenter : ASTVisitor {
 
   public func visit(_ breakStmt: BreakStatement) throws -> Bool {
     append("break_stmt", breakStmt.sourceRange)
+    if let labelName = breakStmt.labelName {
+      presentation += String(indentation: _nested+2)
+      presentation += "label_name: `\(labelName)`\n"
+    }
 
     return true
   }

@@ -89,5 +89,11 @@ let package = Package(
         "AST",
       ]
     ),
+    Target(
+      name: "IntegrationTests",
+      dependencies: [
+        "Frontend",
+      ]
+    ),
   ]
 )
