@@ -30,7 +30,7 @@ class ASTDumpPresenter : ASTVisitor {
       presentation += String(indentation: _nested)
     }
     presentation += nodeType.colored(with: .magenta) + " "
-    presentation += "<range: \(sourceRange)>".colored(with: .yellow)
+    presentation += "<range: \(sourceRange.ttyDescription)>".colored(with: .yellow)
     presentation += "\n"
   }
 

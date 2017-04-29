@@ -14,6 +14,8 @@
    limitations under the License.
 */
 
+import Foundation
+
 enum TTYColor : Int {
   case black
   case red
@@ -40,5 +42,14 @@ extension String {
     default:
       return "\u{001B}[\(30 + color.rawValue)m\(self)\(defaultColor)"
     }
+  }
+
+  var adjustedForPWD: String {
+    let pwd = FileManager.default.currentDirectoryPath
+    guard hasPrefix(pwd) else {
+      return self
+    }
+
+    return substring(from: index(startIndex, offsetBy: pwd.characters.count+1))
   }
 }
