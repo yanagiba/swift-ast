@@ -266,6 +266,24 @@ class ASTDumpPresenter : ASTVisitor {
   ) throws -> Bool {
     append("compiler_ctrl_stmt", compilerCtrlStmt.sourceRange, false)
 
+    presentation += String(indentation: _nested+2)
+    switch compilerCtrlStmt.kind {
+    case .if(let condition):
+      presentation += "kind: `if`, condition: `\(condition)`"
+    case .elseif(let condition):
+      presentation += "kind: `elseif`, condition: `\(condition)`"
+    case .else:
+      presentation += "kind: `else`"
+    case .endif:
+      presentation += "kind: `endif`"
+    case let .sourceLocation(fileName, lineNumber):
+      presentation += "kind: `source_location`"
+      if let fileName = fileName, let lineNumber = lineNumber {
+        presentation += ", file_name: `\(fileName)`, line_number: `\(lineNumber)`"
+      }
+    }
+    presentation += "\n"
+
     return true
   }
 

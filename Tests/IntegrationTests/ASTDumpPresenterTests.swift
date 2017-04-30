@@ -24,6 +24,7 @@ class ASTDumpPresenterTests : XCTestCase {
     let resourceName = "ASTDumpPresenterTestResources"
     let testNames = [
       "BreakStatement",
+      "CompilerControlStatement"
     ]
     for testName in testNames {
       testIntegration(resourceName, testName) { source -> String in
