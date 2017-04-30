@@ -26,6 +26,7 @@ class ASTDumpPresenterTests : XCTestCase {
       "BreakStatement",
       "CompilerControlStatement",
       "ContinueStatement",
+      "DeferStatement",
     ]
     for testName in testNames {
       testIntegration(resourceName, testName) { source -> String in
