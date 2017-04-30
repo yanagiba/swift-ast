@@ -290,6 +290,11 @@ class ASTDumpPresenter : ASTVisitor {
   public func visit(_ continueStmt: ContinueStatement) throws -> Bool {
     append("continue_stmt", continueStmt.sourceRange)
 
+    if let labelName = continueStmt.labelName {
+      presentation += String(indentation: _nested+2)
+      presentation += "label_name: `\(labelName)`\n"
+    }
+
     return true
   }
 
