@@ -1,3 +1,0 @@
-top_level_decl <range: ASTDumpPresenterTestResources/DeferStatementTests.swift:17:1-27.2>
-  defer_stmt <range: ASTDumpPresenterTestResources/DeferStatementTests.swift:17:1-19.2>
-    break_stmt <range: ASTDumpPresenterTestResources/DeferStatementTests.swift:18:3-18.8>

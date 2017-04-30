@@ -19,8 +19,6 @@ defer {
 }
 
 defer {
-// TODO: this doesn't show up in the ast-dump, because the previous code-block stops the traversal
-// we need to work on assigning the lexical parent to nodes before coming back to this
   defer {
     return
   }

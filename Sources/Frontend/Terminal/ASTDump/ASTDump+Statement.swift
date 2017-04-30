@@ -16,28 +16,72 @@
 
 import AST
 
-extension Collection where Iterator.Element == Statement {
-  func ttyASTDump(indentation: Int) -> String {
-    return self
-      .map({ $0.ttyASTDump(indentation: indentation) })
-      .joined(separator: "\n")
+extension Statement {
+  var ttyDump: String {
+    switch self {
+    case let ttyAstDumpRepresentable as TTYASTDumpRepresentable:
+      return ttyAstDumpRepresentable.ttyDump
+    default:
+      return "(".colored(with: .blue) +
+        "unknown".colored(with: .red) +
+        ")".colored(with: .blue) +
+        " " +
+        "<range: \(sourceRange.ttyDescription)>".colored(with: .yellow)
+    }
   }
 }
 
-extension Statement {
-  func ttyASTDump(indentation: Int) -> String {
-    switch self {
-    case let decl as TTYASTDumpDeclaration:
-      return decl.ttyDeclarationDump(indentation: indentation)
-    default:
-      return String(indentation: indentation) +
-        "(".colored(with: .blue) +
-        "statement".colored(with: .magenta) +
-        " " +
-        "<range: \(sourceRange)>".colored(with: .yellow) +
-        "\n" +
-        textDescription +
-        ")".colored(with: .blue)
+extension BreakStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("break_stmt", sourceRange)
+    let body = labelName.map { ["label_name: `\($0)`".indent.indent] } ?? []
+    return ([head] + body).joined(separator: "\n")
+  }
+}
+
+extension CompilerControlStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("compiler_ctrl_stmt", sourceRange)
+    var body = String(indentation: 2)
+    switch kind {
+    case .if(let condition):
+      body += "kind: `if`, condition: `\(condition)`"
+    case .elseif(let condition):
+      body += "kind: `elseif`, condition: `\(condition)`"
+    case .else:
+      body += "kind: `else`"
+    case .endif:
+      body += "kind: `endif`"
+    case let .sourceLocation(fileName, lineNumber):
+      body += "kind: `source_location`"
+      if let fileName = fileName, let lineNumber = lineNumber {
+        body += ", file_name: `\(fileName)`, line_number: `\(lineNumber)`"
+      }
     }
+    return "\(head)\n\(body)"
+  }
+}
+
+extension ContinueStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("continue_stmt", sourceRange)
+    let body = labelName.map { ["label_name: `\($0)`".indent.indent] } ?? []
+    return ([head] + body).joined(separator: "\n")
+  }
+}
+
+extension DeferStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("defer_stmt", sourceRange)
+    let body = codeBlock.ttyDump.indent
+    return "\(head)\n\(body)"
+  }
+}
+
+extension ReturnStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("return_stmt", sourceRange)
+    let body = [String]() // labelName.map { ["label_name: `\($0)`".indent.indent] } ?? []
+    return ([head] + body).joined(separator: "\n")
   }
 }

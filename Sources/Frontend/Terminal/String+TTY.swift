@@ -34,6 +34,14 @@ extension String {
     self.init(repeating: "  ", count: indentation)
   }
 
+  static let indent = String(indentation: 1)
+
+  var indent: String {
+    return components(separatedBy: .newlines)
+      .map { String.indent + $0 }
+      .joined(separator: "\n")
+  }
+
   func colored(with color: TTYColor = .default) -> String {
     let defaultColor = "\u{001B}[0m"
     switch color {

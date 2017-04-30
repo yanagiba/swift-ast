@@ -48,9 +48,7 @@ public func terminalMain(
     DiagnosticPool.shared.report(withConsumer: diagnosticConsumer)
     switch ttyType {
     case .astDump:
-      let astDumpPresenter = ASTDumpPresenter()
-      _ = try? astDumpPresenter.traverse(topLevelDecl)
-      print(astDumpPresenter.presentation)
+      print(topLevelDecl.ttyDump)
     case .astPrint:
       print(topLevelDecl.ttyASTPrint(indentation: 0))
     case .astText:

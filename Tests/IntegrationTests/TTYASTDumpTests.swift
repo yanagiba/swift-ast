@@ -19,9 +19,9 @@ import XCTest
 @testable import Frontend
 @testable import Parser
 
-class ASTDumpPresenterTests : XCTestCase {
-  func testASTDumpPresentation() {
-    let resourceName = "ASTDumpPresenterTestResources"
+class TTYASTDumpTests : XCTestCase {
+  func testASTDump() {
+    let resourceName = "TTYASTDumpTestResources"
     let testNames = [
       "BreakStatement",
       "CompilerControlStatement",
@@ -34,14 +34,12 @@ class ASTDumpPresenterTests : XCTestCase {
         guard let topLevelDecl = try? parser.parse() else {
           return "error: failed in parsing the source \(source.path)."
         }
-        let astDumpPresenter = ASTDumpPresenter()
-        _ = try? astDumpPresenter.traverse(topLevelDecl)
-        return astDumpPresenter.presentation
+        return topLevelDecl.ttyDump
       }
     }
   }
 
   static var allTests = [
-    ("testASTDumpPresentation", testASTDumpPresentation),
+    ("testASTDump", testASTDump),
   ]
 }

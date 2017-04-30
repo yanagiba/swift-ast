@@ -1,0 +1,16 @@
+top_level_decl <range: TTYASTDumpTestResources/CompilerControlStatementTests.swift:17:1-26.16>
+  compiler_ctrl_stmt <range: TTYASTDumpTestResources/CompilerControlStatementTests.swift:17:1-17.14>
+      kind: `if`, condition: ` os(macOS)`
+  break_stmt <range: TTYASTDumpTestResources/CompilerControlStatementTests.swift:18:3-18.8>
+  compiler_ctrl_stmt <range: TTYASTDumpTestResources/CompilerControlStatementTests.swift:19:1-19.21>
+      kind: `elseif`, condition: ` swift(>=3.1)`
+  return_stmt <range: TTYASTDumpTestResources/CompilerControlStatementTests.swift:20:3-20.9>
+  compiler_ctrl_stmt <range: TTYASTDumpTestResources/CompilerControlStatementTests.swift:21:1-21.6>
+      kind: `else`
+  continue_stmt <range: TTYASTDumpTestResources/CompilerControlStatementTests.swift:22:3-22.11>
+  compiler_ctrl_stmt <range: TTYASTDumpTestResources/CompilerControlStatementTests.swift:23:1-23.7>
+      kind: `endif`
+  compiler_ctrl_stmt <range: TTYASTDumpTestResources/CompilerControlStatementTests.swift:25:1-25.16>
+      kind: `source_location`, file_name: `filename`, line_number: `10`
+  compiler_ctrl_stmt <range: TTYASTDumpTestResources/CompilerControlStatementTests.swift:26:1-26.16>
+      kind: `source_location`

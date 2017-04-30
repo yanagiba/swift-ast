@@ -14,9 +14,17 @@
    limitations under the License.
 */
 
+import Source
+
 protocol TTYASTDumpRepresentable {
+  var ttyDump: String { get }
+
+  func dump(_ nodeType: String, _ sourceRange: SourceRange) -> String
 }
 
-protocol TTYASTDumpDeclaration : TTYASTDumpRepresentable {
-  func ttyDeclarationDump(indentation: Int) -> String
+extension TTYASTDumpRepresentable {
+  func dump(_ nodeType: String, _ sourceRange: SourceRange) -> String {
+    return nodeType.colored(with: .magenta) + " " +
+      "<range: \(sourceRange.ttyDescription)>".colored(with: .yellow)
+  }
 }

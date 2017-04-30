@@ -17,28 +17,31 @@
 import AST
 
 extension TopLevelDeclaration : TTYASTDumpRepresentable {
-  func ttyASTDump(indentation: Int) -> String {
-    return "(".colored(with: .blue) +
-      "top_level_decl".colored(with: .magenta) +
-      " " +
-      "<range: \(sourceRange)>".colored(with: .yellow) +
-      "\n" +
-      statements.ttyASTDump(indentation: indentation + 1) +
-      ")".colored(with: .blue)
+  var ttyDump: String {
+    let head = dump("top_level_decl", sourceRange)
+    let body = statements.map { $0.ttyDump.indent }
+    let tail = ""
+    return ([head] + body + [tail]).joined(separator: "\n")
   }
 }
 
-extension ImportDeclaration : TTYASTDumpDeclaration {
-  func ttyDeclarationDump(indentation: Int) -> String {
-    return String(indentation: indentation) +
-      "(".colored(with: .blue) +
-      "import_decl".colored(with: .magenta) +
-      " " +
-      "<range: \(sourceRange)>".colored(with: .yellow) +
-      " " +
-      (attributes.isEmpty ? "" : "\(attributes.textDescription) ") +
-      (kind.map({ " \($0.rawValue)" }) ?? "") +
-      path.joined(separator: ".").colored(with: .yellow) +
-      ")".colored(with: .blue)
+extension CodeBlock : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    return statements.map { $0.ttyDump }.joined(separator: "\n")
   }
 }
+
+// extension ImportDeclaration : TTYASTDumpDeclaration {
+//   func ttyDeclarationDump(indentation: Int) -> String {
+//     return String(indentation: indentation) +
+//       "(".colored(with: .blue) +
+//       "import_decl".colored(with: .magenta) +
+//       " " +
+//       "<range: \(sourceRange)>".colored(with: .yellow) +
+//       " " +
+//       (attributes.isEmpty ? "" : "\(attributes.textDescription) ") +
+//       (kind.map({ " \($0.rawValue)" }) ?? "") +
+//       path.joined(separator: ".").colored(with: .yellow) +
+//       ")".colored(with: .blue)
+//   }
+// }
