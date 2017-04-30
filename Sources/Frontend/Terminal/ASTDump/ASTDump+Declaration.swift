@@ -31,17 +31,211 @@ extension CodeBlock : TTYASTDumpRepresentable {
   }
 }
 
-// extension ImportDeclaration : TTYASTDumpDeclaration {
-//   func ttyDeclarationDump(indentation: Int) -> String {
-//     return String(indentation: indentation) +
-//       "(".colored(with: .blue) +
-//       "import_decl".colored(with: .magenta) +
-//       " " +
-//       "<range: \(sourceRange)>".colored(with: .yellow) +
-//       " " +
-//       (attributes.isEmpty ? "" : "\(attributes.textDescription) ") +
-//       (kind.map({ " \($0.rawValue)" }) ?? "") +
-//       path.joined(separator: ".").colored(with: .yellow) +
-//       ")".colored(with: .blue)
-//   }
-// }
+extension ClassDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("class_decl", sourceRange)
+
+    let body = members.map { member -> String in
+      switch member {
+      case .declaration(let decl):
+        return decl.ttyDump
+      case .compilerControl(let stmt):
+        return stmt.ttyDump
+      }
+    }.joined(separator: "\n").indent
+
+    return "\(head)\n\(body)"
+  }
+}
+
+extension ConstantDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("const_decl", sourceRange)
+
+    // for initializer in constDecl.initializerList {
+    //   if let expr = initializer.initializerExpression {
+    //     guard try traverse(expr) else { return faldump
+    //     }
+    //   }
+    // }
+
+    return head
+  }
+}
+
+extension DeinitializerDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("deinit_decl", sourceRange)
+    let bodyTTYDump = body.ttyDump.indent
+    return "\(head)\n\(bodyTTYDump)"
+  }
+}
+
+extension EnumDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("enum_decl", sourceRange)
+
+    // for member in enumDecl.members {
+    //   switch member {
+    //   case .declaration(let decl):
+    //     _ = try traverse(decl)
+    //   case .compilerControl(let stmt):
+    //     _ = try traverse(stmt)
+    //   case .union:
+    //     presentation += String(indentation: _nested)
+    //     presentation += "<union_case> TODO" + "\n"
+    //   case .rawValue:
+    //     presentation += String(indentation: _nested)
+    //     presentation += "<raw_value_case> TODO" + "\n"
+    //   }
+    // }
+
+    return head
+  }
+}
+
+extension ExtensionDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("ext_decl", sourceRange)
+
+    let body = members.map { member -> String in
+      switch member {
+      case .declaration(let decl):
+        return decl.ttyDump
+      case .compilerControl(let stmt):
+        return stmt.ttyDump
+      }
+    }.joined(separator: "\n").indent
+
+    return "\(head)\n\(body)"
+  }
+}
+
+extension FunctionDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("func_decl", sourceRange)
+
+    let bodyTTYDump = body?.ttyDump.indent ?? ""
+    return "\(head)\n\(bodyTTYDump)"
+  }
+}
+
+extension ImportDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("import_decl", sourceRange)
+
+    return head
+  }
+}
+
+extension InitializerDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("init_decl", sourceRange)
+    let bodyTTYDump = body.ttyDump.indent
+    return "\(head)\n\(bodyTTYDump)"
+  }
+}
+
+extension OperatorDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("op_decl", sourceRange)
+
+    return head
+  }
+}
+
+extension PrecedenceGroupDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("precedence_group_decl", sourceRange)
+
+    return head
+  }
+}
+
+extension ProtocolDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("proto_decl", sourceRange)
+
+    /*
+    for member in protoDecl.members {
+      presentation += String(indentation: _nested)
+      presentation += "<protocol_decl_member> TODO" + "\n"
+      // switch member {
+      // case .method(let method):
+      //   for param in method.signature.parameterList {
+      //     if let defaultArg = param.defaultArgumentClause {
+      //       guard try traverse(defaultArg) else { return faldump
+      }
+      //     }
+      //   }
+      // case .initializer(let initializer):
+      //   for param in initializer.parameterList {
+      //     if let defaultArg = param.defaultArgumentClause {
+      //       guard try traverse(defaultArg) else { return faldump
+      }
+      //     }
+      //   }
+      // case .subscript(let member):
+      //   for param in member.parameterList {
+      //     if let defaultArg = param.defaultArgumentClause {
+      //       guard try traverse(defaultArg) else { return faldump
+      }
+      //     }
+      //   }
+      // case .compilerControl(let stmt):
+      //   guard try traverse(stmt) else { return faldump
+      }
+      // default:
+      //   continue
+      // }
+    }
+    */
+
+    return head
+  }
+}
+
+extension StructDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("struct_decl", sourceRange)
+
+    let body = members.map { member -> String in
+      switch member {
+      case .declaration(let decl):
+        return decl.ttyDump
+      case .compilerControl(let stmt):
+        return stmt.ttyDump
+      }
+    }.joined(separator: "\n").indent
+
+    return "\(head)\n\(body)"
+  }
+}
+
+extension SubscriptDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("subscript_decl", sourceRange)
+
+    // TODO: handle block properly
+
+    return head
+  }
+}
+
+extension TypealiasDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("typealias_decl", sourceRange)
+
+    return head
+  }
+}
+
+extension VariableDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("var_decl", sourceRange)
+
+    // TODO: handle block properly
+
+    return head
+  }
+}

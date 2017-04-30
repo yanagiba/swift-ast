@@ -78,10 +78,68 @@ extension DeferStatement : TTYASTDumpRepresentable {
   }
 }
 
+extension DoStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    return dump("do_stmt", sourceRange)
+  }
+}
+
+extension FallthroughStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    return dump("fallthrough_stmt", sourceRange)
+  }
+}
+
+extension ForInStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    return dump("for_stmt", sourceRange)
+  }
+}
+
+extension GuardStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    return dump("guard_stmt", sourceRange)
+  }
+}
+
+extension IfStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    return dump("if_stmt", sourceRange)
+  }
+}
+
+extension LabeledStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    return dump("labeled_stmt", sourceRange)
+  }
+}
+
+extension RepeatWhileStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    return dump("repeat_stmt", sourceRange)
+  }
+}
+
 extension ReturnStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
-    let head = dump("return_stmt", sourceRange)
-    let body = [String]() // labelName.map { ["label_name: `\($0)`".indent.indent] } ?? []
-    return ([head] + body).joined(separator: "\n")
+    return dump("return_stmt", sourceRange)
+  }
+}
+
+extension SwitchStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    return dump("switch_stmt", sourceRange)
+  }
+}
+
+extension ThrowStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    return dump("throw_stmt", sourceRange)
+  }
+}
+
+extension WhileStatement : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    return dump("while_stmt", sourceRange)
   }
 }
