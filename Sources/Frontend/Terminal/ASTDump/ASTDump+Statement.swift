@@ -34,7 +34,7 @@ extension Statement {
 extension BreakStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("break_stmt", sourceRange)
-    let body = labelName.map { ["label_name: `\($0)`".indent.indent] } ?? []
+    let body = labelName.map { ["label_name: `\($0)`".indent] } ?? []
     return ([head] + body).joined(separator: "\n")
   }
 }
@@ -42,7 +42,7 @@ extension BreakStatement : TTYASTDumpRepresentable {
 extension CompilerControlStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("compiler_ctrl_stmt", sourceRange)
-    var body = String(indentation: 2)
+    var body = String.indent
     switch kind {
     case .if(let condition):
       body += "kind: `if`, condition: `\(condition)`"
@@ -65,7 +65,7 @@ extension CompilerControlStatement : TTYASTDumpRepresentable {
 extension ContinueStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("continue_stmt", sourceRange)
-    let body = labelName.map { ["label_name: `\($0)`".indent.indent] } ?? []
+    let body = labelName.map { ["label_name: `\($0)`".indent] } ?? []
     return ([head] + body).joined(separator: "\n")
   }
 }

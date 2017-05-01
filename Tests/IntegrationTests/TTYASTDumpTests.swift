@@ -25,6 +25,7 @@ class TTYASTDumpTests : XCTestCase {
     let testNames = [
       // primary expressions
       "IdentifierExpression",
+      "LiteralExpression",
 
       // statements
       "BreakStatement",

@@ -18,7 +18,10 @@ import AST
 
 extension AssignmentOperatorExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("assign_expr", sourceRange)
+    let head = dump("assign_expr", sourceRange)
+    let leftExprDump = leftExpression.ttyDump.indent
+    let rightExprDump = rightExpression.ttyDump.indent
+    return "\(head)\n\(leftExprDump)\n\(rightExprDump)"
   }
 }
 
@@ -61,7 +64,7 @@ extension FunctionCallExpression : TTYASTDumpRepresentable {
 extension IdentifierExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("identifier_expr", sourceRange)
-    var body = String(indentation: 2)
+    var body = String.indent
     switch kind {
     case let .identifier(id, generic):
       body += "kind: `identifier`, identifier: `\(id)`"
@@ -104,7 +107,47 @@ extension KeyPathExpression : TTYASTDumpRepresentable {
 
 extension LiteralExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("literal_expr", sourceRange)
+    let head = dump("literal_expr", sourceRange)
+    var body = String.indent
+    switch kind {
+    case .nil:
+      body += "kind: `nil`, literal: `nil`"
+    case .boolean(let bool):
+      body += "kind: `bool`, literal: `\(bool ? "true" : "false")`"
+    case let .integer(i, rawText):
+      body += "kind: `int`, literal: `\(i)`, raw_text: `\(rawText)`"
+    case let .floatingPoint(d, rawText):
+      body += "kind: `double`, literal: `\(d)`, raw_text: `\(rawText)`"
+    case let .staticString(_, rawText):
+      body += "kind: `string`, raw_text: `\(rawText)`"
+    case let .interpolatedString(_, rawText):
+      body += "kind: `interpolated_string`, raw_text: `\(rawText)`"
+    case .array(let exprs):
+      body += "kind: `array`"
+      if exprs.isEmpty {
+        body += ", elements: <empty>"
+      } else {
+        body += "\n"
+        body += exprs.enumerated()
+          .map { "\($0): \($1.ttyDump)" }
+          .joined(separator: "\n")
+          .indent
+      }
+    case .dictionary(let entries):
+      body += "kind: `dict`"
+      if entries.isEmpty {
+        body += ", entries: <empty>"
+      } else {
+        body += "\n"
+        body += entries.enumerated()
+          .map { (index, entry) -> String in
+            "\(index): " + entry.key.ttyDump + "\n\(index): " + entry.value.ttyDump
+          }
+          .joined(separator: "\n")
+          .indent
+      }
+    }
+    return "\(head)\n\(body)"
   }
 }
 

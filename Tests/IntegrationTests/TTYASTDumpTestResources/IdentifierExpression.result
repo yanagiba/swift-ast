@@ -1,13 +1,13 @@
 top_level_decl <range: TTYASTDumpTestResources/IdentifierExpressionTests.swift:17:1-22.6>
   identifier_expr <range: TTYASTDumpTestResources/IdentifierExpressionTests.swift:17:1-17.4>
-      kind: `identifier`, identifier: `foo`
+    kind: `identifier`, identifier: `foo`
   identifier_expr <range: TTYASTDumpTestResources/IdentifierExpressionTests.swift:18:1-18.7>
-      kind: `identifier`, identifier: `foo`, generic_argument: `<T>`
+    kind: `identifier`, identifier: `foo`, generic_argument: `<T>`
   identifier_expr <range: TTYASTDumpTestResources/IdentifierExpressionTests.swift:19:1-19.8>
-      kind: `identifier`, identifier: `class`
+    kind: `identifier`, identifier: `class`
   identifier_expr <range: TTYASTDumpTestResources/IdentifierExpressionTests.swift:20:1-20.11>
-      kind: `identifier`, identifier: `class`, generic_argument: `<P>`
+    kind: `identifier`, identifier: `class`, generic_argument: `<P>`
   identifier_expr <range: TTYASTDumpTestResources/IdentifierExpressionTests.swift:21:1-21.3>
-      kind: `implicit_param_name`, index: `0`
+    kind: `implicit_param_name`, index: `0`
   identifier_expr <range: TTYASTDumpTestResources/IdentifierExpressionTests.swift:22:1-22.6>
-      kind: `implicit_param_name`, index: `0`, generic_argument: `<A>`
+    kind: `implicit_param_name`, index: `0`, generic_argument: `<A>`
