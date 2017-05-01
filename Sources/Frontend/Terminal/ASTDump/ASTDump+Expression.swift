@@ -273,7 +273,20 @@ extension TryOperatorExpression : TTYASTDumpRepresentable {
 
 extension TupleExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("tuple_expr", sourceRange)
+    let head = dump("tuple_expr", sourceRange)
+    let body: String
+    if elementList.isEmpty {
+      body = String.indent + "elements: <empty>"
+    } else {
+      body = elementList.enumerated().map { index, element in
+        var idText = "\(index): "
+        if let id = element.identifier {
+          idText += "id: `\(id)` "
+        }
+        return "\(idText)\(element.expression.ttyDump)"
+      }.joined(separator: "\n").indent
+    }
+    return "\(head)\n\(body)"
   }
 }
 

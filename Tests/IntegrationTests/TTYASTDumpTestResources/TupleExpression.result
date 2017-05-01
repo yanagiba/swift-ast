@@ -1,0 +1,26 @@
+top_level_decl <range: TTYASTDumpTestResources/TupleExpressionTests.swift:17:1-20.42>
+  assign_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:17:1-17.7>
+    wildcard_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:17:1-17.2>
+    tuple_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:17:5-17.7>
+      elements: <empty>
+  assign_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:18:1-18.11>
+    wildcard_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:18:1-18.2>
+    tuple_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:18:5-18.11>
+      0: id: `a` literal_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:18:9-18.10>
+        kind: `int`, literal: `1`, raw_text: `1`
+  assign_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:19:1-19.15>
+    wildcard_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:19:1-19.2>
+    tuple_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:19:5-19.15>
+      0: identifier_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:19:6-19.9>
+        kind: `identifier`, identifier: `foo`
+      1: identifier_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:19:11-19.14>
+        kind: `identifier`, identifier: `bar`
+  assign_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:20:1-20.42>
+    wildcard_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:20:1-20.2>
+    tuple_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:20:5-20.42>
+      0: id: `a` literal_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:20:15-20.16>
+        kind: `int`, literal: `1`, raw_text: `1`
+      1: id: `b` identifier_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:20:27-20.30>
+        kind: `identifier`, identifier: `foo`
+      2: tuple_expr <range: TTYASTDumpTestResources/TupleExpressionTests.swift:20:32-20.37>
+        elements: <empty>

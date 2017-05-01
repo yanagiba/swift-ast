@@ -30,6 +30,7 @@ class TTYASTDumpTests : XCTestCase {
       "SuperclassExpression",
       "ClosureExpression",
       "ParenthesizedExpression",
+      "TupleExpression",
 
       // statements
       "BreakStatement",
