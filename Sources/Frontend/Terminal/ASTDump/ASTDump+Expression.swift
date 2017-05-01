@@ -128,10 +128,7 @@ extension LiteralExpression : TTYASTDumpRepresentable {
         body += ", elements: <empty>"
       } else {
         body += "\n"
-        body += exprs.enumerated()
-          .map { "\($0): \($1.ttyDump)" }
-          .joined(separator: "\n")
-          .indent
+        body += dump(exprs).indent
       }
     case .dictionary(let entries):
       body += "kind: `dict`"
@@ -199,10 +196,7 @@ extension SelfExpression : TTYASTDumpRepresentable {
     case .subscript(let exprs):
       body += "kind: `subscript`"
       body += "\n"
-      body += exprs.enumerated()
-        .map { "\($0): \($1.ttyDump)" }
-        .joined(separator: "\n")
-        .indent
+      body += dump(exprs).indent
     case .initializer:
       body += "kind: `initializer`"
     }
@@ -218,7 +212,19 @@ extension SubscriptExpression : TTYASTDumpRepresentable {
 
 extension SuperclassExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("superclass_expr", sourceRange)
+    let head = dump("superclass_expr", sourceRange)
+    var body = String.indent
+    switch kind {
+    case .method(let name):
+      body += "kind: `method`, method_name: `\(name)`"
+    case .subscript(let exprs):
+      body += "kind: `subscript`"
+      body += "\n"
+      body += dump(exprs).indent
+    case .initializer:
+      body += "kind: `initializer`"
+    }
+    return "\(head)\n\(body)"
   }
 }
 

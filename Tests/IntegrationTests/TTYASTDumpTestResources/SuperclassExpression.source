@@ -14,25 +14,6 @@
    limitations under the License.
 */
 
-import Source
-import AST
-
-protocol TTYASTDumpRepresentable {
-  var ttyDump: String { get }
-
-  func dump(_ nodeType: String, _ sourceRange: SourceRange) -> String
-  func dump(_ exprs: ExpressionList) -> String
-}
-
-extension TTYASTDumpRepresentable {
-  func dump(_ nodeType: String, _ sourceRange: SourceRange) -> String {
-    return nodeType.colored(with: .magenta) + " " +
-      "<range: \(sourceRange.ttyDescription)>".colored(with: .yellow)
-  }
-
-  func dump(_ exprs: ExpressionList) -> String {
-    return exprs.enumerated()
-      .map { "\($0): \($1.ttyDump)" }
-      .joined(separator: "\n")
-  }
-}
+super.foo
+super.init
+super[foo, bar]
