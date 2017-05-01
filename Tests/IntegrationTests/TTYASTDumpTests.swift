@@ -23,6 +23,10 @@ class TTYASTDumpTests : XCTestCase {
   func testASTDump() {
     let resourceName = "TTYASTDumpTestResources"
     let testNames = [
+      // primary expressions
+      "IdentifierExpression",
+
+      // statements
       "BreakStatement",
       "CompilerControlStatement",
       "ContinueStatement",

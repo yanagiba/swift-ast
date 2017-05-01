@@ -60,7 +60,21 @@ extension FunctionCallExpression : TTYASTDumpRepresentable {
 
 extension IdentifierExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("identifier_expr", sourceRange)
+    let head = dump("identifier_expr", sourceRange)
+    var body = String(indentation: 2)
+    switch kind {
+    case let .identifier(id, generic):
+      body += "kind: `identifier`, identifier: `\(id)`"
+      if let gnrc = generic {
+        body += ", generic_argument: `\(gnrc.textDescription)`"
+      }
+    case let .implicitParameterName(i, generic):
+      body += "kind: `implicit_param_name`, index: `\(i)`"
+      if let gnrc = generic {
+        body += ", generic_argument: `\(gnrc.textDescription)`"
+      }
+    }
+    return "\(head)\n\(body)"
   }
 }
 

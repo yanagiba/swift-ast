@@ -29,7 +29,7 @@ public class IdentifierExpression : ASTNode, PrimaryExpression {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    switch self.kind {
+    switch kind {
     case let .identifier(id, generic):
       return "\(id)\(generic?.textDescription ?? "")"
     case let .implicitParameterName(i, generic):
