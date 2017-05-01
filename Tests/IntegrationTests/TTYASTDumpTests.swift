@@ -26,6 +26,7 @@ class TTYASTDumpTests : XCTestCase {
       // primary expressions
       "IdentifierExpression",
       "LiteralExpression",
+      "SelfExpression",
 
       // statements
       "BreakStatement",

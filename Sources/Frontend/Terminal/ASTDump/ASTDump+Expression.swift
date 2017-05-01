@@ -189,7 +189,24 @@ extension SelectorExpression : TTYASTDumpRepresentable {
 
 extension SelfExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("self_expr", sourceRange)
+    let head = dump("self_expr", sourceRange)
+    var body = String.indent
+    switch kind {
+    case .self:
+      body += "kind: `self`"
+    case .method(let name):
+      body += "kind: `method`, method_name: `\(name)`"
+    case .subscript(let exprs):
+      body += "kind: `subscript`"
+      body += "\n"
+      body += exprs.enumerated()
+        .map { "\($0): \($1.ttyDump)" }
+        .joined(separator: "\n")
+        .indent
+    case .initializer:
+      body += "kind: `initializer`"
+    }
+    return "\(head)\n\(body)"
   }
 }
 

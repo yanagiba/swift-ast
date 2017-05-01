@@ -31,7 +31,7 @@ public class SelfExpression : ASTNode, PrimaryExpression {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    switch self.kind {
+    switch kind {
     case .self:
       return "self"
     case .method(let name):
