@@ -28,6 +28,7 @@ class TTYASTDumpTests : XCTestCase {
       "LiteralExpression",
       "SelfExpression",
       "SuperclassExpression",
+      "ClosureExpression",
 
       // statements
       "BreakStatement",

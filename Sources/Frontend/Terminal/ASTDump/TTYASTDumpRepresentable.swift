@@ -22,6 +22,7 @@ protocol TTYASTDumpRepresentable {
 
   func dump(_ nodeType: String, _ sourceRange: SourceRange) -> String
   func dump(_ exprs: ExpressionList) -> String
+  func dump(_ funcResult: FunctionResult) -> String
 }
 
 extension TTYASTDumpRepresentable {
@@ -34,5 +35,13 @@ extension TTYASTDumpRepresentable {
     return exprs.enumerated()
       .map { "\($0): \($1.ttyDump)" }
       .joined(separator: "\n")
+  }
+
+  func dump(_ funcResult: FunctionResult) -> String {
+    let typeDump = "return_type: `\(funcResult.type.textDescription)`"
+    if funcResult.attributes.isEmpty {
+      return typeDump
+    }
+    return "\(typeDump) with attributes `\(funcResult.attributes.textDescription)`"
   }
 }

@@ -33,7 +33,36 @@ extension BinaryOperatorExpression : TTYASTDumpRepresentable {
 
 extension ClosureExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("closure_expr", sourceRange)
+    let head = dump("closure_expr", sourceRange)
+    var body = ""
+    if let signature = signature {
+      if let captureList = signature.captureList {
+        body += "\n"
+        body += "capture_list: `\(captureList.map({ $0.textDescription }).joined(separator: ", "))`".indent
+      }
+      if let parameterClause = signature.parameterClause {
+        body += "\n"
+        body += "parameters: `\(parameterClause.textDescription)`".indent
+      }
+      if signature.canThrow {
+        body += "\n"
+        body += "throwable: `true`".indent
+      }
+      if let functionResult = signature.functionResult {
+        body += "\n"
+        body += dump(functionResult).indent
+      }
+    }
+    if let stmts = statements {
+      body += "\n"
+      body += "statements:".indent
+      body += "\n"
+      body += stmts.enumerated()
+        .map { "\($0): \($1.ttyDump)" }
+        .joined(separator: "\n")
+        .indent
+    }
+    return "\(head)\(body)"
   }
 }
 

@@ -107,6 +107,7 @@ public class ClosureExpression : ASTNode, PrimaryExpression {
         stmtsText = "\n\(stmts.textDescription)\n"
       }
     }
+
     return "{\(signatureText)\(stmtsText)}"
   }
 }
