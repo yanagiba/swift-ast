@@ -185,7 +185,9 @@ extension OptionalChainingExpression : TTYASTDumpRepresentable {
 
 extension ParenthesizedExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("paren_expr", sourceRange)
+    let head = dump("paren_expr", sourceRange)
+    let exprDump = expression.ttyDump.indent
+    return "\(head)\n\(exprDump)"
   }
 }
 
