@@ -132,7 +132,7 @@ extension InitializerExpression : TTYASTDumpRepresentable {
 
 extension KeyPathExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("keypath_expr", sourceRange)
+    return dump("keypath_expr", sourceRange) + "\n" + expression.ttyDump.indent
   }
 }
 
