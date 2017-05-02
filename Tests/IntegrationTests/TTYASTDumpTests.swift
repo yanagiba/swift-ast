@@ -54,6 +54,7 @@ class TTYASTDumpTests : XCTestCase {
       "BinaryOperatorExpression",
       "AssignmentOperatorExpression",
       "TernaryConditionalOperatorExpression",
+      "TypeCastingOperatorExpression",
 
       // statements
       "BreakStatement",

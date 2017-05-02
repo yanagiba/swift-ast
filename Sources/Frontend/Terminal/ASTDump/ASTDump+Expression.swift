@@ -406,7 +406,30 @@ extension TupleExpression : TTYASTDumpRepresentable {
 
 extension TypeCastingOperatorExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("type_casting_expr", sourceRange)
+    let head = dump("type_casting_expr", sourceRange)
+    let exprText: String
+    let operatorText: String
+    let typeText: String
+    switch kind {
+    case let .check(expr, type):
+      exprText = expr.ttyDump
+      operatorText = "is"
+      typeText = type.textDescription
+    case let .cast(expr, type):
+      exprText = expr.ttyDump
+      operatorText = "cast"
+      typeText = type.textDescription
+    case let .conditionalCast(expr, type):
+      exprText = expr.ttyDump
+      operatorText = "conditional_cast"
+      typeText = type.textDescription
+    case let .forcedCast(expr, type):
+      exprText = expr.ttyDump
+      operatorText = "forced_cast"
+      typeText = type.textDescription
+    }
+    return "\(head)\n" +
+      "kind: `\(operatorText)`, type: `\(typeText)`\n\(exprText)".indent
   }
 }
 
