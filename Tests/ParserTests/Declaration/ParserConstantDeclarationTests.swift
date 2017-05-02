@@ -150,7 +150,7 @@ class ParserConstantDeclarationTests: XCTestCase {
     })
   }
 
-  func testFollowedByTailClosure() {
+  func testFollowedByTrailingClosure() {
     parseDeclarationAndTest(
       "let foo = bar { $0 == 0 }",
       "let foo = bar { $0 == 0 }",
@@ -198,7 +198,7 @@ class ParserConstantDeclarationTests: XCTestCase {
     ("testAttributes", testAttributes),
     ("testModifiers", testModifiers),
     ("testAttributeAndModifiers", testAttributeAndModifiers),
-    ("testFollowedByTailClosure", testFollowedByTailClosure),
+    ("testFollowedByTrailingClosure", testFollowedByTrailingClosure),
     ("testSourceRange", testSourceRange),
   ]
 }

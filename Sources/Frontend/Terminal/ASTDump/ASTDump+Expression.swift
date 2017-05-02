@@ -86,7 +86,39 @@ extension ForcedValueExpression : TTYASTDumpRepresentable {
 
 extension FunctionCallExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("function_call_expr", sourceRange)
+    let head = dump("function_call_expr", sourceRange)
+    var body = "head_\(postfixExpression.ttyDump)".indent
+    if let argumentClause = argumentClause {
+      body += "\n" + "arguments:".indent
+      if argumentClause.isEmpty {
+        body += " <empty>"
+      }
+      for (index, arg) in argumentClause.enumerated() {
+        body += "\n" + "\(index): ".indent
+        switch arg {
+        case .expression(let expr):
+          body += "kind: `expression`\n"
+          body += expr.ttyDump.indent.indent
+        case let .namedExpression(identifier, expr):
+          body += "kind: `named_expression`, name: `\(identifier)`\n"
+          body += expr.ttyDump.indent.indent
+        case .memoryReference(let expr):
+          body += "kind: `memory_reference`\n"
+          body += expr.ttyDump.indent.indent
+        case let .namedMemoryReference(name, expr):
+          body += "kind: `named_memory_reference`, name: `\(name)\n"
+          body += expr.ttyDump.indent.indent
+        case .operator(let op):
+          body += "kind: `operator`, operator: `\(op)`"
+        case let .namedOperator(identifier, op):
+          body += "kind: `named_operator`, name: `\(identifier)`, operator: `\(op)`"
+        }
+      }
+    }
+    if let trailingClosure = trailingClosure {
+      body += "\n" + "trailing_\(trailingClosure.ttyDump)".indent
+    }
+    return "\(head)\n\(body)"
   }
 }
 

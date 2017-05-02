@@ -1207,7 +1207,7 @@ class ParserVariableDeclarationTests: XCTestCase {
     })
   }
 
-  func testFollowedByTailClosure() {
+  func testFollowedByTrailingClosure() {
     parseDeclarationAndTest(
       "var foo = bar { $0 == 0 }",
       "var foo = bar { $0 == 0 }",
@@ -1336,8 +1336,8 @@ class ParserVariableDeclarationTests: XCTestCase {
     ("testDidSetWithAttributesAndNameThenWillSetWithAttributesAndName", testDidSetWithAttributesAndNameThenWillSetWithAttributesAndName),
     ("testTypeAnnotationWillSetDidSet", testTypeAnnotationWillSetDidSet),
     ("testTypeAnnotationInitializerWillSetDidSet", testTypeAnnotationInitializerWillSetDidSet),
-    // tail closure
-    ("testFollowedByTailClosure", testFollowedByTailClosure),
+    // trailing closure
+    ("testFollowedByTrailingClosure", testFollowedByTrailingClosure),
     // attributes/modifiers
     ("testAttributes", testAttributes),
     ("testModifiers", testModifiers),
