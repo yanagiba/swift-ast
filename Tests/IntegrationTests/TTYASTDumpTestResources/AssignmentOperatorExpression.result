@@ -1,0 +1,46 @@
+top_level_decl <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:1-22.17>
+  assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:1-17.41>
+    tuple_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:1-17.15>
+      0: identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:2-17.3>
+        kind: `identifier`, identifier: `a`
+      1: wildcard_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:5-17.6>
+      2: tuple_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:8-17.14>
+        0: identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:9-17.10>
+          kind: `identifier`, identifier: `b`
+        1: identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:12-17.13>
+          kind: `identifier`, identifier: `c`
+    tuple_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:18-17.41>
+      0: literal_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:19-17.25>
+        kind: `string`, raw_text: `"test"`
+      1: literal_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:27-17.31>
+        kind: `double`, literal: `9.45`, raw_text: `9.45`
+      2: tuple_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:33-17.40>
+        0: literal_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:34-17.36>
+          kind: `int`, literal: `12`, raw_text: `12`
+        1: literal_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:38-17.39>
+          kind: `int`, literal: `3`, raw_text: `3`
+  assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:18:1-18.10>
+    identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:18:1-18.4>
+      kind: `identifier`, identifier: `foo`
+    identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:18:7-18.10>
+      kind: `identifier`, identifier: `bar`
+  assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:19:1-19.17>
+    identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:19:1-19.4>
+      kind: `identifier`, identifier: `foo`
+    try_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:19:9-19.17>
+  assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:20:1-20.18>
+    identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:20:1-20.4>
+      kind: `identifier`, identifier: `foo`
+    try_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:20:9-20.18>
+  assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:21:1-21.18>
+    identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:21:1-21.4>
+      kind: `identifier`, identifier: `foo`
+    try_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:21:9-21.18>
+  assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:1-22.17>
+    assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:1-22.10>
+      identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:1-22.4>
+        kind: `identifier`, identifier: `foo`
+      identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:7-22.10>
+        kind: `identifier`, identifier: `bar`
+    literal_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:13-22.17>
+      kind: `bool`, literal: `true`
