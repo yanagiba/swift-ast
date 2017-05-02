@@ -1,0 +1,12 @@
+top_level_decl <range: TTYASTDumpTestResources/OptionalChainingExpressionTests.swift:17:1-19.6>
+  optional_chaining_expr <range: TTYASTDumpTestResources/OptionalChainingExpressionTests.swift:17:1-17.5>
+    identifier_expr <range: TTYASTDumpTestResources/OptionalChainingExpressionTests.swift:17:1-17.4>
+      kind: `identifier`, identifier: `foo`
+  optional_chaining_expr <range: TTYASTDumpTestResources/OptionalChainingExpressionTests.swift:18:1-18.6>
+    optional_chaining_expr <range: TTYASTDumpTestResources/OptionalChainingExpressionTests.swift:18:1-18.5>
+      identifier_expr <range: TTYASTDumpTestResources/OptionalChainingExpressionTests.swift:18:1-18.4>
+        kind: `identifier`, identifier: `foo`
+  optional_chaining_expr <range: TTYASTDumpTestResources/OptionalChainingExpressionTests.swift:19:1-19.6>
+    forced_value_expr <range: TTYASTDumpTestResources/OptionalChainingExpressionTests.swift:19:1-19.5>
+      identifier_expr <range: TTYASTDumpTestResources/OptionalChainingExpressionTests.swift:19:1-19.4>
+        kind: `identifier`, identifier: `foo`

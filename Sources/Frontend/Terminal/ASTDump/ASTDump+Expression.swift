@@ -108,7 +108,9 @@ extension ExplicitMemberExpression : TTYASTDumpRepresentable {
 
 extension ForcedValueExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("forced_value_expr", sourceRange)
+    let head = dump("forced_value_expr", sourceRange)
+    let exprDump = postfixExpression.ttyDump.indent
+    return "\(head)\n\(exprDump)"
   }
 }
 
@@ -250,7 +252,9 @@ extension LiteralExpression : TTYASTDumpRepresentable {
 
 extension OptionalChainingExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("optional_chaining_expr", sourceRange)
+    let head = dump("optional_chaining_expr", sourceRange)
+    let exprDump = postfixExpression.ttyDump.indent
+    return "\(head)\n\(exprDump)"
   }
 }
 

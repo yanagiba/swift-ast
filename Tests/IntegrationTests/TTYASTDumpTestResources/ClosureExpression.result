@@ -180,4 +180,6 @@ top_level_decl <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1
         0: kind: `expression`
           explicit_member_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:37:71-37.81>
             forced_value_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:37:71-37.75>
+              identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:37:71-37.74>
+                kind: `identifier`, identifier: `foo`
             identifier: `title`
