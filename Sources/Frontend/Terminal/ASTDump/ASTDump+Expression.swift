@@ -182,7 +182,9 @@ extension ImplicitMemberExpression : TTYASTDumpRepresentable {
 
 extension InOutExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("in_out_expr", sourceRange)
+    let head = dump("in_out_expr", sourceRange)
+    let body = "identifier: `\(identifier)`".indent
+    return "\(head)\n\(body)"
   }
 }
 

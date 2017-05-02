@@ -48,6 +48,7 @@ class TTYASTDumpTests : XCTestCase {
 
       // prefix expressions
       "PrefixOperatorExpression",
+      "InOutExpression",
 
       // statements
       "BreakStatement",
