@@ -158,7 +158,16 @@ extension InOutExpression : TTYASTDumpRepresentable {
 
 extension InitializerExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("initializer_expr", sourceRange)
+    let head = dump("initializer_expr", sourceRange)
+    var body = "head_\(postfixExpression.ttyDump)".indent
+    body += "\n" + "arguments:".indent
+    if argumentNames.isEmpty {
+      body += " <empty>"
+    }
+    for (index, arg) in argumentNames.enumerated() {
+      body += "\n" + "\(index): name: `name`".indent
+    }
+    return "\(head)\n\(body)"
   }
 }
 
