@@ -59,3 +59,8 @@ top_level_decl <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:17
       kind: `identifier`, identifier: `foo`
     index:
     0: try_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:22:6-22.15>
+      kind: `try`
+      function_call_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:22:10-22.15>
+        identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:22:10-22.13>
+          kind: `identifier`, identifier: `bar`
+        arguments: <empty>

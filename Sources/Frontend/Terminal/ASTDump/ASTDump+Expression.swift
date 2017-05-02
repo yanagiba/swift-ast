@@ -381,7 +381,21 @@ extension TernaryConditionalOperatorExpression : TTYASTDumpRepresentable {
 
 extension TryOperatorExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("try_expr", sourceRange)
+    let head = dump("try_expr", sourceRange)
+    let tryText: String
+    let exprDump: String
+    switch kind {
+    case .try(let expr):
+      tryText = "try"
+      exprDump = expr.ttyDump
+    case .forced(let expr):
+      tryText = "forced_try"
+      exprDump = expr.ttyDump
+    case .optional(let expr):
+      tryText = "optional_try"
+      exprDump = expr.ttyDump
+    }
+    return "\(head)\n" + "kind: `\(tryText)`\n\(exprDump)".indent
   }
 }
 

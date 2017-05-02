@@ -20,6 +20,24 @@ top_level_decl <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpress
         kind: `identifier`, identifier: `f`
       arguments: <empty>
   try_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:19:1-19.30>
+    kind: `optional_try`
+    ternary_cond_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:19:6-19.30>
+      function_call_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:19:6-19.9>
+        identifier_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:19:6-19.7>
+          kind: `identifier`, identifier: `c`
+        arguments: <empty>
+      try_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:19:12-19.19>
+        kind: `try`
+        function_call_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:19:16-19.19>
+          identifier_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:19:16-19.17>
+            kind: `identifier`, identifier: `t`
+          arguments: <empty>
+      try_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:19:22-19.30>
+        kind: `forced_try`
+        function_call_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:19:27-19.30>
+          identifier_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:19:27-19.28>
+            kind: `identifier`, identifier: `f`
+          arguments: <empty>
   ternary_cond_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:20:1-20.34>
     ternary_cond_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:20:1-20.18>
       identifier_expr <range: TTYASTDumpTestResources/TernaryConditionalOperatorExpressionTests.swift:20:1-20.2>

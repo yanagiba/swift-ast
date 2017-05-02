@@ -28,14 +28,23 @@ top_level_decl <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests
     identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:19:1-19.4>
       kind: `identifier`, identifier: `foo`
     try_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:19:9-19.17>
+      kind: `try`
+      identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:19:14-19.17>
+        kind: `identifier`, identifier: `bar`
   assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:20:1-20.18>
     identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:20:1-20.4>
       kind: `identifier`, identifier: `foo`
     try_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:20:9-20.18>
+      kind: `optional_try`
+      identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:20:15-20.18>
+        kind: `identifier`, identifier: `bar`
   assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:21:1-21.18>
     identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:21:1-21.4>
       kind: `identifier`, identifier: `foo`
     try_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:21:9-21.18>
+      kind: `forced_try`
+      identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:21:15-21.18>
+        kind: `identifier`, identifier: `bar`
   assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:1-22.17>
     assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:1-22.10>
       identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:1-22.4>

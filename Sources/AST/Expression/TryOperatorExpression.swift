@@ -32,7 +32,7 @@ public class TryOperatorExpression : ASTNode, Expression {
   override public var textDescription: String {
     let tryText: String
     let exprText: String
-    switch self.kind {
+    switch kind {
     case .try(let expr):
       tryText = "try"
       exprText = expr.textDescription
