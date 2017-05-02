@@ -42,6 +42,7 @@ class TTYASTDumpTests : XCTestCase {
       "InitializerExpression",
       "ExplicitMemberExpression",
       "PostfixSelfExpression",
+      "SubscriptExpression",
 
       // statements
       "BreakStatement",

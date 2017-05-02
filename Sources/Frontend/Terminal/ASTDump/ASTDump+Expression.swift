@@ -330,7 +330,11 @@ extension SelfExpression : TTYASTDumpRepresentable {
 
 extension SubscriptExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("subscript_expr", sourceRange)
+    let head = dump("subscript_expr", sourceRange)
+    let exprDump = postfixExpression.ttyDump.indent
+    let indexHead = "index:".indent
+    let exprsDump = dump(expressionList).indent
+    return "\(head)\n\(exprDump)\n\(indexHead)\n\(exprsDump)"
   }
 }
 
