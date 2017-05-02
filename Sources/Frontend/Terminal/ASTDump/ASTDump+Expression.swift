@@ -371,7 +371,11 @@ extension SuperclassExpression : TTYASTDumpRepresentable {
 
 extension TernaryConditionalOperatorExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("ternary_cond_expr", sourceRange)
+    let head = dump("ternary_cond_expr", sourceRange)
+    let condExprDump = conditionExpression.ttyDump.indent
+    let trueExprDump = trueExpression.ttyDump.indent
+    let falseExprDump = falseExpression.ttyDump.indent
+    return "\(head)\n\(condExprDump)\n\(trueExprDump)\n\(falseExprDump)"
   }
 }
 
