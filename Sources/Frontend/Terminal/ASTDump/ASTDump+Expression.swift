@@ -273,7 +273,9 @@ extension PostfixOperatorExpression : TTYASTDumpRepresentable {
 
 extension PostfixSelfExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("postfix_self_expr", sourceRange)
+    let head = dump("postfix_self_expr", sourceRange)
+    let exprDump = postfixExpression.ttyDump.indent
+    return "\(head)\n\(exprDump)"
   }
 }
 
