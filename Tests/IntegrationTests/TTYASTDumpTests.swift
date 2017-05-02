@@ -46,6 +46,9 @@ class TTYASTDumpTests : XCTestCase {
       "ForcedValueExpression",
       "OptionalChainingExpression",
 
+      // prefix expressions
+      "PrefixOperatorExpression",
+
       // statements
       "BreakStatement",
       "CompilerControlStatement",

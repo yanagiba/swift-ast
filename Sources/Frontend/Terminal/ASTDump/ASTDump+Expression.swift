@@ -285,7 +285,10 @@ extension PostfixSelfExpression : TTYASTDumpRepresentable {
 
 extension PrefixOperatorExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("prefix_op_expr", sourceRange)
+    let head = dump("prefix_op_expr", sourceRange)
+    let opDump = "operator: `\(prefixOperator)`".indent
+    let exprDump = postfixExpression.ttyDump.indent
+    return "\(head)\n\(opDump)\n\(exprDump)"
   }
 }
 

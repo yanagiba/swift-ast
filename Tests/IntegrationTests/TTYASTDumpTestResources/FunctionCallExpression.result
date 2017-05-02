@@ -57,8 +57,14 @@ top_level_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift
     1: kind: `named_operator`, name: `op`, operator: `-`
     2: kind: `expression`
       prefix_op_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:26:12-26.16>
+        operator: `-`
+        identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:26:13-26.16>
+          kind: `identifier`, identifier: `bar`
     3: kind: `named_expression`, name: `expr`
       prefix_op_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:26:22-26.26>
+        operator: `-`
+        identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:26:23-26.26>
+          kind: `identifier`, identifier: `bar`
   function_call_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:27:1-27.31>
     identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:27:1-27.4>
       kind: `identifier`, identifier: `min`
@@ -76,6 +82,11 @@ top_level_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift
     arguments:
     0: kind: `expression`
       prefix_op_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:28:8-28.22>
+        operator: `!`
+        explicit_member_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:28:9-28.22>
+          identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:28:9-28.14>
+            kind: `identifier`, identifier: `bytes`
+          identifier: `isEmpty`
   function_call_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:29:1-29.23>
     identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:29:1-29.4>
       kind: `identifier`, identifier: `foo`
