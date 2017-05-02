@@ -40,6 +40,7 @@ class TTYASTDumpTests : XCTestCase {
       "PostfixOperatorExpression",
       "FunctionCallExpression",
       "InitializerExpression",
+      "ExplicitMemberExpression",
 
       // statements
       "BreakStatement",

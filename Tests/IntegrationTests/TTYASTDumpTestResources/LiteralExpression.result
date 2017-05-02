@@ -45,7 +45,7 @@ top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1
       1: literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:32:9-32.12>
         kind: `dict`, entries: <empty>
       2: function_call_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:32:14-32.19>
-        head_identifier_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:32:14-32.17>
+        identifier_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:32:14-32.17>
           kind: `identifier`, identifier: `foo`
         arguments: <empty>
   assign_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:33:1-33.8>
@@ -63,7 +63,7 @@ top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1
       1: literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:34:19-34.24>
         kind: `string`, raw_text: `"bar"`
       1: function_call_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:34:26-34.44>
-        head_identifier_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:34:26-34.29>
+        identifier_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:34:26-34.29>
           kind: `identifier`, identifier: `foo`
         trailing_closure_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:34:30-34.44>
           statements:

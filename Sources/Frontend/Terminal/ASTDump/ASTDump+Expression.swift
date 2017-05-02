@@ -74,7 +74,35 @@ extension DynamicTypeExpression : TTYASTDumpRepresentable {
 
 extension ExplicitMemberExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("explicit_member_expr", sourceRange)
+    let head = dump("explicit_member_expr", sourceRange)
+    var body = ""
+    switch kind {
+    case let .tuple(postfixExpr, index):
+      body += postfixExpr.ttyDump.indent
+      body += "\n"
+      body += "index: `\(index)`".indent
+    case let .namedType(postfixExpr, identifier):
+      body += postfixExpr.ttyDump.indent
+      body += "\n"
+      body += "identifier: `\(identifier)`".indent
+    case let .generic(postfixExpr, identifier, genericClause):
+      body += postfixExpr.ttyDump.indent
+      body += "\n"
+      body += "identifier: `\(identifier)`".indent
+      body += ", generic_argument: `\(genericClause.textDescription)`"
+    case let .argument(postfixExpr, identifier, argumentNames):
+      body += postfixExpr.ttyDump.indent
+      body += "\n"
+      body += "identifier: `\(identifier)`".indent
+      body += "\n" + "arguments:".indent
+      if argumentNames.isEmpty {
+        body += " <empty>"
+      }
+      for (index, arg) in argumentNames.enumerated() {
+        body += "\n" + "\(index): name: `\(arg)`".indent
+      }
+    }
+    return "\(head)\n\(body)"
   }
 }
 
@@ -87,7 +115,7 @@ extension ForcedValueExpression : TTYASTDumpRepresentable {
 extension FunctionCallExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("function_call_expr", sourceRange)
-    var body = "head_\(postfixExpression.ttyDump)".indent
+    var body = postfixExpression.ttyDump.indent
     if let argumentClause = argumentClause {
       body += "\n" + "arguments:".indent
       if argumentClause.isEmpty {
@@ -159,13 +187,13 @@ extension InOutExpression : TTYASTDumpRepresentable {
 extension InitializerExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("initializer_expr", sourceRange)
-    var body = "head_\(postfixExpression.ttyDump)".indent
+    var body = postfixExpression.ttyDump.indent
     body += "\n" + "arguments:".indent
     if argumentNames.isEmpty {
       body += " <empty>"
     }
     for (index, arg) in argumentNames.enumerated() {
-      body += "\n" + "\(index): name: `name`".indent
+      body += "\n" + "\(index): name: `\(arg)`".indent
     }
     return "\(head)\n\(body)"
   }

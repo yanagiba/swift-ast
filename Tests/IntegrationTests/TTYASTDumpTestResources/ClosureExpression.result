@@ -7,7 +7,7 @@ top_level_decl <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1
     closure_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:18:5-18.41>
       statements:
       0: function_call_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:18:7-18.39>
-        head_self_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:18:7-18.19>
+        self_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:18:7-18.19>
           kind: `method`, method_name: `present`
         arguments:
         0: kind: `expression`
@@ -22,10 +22,13 @@ top_level_decl <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1
       statements:
       0: assign_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:19:7-19.19>
         explicit_member_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:19:7-19.13>
+          identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:19:7-19.9>
+            kind: `identifier`, identifier: `vc`
+          identifier: `foo`
         identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:19:16-19.19>
           kind: `identifier`, identifier: `foo`
       1: function_call_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:19:20-19.52>
-        head_self_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:19:20-19.32>
+        self_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:19:20-19.32>
           kind: `method`, method_name: `present`
         arguments:
         0: kind: `expression`
@@ -52,7 +55,7 @@ top_level_decl <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1
       capture_list: `weak self`
       statements:
       0: function_call_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:23:22-23.54>
-        head_self_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:23:22-23.34>
+        self_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:23:22-23.34>
           kind: `method`, method_name: `present`
         arguments:
         0: kind: `expression`
@@ -87,21 +90,21 @@ top_level_decl <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1
       parameters: `(a, b, c)`
       statements:
       0: function_call_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:29:20-29.28>
-        head_identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:29:20-29.25>
+        identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:29:20-29.25>
           kind: `identifier`, identifier: `print`
         arguments:
         0: kind: `expression`
           identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:29:26-29.27>
             kind: `identifier`, identifier: `a`
       1: function_call_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:29:29-29.37>
-        head_identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:29:29-29.34>
+        identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:29:29-29.34>
           kind: `identifier`, identifier: `print`
         arguments:
         0: kind: `expression`
           identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:29:35-29.36>
             kind: `identifier`, identifier: `b`
       2: function_call_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:29:38-29.46>
-        head_identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:29:38-29.43>
+        identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:29:38-29.43>
           kind: `identifier`, identifier: `print`
         arguments:
         0: kind: `expression`
@@ -121,21 +124,21 @@ top_level_decl <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1
       parameters: `a, b, c`
       statements:
       0: function_call_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:32:18-32.26>
-        head_identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:32:18-32.23>
+        identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:32:18-32.23>
           kind: `identifier`, identifier: `print`
         arguments:
         0: kind: `expression`
           identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:32:24-32.25>
             kind: `identifier`, identifier: `a`
       1: function_call_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:32:27-32.35>
-        head_identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:32:27-32.32>
+        identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:32:27-32.32>
           kind: `identifier`, identifier: `print`
         arguments:
         0: kind: `expression`
           identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:32:33-32.34>
             kind: `identifier`, identifier: `b`
       2: function_call_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:32:36-32.44>
-        head_identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:32:36-32.41>
+        identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:32:36-32.41>
           kind: `identifier`, identifier: `print`
         arguments:
         0: kind: `expression`
@@ -171,8 +174,10 @@ top_level_decl <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1
       return_type: `Bar` with attributes `@x @y @z`
       statements:
       0: function_call_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:37:65-37.82>
-        head_identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:37:65-37.70>
+        identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:37:65-37.70>
           kind: `identifier`, identifier: `print`
         arguments:
         0: kind: `expression`
           explicit_member_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:37:71-37.81>
+            forced_value_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:37:71-37.75>
+            identifier: `title`
