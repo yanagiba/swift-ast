@@ -195,7 +195,10 @@ extension ParenthesizedExpression : TTYASTDumpRepresentable {
 
 extension PostfixOperatorExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("postfix_op_expr", sourceRange)
+    let head = dump("postfix_op_expr", sourceRange)
+    let opDump = "operator: `\(postfixOperator)`".indent
+    let exprDump = postfixExpression.ttyDump.indent
+    return "\(head)\n\(opDump)\n\(exprDump)"
   }
 }
 
