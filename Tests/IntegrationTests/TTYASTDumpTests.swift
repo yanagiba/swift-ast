@@ -33,6 +33,7 @@ class TTYASTDumpTests : XCTestCase {
       "TupleExpression",
       "ImplicitMemberExpression",
       "WildcardExpression",
+      "SelectorExpression",
 
       // statements
       "BreakStatement",

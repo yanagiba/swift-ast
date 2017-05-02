@@ -213,7 +213,24 @@ extension PrefixOperatorExpression : TTYASTDumpRepresentable {
 
 extension SelectorExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("selector_expr", sourceRange)
+    let head = dump("selector_expr", sourceRange)
+    let body: String
+    switch kind {
+    case .selector(let expr):
+      body = expr.ttyDump
+    case .getter(let expr):
+      body = "getter: " + expr.ttyDump
+    case .setter(let expr):
+      body = "setter: " + expr.ttyDump
+    case let .selfMember(identifier, argumentNames):
+      var textDesc = identifier
+      if !argumentNames.isEmpty {
+        let argumentNamesDesc = argumentNames.map({ "\($0):" }).joined()
+        textDesc += "(\(argumentNamesDesc))"
+      }
+      body = "self_member: `\(textDesc)`"
+    }
+    return "\(head)\n\(body.indent)"
   }
 }
 
