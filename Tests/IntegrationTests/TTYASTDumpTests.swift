@@ -50,6 +50,9 @@ class TTYASTDumpTests : XCTestCase {
       "PrefixOperatorExpression",
       "InOutExpression",
 
+      // binary expressions
+      "BinaryOperatorExpression",
+
       // statements
       "BreakStatement",
       "CompilerControlStatement",

@@ -27,7 +27,11 @@ extension AssignmentOperatorExpression : TTYASTDumpRepresentable {
 
 extension BinaryOperatorExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("binary_op_expr", sourceRange)
+    let head = dump("binary_op_expr", sourceRange)
+    let opDump = "operator: `\(binaryOperator)`".indent
+    let leftExprDump = leftExpression.ttyDump.indent
+    let rightExprDump = rightExpression.ttyDump.indent
+    return "\(head)\n\(opDump)\n\(leftExprDump)\n\(rightExprDump)"
   }
 }
 

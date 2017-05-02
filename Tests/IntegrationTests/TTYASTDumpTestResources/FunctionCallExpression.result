@@ -71,6 +71,15 @@ top_level_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift
     arguments:
     0: kind: `expression`
       binary_op_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:27:5-27.19>
+        operator: `*`
+        prefix_op_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:27:5-27.15>
+          operator: `-`
+          explicit_member_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:27:6-27.15>
+            identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:27:6-27.10>
+              kind: `identifier`, identifier: `data`
+            identifier: `yMax`
+        literal_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:27:16-27.19>
+          kind: `double`, literal: `0.1`, raw_text: `0.1`
     1: kind: `expression`
       explicit_member_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:27:21-27.30>
         identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:27:21-27.25>
@@ -197,6 +206,11 @@ top_level_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift
               parameters: `i`
               statements:
               0: binary_op_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:38:24-38.27>
+                operator: `^`
+                identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:38:24-38.25>
+                  kind: `identifier`, identifier: `i`
+                literal_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:38:26-38.27>
+                  kind: `int`, literal: `2`, raw_text: `2`
           identifier: `joined`
         arguments: <empty>
   function_call_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:39:1-40.4>
@@ -219,6 +233,11 @@ top_level_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift
           parameters: `i`
           statements:
           0: binary_op_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:39:24-39.27>
+            operator: `^`
+            identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:39:24-39.25>
+              kind: `identifier`, identifier: `i`
+            literal_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:39:26-39.27>
+              kind: `int`, literal: `2`, raw_text: `2`
   function_call_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:40:1-43.2>
     identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:40:1-40.4>
       kind: `identifier`, identifier: `map`

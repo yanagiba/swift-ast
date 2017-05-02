@@ -1,0 +1,37 @@
+top_level_decl <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:17:1-22.12>
+  binary_op_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:17:1-17.8>
+    operator: `/`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:17:1-17.4>
+      kind: `identifier`, identifier: `foo`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:17:5-17.8>
+      kind: `identifier`, identifier: `bar`
+  binary_op_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:18:1-18.9>
+    operator: `<>`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:18:1-18.4>
+      kind: `identifier`, identifier: `foo`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:18:6-18.9>
+      kind: `identifier`, identifier: `bar`
+  binary_op_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:19:1-19.10>
+    operator: `...`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:19:1-19.4>
+      kind: `identifier`, identifier: `foo`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:19:7-19.10>
+      kind: `identifier`, identifier: `bar`
+  binary_op_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:20:1-20.10>
+    operator: `/`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:20:1-20.4>
+      kind: `identifier`, identifier: `foo`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:20:7-20.10>
+      kind: `identifier`, identifier: `bar`
+  binary_op_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:21:1-21.11>
+    operator: `<>`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:21:1-21.4>
+      kind: `identifier`, identifier: `foo`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:21:8-21.11>
+      kind: `identifier`, identifier: `bar`
+  binary_op_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:22:1-22.12>
+    operator: `...`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:22:1-22.4>
+      kind: `identifier`, identifier: `foo`
+    identifier_expr <range: TTYASTDumpTestResources/BinaryOperatorExpressionTests.swift:22:9-22.12>
+      kind: `identifier`, identifier: `bar`
