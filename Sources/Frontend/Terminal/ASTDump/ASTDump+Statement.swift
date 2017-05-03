@@ -164,7 +164,10 @@ extension IfStatement : TTYASTDumpRepresentable {
 
 extension LabeledStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("labeled_stmt", sourceRange)
+    let head = dump("labeled_stmt", sourceRange)
+    let neck = "label_name: `\(labelName)`".indent
+    let body = statement.ttyDump.indent
+    return "\(head)\n\(neck)\n\(body)"
   }
 }
 
