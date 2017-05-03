@@ -68,6 +68,8 @@ top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1
         trailing_closure_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:34:30-34.44>
           statements:
           0: return_stmt <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:34:32-34.42>
+            identifier_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:34:39-34.42>
+              kind: `identifier`, identifier: `bar`
   assign_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:35:1-35.10>
     wildcard_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:35:1-35.2>
     literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:35:5-35.10>

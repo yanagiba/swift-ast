@@ -179,7 +179,12 @@ extension RepeatWhileStatement : TTYASTDumpRepresentable {
 
 extension ReturnStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("return_stmt", sourceRange)
+    let head = dump("return_stmt", sourceRange)
+    guard let returnExpr = expression else {
+      return head
+    }
+    let body = returnExpr.ttyDump.indent
+    return "\(head)\n\(body)"
   }
 }
 

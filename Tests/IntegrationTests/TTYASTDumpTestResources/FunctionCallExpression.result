@@ -247,3 +247,5 @@ top_level_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift
       statements:
       0: const_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:41:3-41.16>
       1: return_stmt <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:42:3-42.16>
+        literal_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:42:10-42.16>
+          kind: `interpolated_string`, raw_text: `"\(j)"`
