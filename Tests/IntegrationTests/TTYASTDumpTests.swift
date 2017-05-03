@@ -70,7 +70,7 @@ class TTYASTDumpTests : XCTestCase {
       "GuardStatement",
       "IfStatement",
       // "LabeledStatement",
-      // "RepeatWhileStatement",
+      "RepeatWhileStatement",
       // "ReturnStatement",
       // "SwitchStatement",
       // "ThrowStatement",

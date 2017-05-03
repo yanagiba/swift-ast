@@ -170,7 +170,10 @@ extension LabeledStatement : TTYASTDumpRepresentable {
 
 extension RepeatWhileStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("repeat_stmt", sourceRange)
+    let head = dump("repeat_stmt", sourceRange)
+    let condition = "condition: \(conditionExpression.ttyDump)".indent
+    let body = codeBlock.ttyDump.indent
+    return "\(head)\n\(body)\n\(condition)"
   }
 }
 
