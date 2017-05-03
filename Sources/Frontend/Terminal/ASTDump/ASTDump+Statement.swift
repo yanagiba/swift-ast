@@ -114,7 +114,21 @@ extension FallthroughStatement : TTYASTDumpRepresentable {
 
 extension ForInStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("for_stmt", sourceRange)
+    var dumps: [String] = []
+
+    let head = dump("for_stmt", sourceRange)
+    dumps.append(head)
+    if item.isCaseMatching {
+      dumps.append("case_matching: `true`".indent)
+    }
+    dumps.append("pattern: `\(item.matchingPattern.textDescription)`".indent)
+    dumps.append("collection: \(collection.ttyDump)".indent)
+    if let whereClause = item.whereClause {
+      dumps.append("where: \(whereClause.ttyDump)".indent)
+    }
+    let body = codeBlock.ttyDump.indent
+    dumps.append(body)
+    return dumps.joined(separator: "\n")
   }
 }
 

@@ -66,7 +66,7 @@ class TTYASTDumpTests : XCTestCase {
       "DeferStatement",
       "DoStatement",
       "FallthroughStatement",
-      // "ForInStatement",
+      "ForInStatement",
       // "GuardStatement",
       // "IfStatement",
       // "LabeledStatement",

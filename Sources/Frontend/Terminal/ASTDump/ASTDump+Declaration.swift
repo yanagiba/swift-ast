@@ -27,6 +27,9 @@ extension TopLevelDeclaration : TTYASTDumpRepresentable {
 
 extension CodeBlock : TTYASTDumpRepresentable {
   var ttyDump: String {
+    if statements.isEmpty {
+      return "<empty_code_block>"
+    }
     return statements.map { $0.ttyDump }.joined(separator: "\n")
   }
 }
