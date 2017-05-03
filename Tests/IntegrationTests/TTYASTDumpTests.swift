@@ -74,7 +74,7 @@ class TTYASTDumpTests : XCTestCase {
       "ReturnStatement",
       "SwitchStatement",
       "ThrowStatement",
-      // "WhileStatement",
+      "WhileStatement",
     ]
     for testName in testNames {
       testIntegration(resourceName, testName) { source -> String in

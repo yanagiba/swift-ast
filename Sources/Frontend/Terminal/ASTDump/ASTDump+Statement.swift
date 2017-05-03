@@ -238,6 +238,9 @@ extension ThrowStatement : TTYASTDumpRepresentable {
 
 extension WhileStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("while_stmt", sourceRange)
+    let head = dump("while_stmt", sourceRange)
+    let conditions = dump(conditionList).indent
+    let body = codeBlock.ttyDump.indent
+    return "\(head)\n\(conditions)\n\(body)"
   }
 }
