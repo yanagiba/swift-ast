@@ -230,7 +230,9 @@ extension SwitchStatement : TTYASTDumpRepresentable {
 
 extension ThrowStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("throw_stmt", sourceRange)
+    let head = dump("throw_stmt", sourceRange)
+    let body = expression.ttyDump.indent
+    return "\(head)\n\(body)"
   }
 }
 

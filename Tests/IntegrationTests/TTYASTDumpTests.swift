@@ -73,7 +73,7 @@ class TTYASTDumpTests : XCTestCase {
       "RepeatWhileStatement",
       "ReturnStatement",
       "SwitchStatement",
-      // "ThrowStatement",
+      "ThrowStatement",
       // "WhileStatement",
     ]
     for testName in testNames {
