@@ -59,12 +59,22 @@ class TTYASTDumpTests : XCTestCase {
       // try expression
       "TryOperatorExpression",
 
-
       // statements
       "BreakStatement",
       "CompilerControlStatement",
       "ContinueStatement",
       "DeferStatement",
+      "DoStatement",
+      // "FallthroughStatement",
+      // "ForInStatement",
+      // "GuardStatement",
+      // "IfStatement",
+      // "LabeledStatement",
+      // "RepeatWhileStatement",
+      // "ReturnStatement",
+      // "SwitchStatement",
+      // "ThrowStatement",
+      // "WhileStatement",
     ]
     for testName in testNames {
       testIntegration(resourceName, testName) { source -> String in

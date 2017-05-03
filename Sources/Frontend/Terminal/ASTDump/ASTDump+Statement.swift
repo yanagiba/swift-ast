@@ -80,7 +80,29 @@ extension DeferStatement : TTYASTDumpRepresentable {
 
 extension DoStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("do_stmt", sourceRange)
+    let head = dump("do_stmt", sourceRange)
+    let body = codeBlock.ttyDump.indent
+    var catches = "catches:".indent
+    if catchClauses.isEmpty {
+      catches += " <empty>"
+    }
+    for (index, catchClause) in catchClauses.enumerated() {
+      catches += "\n"
+      catches += "\(index): ".indent
+      switch (catchClause.pattern, catchClause.whereExpression) {
+      case (nil, nil):
+        catches += "<catch_all>"
+      case (let pattern?, nil):
+        catches += "pattern: `\(pattern.textDescription)`"
+      case (nil, let expr?):
+        catches += "where: `\(expr.ttyDump)`"
+      case let (pattern?, expr?):
+        catches += "pattern: `\(pattern.textDescription)`, where: `\(expr.ttyDump)`"
+      }
+      catches += "\n"
+      catches += catchClause.codeBlock.ttyDump.indent.indent
+    }
+    return "\(head)\n\(body)\n\(catches)"
   }
 }
 
