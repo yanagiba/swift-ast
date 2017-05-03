@@ -143,7 +143,22 @@ extension GuardStatement : TTYASTDumpRepresentable {
 
 extension IfStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("if_stmt", sourceRange)
+    let head = dump("if_stmt", sourceRange)
+    let conditions = dump(conditionList).indent
+    let body = codeBlock.ttyDump.indent
+    let neck = "\(head)\n\(conditions)\n\(body)"
+
+    guard let elseClause = elseClause else {
+      return neck
+    }
+    switch elseClause {
+    case .else(let codeBlock):
+      return "\(neck)\n" +
+        "else:\n\(codeBlock.ttyDump)".indent
+    case .elseif(let ifStmt):
+      return "\(neck)\n" +
+        "elseif:\n\(ifStmt.ttyDump)".indent
+    }
   }
 }
 

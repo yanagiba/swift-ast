@@ -56,15 +56,15 @@ extension TTYASTDumpRepresentable {
   func dump(_ condition: Condition) -> String {
     switch condition {
     case .expression(let expr):
-      return "kind: `expression`\n" + expr.ttyDump.indent
+      return expr.ttyDump
     case .availability(let availabilityCondition):
-      return availabilityCondition.textDescription // TODO: postpone to `if` statement
+      return availabilityCondition.textDescription
     case let .case(pattern, expr):
-      return "case \(pattern) = \(expr)" // TODO: postpone to `if` statement
+      return "case_binding: `\(pattern)`\n\(expr.ttyDump.indent)"
     case let .let(pattern, expr):
-      return "let \(pattern) = \(expr)" // TODO: postpone to `if` statement
+      return "constant_optional_binding: `\(pattern)`\n\(expr.ttyDump.indent)"
     case let .var(pattern, expr):
-      return "var \(pattern) = \(expr)" // TODO: postpone to `if` statement
+      return "variable_optional_binding: `\(pattern)`\n\(expr.ttyDump.indent)"
     }
   }
 }
