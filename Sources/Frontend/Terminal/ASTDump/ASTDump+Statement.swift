@@ -190,7 +190,41 @@ extension ReturnStatement : TTYASTDumpRepresentable {
 
 extension SwitchStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("switch_stmt", sourceRange)
+    let head = dump("switch_stmt", sourceRange)
+    var body = expression.ttyDump.indent
+    body += "\n"
+    body += "cases:".indent
+    if cases.isEmpty {
+      body += " <empty>"
+    }
+    for (index, eachCase) in cases.enumerated() {
+      body += "\n"
+      body += "\(index): ".indent
+      switch eachCase {
+      case let .case(items, stmts):
+        body += "kind: `case`"
+        body += "\n"
+        body += "items:".indent.indent
+        if items.isEmpty {
+          body += " <empty>" // TODO: can this really happen?
+        }
+        for (itemIndex, item) in items.enumerated() {
+          body += "\n"
+          body += "\(itemIndex): pattern: `\(item.pattern)`".indent.indent
+          if let whereExpr = item.whereExpression {
+            body += "\n"
+            body += "where: \(whereExpr.ttyDump)".indent.indent.indent
+          }
+        }
+        body += "\n"
+        body += stmts.map({ $0.ttyDump }).joined(separator: "\n").indent.indent
+      case .default(let stmts):
+        body += "kind: `default`"
+        body += "\n"
+        body += stmts.map({ $0.ttyDump }).joined(separator: "\n").indent.indent
+      }
+    }
+    return "\(head)\n\(body)"
   }
 }
 
