@@ -347,9 +347,38 @@ extension OperatorDeclaration : TTYASTDumpRepresentable {
 
 extension PrecedenceGroupDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
-    let head = dump("precedence_group_decl", sourceRange)
+    func dumpAttr(_ attr: PrecedenceGroupDeclaration.Attribute) -> String {
+      switch attr {
+      case .higherThan(let ids):
+        return "higherThan: `\(ids.textDescription)`"
+      case .lowerThan(let ids):
+        return "lowerThan: `\(ids.textDescription)`"
+      case .assignment(let b):
+        let boolText = b ? "`true`" : "`false`"
+        return "assignment: \(boolText)"
+      case .associativityLeft:
+        return "associativity: `left`"
+      case .associativityRight:
+        return "associativity: `right`"
+      case .associativityNone:
+        return "associativity: `none`"
+      }
+    }
 
-    return head
+    let head = dump("precedence_group_decl", sourceRange)
+    let neck = "name: \(name)".indent
+    let body: String
+    switch attributes.count {
+    case 0:
+      body = "<no_attributes>"
+    case 1:
+      body = dumpAttr(attributes[0])
+    default:
+      body = "attributes:\n" + attributes.enumerated()
+        .map { "\($0): \(dumpAttr($1))" }
+        .joined(separator: "\n")
+    }
+    return "\(head)\n\(neck)\n\(body.indent)"
   }
 }
 
