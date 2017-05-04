@@ -1,0 +1,203 @@
+top_level_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:17:1-96.2>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:17:1-17.12>
+    name: Foo
+    <empty_body>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:18:1-18.21>
+    name: Foo
+    attributes: `@a @b @c`
+    <empty_body>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:19:1-19.24>
+    name: Foo
+    access_level: fileprivate
+    <empty_body>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:20:1-20.22>
+    name: Foo
+    attributes: `@a`
+    access_level: public
+    <empty_body>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:21:1-21.21>
+    name: Foo
+    indirect: `true`
+    <empty_body>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:22:1-22.31>
+    name: Foo
+    attributes: `@a`
+    access_level: public
+    indirect: `true`
+    <empty_body>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:23:1-23.33>
+    name: Foo
+    generic_param: `<A, B: C, D: E, F, G>`
+    <empty_body>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:24:1-24.20>
+    name: Foo
+    parent_types: : String
+    <empty_body>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:25:1-25.29>
+    name: Foo
+    generic_where: `where Foo == Bar`
+    <empty_body>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:26:1-26.49>
+    name: Foo
+    generic_param: `<T>`
+    parent_types: : Array<T>
+    generic_where: `where T: protocol<Int, Double>`
+    <empty_body>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:27:1-29.2>
+    name: Foo
+    const_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:28:3-28.12>
+      pattern: a
+        literal_expr <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:28:11-28.12>
+          kind: `int`, literal: `1`, raw_text: `1`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:30:1-32.2>
+    name: Foo
+    enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:31:3-31.14>
+      name: Bar
+      <empty_body>
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:33:1-35.2>
+    name: Foo
+    union_case
+      name: `a`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:36:1-38.2>
+    name: Foo
+    union_case
+      name: `a`
+      tuple: `(A)`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:39:1-41.2>
+    name: Foo
+    union_case
+      0: name: `a`, tuple: `(A)`
+      1: name: `b`
+      2: name: `c`, tuple: `(A, B, C)`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:42:1-44.2>
+    name: Foo
+    parent_types: : Int
+    raw_value_case
+      name: `a`
+      raw_value: `integer(1)`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:45:1-47.2>
+    name: Foo
+    parent_types: : Int
+    raw_value_case
+      0: name: `a`, raw_value: `integer(1)`
+      1: name: `b`
+      2: name: `c`, raw_value: `integer(999)`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:48:1-50.2>
+    name: Foo
+    indirect: `true`
+    union_case
+      indirect: `true`
+      name: `a`
+      tuple: `(Foo)`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:51:1-53.2>
+    name: Foo
+    union_case
+      attributes: `@a @b @c`
+      name: `a`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:54:1-56.2>
+    name: Foo
+    indirect: `true`
+    union_case
+      attributes: `@a`
+      indirect: `true`
+      name: `a`
+      tuple: `(Foo)`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:57:1-59.2>
+    name: Foo
+    parent_types: : Int
+    raw_value_case
+      attributes: `@a @b @c`
+      name: `a`
+      raw_value: `integer(1)`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:60:1-64.2>
+    name: Foo
+    union_case
+      name: `a`
+      tuple: `(A)`
+    union_case
+      name: `b`
+    union_case
+      name: `c`
+      tuple: `(A, B, C)`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:65:1-73.2>
+    name: Foo
+    const_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:66:3-66.12>
+      pattern: a
+        literal_expr <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:66:11-66.12>
+          kind: `int`, literal: `1`, raw_text: `1`
+    union_case
+      name: `a`
+      tuple: `(A)`
+    const_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:68:3-68.12>
+      pattern: b
+        literal_expr <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:68:11-68.12>
+          kind: `int`, literal: `2`, raw_text: `2`
+    union_case
+      name: `b`
+    const_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:70:3-70.12>
+      pattern: c
+        literal_expr <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:70:11-70.12>
+          kind: `int`, literal: `3`, raw_text: `3`
+    union_case
+      name: `c`
+      tuple: `(A, B, C)`
+    const_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:72:3-72.12>
+      pattern: d
+        literal_expr <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:72:11-72.12>
+          kind: `int`, literal: `4`, raw_text: `4`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:74:1-78.2>
+    name: Foo
+    parent_types: : Int
+    raw_value_case
+      name: `a`
+    raw_value_case
+      name: `b`
+      raw_value: `integer(1)`
+    raw_value_case
+      name: `c`
+      raw_value: `integer(999)`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:79:1-87.2>
+    name: Foo
+    parent_types: : Int
+    const_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:80:3-80.12>
+      pattern: a
+        literal_expr <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:80:11-80.12>
+          kind: `int`, literal: `1`, raw_text: `1`
+    raw_value_case
+      name: `a`
+    const_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:82:3-82.12>
+      pattern: b
+        literal_expr <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:82:11-82.12>
+          kind: `int`, literal: `2`, raw_text: `2`
+    raw_value_case
+      name: `b`
+      raw_value: `integer(1)`
+    const_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:84:3-84.12>
+      pattern: c
+        literal_expr <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:84:11-84.12>
+          kind: `int`, literal: `3`, raw_text: `3`
+    raw_value_case
+      name: `c`
+      raw_value: `integer(999)`
+    const_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:86:3-86.12>
+      pattern: d
+        literal_expr <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:86:11-86.12>
+          kind: `int`, literal: `4`, raw_text: `4`
+  enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:88:1-96.2>
+    name: Foo
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:89:1-89.6>
+      kind: `if`, condition: ` a`
+    union_case
+      name: `a`
+      tuple: `(A)`
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:91:1-91.10>
+      kind: `elseif`, condition: ` b`
+    union_case
+      name: `b`
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:93:1-93.6>
+      kind: `else`
+    union_case
+      name: `c`
+      tuple: `(A, B, C)`
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:95:1-95.7>
+      kind: `endif`

@@ -113,23 +113,96 @@ extension DeinitializerDeclaration : TTYASTDumpRepresentable {
 extension EnumDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("enum_decl", sourceRange)
+    var neck = "\n" + "name: \(name)".indent
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indent
+    }
+    if let accessLevel = accessLevelModifier {
+      neck += "\n"
+      neck += "access_level: \(accessLevel)".indent
+    }
+    if isIndirect {
+      neck += "\n"
+      neck += "indirect: `true`".indent
+    }
+    if let genericParam = genericParameterClause {
+      neck += "\n"
+      neck += "generic_param: `\(genericParam.textDescription)`".indent
+    }
+    if let typeInheritance = typeInheritanceClause {
+      neck += "\n"
+      neck += "parent_types: \(typeInheritance.textDescription)".indent
+    }
+    if let genericWhere = genericWhereClause {
+      neck += "\n"
+      neck += "generic_where: `\(genericWhere.textDescription)`".indent
+    }
+    let body: String
+    if members.isEmpty {
+      body = "<empty_body>".indent
+    } else {
+      body = members.map { member -> String in
+        switch member {
+        case .declaration(let decl):
+          return decl.ttyDump
+        case .compilerControl(let stmt):
+          return stmt.ttyDump
+        case .union(let unionCase):
+          let caseHead = "union_case"
+          var caseNeck = ""
+          if !unionCase.attributes.isEmpty {
+            caseNeck += "\n"
+            caseNeck += "attributes: `\(unionCase.attributes.textDescription)`".indent
+          }
+          if unionCase.isIndirect {
+            caseNeck += "\n"
+            caseNeck += "indirect: `true`".indent
+          }
+          let caseBody: String
+          switch unionCase.cases.count {
+          case 0:
+            caseBody = "<no_union_cases>" // Note: this should never happen
+          case 1:
+            let unionCaseCase = unionCase.cases[0]
+            let nameDump = "name: `\(unionCaseCase.name)`"
+            caseBody = unionCaseCase.tuple.map({ "\(nameDump)\ntuple: `\($0.textDescription)`" }) ?? nameDump
+          default:
+            caseBody = unionCase.cases.enumerated().map { (index, e) -> String in
+              let nameDump = "\(index): name: `\(e.name)`"
+              return e.tuple.map({ "\(nameDump), tuple: `\($0.textDescription)`" }) ?? nameDump
+            }.joined(separator: "\n")
+          }
+          return "\(caseHead)\(caseNeck)\n\(caseBody.indent)"
+        case .rawValue(let rawValueCase):
+          let caseHead = "raw_value_case"
+          var caseNeck = ""
+          if !rawValueCase.attributes.isEmpty {
+            caseNeck += "\n"
+            caseNeck += "attributes: `\(rawValueCase.attributes.textDescription)`".indent
+          }
+          let caseBody: String
+          switch rawValueCase.cases.count {
+          case 0:
+            caseBody = "<no_raw_value_cases>" // Note: this should never happen
+          case 1:
+            let rawValueCaseCase = rawValueCase.cases[0]
+            let nameDump = "name: `\(rawValueCaseCase.name)`"
+            caseBody = rawValueCaseCase.assignment.map({ "\(nameDump)\nraw_value: `\($0)`" }) ?? nameDump
+          default:
+            caseBody = rawValueCase.cases.enumerated().map { (index, e) -> String in
+              let nameDump = "\(index): name: `\(e.name)`"
+              return e.assignment.map({ "\(nameDump), raw_value: `\($0)`" }) ?? nameDump
+            }.joined(separator: "\n")
+          }
+          return "\(caseHead)\(caseNeck)\n\(caseBody.indent)"
+        }
+      }.joined(separator: "\n").indent
+    }
 
-    // for member in enumDecl.members {
-    //   switch member {
-    //   case .declaration(let decl):
-    //     _ = try traverse(decl)
-    //   case .compilerControl(let stmt):
-    //     _ = try traverse(stmt)
-    //   case .union:
-    //     presentation += String(indentation: _nested)
-    //     presentation += "<union_case> TODO" + "\n"
-    //   case .rawValue:
-    //     presentation += String(indentation: _nested)
-    //     presentation += "<raw_value_case> TODO" + "\n"
-    //   }
-    // }
+    return "\(head)\(neck)\n\(body)"
 
-    return head
+    // TODO: some of these `ttyDump` implementations require serious refactorings
   }
 }
 
