@@ -293,8 +293,37 @@ extension ImportDeclaration : TTYASTDumpRepresentable {
 extension InitializerDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("init_decl", sourceRange)
+    var neck = ""
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indent
+    }
+    if !modifiers.isEmpty {
+      neck += "\n"
+      neck += "modifiers: \(modifiers.textDescription)".indent
+    }
+    if let genericParam = genericParameterClause {
+      neck += "\n"
+      neck += "generic_param: `\(genericParam.textDescription)`".indent
+    }
+    if let genericWhere = genericWhereClause {
+      neck += "\n"
+      neck += "generic_where: `\(genericWhere.textDescription)`".indent
+    }
+    neck += "\n" + "kind: ".indent
+    switch kind {
+    case .nonfailable:
+      neck += "`non_failable`"
+    case .optionalFailable:
+      neck += "`optional_failable`"
+    case .implicitlyUnwrappedFailable:
+      neck += "`implicit_unwrapped_failable`"
+    }
+    if !parameterList.isEmpty {
+      neck += "\n" + dump(parameterList).indent
+    }
     let bodyTTYDump = body.ttyDump.indent
-    return "\(head)\n\(bodyTTYDump)"
+    return "\(head)\(neck)\n\(bodyTTYDump)"
   }
 }
 

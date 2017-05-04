@@ -23,6 +23,7 @@ protocol TTYASTDumpRepresentable {
   func dump(_ nodeType: String, _ sourceRange: SourceRange) -> String
   func dump(_ exprs: ExpressionList) -> String
   func dump(_ funcSign: FunctionSignature) -> String
+  func dump(_ funcSignParams: [FunctionSignature.Parameter]) -> String
   func dump(_ funcResult: FunctionResult) -> String
   func dump(_ condition: Condition) -> String
   func dump(_ conditionList: ConditionList) -> String
@@ -45,10 +46,7 @@ extension TTYASTDumpRepresentable {
   func dump(_ funcSign: FunctionSignature) -> String {
     var dumps: [String] = []
     if !funcSign.parameterList.isEmpty {
-      let paramsDump = "parameters:\n" + funcSign.parameterList.enumerated()
-        .map { "\($0): \($1.textDescription)" }
-        .joined(separator: "\n")
-      dumps.append(paramsDump)
+      dumps.append(dump(funcSign.parameterList))
     }
     if funcSign.throwsKind != .nothrowing {
       dumps.append("throws_kind: `\(funcSign.throwsKind.textDescription)`")
@@ -57,6 +55,12 @@ extension TTYASTDumpRepresentable {
       dumps.append(dump(result))
     }
     return dumps.joined(separator: "\n")
+  }
+
+  func dump(_ funcSignParams: [FunctionSignature.Parameter]) -> String {
+    return "parameters:\n" + funcSignParams.enumerated()
+      .map { "\($0): \($1.textDescription)" }
+      .joined(separator: "\n")
   }
 
   func dump(_ funcResult: FunctionResult) -> String {
