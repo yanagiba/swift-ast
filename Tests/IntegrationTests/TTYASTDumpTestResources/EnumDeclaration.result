@@ -31,7 +31,7 @@ top_level_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:17:1-9
     <empty_body>
   enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:24:1-24.20>
     name: Foo
-    parent_types: : String
+    parent_types: String
     <empty_body>
   enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:25:1-25.29>
     name: Foo
@@ -40,7 +40,7 @@ top_level_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:17:1-9
   enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:26:1-26.49>
     name: Foo
     generic_param: `<T>`
-    parent_types: : Array<T>
+    parent_types: Array<T>
     generic_where: `where T: protocol<Int, Double>`
     <empty_body>
   enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:27:1-29.2>
@@ -71,13 +71,13 @@ top_level_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:17:1-9
       2: name: `c`, tuple: `(A, B, C)`
   enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:42:1-44.2>
     name: Foo
-    parent_types: : Int
+    parent_types: Int
     raw_value_case
       name: `a`
       raw_value: `integer(1)`
   enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:45:1-47.2>
     name: Foo
-    parent_types: : Int
+    parent_types: Int
     raw_value_case
       0: name: `a`, raw_value: `integer(1)`
       1: name: `b`
@@ -104,7 +104,7 @@ top_level_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:17:1-9
       tuple: `(Foo)`
   enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:57:1-59.2>
     name: Foo
-    parent_types: : Int
+    parent_types: Int
     raw_value_case
       attributes: `@a @b @c`
       name: `a`
@@ -147,7 +147,7 @@ top_level_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:17:1-9
           kind: `int`, literal: `4`, raw_text: `4`
   enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:74:1-78.2>
     name: Foo
-    parent_types: : Int
+    parent_types: Int
     raw_value_case
       name: `a`
     raw_value_case
@@ -158,7 +158,7 @@ top_level_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:17:1-9
       raw_value: `integer(999)`
   enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:79:1-87.2>
     name: Foo
-    parent_types: : Int
+    parent_types: Int
     const_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:80:3-80.12>
       pattern: a
         literal_expr <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:80:11-80.12>

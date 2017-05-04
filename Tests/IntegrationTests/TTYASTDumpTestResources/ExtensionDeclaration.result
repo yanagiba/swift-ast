@@ -1,0 +1,63 @@
+top_level_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:17:1-39.2>
+  ext_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:17:1-17.17>
+    type: Foo
+    <empty_body>
+  ext_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:18:1-18.26>
+    type: Foo
+    attributes: `@a @b @c`
+    <empty_body>
+  ext_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:19:1-19.29>
+    type: Foo
+    access_level: fileprivate
+    <empty_body>
+  ext_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:20:1-20.27>
+    type: Foo
+    attributes: `@a`
+    access_level: public
+    <empty_body>
+  ext_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:21:1-21.38>
+    type: a.b<x, y>.c.Foo<A, B, C>
+    <empty_body>
+  ext_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:22:1-22.25>
+    type: Foo
+    parent_types: String
+    <empty_body>
+  ext_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:23:1-23.34>
+    type: Foo
+    generic_where: `where Foo == Bar`
+    <empty_body>
+  ext_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:24:1-26.2>
+    type: Foo
+    const_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:25:3-25.12>
+      pattern: a
+        literal_expr <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:25:11-25.12>
+          kind: `int`, literal: `1`, raw_text: `1`
+  ext_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:27:1-30.2>
+    type: Foo
+    const_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:28:3-28.12>
+      pattern: a
+        literal_expr <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:28:11-28.12>
+          kind: `int`, literal: `1`, raw_text: `1`
+    var_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:29:3-29.12>
+  ext_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:31:1-39.2>
+    type: Foo
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:32:1-32.6>
+      kind: `if`, condition: ` a`
+    const_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:33:3-33.12>
+      pattern: a
+        literal_expr <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:33:11-33.12>
+          kind: `int`, literal: `1`, raw_text: `1`
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:34:1-34.10>
+      kind: `elseif`, condition: ` b`
+    const_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:35:3-35.12>
+      pattern: b
+        literal_expr <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:35:11-35.12>
+          kind: `int`, literal: `2`, raw_text: `2`
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:36:1-36.6>
+      kind: `else`
+    const_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:37:3-37.12>
+      pattern: e
+        literal_expr <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:37:11-37.12>
+          kind: `int`, literal: `3`, raw_text: `3`
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:38:1-38.7>
+      kind: `endif`

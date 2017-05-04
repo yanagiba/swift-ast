@@ -37,7 +37,7 @@ top_level_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:17:1-
     <empty_body>
   class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:25:1-25.21>
     name: Foo
-    parent_types: : String
+    parent_types: String
     <empty_body>
   class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:26:1-26.30>
     name: Foo
@@ -46,7 +46,7 @@ top_level_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:17:1-
   class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:27:1-27.50>
     name: Foo
     generic_param: `<T>`
-    parent_types: : Array<T>
+    parent_types: Array<T>
     generic_where: `where T: protocol<Int, Double>`
     <empty_body>
   class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:28:1-30.2>

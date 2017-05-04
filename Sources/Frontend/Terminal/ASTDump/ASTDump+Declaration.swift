@@ -56,7 +56,7 @@ extension ClassDeclaration : TTYASTDumpRepresentable {
     }
     if let typeInheritance = typeInheritanceClause {
       neck += "\n"
-      neck += "parent_types: \(typeInheritance.textDescription)".indent
+      neck += "parent_types\(typeInheritance.textDescription)".indent
     }
     if let genericWhere = genericWhereClause {
       neck += "\n"
@@ -132,7 +132,7 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
     }
     if let typeInheritance = typeInheritanceClause {
       neck += "\n"
-      neck += "parent_types: \(typeInheritance.textDescription)".indent
+      neck += "parent_types\(typeInheritance.textDescription)".indent
     }
     if let genericWhere = genericWhereClause {
       neck += "\n"
@@ -209,17 +209,38 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
 extension ExtensionDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("ext_decl", sourceRange)
+    var neck = "\n" + "type: \(type.textDescription)".indent
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indent
+    }
+    if let accessLevel = accessLevelModifier {
+      neck += "\n"
+      neck += "access_level: \(accessLevel)".indent
+    }
+    if let typeInheritance = typeInheritanceClause {
+      neck += "\n"
+      neck += "parent_types\(typeInheritance.textDescription)".indent
+    }
+    if let genericWhere = genericWhereClause {
+      neck += "\n"
+      neck += "generic_where: `\(genericWhere.textDescription)`".indent
+    }
+    let body: String
+    if members.isEmpty {
+      body = "<empty_body>".indent
+    } else {
+      body = members.map { member -> String in
+        switch member {
+        case .declaration(let decl):
+          return decl.ttyDump
+        case .compilerControl(let stmt):
+          return stmt.ttyDump
+        }
+      }.joined(separator: "\n").indent
+    }
 
-    let body = members.map { member -> String in
-      switch member {
-      case .declaration(let decl):
-        return decl.ttyDump
-      case .compilerControl(let stmt):
-        return stmt.ttyDump
-      }
-    }.joined(separator: "\n").indent
-
-    return "\(head)\n\(body)"
+    return "\(head)\(neck)\n\(body)"
   }
 }
 
