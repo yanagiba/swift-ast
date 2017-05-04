@@ -247,9 +247,29 @@ extension ExtensionDeclaration : TTYASTDumpRepresentable {
 extension FunctionDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("func_decl", sourceRange)
-
-    let bodyTTYDump = body?.ttyDump.indent ?? ""
-    return "\(head)\n\(bodyTTYDump)"
+    var neck = "\n" + "name: \(name)".indent
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indent
+    }
+    if !modifiers.isEmpty {
+      neck += "\n"
+      neck += "modifiers: \(modifiers.textDescription)".indent
+    }
+    if let genericParam = genericParameterClause {
+      neck += "\n"
+      neck += "generic_param: `\(genericParam.textDescription)`".indent
+    }
+    if let genericWhere = genericWhereClause {
+      neck += "\n"
+      neck += "generic_where: `\(genericWhere.textDescription)`".indent
+    }
+    let signatureDump = dump(signature)
+    if !signatureDump.isEmpty {
+      neck += "\n" + signatureDump.indent
+    }
+    let bodyTTYDump = body?.ttyDump ?? "<func_def_only>"
+    return "\(head)\(neck)\n\(bodyTTYDump.indent)"
   }
 }
 
