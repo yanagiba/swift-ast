@@ -330,8 +330,18 @@ extension InitializerDeclaration : TTYASTDumpRepresentable {
 extension OperatorDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("op_decl", sourceRange)
-
-    return head
+    let body: String
+    switch kind {
+    case .prefix(let op):
+      body = "kind: `prefix`, operator: `\(op)`"
+    case .postfix(let op):
+      body = "kind: `postfix`, operator: `\(op)`"
+    case .infix(let op, nil):
+      body = "kind: `infix`, operator: `\(op)`"
+    case .infix(let op, let id?):
+      body = "kind: `infix`, operator: `\(op)`, precedence_group_name: `\(id)`"
+    }
+    return "\(head)\n\(body.indent)"
   }
 }
 
