@@ -100,8 +100,13 @@ extension ConstantDeclaration : TTYASTDumpRepresentable {
 extension DeinitializerDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("deinit_decl", sourceRange)
+    var neck = ""
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indent
+    }
     let bodyTTYDump = body.ttyDump.indent
-    return "\(head)\n\(bodyTTYDump)"
+    return "\(head)\(neck)\n\(bodyTTYDump)"
   }
 }
 

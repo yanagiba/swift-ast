@@ -1,0 +1,14 @@
+top_level_decl <range: TTYASTDumpTestResources/DeinitializerDeclarationTests.swift:17:1-18.19>
+  deinit_decl <range: TTYASTDumpTestResources/DeinitializerDeclarationTests.swift:17:1-17.53>
+    function_call_expr <range: TTYASTDumpTestResources/DeinitializerDeclarationTests.swift:17:10-17.51>
+      explicit_member_expr <range: TTYASTDumpTestResources/DeinitializerDeclarationTests.swift:17:10-17.45>
+        identifier_expr <range: TTYASTDumpTestResources/DeinitializerDeclarationTests.swift:17:10-17.30>
+          kind: `identifier`, identifier: `NSNotificationCenter`
+        identifier: `removeObserver`
+      arguments:
+      0: kind: `expression`
+        self_expr <range: TTYASTDumpTestResources/DeinitializerDeclarationTests.swift:17:46-17.50>
+          kind: `self`
+  deinit_decl <range: TTYASTDumpTestResources/DeinitializerDeclarationTests.swift:18:1-18.19>
+    attributes: `@a @b @c`
+    <empty_code_block>
