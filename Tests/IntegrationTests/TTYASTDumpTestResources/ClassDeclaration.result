@@ -1,0 +1,76 @@
+top_level_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:17:1-48.2>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:17:1-17.13>
+    name: Foo
+    <empty_body>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:18:1-18.22>
+    name: Foo
+    attributes: `@a @b @c`
+    <empty_body>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:19:1-19.25>
+    name: Foo
+    access_level: fileprivate
+    <empty_body>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:20:1-20.23>
+    name: Foo
+    attributes: `@a`
+    access_level: public
+    <empty_body>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:21:1-21.19>
+    name: Foo
+    final: `true`
+    <empty_body>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:22:1-22.29>
+    name: Foo
+    attributes: `@a`
+    access_level: public
+    final: `true`
+    <empty_body>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:23:1-23.29>
+    name: Foo
+    attributes: `@a`
+    access_level: public
+    final: `true`
+    <empty_body>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:24:1-24.34>
+    name: Foo
+    generic_param: `<A, B: C, D: E, F, G>`
+    <empty_body>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:25:1-25.21>
+    name: Foo
+    parent_types: : String
+    <empty_body>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:26:1-26.30>
+    name: Foo
+    generic_where: `where Foo == Bar`
+    <empty_body>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:27:1-27.50>
+    name: Foo
+    generic_param: `<T>`
+    parent_types: : Array<T>
+    generic_where: `where T: protocol<Int, Double>`
+    <empty_body>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:28:1-30.2>
+    name: Foo
+    const_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:29:3-29.12>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:31:1-34.2>
+    name: Foo
+    const_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:32:3-32.12>
+    var_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:33:3-33.12>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:35:1-39.2>
+    name: Foo
+    class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:36:3-38.4>
+      name: Bar
+      const_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:37:5-37.14>
+  class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:40:1-48.2>
+    name: Foo
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:41:1-41.6>
+      kind: `if`, condition: ` a`
+    const_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:42:3-42.12>
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:43:1-43.10>
+      kind: `elseif`, condition: ` b`
+    const_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:44:3-44.12>
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:45:1-45.6>
+      kind: `else`
+    const_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:46:3-46.12>
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:47:1-47.7>
+      kind: `endif`

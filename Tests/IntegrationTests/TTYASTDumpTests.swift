@@ -75,6 +75,23 @@ class TTYASTDumpTests : XCTestCase {
       "SwitchStatement",
       "ThrowStatement",
       "WhileStatement",
+
+      // declarations
+      "ClassDeclaration",
+      // "ConstantDeclaration",
+      // "DeinitializerDeclaration",
+      // "EnumDeclaration",
+      // "ExtensionDeclaration",
+      // "FunctionDeclaration",
+      // "ImportDeclaration",
+      // "InitializerDeclaration",
+      // "OperatorDeclaration",
+      // "PrecedenceGroupDeclaration",
+      // "ProtocolDeclaration",
+      // "StructDeclaration",
+      // "SubscriptDeclaration",
+      // "TypealiasDeclaration",
+      // "VariableDeclaration",
     ]
     for testName in testNames {
       testIntegration(resourceName, testName) { source -> String in

@@ -1,0 +1,48 @@
+/*
+   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+class Foo {}
+@a @b @c class Foo {}
+fileprivate class Foo {}
+@a public class Foo {}
+final class Foo {}
+@a public final class Foo {}
+@a final public class Foo {}
+class Foo<A, B: C, D: E, F, G> {}
+class Foo: String {}
+class Foo where Foo == Bar {}
+class Foo<T> : Array<T> where T : Int & Double {}
+class Foo {
+  let a = 1
+}
+class Foo {
+  let a = 1
+  var b = 2
+}
+class Foo {
+  class Bar {
+    let b = 2
+  }
+}
+class Foo {
+#if a
+  let a = 1
+#elseif b
+  let b = 2
+#else
+  let e = 3
+#endif
+}
