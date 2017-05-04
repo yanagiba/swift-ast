@@ -25,6 +25,8 @@ protocol TTYASTDumpRepresentable {
   func dump(_ funcResult: FunctionResult) -> String
   func dump(_ condition: Condition) -> String
   func dump(_ conditionList: ConditionList) -> String
+  func dump(_ inits: [PatternInitializer]) -> String
+  func dump(_ patternInit: PatternInitializer) -> String
 }
 
 extension TTYASTDumpRepresentable {
@@ -66,5 +68,26 @@ extension TTYASTDumpRepresentable {
     case let .var(pattern, expr):
       return "variable_optional_binding: `\(pattern)`\n\(expr.ttyDump.indent)"
     }
+  }
+
+  func dump(_ inits: [PatternInitializer]) -> String {
+    switch inits.count {
+    case 0:
+      return "<no_pattern_initializers>" // Note: this should never happen
+    case 1:
+      return dump(inits[0])
+    default:
+      return "pattern_initializers:\n" + inits.enumerated()
+        .map { "\($0): \(dump($1))" }
+        .joined(separator: "\n")
+    }
+  }
+
+  func dump(_ patternInit: PatternInitializer) -> String {
+    let patternDump = "pattern: \(patternInit.pattern.textDescription)"
+    guard let initExpr = patternInit.initializerExpression else {
+      return patternDump
+    }
+    return "\(patternDump)\n\(initExpr.ttyDump.indent)"
   }
 }

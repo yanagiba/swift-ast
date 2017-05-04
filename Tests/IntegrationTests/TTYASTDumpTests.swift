@@ -78,7 +78,7 @@ class TTYASTDumpTests : XCTestCase {
 
       // declarations
       "ClassDeclaration",
-      // "ConstantDeclaration",
+      "ConstantDeclaration",
       // "DeinitializerDeclaration",
       // "EnumDeclaration",
       // "ExtensionDeclaration",

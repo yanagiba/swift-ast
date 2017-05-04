@@ -83,15 +83,17 @@ extension ClassDeclaration : TTYASTDumpRepresentable {
 extension ConstantDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("const_decl", sourceRange)
-
-    // for initializer in constDecl.initializerList {
-    //   if let expr = initializer.initializerExpression {
-    //     guard try traverse(expr) else { return faldump
-    //     }
-    //   }
-    // }
-
-    return head
+    var neck = ""
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indent
+    }
+    if !modifiers.isEmpty {
+      neck += "\n"
+      neck += "modifiers: \(modifiers.textDescription)".indent
+    }
+    let body = dump(initializerList).indent
+    return "\(head)\(neck)\n\(body)"
   }
 }
 
