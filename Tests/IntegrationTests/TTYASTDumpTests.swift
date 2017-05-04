@@ -83,7 +83,7 @@ class TTYASTDumpTests : XCTestCase {
       "EnumDeclaration",
       "ExtensionDeclaration",
       "FunctionDeclaration",
-      // "ImportDeclaration",
+      "ImportDeclaration",
       // "InitializerDeclaration",
       // "OperatorDeclaration",
       // "PrecedenceGroupDeclaration",

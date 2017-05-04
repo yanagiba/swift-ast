@@ -276,8 +276,17 @@ extension FunctionDeclaration : TTYASTDumpRepresentable {
 extension ImportDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("import_decl", sourceRange)
-
-    return head
+    var neck = ""
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indent
+    }
+    if let kind = kind {
+      neck += "\n"
+      neck += "kind: `\(kind)`".indent
+    }
+    let body = "path:\n" + path.enumerated().map { "\($0): `\($1)`" }.joined(separator: "\n")
+    return "\(head)\(neck)\n\(body.indent)"
   }
 }
 
