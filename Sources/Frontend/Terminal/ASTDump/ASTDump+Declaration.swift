@@ -605,8 +605,22 @@ extension SubscriptDeclaration : TTYASTDumpRepresentable {
 extension TypealiasDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("typealias_decl", sourceRange)
-
-    return head
+    var neck = "\n" + "name: \(name)".indent
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indent
+    }
+    if let accessLevel = accessLevelModifier {
+      neck += "\n"
+      neck += "access_level: \(accessLevel)".indent
+    }
+    if let genericParam = generic {
+      neck += "\n"
+      neck += "generic_param: `\(genericParam.textDescription)`".indent
+    }
+    neck += "\n"
+    neck += "type: \(assignment.textDescription)".indent
+    return "\(head)\(neck)"
   }
 }
 

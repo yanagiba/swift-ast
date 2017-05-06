@@ -90,7 +90,7 @@ class TTYASTDumpTests : XCTestCase {
       "ProtocolDeclaration",
       "StructDeclaration",
       "SubscriptDeclaration",
-      // "TypealiasDeclaration",
+      "TypealiasDeclaration",
       // "VariableDeclaration",
     ]
     for testName in testNames {
