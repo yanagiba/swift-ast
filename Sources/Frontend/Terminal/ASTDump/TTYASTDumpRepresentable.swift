@@ -29,6 +29,7 @@ protocol TTYASTDumpRepresentable {
   func dump(_ conditionList: ConditionList) -> String
   func dump(_ inits: [PatternInitializer]) -> String
   func dump(_ patternInit: PatternInitializer) -> String
+  func dump(_ block: GetterSetterKeywordBlock) -> String
 }
 
 extension TTYASTDumpRepresentable {
@@ -111,5 +112,26 @@ extension TTYASTDumpRepresentable {
       return patternDump
     }
     return "\(patternDump)\n\(initExpr.ttyDump.indent)"
+  }
+
+  func dump(_ block: GetterSetterKeywordBlock) -> String {
+    let head = "getter_setter_keyword_block:"
+    var body = "getter"
+    if !block.getter.attributes.isEmpty {
+      body += ", attributes: `\(block.getter.attributes.textDescription)`"
+    }
+    if let getterModifier = block.getter.mutationModifier {
+      body += ", modifier: `\(getterModifier.textDescription)`"
+    }
+    if let setter = block.setter {
+      body += "\nsetter"
+      if !setter.attributes.isEmpty {
+        body += ", attributes: `\(setter.attributes.textDescription)`"
+      }
+      if let setterModifier = setter.mutationModifier {
+        body += ", modifier: `\(setterModifier.textDescription)`"
+      }
+    }
+    return "\(head)\n\(body.indent)"
   }
 }

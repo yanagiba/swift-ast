@@ -385,43 +385,144 @@ extension PrecedenceGroupDeclaration : TTYASTDumpRepresentable {
 extension ProtocolDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("proto_decl", sourceRange)
-
-    /*
-    for member in protoDecl.members {
-      presentation += String(indentation: _nested)
-      presentation += "<protocol_decl_member> TODO" + "\n"
-      // switch member {
-      // case .method(let method):
-      //   for param in method.signature.parameterList {
-      //     if let defaultArg = param.defaultArgumentClause {
-      //       guard try traverse(defaultArg) else { return faldump
-      }
-      //     }
-      //   }
-      // case .initializer(let initializer):
-      //   for param in initializer.parameterList {
-      //     if let defaultArg = param.defaultArgumentClause {
-      //       guard try traverse(defaultArg) else { return faldump
-      }
-      //     }
-      //   }
-      // case .subscript(let member):
-      //   for param in member.parameterList {
-      //     if let defaultArg = param.defaultArgumentClause {
-      //       guard try traverse(defaultArg) else { return faldump
-      }
-      //     }
-      //   }
-      // case .compilerControl(let stmt):
-      //   guard try traverse(stmt) else { return faldump
-      }
-      // default:
-      //   continue
-      // }
+    var neck = "\n" + "name: \(name)".indent
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indent
     }
-    */
-
-    return head
+    if let accessLevel = accessLevelModifier {
+      neck += "\n"
+      neck += "access_level: \(accessLevel)".indent
+    }
+    if let typeInheritance = typeInheritanceClause {
+      neck += "\n"
+      neck += "parent_types\(typeInheritance.textDescription)".indent
+    }
+    let body: String
+    if members.isEmpty {
+      body = "<empty_body_block>"
+    } else {
+      body = members.enumerated()
+        .map { index, m -> String in
+          var memberDump = "\(index): "
+          switch m {
+          case .property(let member):
+            memberDump += "kind: `property`\n"
+            memberDump += "name: \(name)".indent
+            if !member.attributes.isEmpty {
+              memberDump += "\n"
+              memberDump += "attributes: `\(member.attributes.textDescription)`".indent
+            }
+            if !member.modifiers.isEmpty {
+              memberDump += "\n"
+              memberDump += "modifiers: \(member.modifiers.textDescription)".indent
+            }
+            memberDump += "\n"
+            memberDump += "type\(member.typeAnnotation.textDescription)".indent
+            memberDump += "\n" + dump(member.getterSetterKeywordBlock).indent
+          case .method(let member):
+            memberDump += "kind: `method`\n"
+            memberDump += "name: \(name)".indent
+            if !member.attributes.isEmpty {
+              memberDump += "\n"
+              memberDump += "attributes: `\(member.attributes.textDescription)`".indent
+            }
+            if !member.modifiers.isEmpty {
+              memberDump += "\n"
+              memberDump += "modifiers: \(member.modifiers.textDescription)".indent
+            }
+            if let genericParam = member.genericParameter {
+              memberDump += "\n"
+              memberDump += "generic_param: `\(genericParam.textDescription)`".indent
+            }
+            if let genericWhere = member.genericWhere {
+              memberDump += "\n"
+              memberDump += "generic_where: `\(genericWhere.textDescription)`".indent
+            }
+            let signatureDump = dump(member.signature)
+            if !signatureDump.isEmpty {
+              memberDump += "\n" + signatureDump.indent
+            }
+          case .initializer(let member):
+            memberDump += "kind: "
+            switch member.kind {
+            case .nonfailable:
+              memberDump += "`non_failable_initializer`"
+            case .optionalFailable:
+              memberDump += "`optional_failable_initializer`"
+            case .implicitlyUnwrappedFailable:
+              memberDump += "`implicit_unwrapped_failable_initializer`"
+            }
+            if !member.attributes.isEmpty {
+              memberDump += "\n"
+              memberDump += "attributes: `\(member.attributes.textDescription)`".indent
+            }
+            if !member.modifiers.isEmpty {
+              memberDump += "\n"
+              memberDump += "modifiers: \(member.modifiers.textDescription)".indent
+            }
+            if let genericParam = member.genericParameter {
+              memberDump += "\n"
+              memberDump += "generic_param: `\(genericParam.textDescription)`".indent
+            }
+            if let genericWhere = member.genericWhere {
+              memberDump += "\n"
+              memberDump += "generic_where: `\(genericWhere.textDescription)`".indent
+            }
+            if !member.parameterList.isEmpty {
+              memberDump += "\n" + dump(member.parameterList).indent
+            }
+            if member.throwsKind != .nothrowing {
+              memberDump += "\n" + "throws_kind: `\(member.throwsKind.textDescription)`".indent
+            }
+          case .subscript(let member):
+            memberDump += "kind: `subscript`"
+            if !member.attributes.isEmpty {
+              memberDump += "\n"
+              memberDump += "attributes: `\(member.attributes.textDescription)`".indent
+            }
+            if !member.modifiers.isEmpty {
+              memberDump += "\n"
+              memberDump += "modifiers: \(member.modifiers.textDescription)".indent
+            }
+            if !member.parameterList.isEmpty {
+              memberDump += "\n" + dump(member.parameterList).indent
+            }
+            memberDump += "\n"
+            memberDump += "type: \(member.resultType.textDescription)".indent
+            if !member.resultAttributes.isEmpty {
+              memberDump += "\n"
+              memberDump += "result_attributes: `\(member.resultAttributes.textDescription)`".indent
+            }
+            memberDump += "\n" + dump(member.getterSetterKeywordBlock).indent
+          case .associatedType(let member):
+            memberDump += "kind: `associated_type`\n"
+            memberDump += "name: \(name)".indent
+            if !member.attributes.isEmpty {
+              memberDump += "\n"
+              memberDump += "attributes: `\(member.attributes.textDescription)`".indent
+            }
+            if let accessLevel = member.accessLevelModifier {
+              memberDump += "\n"
+              memberDump += "access_level: \(accessLevel.textDescription)".indent
+            }
+            if let typeInheritance = member.typeInheritance {
+              memberDump += "\n"
+              memberDump += "parent_types\(typeInheritance.textDescription)".indent
+            }
+            if let assignmentType = member.assignmentType {
+              memberDump += "\n"
+              memberDump += "assignment_type: \(assignmentType.textDescription)".indent
+            }
+          case .compilerControl(let stmt):
+            memberDump += "kind: `compiler_control`\n"
+            memberDump += stmt.ttyDump.indent
+          }
+          return memberDump
+        }
+        .joined(separator: "\n")
+    }
+    return "\(head)\(neck)\n\(body.indent)"
   }
 }
 
