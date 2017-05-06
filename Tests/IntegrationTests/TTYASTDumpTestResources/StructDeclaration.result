@@ -46,6 +46,9 @@ top_level_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:17:1
         literal_expr <range: TTYASTDumpTestResources/StructDeclarationTests.swift:29:11-29.12>
           kind: `int`, literal: `1`, raw_text: `1`
     var_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:30:3-30.12>
+      pattern: b
+        literal_expr <range: TTYASTDumpTestResources/StructDeclarationTests.swift:30:11-30.12>
+          kind: `int`, literal: `2`, raw_text: `2`
   struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:32:1-36.2>
     name: Foo
     struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:33:3-35.4>

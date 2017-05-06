@@ -627,9 +627,59 @@ extension TypealiasDeclaration : TTYASTDumpRepresentable {
 extension VariableDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("var_decl", sourceRange)
+    var neck = ""
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indent
+    }
+    if !modifiers.isEmpty {
+      neck += "\n"
+      neck += "modifiers: \(modifiers.textDescription)".indent
+    }
+    let bodyTTYDump: String
+    switch body {
+    case .initializerList(let inits):
+      bodyTTYDump = dump(inits)
+    case let .codeBlock(name, typeAnnotation, codeBlock):
+      bodyTTYDump = "name: \(name)\ntype\(typeAnnotation)\n\(codeBlock.ttyDump)"
+    case let .getterSetterBlock(name, typeAnnotation, block):
+      bodyTTYDump = "name: \(name)\ntype\(typeAnnotation)\n\(dump(block))"
+    case let .getterSetterKeywordBlock(name, typeAnnotation, block):
+      bodyTTYDump = "name: \(name)\ntype\(typeAnnotation)\n\(dump(block))"
+    case let .willSetDidSetBlock(name, typeAnnotation, initExpr, block):
+      var blockDump = "name: \(name)"
+      if let typeAnnotation = typeAnnotation {
+        blockDump += "\ntype\(typeAnnotation)"
+      }
+      if let initExpr = initExpr {
+        blockDump += "\ninit_expr: \(initExpr.ttyDump)"
+      }
 
-    // TODO: handle block properly
-
-    return head
+      blockDump += "\nwill_set_did_set_block:"
+      if let willSetClause = block.willSetClause {
+        blockDump += "\n" + "will_set".indent
+        if let setterName = willSetClause.name {
+          blockDump += ", name: `\(setterName)`"
+        }
+        if !willSetClause.attributes.isEmpty {
+          blockDump += ", attributes: `\(willSetClause.attributes.textDescription)`"
+        }
+        blockDump += "\n"
+        blockDump += willSetClause.codeBlock.ttyDump.indent.indent
+      }
+      if let didSetClause = block.didSetClause {
+        blockDump += "\n" + "did_set".indent
+        if let setterName = didSetClause.name {
+          blockDump += ", name: `\(setterName)`"
+        }
+        if !didSetClause.attributes.isEmpty {
+          blockDump += ", attributes: `\(didSetClause.attributes.textDescription)`"
+        }
+        blockDump += "\n"
+        blockDump += didSetClause.codeBlock.ttyDump.indent.indent
+      }
+      bodyTTYDump = blockDump
+    }
+    return "\(head)\(neck)\n\(bodyTTYDump.indent)"
   }
 }

@@ -39,6 +39,9 @@ top_level_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:1
         literal_expr <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:28:11-28.12>
           kind: `int`, literal: `1`, raw_text: `1`
     var_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:29:3-29.12>
+      pattern: b
+        literal_expr <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:29:11-29.12>
+          kind: `int`, literal: `2`, raw_text: `2`
   ext_decl <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:31:1-39.2>
     type: Foo
     compiler_ctrl_stmt <range: TTYASTDumpTestResources/ExtensionDeclarationTests.swift:32:1-32.6>

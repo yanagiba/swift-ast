@@ -91,7 +91,7 @@ class TTYASTDumpTests : XCTestCase {
       "StructDeclaration",
       "SubscriptDeclaration",
       "TypealiasDeclaration",
-      // "VariableDeclaration",
+      "VariableDeclaration",
     ]
     for testName in testNames {
       testIntegration(resourceName, testName) { source -> String in

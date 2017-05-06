@@ -62,6 +62,9 @@ top_level_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:17:1-
         literal_expr <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:32:11-32.12>
           kind: `int`, literal: `1`, raw_text: `1`
     var_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:33:3-33.12>
+      pattern: b
+        literal_expr <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:33:11-33.12>
+          kind: `int`, literal: `2`, raw_text: `2`
   class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:35:1-39.2>
     name: Foo
     class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:36:3-38.4>
