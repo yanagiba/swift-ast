@@ -1,0 +1,78 @@
+top_level_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:17:1-45.2>
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:17:1-17.14>
+    name: Foo
+    <empty_body>
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:18:1-18.23>
+    name: Foo
+    attributes: `@a @b @c`
+    <empty_body>
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:19:1-19.26>
+    name: Foo
+    access_level: fileprivate
+    <empty_body>
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:20:1-20.24>
+    name: Foo
+    attributes: `@a`
+    access_level: public
+    <empty_body>
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:21:1-21.35>
+    name: Foo
+    generic_param: `<A, B: C, D: E, F, G>`
+    <empty_body>
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:22:1-22.22>
+    name: Foo
+    parent_types: String
+    <empty_body>
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:23:1-23.31>
+    name: Foo
+    generic_where: `where Foo == Bar`
+    <empty_body>
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:24:1-24.51>
+    name: Foo
+    generic_param: `<T>`
+    parent_types: Array<T>
+    generic_where: `where T: protocol<Int, Double>`
+    <empty_body>
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:25:1-27.2>
+    name: Foo
+    const_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:26:3-26.12>
+      pattern: a
+        literal_expr <range: TTYASTDumpTestResources/StructDeclarationTests.swift:26:11-26.12>
+          kind: `int`, literal: `1`, raw_text: `1`
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:28:1-31.2>
+    name: Foo
+    const_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:29:3-29.12>
+      pattern: a
+        literal_expr <range: TTYASTDumpTestResources/StructDeclarationTests.swift:29:11-29.12>
+          kind: `int`, literal: `1`, raw_text: `1`
+    var_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:30:3-30.12>
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:32:1-36.2>
+    name: Foo
+    struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:33:3-35.4>
+      name: Bar
+      const_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:34:5-34.14>
+        pattern: b
+          literal_expr <range: TTYASTDumpTestResources/StructDeclarationTests.swift:34:13-34.14>
+            kind: `int`, literal: `2`, raw_text: `2`
+  struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:37:1-45.2>
+    name: Foo
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/StructDeclarationTests.swift:38:1-38.6>
+      kind: `if`, condition: ` a`
+    const_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:39:3-39.12>
+      pattern: a
+        literal_expr <range: TTYASTDumpTestResources/StructDeclarationTests.swift:39:11-39.12>
+          kind: `int`, literal: `1`, raw_text: `1`
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/StructDeclarationTests.swift:40:1-40.10>
+      kind: `elseif`, condition: ` b`
+    const_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:41:3-41.12>
+      pattern: b
+        literal_expr <range: TTYASTDumpTestResources/StructDeclarationTests.swift:41:11-41.12>
+          kind: `int`, literal: `2`, raw_text: `2`
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/StructDeclarationTests.swift:42:1-42.6>
+      kind: `else`
+    const_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:43:3-43.12>
+      pattern: e
+        literal_expr <range: TTYASTDumpTestResources/StructDeclarationTests.swift:43:11-43.12>
+          kind: `int`, literal: `3`, raw_text: `3`
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/StructDeclarationTests.swift:44:1-44.7>
+      kind: `endif`
