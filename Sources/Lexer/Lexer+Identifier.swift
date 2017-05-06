@@ -93,7 +93,6 @@ fileprivate let keywordMapping: [String: Token.Kind] = [
   "didSet": .didSet,
   "do": .do,
   "dynamic": .dynamic,
-  "dynamicType": .dynamicType,
   "enum": .enum,
   "extension": .extension,
   "else": .else,

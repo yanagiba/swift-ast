@@ -70,12 +70,6 @@ extension ClosureExpression : TTYASTDumpRepresentable {
   }
 }
 
-extension DynamicTypeExpression : TTYASTDumpRepresentable {
-  var ttyDump: String {
-    return dump("dyn_type_expr", sourceRange)
-  }
-}
-
 extension ExplicitMemberExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("explicit_member_expr", sourceRange)

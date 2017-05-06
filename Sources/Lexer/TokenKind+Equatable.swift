@@ -151,8 +151,6 @@ extension Token.Kind: Equatable {
       return true
     case (.do, .do):
       return true
-    case (.dynamicType, .dynamicType):
-      return true
     case (.enum, .enum):
       return true
     case (.extension, .extension):

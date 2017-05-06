@@ -481,8 +481,6 @@ extension ASTVisitor {
       return try traverse(expr)
     case let expr as ClosureExpression:
       return try traverse(expr)
-    case let expr as DynamicTypeExpression:
-      return try traverse(expr)
     case let expr as ExplicitMemberExpression:
       return try traverse(expr)
     case let expr as ForcedValueExpression:
@@ -566,11 +564,6 @@ extension ASTVisitor {
     }
 
     return true
-  }
-
-  public func traverse(_ expr: DynamicTypeExpression) throws -> Bool {
-    guard try visit(expr) else { return false }
-    return try traverse(expr.expression)
   }
 
   public func traverse(_ expr: ExplicitMemberExpression) throws -> Bool {

@@ -67,8 +67,6 @@ public extension Token.Kind /* named identifier */ {
       return "do"
     case .dynamic:
       return "dynamic"
-    case .dynamicType:
-      return "dynamicType"
     case .enum:
       return "enum"
     case .extension:
