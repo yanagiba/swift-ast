@@ -155,6 +155,12 @@ extension ASTVisitor {
   public func traverse(_ decl: InitializerDeclaration) throws -> Bool {
     guard try visit(decl) else { return false }
 
+    for param in decl.parameterList {
+      if let defaultArg = param.defaultArgumentClause {
+        guard try traverse(defaultArg) else { return false }
+      }
+    }
+
     return try traverse(decl.body)
   }
 

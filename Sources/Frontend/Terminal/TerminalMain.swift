@@ -41,18 +41,18 @@ public func terminalMain(
     }
     let diagnosticConsumer = TerminalDiagnosticConsumer()
     let parser = Parser(source: sourceFile)
-    guard let result = try? parser.parse() else {
+    guard let topLevelDecl = try? parser.parse() else {
       DiagnosticPool.shared.report(withConsumer: diagnosticConsumer)
       return -2
     }
     DiagnosticPool.shared.report(withConsumer: diagnosticConsumer)
     switch ttyType {
     case .astDump:
-      print(result.ttyASTDump(indentation: 0))
+      print(topLevelDecl.ttyDump)
     case .astPrint:
-      print(result.ttyASTPrint(indentation: 0))
+      print(topLevelDecl.ttyASTPrint(indentation: 0))
     case .astText:
-      print(result.textDescription)
+      print(topLevelDecl.textDescription)
     case .diagnosticsOnly:
       print()
     }

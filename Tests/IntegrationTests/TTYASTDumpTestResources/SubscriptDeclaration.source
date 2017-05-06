@@ -1,0 +1,47 @@
+/*
+   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+subscript() -> Self {}
+@a subscript() -> Self {}
+private nonmutating static final subscript() -> Self {}
+@a fileprivate subscript() -> Self {}
+subscript(i: Int) -> Self {}
+subscript(section: Int, row: Int) -> Self {}
+subscript() -> @a @b @c Self {}
+subscript() -> Self {
+  let foo = 3
+  return _weakSelf
+}
+subscript() -> Self {
+  get {
+    return _foo
+  }
+  set {
+    _foo = newValue
+  }
+}
+subscript() -> Self {
+  @a mutating get {
+    return _foo
+  }
+  @a mutating set(newFoo) {
+    _foo = newFoo
+  }
+}
+subscript() -> Self {
+  @a @b @c mutating get
+  @x @y @z nonmutating set
+}

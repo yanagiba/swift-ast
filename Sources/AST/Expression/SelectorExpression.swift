@@ -35,7 +35,7 @@ public class SelectorExpression : ASTNode, PrimaryExpression {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    switch self.kind {
+    switch kind {
     case .selector(let expr):
       return "#selector(\(expr.textDescription))"
     case .getter(let expr):

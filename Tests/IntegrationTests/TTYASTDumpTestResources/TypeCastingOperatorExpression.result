@@ -1,0 +1,17 @@
+top_level_decl <range: TTYASTDumpTestResources/TypeCastingOperatorExpressionTests.swift:17:1-20.12>
+  type_casting_expr <range: TTYASTDumpTestResources/TypeCastingOperatorExpressionTests.swift:17:1-17.11>
+    kind: `is`, type: `bar`
+    identifier_expr <range: TTYASTDumpTestResources/TypeCastingOperatorExpressionTests.swift:17:1-17.4>
+      kind: `identifier`, identifier: `foo`
+  type_casting_expr <range: TTYASTDumpTestResources/TypeCastingOperatorExpressionTests.swift:18:1-18.11>
+    kind: `cast`, type: `bar`
+    identifier_expr <range: TTYASTDumpTestResources/TypeCastingOperatorExpressionTests.swift:18:1-18.4>
+      kind: `identifier`, identifier: `foo`
+  type_casting_expr <range: TTYASTDumpTestResources/TypeCastingOperatorExpressionTests.swift:19:1-19.12>
+    kind: `conditional_cast`, type: `bar`
+    identifier_expr <range: TTYASTDumpTestResources/TypeCastingOperatorExpressionTests.swift:19:1-19.4>
+      kind: `identifier`, identifier: `foo`
+  type_casting_expr <range: TTYASTDumpTestResources/TypeCastingOperatorExpressionTests.swift:20:1-20.12>
+    kind: `forced_cast`, type: `bar`
+    identifier_expr <range: TTYASTDumpTestResources/TypeCastingOperatorExpressionTests.swift:20:1-20.4>
+      kind: `identifier`, identifier: `foo`

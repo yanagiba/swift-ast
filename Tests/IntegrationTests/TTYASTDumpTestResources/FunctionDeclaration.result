@@ -1,0 +1,145 @@
+top_level_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:17:1-46.49>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:17:1-17.11>
+    name: foo
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:18:1-18.11>
+    name: <!>
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:19:1-19.15>
+    name: <
+    modifiers: infix
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:20:1-20.17>
+    name: <
+    modifiers: postfix
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:21:1-21.16>
+    name: >
+    modifiers: prefix
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:22:1-22.20>
+    name: foo
+    attributes: `@a @b @c`
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:23:1-23.45>
+    name: foo
+    modifiers: fileprivate static final override
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:24:1-24.33>
+    name: √
+    attributes: `@a @b @c`
+    modifiers: private prefix
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:25:1-25.34>
+    name: foo
+    generic_param: `<A, B: C, D: protocol<E, F, G>>`
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:26:1-26.19>
+    name: foo
+    parameters:
+    0: bar: Bar
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:27:1-27.25>
+    name: foo
+    parameters:
+    0: bar: inout Bar
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:28:1-28.22>
+    name: foo
+    parameters:
+    0: _b bar: Bar
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:29:1-29.21>
+    name: foo
+    parameters:
+    0: _ bar: Bar
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:30:1-30.29>
+    name: foo
+    parameters:
+    0: _: Bar
+    1: and _: Bar
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:31:1-31.22>
+    name: foo
+    parameters:
+    0: i: Int = 12
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:32:1-32.22>
+    name: foo
+    parameters:
+    0: bar: Bar...
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:33:1-33.53>
+    name: foo
+    parameters:
+    0: a: A
+    1: _ b: B
+    2: c: inout C
+    3: d: @a D
+    4: e: E...
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:34:1-34.26>
+    name: foo
+    parameters:
+    0: bar: Bar
+    throws_kind: `throws`
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:35:1-35.28>
+    name: foo
+    parameters:
+    0: bar: Bar
+    throws_kind: `rethrows`
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:36:1-36.35>
+    name: foo
+    parameters:
+    0: bar: Bar
+    return_type: `Foo` with attributes `@a @b @c`
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:37:1-37.33>
+    name: foo
+    parameters:
+    0: bar: Bar
+    throws_kind: `throws`
+    return_type: `Foo`
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:38:1-38.35>
+    name: foo
+    parameters:
+    0: bar: Bar
+    throws_kind: `rethrows`
+    return_type: `Foo`
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:39:1-39.29>
+    name: foo
+    generic_param: `<A>`
+    generic_where: `where A == Foo`
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:40:1-40.14>
+    name: foo
+    <empty_code_block>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:41:1-43.2>
+    name: foo
+    function_call_expr <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:42:3-42.23>
+      identifier_expr <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:42:3-42.8>
+        kind: `identifier`, identifier: `print`
+      arguments:
+      0: kind: `expression`
+        literal_expr <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:42:9-42.22>
+          kind: `string`, raw_text: `"hello world"`
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:44:1-44.32>
+    name: foo
+    generic_param: `<A>`
+    generic_where: `where A == Foo`
+    <empty_code_block>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:45:1-45.26>
+    name: foo
+    parameters:
+    0: b: () -> String
+    <func_def_only>
+  func_decl <range: TTYASTDumpTestResources/FunctionDeclarationTests.swift:46:1-46.49>
+    name: foo
+    parameters:
+    0: b: @autoclosure (Int) rethrows -> String
+    <func_def_only>

@@ -1,0 +1,2 @@
+top_level_decl <range: TTYASTDumpTestResources/WildcardExpressionTests.swift:17:1-17.2>
+  wildcard_expr <range: TTYASTDumpTestResources/WildcardExpressionTests.swift:17:1-17.2>

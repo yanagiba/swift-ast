@@ -30,7 +30,7 @@ public class OperatorDeclaration : ASTNode, Declaration {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    switch self.kind {
+    switch kind {
     case .prefix(let op):
       return "prefix operator \(op)"
     case .postfix(let op):

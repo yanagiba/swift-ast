@@ -31,10 +31,10 @@ public class TypeCastingOperatorExpression : ASTNode, BinaryExpression {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    var exprText: String
-    var operatorText: String
-    var typeText: String
-    switch self.kind {
+    let exprText: String
+    let operatorText: String
+    let typeText: String
+    switch kind {
     case let .check(expr, type):
       exprText = expr.textDescription
       operatorText = "is"

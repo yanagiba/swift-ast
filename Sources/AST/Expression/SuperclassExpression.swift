@@ -30,7 +30,7 @@ public class SuperclassExpression : ASTNode, PrimaryExpression {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    switch self.kind {
+    switch kind {
     case .method(let name):
       return "super.\(name)"
     case .subscript(let exprs):

@@ -15,7 +15,7 @@
 */
 
 public class KeyPathExpression : ASTNode, PrimaryExpression {
-  let expression: Expression
+  public let expression: Expression
 
   public init(expression: Expression) {
     self.expression = expression

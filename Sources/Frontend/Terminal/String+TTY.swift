@@ -14,6 +14,8 @@
    limitations under the License.
 */
 
+import Foundation
+
 enum TTYColor : Int {
   case black
   case red
@@ -32,6 +34,14 @@ extension String {
     self.init(repeating: "  ", count: indentation)
   }
 
+  static let indent = String(indentation: 1)
+
+  var indent: String {
+    return components(separatedBy: .newlines)
+      .map { String.indent + $0 }
+      .joined(separator: "\n")
+  }
+
   func colored(with color: TTYColor = .default) -> String {
     let defaultColor = "\u{001B}[0m"
     switch color {
@@ -40,5 +50,14 @@ extension String {
     default:
       return "\u{001B}[\(30 + color.rawValue)m\(self)\(defaultColor)"
     }
+  }
+
+  var adjustedForPWD: String {
+    let pwd = FileManager.default.currentDirectoryPath
+    guard hasPrefix(pwd) else {
+      return self
+    }
+
+    return substring(from: index(startIndex, offsetBy: pwd.characters.count+1))
   }
 }

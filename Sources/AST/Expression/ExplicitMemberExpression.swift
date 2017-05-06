@@ -31,7 +31,7 @@ public class ExplicitMemberExpression : ASTNode, PostfixExpression {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    switch self.kind {
+    switch kind {
     case let .tuple(postfixExpr, index):
       return "\(postfixExpr.textDescription).\(index)"
     case let .namedType(postfixExpr, identifier):

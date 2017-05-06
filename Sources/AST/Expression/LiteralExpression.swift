@@ -51,7 +51,7 @@ public class LiteralExpression : ASTNode, PrimaryExpression {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    switch self.kind {
+    switch kind {
     case .nil:
       return "nil"
     case .boolean(let bool):
@@ -66,11 +66,11 @@ public class LiteralExpression : ASTNode, PrimaryExpression {
       return rawText
     case .array(let exprs):
       return "[\(exprs.textDescription)]"
-    case .dictionary(let exprs):
-      if exprs.isEmpty {
+    case .dictionary(let entries):
+      if entries.isEmpty {
         return "[:]"
       }
-      let dictText = exprs.map({ $0.textDescription }).joined(separator: ", ")
+      let dictText = entries.map({ $0.textDescription }).joined(separator: ", ")
       return "[\(dictText)]"
     }
   }
