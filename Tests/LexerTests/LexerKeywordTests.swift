@@ -35,7 +35,6 @@ class LexerKeywordTests: XCTestCase {
     ("didSet", .didSet),
     ("do", .do),
     ("dynamic", .dynamic),
-    ("dynamicType", .dynamicType),
     ("enum", .enum),
     ("extension", .extension),
     ("else", .else),

@@ -303,11 +303,6 @@ extension Parser {
     return resultExpr
   }
 
-  /**
-   This parses a `FunctionCallExpression`.
-   And if it is ended in the format of `type(of: expression)`,
-   we convert it into a dynamic type expression.
-   */
   private func parseFunctionCallExpression(
     postfixExpression expr: PostfixExpression, config: ParserExpressionConfig
   ) throws -> PostfixExpression {
@@ -412,17 +407,6 @@ extension Parser {
     endLocation = getEndLocation()
     if !_lexer.match(.rightParen) {
         try _raiseError(.dummy)
-    }
-
-    // handle dynamic type expression
-    if let idExpr = expr as? IdentifierExpression,
-      case .identifier("type", _) = idExpr.kind,
-      argumentList.count == 1,
-      case let .namedExpression("of", argExpr) = argumentList[0]
-    {
-      let dynTypeExpr = DynamicTypeExpression(expression: argExpr)
-      dynTypeExpr.setSourceRange(expr.sourceRange.start, endLocation)
-      return dynTypeExpr
     }
 
     let funcCallExpr: FunctionCallExpression
@@ -536,7 +520,6 @@ extension Parser {
     switch _lexer.read([
       .init,
       .self,
-      .dynamicType,
       .dummyIntegerLiteral,
       .dummyFloatingPointLiteral,
     ]) {
@@ -566,10 +549,6 @@ extension Parser {
       let postfixSelfExpr = PostfixSelfExpression(postfixExpression: expr)
       postfixSelfExpr.setSourceRange(expr.sourceRange.start, endLocation)
       return postfixSelfExpr
-    case .dynamicType:
-      let dynTypeExpr = DynamicTypeExpression(expression: expr)
-      dynTypeExpr.setSourceRange(startLocation, endLocation)
-      return dynTypeExpr
     default:
       endLocation = getEndLocation()
       guard let id = _lexer.readNamedIdentifier() else {

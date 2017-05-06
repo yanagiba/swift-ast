@@ -59,7 +59,6 @@ public protocol ASTVisitor {
   func visit(_: AssignmentOperatorExpression) throws -> Bool
   func visit(_: BinaryOperatorExpression) throws -> Bool
   func visit(_: ClosureExpression) throws -> Bool
-  func visit(_: DynamicTypeExpression) throws -> Bool
   func visit(_: ExplicitMemberExpression) throws -> Bool
   func visit(_: ForcedValueExpression) throws -> Bool
   func visit(_: FunctionCallExpression) throws -> Bool
@@ -229,10 +228,6 @@ extension ASTVisitor {
   }
 
   public func visit(_: ClosureExpression) throws -> Bool {
-    return true
-  }
-
-  public func visit(_: DynamicTypeExpression) throws -> Bool {
     return true
   }
 

@@ -55,7 +55,6 @@ public func allTests() -> [XCTestCaseEntry] {
     testCase(ParserInitializerExpressionTests.allTests),
     testCase(ParserExplicitMemberExpressionTests.allTests),
     testCase(ParserPostfixSelfExpressionTests.allTests),
-    testCase(ParserDynamicTypeExpressionTests.allTests),
     testCase(ParserSubscriptExpressionTests.allTests),
     testCase(ParserForcedValueExpressionTests.allTests),
     testCase(ParserOptionalChainingExpressionTests.allTests),
