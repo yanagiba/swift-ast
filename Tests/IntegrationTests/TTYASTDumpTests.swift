@@ -89,7 +89,7 @@ class TTYASTDumpTests : XCTestCase {
       "PrecedenceGroupDeclaration",
       "ProtocolDeclaration",
       "StructDeclaration",
-      // "SubscriptDeclaration",
+      "SubscriptDeclaration",
       // "TypealiasDeclaration",
       // "VariableDeclaration",
     ]

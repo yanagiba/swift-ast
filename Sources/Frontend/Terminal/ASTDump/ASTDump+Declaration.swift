@@ -571,10 +571,34 @@ extension StructDeclaration : TTYASTDumpRepresentable {
 extension SubscriptDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("subscript_decl", sourceRange)
-
-    // TODO: handle block properly
-
-    return head
+    var neck = ""
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indent
+    }
+    if !modifiers.isEmpty {
+      neck += "\n"
+      neck += "modifiers: \(modifiers.textDescription)".indent
+    }
+    if !parameterList.isEmpty {
+      neck += "\n" + dump(parameterList).indent
+    }
+    neck += "\n"
+    neck += "type: \(resultType.textDescription)".indent
+    if !resultAttributes.isEmpty {
+      neck += "\n"
+      neck += "result_attributes: `\(resultAttributes.textDescription)`".indent
+    }
+    let bodyTTYDump: String
+    switch body {
+    case .codeBlock(let block):
+      bodyTTYDump = block.ttyDump
+    case .getterSetterBlock(let block):
+      bodyTTYDump = dump(block)
+    case .getterSetterKeywordBlock(let block):
+      bodyTTYDump = dump(block)
+    }
+    return "\(head)\(neck)\n\(bodyTTYDump.indent)"
   }
 }
 
