@@ -1,0 +1,4 @@
+top_level_decl <range: TTYASTDumpTestResources/ContinueStatementTests.swift:17:1-18.9>
+  continue_stmt <range: TTYASTDumpTestResources/ContinueStatementTests.swift:17:1-17.13>
+    label_name: `foo`
+  continue_stmt <range: TTYASTDumpTestResources/ContinueStatementTests.swift:18:1-18.9>

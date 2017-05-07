@@ -14,13 +14,9 @@
    limitations under the License.
 */
 
-import XCTest
-
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(TTYASTDumpTests.allTests),
-    testCase(TTYASTPrintTests.allTests),
-  ]
-}
-#endif
+typealias Foo = Bar
+@a @b @c typealias Foo = Bar
+fileprivate typealias Foo = Bar
+@a public typealias Foo = Bar
+typealias Foo<A, B: C, D: E, F, G> = (a, b, c) throws -> Bar<A, B, C>
+@a public typealias Foo<A> = Bar

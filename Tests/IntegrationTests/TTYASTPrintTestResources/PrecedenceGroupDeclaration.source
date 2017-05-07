@@ -14,13 +14,42 @@
    limitations under the License.
 */
 
-import XCTest
-
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(TTYASTDumpTests.allTests),
-    testCase(TTYASTPrintTests.allTests),
-  ]
+precedencegroup foo {}
+precedencegroup foo {
+  higherThan: bar
 }
-#endif
+precedencegroup foo {
+  higherThan: a, b, c
+}
+precedencegroup foo {
+  lowerThan: bar
+}
+precedencegroup foo {
+  lowerThan: a, b, c
+}
+precedencegroup foo {
+  assignment: true
+}
+precedencegroup foo {
+  assignment: false
+}
+precedencegroup foo {
+  associativity: left
+}
+precedencegroup foo {
+  associativity: right
+}
+precedencegroup foo {
+  associativity: none
+}
+precedencegroup foo {
+  higherThan: bar
+  higherThan: a, b, c
+  lowerThan: bar
+  lowerThan: a, b, c
+  assignment: true
+  assignment: false
+  associativity: left
+  associativity: right
+  associativity: none
+}

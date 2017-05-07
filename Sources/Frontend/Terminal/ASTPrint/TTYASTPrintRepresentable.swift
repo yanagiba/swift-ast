@@ -15,7 +15,15 @@
 */
 
 protocol TTYASTPrintRepresentable {
+  // var ttyPrint: String { get }
+
   func ttyASTPrint(indentation: Int) -> String
+}
+
+extension TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return ttyASTPrint(indentation: 0)
+  }
 }
 
 protocol TTYASTPrintExpression : TTYASTPrintRepresentable {

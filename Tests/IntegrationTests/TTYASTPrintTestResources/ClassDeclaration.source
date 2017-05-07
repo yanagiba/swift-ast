@@ -14,13 +14,35 @@
    limitations under the License.
 */
 
-import XCTest
-
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(TTYASTDumpTests.allTests),
-    testCase(TTYASTPrintTests.allTests),
-  ]
+class Foo {}
+@a @b @c class Foo {}
+fileprivate class Foo {}
+@a public class Foo {}
+final class Foo {}
+@a public final class Foo {}
+@a final public class Foo {}
+class Foo<A, B: C, D: E, F, G> {}
+class Foo: String {}
+class Foo where Foo == Bar {}
+class Foo<T> : Array<T> where T : Int & Double {}
+class Foo {
+  let a = 1
 }
+class Foo {
+  let a = 1
+  var b = 2
+}
+class Foo {
+  class Bar {
+    let b = 2
+  }
+}
+class Foo {
+#if a
+  let a = 1
+#elseif b
+  let b = 2
+#else
+  let e = 3
 #endif
+}

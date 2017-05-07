@@ -1,0 +1,11 @@
+top_level_decl <range: TTYASTDumpTestResources/SuperclassExpressionTests.swift:17:1-19.16>
+  superclass_expr <range: TTYASTDumpTestResources/SuperclassExpressionTests.swift:17:1-17.10>
+    kind: `method`, method_name: `foo`
+  superclass_expr <range: TTYASTDumpTestResources/SuperclassExpressionTests.swift:18:1-18.11>
+    kind: `initializer`
+  superclass_expr <range: TTYASTDumpTestResources/SuperclassExpressionTests.swift:19:1-19.16>
+    kind: `subscript`
+    0: identifier_expr <range: TTYASTDumpTestResources/SuperclassExpressionTests.swift:19:7-19.10>
+      kind: `identifier`, identifier: `foo`
+    1: identifier_expr <range: TTYASTDumpTestResources/SuperclassExpressionTests.swift:19:12-19.15>
+      kind: `identifier`, identifier: `bar`

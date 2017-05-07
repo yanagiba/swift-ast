@@ -16,6 +16,17 @@
 
 import AST
 
+extension Statement {
+  var ttyPrint: String {
+    switch self {
+    case let ttyAstPrintRepresentable as TTYASTPrintRepresentable:
+      return ttyAstPrintRepresentable.ttyPrint
+    default:
+      return textDescription
+    }
+  }
+}
+
 extension Collection where Iterator.Element == Statement {
   func ttyASTPrint(indentation: Int) -> String {
     return self.map({ $0.ttyASTPrint(indentation: indentation) }).joined(separator: "\n")

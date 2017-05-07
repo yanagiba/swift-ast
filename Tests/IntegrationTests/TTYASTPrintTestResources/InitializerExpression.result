@@ -1,0 +1,17 @@
+top_level_decl <range: TTYASTDumpTestResources/InitializerExpressionTests.swift:17:1-19.17>
+  initializer_expr <range: TTYASTDumpTestResources/InitializerExpressionTests.swift:17:1-17.9>
+    identifier_expr <range: TTYASTDumpTestResources/InitializerExpressionTests.swift:17:1-17.4>
+      kind: `identifier`, identifier: `foo`
+    arguments: <empty>
+  initializer_expr <range: TTYASTDumpTestResources/InitializerExpressionTests.swift:18:1-18.15>
+    identifier_expr <range: TTYASTDumpTestResources/InitializerExpressionTests.swift:18:1-18.4>
+      kind: `identifier`, identifier: `foo`
+    arguments:
+    0: name: `bar`
+  initializer_expr <range: TTYASTDumpTestResources/InitializerExpressionTests.swift:19:1-19.17>
+    identifier_expr <range: TTYASTDumpTestResources/InitializerExpressionTests.swift:19:1-19.4>
+      kind: `identifier`, identifier: `foo`
+    arguments:
+    0: name: `a`
+    1: name: `b`
+    2: name: `c`

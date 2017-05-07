@@ -20,6 +20,13 @@ extension TopLevelDeclaration : TTYASTPrintRepresentable {
   func ttyASTPrint(indentation: Int) -> String {
     return statements.ttyASTPrint(indentation: indentation)
   }
+
+  var ttyPrint: String {
+    return statements
+      .map { $0.ttyPrint }
+      .joined(separator: "\n")
+      + "\n"
+  }
 }
 
 extension CodeBlock : TTYASTPrintRepresentable {

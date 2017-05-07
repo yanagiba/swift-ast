@@ -14,13 +14,8 @@
    limitations under the License.
 */
 
-import XCTest
-
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(TTYASTDumpTests.allTests),
-    testCase(TTYASTPrintTests.allTests),
-  ]
-}
-#endif
+for i in aCollection { print(i) }
+for case i in aCollection {}
+for (k, v) in [1: true, 0: false] where v {}
+for (index, it) in enumerate([]) {}
+for e in 0..<9 {}

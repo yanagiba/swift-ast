@@ -14,13 +14,8 @@
    limitations under the License.
 */
 
-import XCTest
+while true {}
 
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(TTYASTDumpTests.allTests),
-    testCase(TTYASTPrintTests.allTests),
-  ]
+while shouldContinue(with: i) {
+  print(i)
 }
-#endif

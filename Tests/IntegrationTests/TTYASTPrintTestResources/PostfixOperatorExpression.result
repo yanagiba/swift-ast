@@ -1,0 +1,13 @@
+top_level_decl <range: TTYASTDumpTestResources/PostfixOperatorExpressionTests.swift:17:1-19.7>
+  postfix_op_expr <range: TTYASTDumpTestResources/PostfixOperatorExpressionTests.swift:17:1-17.5>
+    operator: `/`
+    identifier_expr <range: TTYASTDumpTestResources/PostfixOperatorExpressionTests.swift:17:1-17.4>
+      kind: `identifier`, identifier: `foo`
+  postfix_op_expr <range: TTYASTDumpTestResources/PostfixOperatorExpressionTests.swift:18:1-18.6>
+    operator: `<>`
+    identifier_expr <range: TTYASTDumpTestResources/PostfixOperatorExpressionTests.swift:18:1-18.4>
+      kind: `identifier`, identifier: `foo`
+  postfix_op_expr <range: TTYASTDumpTestResources/PostfixOperatorExpressionTests.swift:19:1-19.7>
+    operator: `...`
+    identifier_expr <range: TTYASTDumpTestResources/PostfixOperatorExpressionTests.swift:19:1-19.4>
+      kind: `identifier`, identifier: `foo`

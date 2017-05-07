@@ -1,0 +1,33 @@
+top_level_decl <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:17:1-21.23>
+  explicit_member_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:17:1-17.6>
+    identifier_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:17:1-17.4>
+      kind: `identifier`, identifier: `foo`
+    index: `0`
+  explicit_member_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:18:1-18.8>
+    identifier_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:18:1-18.4>
+      kind: `identifier`, identifier: `foo`
+    identifier: `bar`
+  explicit_member_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:19:1-19.17>
+    identifier_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:19:1-19.4>
+      kind: `identifier`, identifier: `foo`
+    identifier: `bar`, generic_argument: `<a, b, c>`
+  explicit_member_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:20:1-20.16>
+    identifier_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:20:1-20.4>
+      kind: `identifier`, identifier: `foo`
+    identifier: `bar`
+    arguments:
+    0: name: `a`
+    1: name: `b`
+    2: name: `c`
+  explicit_member_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:21:1-21.23>
+    explicit_member_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:21:1-21.17>
+      explicit_member_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:21:1-21.13>
+        explicit_member_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:21:1-21.8>
+          identifier_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:21:1-21.4>
+            kind: `identifier`, identifier: `foo`
+          identifier: `bar`
+        identifier: `a`, generic_argument: `<x>`
+      index: `100`
+    identifier: `b`
+    arguments:
+    0: name: `y`

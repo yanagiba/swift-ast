@@ -14,13 +14,9 @@
    limitations under the License.
 */
 
-import XCTest
-
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(TTYASTDumpTests.allTests),
-    testCase(TTYASTPrintTests.allTests),
-  ]
-}
-#endif
+_ = #selector(foo)
+_ = #selector(self.bar)
+_ = #selector(getter: SomeClass.property)
+_ = #selector(setter: SomeClass.property)
+_ = #selector(pillTapped(_:))
+_ = #selector(self.pillTapped(_:))

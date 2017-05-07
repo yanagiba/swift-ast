@@ -14,13 +14,12 @@
    limitations under the License.
 */
 
-import XCTest
-
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(TTYASTDumpTests.allTests),
-    testCase(TTYASTPrintTests.allTests),
-  ]
+defer {
+  break
 }
-#endif
+
+defer {
+  defer {
+    return
+  }
+}
