@@ -16,25 +16,22 @@
 
 import AST
 
-extension Expression {
-  func ttyASTPrint(indentation: Int) -> String {
-    switch self {
-    case let representable as TTYASTPrintRepresentable:
-      return representable.ttyASTPrint(indentation: indentation)
-    default:
-      return textDescription
-    }
-  }
-}
-
 extension AssignmentOperatorExpression : TTYASTPrintExpression {
+  var ttyPrint: String {
+    return ttyASTPrint(indentation: 0)
+  }
+
   func ttyASTPrint(indentation: Int) -> String {
     return "\(leftExpression.textDescription) = " +
-      rightExpression.ttyASTPrint(indentation: indentation)
+      rightExpression.ttyPrint
   }
 }
 
 extension ClosureExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return ttyASTPrint(indentation: 0)
+  }
+
   func ttyASTPrint(indentation: Int) -> String {
     var signatureText = ""
     var stmtsText = ""
@@ -67,17 +64,21 @@ extension ClosureExpression : TTYASTPrintRepresentable {
 }
 
 extension ExplicitMemberExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return ttyASTPrint(indentation: 0)
+  }
+
   func ttyASTPrint(indentation: Int) -> String {
     switch kind {
     case let .tuple(postfixExpr, index):
-      return "\(postfixExpr.ttyASTPrint(indentation: indentation)).\(index)"
+      return "\(postfixExpr.ttyPrint).\(index)"
     case let .namedType(postfixExpr, identifier):
-      return "\(postfixExpr.ttyASTPrint(indentation: indentation)).\(identifier)"
+      return "\(postfixExpr.ttyPrint).\(identifier)"
     case let .generic(postfixExpr, identifier, genericArgumentClause):
-      return "\(postfixExpr.ttyASTPrint(indentation: indentation)).\(identifier)" +
+      return "\(postfixExpr.ttyPrint).\(identifier)" +
         "\(genericArgumentClause.textDescription)"
     case let .argument(postfixExpr, identifier, argumentNames):
-      var textDesc = "\(postfixExpr.ttyASTPrint(indentation: indentation)).\(identifier)"
+      var textDesc = "\(postfixExpr.ttyPrint).\(identifier)"
       if !argumentNames.isEmpty {
         let argumentNamesDesc = argumentNames.map({ "\($0):" }).joined()
         textDesc += "(\(argumentNamesDesc))"
@@ -88,12 +89,16 @@ extension ExplicitMemberExpression : TTYASTPrintRepresentable {
 }
 
 extension FunctionCallExpression.Argument : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return ttyASTPrint(indentation: 0)
+  }
+
   func ttyASTPrint(indentation: Int) -> String {
     switch self {
     case .expression(let expr):
-      return expr.ttyASTPrint(indentation: indentation)
+      return expr.ttyPrint
     case let .namedExpression(identifier, expr):
-      return "\(identifier): \(expr.ttyASTPrint(indentation: indentation))"
+      return "\(identifier): \(expr.ttyPrint)"
     default:
       return textDescription
     }
@@ -101,37 +106,45 @@ extension FunctionCallExpression.Argument : TTYASTPrintRepresentable {
 }
 
 extension FunctionCallExpression : TTYASTPrintExpression {
+  var ttyPrint: String {
+    return ttyASTPrint(indentation: 0)
+  }
+
   func ttyASTPrint(indentation: Int) -> String {
     var parameterText = ""
     if let argumentClause = argumentClause {
       let argumentsText = argumentClause
-        .map({ $0.ttyASTPrint(indentation: indentation) })
+        .map({ $0.ttyPrint })
         .joined(separator: ", ")
       parameterText = "(\(argumentsText))"
     }
     var trailingText = ""
     if let trailingClosure = trailingClosure {
-      trailingText = " \(trailingClosure.ttyASTPrint(indentation: indentation))"
+      trailingText = " \(trailingClosure.ttyPrint)"
     }
-    return postfixExpression.ttyASTPrint(indentation: indentation) +
+    return postfixExpression.ttyPrint +
       "\(parameterText)\(trailingText)"
   }
 }
 
 extension TryOperatorExpression : TTYASTPrintExpression {
+  var ttyPrint: String {
+    return ttyASTPrint(indentation: 0)
+  }
+
   func ttyASTPrint(indentation: Int) -> String {
     let tryText: String
     let exprText: String
     switch kind {
     case .try(let expr):
       tryText = "try"
-      exprText = expr.ttyASTPrint(indentation: indentation)
+      exprText = expr.ttyPrint
     case .forced(let expr):
       tryText = "try!"
-      exprText = expr.ttyASTPrint(indentation: indentation)
+      exprText = expr.ttyPrint
     case .optional(let expr):
       tryText = "try?"
-      exprText = expr.ttyASTPrint(indentation: indentation)
+      exprText = expr.ttyPrint
     }
     return "\(tryText) \(exprText)"
   }
