@@ -24,7 +24,7 @@ class TTYASTPrintTests : XCTestCase {
     let resourceName = "TTYASTPrintTestResources"
     let testNames = [
       // primary expressions
-      // "IdentifierExpression",
+      "IdentifierExpression",
       // "LiteralExpression",
       // "SelfExpression",
       // "SuperclassExpression",

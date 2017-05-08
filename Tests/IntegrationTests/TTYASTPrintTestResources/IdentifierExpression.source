@@ -16,7 +16,7 @@
 
 foo
 foo<T>
-`class`
+`class` // TODO: need to take care of the backtick
 `class`<P>
 $0
 $0<A>
