@@ -122,6 +122,77 @@ extension FunctionCallExpression : TTYASTPrintExpression {
   }
 }
 
+extension LiteralExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    switch kind {
+    case .array(let exprs):
+      let arrayText = exprs
+        .map({ $0.ttyPrint })
+        .joined(separator: ", ")
+      return "[\(arrayText)]"
+    case .dictionary(let entries):
+      if entries.isEmpty {
+        return "[:]"
+      }
+      let dictText = entries
+        .map({ "\($0.key.ttyPrint): \($0.value.ttyPrint)" })
+        .joined(separator: ", ")
+      return "[\(dictText)]"
+    default:
+      return textDescription
+    }
+  }
+}
+
+extension ParenthesizedExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return "(\(expression.ttyPrint))"
+  }
+}
+
+extension SelectorExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    switch kind {
+    case .selector(let expr):
+      return "#selector(\(expr.ttyPrint))"
+    case .getter(let expr):
+      return "#selector(getter: \(expr.ttyPrint))"
+    case .setter(let expr):
+      return "#selector(setter: \(expr.ttyPrint))"
+    default:
+      return textDescription
+    }
+  }
+}
+
+extension SelfExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    switch kind {
+    case .subscript(let exprs):
+      let exprsText = exprs
+        .map({ $0.ttyPrint })
+        .joined(separator: ", ")
+      return "self[\(exprsText)]"
+    default:
+      return textDescription
+    }
+  }
+}
+
+extension SuperclassExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    switch kind {
+    case .subscript(let exprs):
+      let exprsText = exprs
+        .map({ $0.ttyPrint })
+        .joined(separator: ", ")
+      return "super[\(exprsText)]"
+    default:
+      return textDescription
+    }
+  }
+}
+
 extension TryOperatorExpression : TTYASTPrintExpression {
   var ttyPrint: String {
     return ttyASTPrint(indentation: 0)
@@ -142,5 +213,22 @@ extension TryOperatorExpression : TTYASTPrintExpression {
       exprText = expr.ttyPrint
     }
     return "\(tryText) \(exprText)"
+  }
+}
+
+extension TupleExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    if elementList.isEmpty {
+      return "()"
+    }
+
+    let listText: [String] = elementList.map { element in
+      var idText = ""
+      if let id = element.identifier {
+        idText = "\(id): "
+      }
+      return "\(idText)\(element.expression.ttyPrint)"
+    }
+    return "(\(listText.joined(separator: ", ")))"
   }
 }

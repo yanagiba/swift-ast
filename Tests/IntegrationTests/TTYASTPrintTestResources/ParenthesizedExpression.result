@@ -1,13 +1,2 @@
-top_level_decl <range: TTYASTDumpTestResources/ParenthesizedExpressionTests.swift:17:1-18.14>
-  assign_expr <range: TTYASTDumpTestResources/ParenthesizedExpressionTests.swift:17:1-17.10>
-    wildcard_expr <range: TTYASTDumpTestResources/ParenthesizedExpressionTests.swift:17:1-17.2>
-    paren_expr <range: TTYASTDumpTestResources/ParenthesizedExpressionTests.swift:17:5-17.10>
-      identifier_expr <range: TTYASTDumpTestResources/ParenthesizedExpressionTests.swift:17:6-17.9>
-        kind: `identifier`, identifier: `foo`
-  assign_expr <range: TTYASTDumpTestResources/ParenthesizedExpressionTests.swift:18:1-18.14>
-    wildcard_expr <range: TTYASTDumpTestResources/ParenthesizedExpressionTests.swift:18:1-18.2>
-    paren_expr <range: TTYASTDumpTestResources/ParenthesizedExpressionTests.swift:18:5-18.14>
-      paren_expr <range: TTYASTDumpTestResources/ParenthesizedExpressionTests.swift:18:6-18.13>
-        paren_expr <range: TTYASTDumpTestResources/ParenthesizedExpressionTests.swift:18:7-18.12>
-          identifier_expr <range: TTYASTDumpTestResources/ParenthesizedExpressionTests.swift:18:8-18.11>
-            kind: `identifier`, identifier: `bar`
+_ = (foo)
+_ = (((bar)))

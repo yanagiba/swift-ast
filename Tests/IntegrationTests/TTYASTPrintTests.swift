@@ -26,14 +26,14 @@ class TTYASTPrintTests : XCTestCase {
       // primary expressions
       "IdentifierExpression",
       "LiteralExpression",
-      // "SelfExpression",
-      // "SuperclassExpression",
+      "SelfExpression",
+      "SuperclassExpression",
       // "ClosureExpression",
-      // "ParenthesizedExpression",
-      // "TupleExpression",
-      // "ImplicitMemberExpression",
+      "ParenthesizedExpression",
+      "TupleExpression",
+      "ImplicitMemberExpression",
       "WildcardExpression",
-      // "SelectorExpression",
+      "SelectorExpression",
       // "KeyPathExpression",
 
       // postfix expressions

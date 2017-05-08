@@ -1,13 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/SelfExpressionTests.swift:17:1-20.15>
-  self_expr <range: TTYASTDumpTestResources/SelfExpressionTests.swift:17:1-17.5>
-    kind: `self`
-  self_expr <range: TTYASTDumpTestResources/SelfExpressionTests.swift:18:1-18.9>
-    kind: `method`, method_name: `foo`
-  self_expr <range: TTYASTDumpTestResources/SelfExpressionTests.swift:19:1-19.10>
-    kind: `initializer`
-  self_expr <range: TTYASTDumpTestResources/SelfExpressionTests.swift:20:1-20.15>
-    kind: `subscript`
-    0: identifier_expr <range: TTYASTDumpTestResources/SelfExpressionTests.swift:20:6-20.9>
-      kind: `identifier`, identifier: `foo`
-    1: identifier_expr <range: TTYASTDumpTestResources/SelfExpressionTests.swift:20:11-20.14>
-      kind: `identifier`, identifier: `bar`
+self
+self.foo
+self.init
+self[foo, bar]
