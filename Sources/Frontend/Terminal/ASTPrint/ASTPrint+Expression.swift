@@ -18,12 +18,7 @@ import AST
 
 extension AssignmentOperatorExpression : TTYASTPrintExpression {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
-    return "\(leftExpression.textDescription) = " +
-      rightExpression.ttyPrint
+    return leftExpression.ttyPrint + " = " + rightExpression.ttyPrint
   }
 }
 
