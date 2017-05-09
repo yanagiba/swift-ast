@@ -122,6 +122,12 @@ extension FunctionCallExpression : TTYASTPrintExpression {
   }
 }
 
+extension KeyPathExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return "#keyPath(\(expression.ttyPrint))"
+  }
+}
+
 extension LiteralExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     switch kind {

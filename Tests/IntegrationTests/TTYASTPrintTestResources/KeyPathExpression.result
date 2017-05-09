@@ -1,6 +1,1 @@
-top_level_decl <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-17.18>
-  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-17.18>
-    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-17.2>
-    keypath_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:5-17.18>
-      identifier_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:14-17.17>
-        kind: `identifier`, identifier: `foo`
+_ = #keyPath(foo)
