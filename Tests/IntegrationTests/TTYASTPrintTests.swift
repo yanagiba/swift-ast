@@ -28,7 +28,7 @@ class TTYASTPrintTests : XCTestCase {
       "LiteralExpression",
       "SelfExpression",
       "SuperclassExpression",
-      // "ClosureExpression",
+      "ClosureExpression",
       "ParenthesizedExpression",
       "TupleExpression",
       "ImplicitMemberExpression",
@@ -37,8 +37,8 @@ class TTYASTPrintTests : XCTestCase {
       "KeyPathExpression",
 
       // postfix expressions
-      // "PostfixOperatorExpression",
-      // "FunctionCallExpression",
+      "PostfixOperatorExpression",
+      "FunctionCallExpression",
       // "InitializerExpression",
       // "ExplicitMemberExpression",
       // "PostfixSelfExpression",

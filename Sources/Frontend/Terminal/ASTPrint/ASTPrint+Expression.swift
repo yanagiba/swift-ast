@@ -24,10 +24,6 @@ extension AssignmentOperatorExpression : TTYASTPrintExpression {
 
 extension ClosureExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
     var signatureText = ""
     var stmtsText = ""
 
@@ -40,18 +36,11 @@ extension ClosureExpression : TTYASTPrintRepresentable {
 
     if let stmts = statements {
       if signature == nil && stmts.count == 1 {
-        let stmt = stmts[0]
-        switch stmt {
-        case let tryOpExpr as TryOperatorExpression:
-          stmtsText = "\n\(String(indentation: indentation + 1))" +
-            tryOpExpr.ttyASTPrint(indentation: indentation + 1) +
-            "\n\(String(indentation: indentation))"
-        default:
-          stmtsText = " \(stmt.textDescription) "
-        }
+        stmtsText = " \(stmts[0].ttyPrint) "
       } else {
-        stmtsText = "\n\(stmts.ttyASTPrint(indentation: indentation + 1))" +
-          "\n\(String(indentation: indentation))"
+        stmtsText = "\n" +
+          stmts.map { $0.ttyPrint }.joined(separator: "\n").indent +
+          "\n"
       }
     }
     return "{\(signatureText)\(stmtsText)}"
@@ -85,10 +74,6 @@ extension ExplicitMemberExpression : TTYASTPrintRepresentable {
 
 extension FunctionCallExpression.Argument : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
     switch self {
     case .expression(let expr):
       return expr.ttyPrint
@@ -102,10 +87,6 @@ extension FunctionCallExpression.Argument : TTYASTPrintRepresentable {
 
 extension FunctionCallExpression : TTYASTPrintExpression {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
     var parameterText = ""
     if let argumentClause = argumentClause {
       let argumentsText = argumentClause
@@ -153,6 +134,12 @@ extension LiteralExpression : TTYASTPrintRepresentable {
 extension ParenthesizedExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     return "(\(expression.ttyPrint))"
+  }
+}
+
+extension PostfixOperatorExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return "\(postfixExpression.ttyPrint)\(postfixOperator)"
   }
 }
 
