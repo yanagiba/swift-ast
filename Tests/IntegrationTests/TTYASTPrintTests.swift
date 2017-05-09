@@ -51,10 +51,10 @@ class TTYASTPrintTests : XCTestCase {
       "InOutExpression",
 
       // binary expressions
-      // "BinaryOperatorExpression",
-      // "AssignmentOperatorExpression",
-      // "TernaryConditionalOperatorExpression",
-      // "TypeCastingOperatorExpression",
+      "BinaryOperatorExpression",
+      "AssignmentOperatorExpression",
+      "TernaryConditionalOperatorExpression",
+      "TypeCastingOperatorExpression",
 
       // try expression
       // "TryOperatorExpression",

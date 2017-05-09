@@ -16,9 +16,15 @@
 
 import AST
 
-extension AssignmentOperatorExpression : TTYASTPrintExpression {
+extension AssignmentOperatorExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     return leftExpression.ttyPrint + " = " + rightExpression.ttyPrint
+  }
+}
+
+extension BinaryOperatorExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return "\(leftExpression.ttyPrint) \(binaryOperator) \(rightExpression.ttyPrint)"
   }
 }
 
@@ -223,6 +229,12 @@ extension SuperclassExpression : TTYASTPrintRepresentable {
   }
 }
 
+extension TernaryConditionalOperatorExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return "\(conditionExpression.ttyPrint) ? \(trueExpression.ttyPrint) : \(falseExpression.ttyPrint)"
+  }
+}
+
 extension TryOperatorExpression : TTYASTPrintExpression {
   var ttyPrint: String {
     return ttyASTPrint(indentation: 0)
@@ -260,5 +272,32 @@ extension TupleExpression : TTYASTPrintRepresentable {
       return "\(idText)\(element.expression.ttyPrint)"
     }
     return "(\(listText.joined(separator: ", ")))"
+  }
+}
+
+extension TypeCastingOperatorExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    let exprText: String
+    let operatorText: String
+    let typeText: String
+    switch kind {
+    case let .check(expr, type):
+      exprText = expr.ttyPrint
+      operatorText = "is"
+      typeText = type.textDescription
+    case let .cast(expr, type):
+      exprText = expr.ttyPrint
+      operatorText = "as"
+      typeText = type.textDescription
+    case let .conditionalCast(expr, type):
+      exprText = expr.ttyPrint
+      operatorText = "as?"
+      typeText = type.textDescription
+    case let .forcedCast(expr, type):
+      exprText = expr.ttyPrint
+      operatorText = "as!"
+      typeText = type.textDescription
+    }
+    return "\(exprText) \(operatorText) \(typeText)"
   }
 }
