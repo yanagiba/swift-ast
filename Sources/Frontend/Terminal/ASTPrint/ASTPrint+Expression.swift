@@ -168,6 +168,12 @@ extension PostfixSelfExpression : TTYASTPrintRepresentable {
   }
 }
 
+extension PrefixOperatorExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return "\(prefixOperator)\(postfixExpression.ttyPrint)"
+  }
+}
+
 extension SelectorExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     switch kind {

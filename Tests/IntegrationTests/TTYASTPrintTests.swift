@@ -47,8 +47,8 @@ class TTYASTPrintTests : XCTestCase {
       "OptionalChainingExpression",
 
       // prefix expressions
-      // "PrefixOperatorExpression",
-      // "InOutExpression",
+      "PrefixOperatorExpression",
+      "InOutExpression",
 
       // binary expressions
       // "BinaryOperatorExpression",
