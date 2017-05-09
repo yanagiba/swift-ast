@@ -39,12 +39,12 @@ class TTYASTPrintTests : XCTestCase {
       // postfix expressions
       "PostfixOperatorExpression",
       "FunctionCallExpression",
-      // "InitializerExpression",
-      // "ExplicitMemberExpression",
-      // "PostfixSelfExpression",
-      // "SubscriptExpression",
-      // "ForcedValueExpression",
-      // "OptionalChainingExpression",
+      "InitializerExpression",
+      "ExplicitMemberExpression",
+      "PostfixSelfExpression",
+      "SubscriptExpression",
+      "ForcedValueExpression",
+      "OptionalChainingExpression",
 
       // prefix expressions
       // "PrefixOperatorExpression",

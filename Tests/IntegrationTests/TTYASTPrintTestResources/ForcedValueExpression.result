@@ -1,12 +1,3 @@
-top_level_decl <range: TTYASTDumpTestResources/ForcedValueExpressionTests.swift:17:1-19.6>
-  forced_value_expr <range: TTYASTDumpTestResources/ForcedValueExpressionTests.swift:17:1-17.5>
-    identifier_expr <range: TTYASTDumpTestResources/ForcedValueExpressionTests.swift:17:1-17.4>
-      kind: `identifier`, identifier: `foo`
-  forced_value_expr <range: TTYASTDumpTestResources/ForcedValueExpressionTests.swift:18:1-18.6>
-    forced_value_expr <range: TTYASTDumpTestResources/ForcedValueExpressionTests.swift:18:1-18.5>
-      identifier_expr <range: TTYASTDumpTestResources/ForcedValueExpressionTests.swift:18:1-18.4>
-        kind: `identifier`, identifier: `foo`
-  forced_value_expr <range: TTYASTDumpTestResources/ForcedValueExpressionTests.swift:19:1-19.6>
-    optional_chaining_expr <range: TTYASTDumpTestResources/ForcedValueExpressionTests.swift:19:1-19.5>
-      identifier_expr <range: TTYASTDumpTestResources/ForcedValueExpressionTests.swift:19:1-19.4>
-        kind: `identifier`, identifier: `foo`
+foo!
+foo!!
+foo?!

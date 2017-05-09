@@ -49,10 +49,6 @@ extension ClosureExpression : TTYASTPrintRepresentable {
 
 extension ExplicitMemberExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
     switch kind {
     case let .tuple(postfixExpr, index):
       return "\(postfixExpr.ttyPrint).\(index)"
@@ -69,6 +65,12 @@ extension ExplicitMemberExpression : TTYASTPrintRepresentable {
       }
       return textDesc
     }
+  }
+}
+
+extension ForcedValueExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return "\(postfixExpression.ttyPrint)!"
   }
 }
 
@@ -109,6 +111,17 @@ extension KeyPathExpression : TTYASTPrintRepresentable {
   }
 }
 
+extension InitializerExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    var textDesc = "\(postfixExpression.ttyPrint).init"
+    if !argumentNames.isEmpty {
+      let argumentNamesDesc = argumentNames.map({ "\($0):" }).joined()
+      textDesc += "(\(argumentNamesDesc))"
+    }
+    return textDesc
+  }
+}
+
 extension LiteralExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     switch kind {
@@ -131,6 +144,12 @@ extension LiteralExpression : TTYASTPrintRepresentable {
   }
 }
 
+extension OptionalChainingExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return "\(postfixExpression.ttyPrint)?"
+  }
+}
+
 extension ParenthesizedExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     return "(\(expression.ttyPrint))"
@@ -140,6 +159,12 @@ extension ParenthesizedExpression : TTYASTPrintRepresentable {
 extension PostfixOperatorExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     return "\(postfixExpression.ttyPrint)\(postfixOperator)"
+  }
+}
+
+extension PostfixSelfExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return "\(postfixExpression.ttyPrint).self"
   }
 }
 
@@ -169,6 +194,12 @@ extension SelfExpression : TTYASTPrintRepresentable {
     default:
       return textDescription
     }
+  }
+}
+
+extension SubscriptExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return "\(postfixExpression.ttyPrint)[\(expressionList.map { $0.ttyPrint }.joined(separator: ", "))]"
   }
 }
 

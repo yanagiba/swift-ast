@@ -1,9 +1,2 @@
-top_level_decl <range: TTYASTDumpTestResources/PostfixSelfExpressionTests.swift:17:1-18.13>
-  postfix_self_expr <range: TTYASTDumpTestResources/PostfixSelfExpressionTests.swift:17:1-17.9>
-    identifier_expr <range: TTYASTDumpTestResources/PostfixSelfExpressionTests.swift:17:1-17.4>
-      kind: `identifier`, identifier: `foo`
-  postfix_self_expr <range: TTYASTDumpTestResources/PostfixSelfExpressionTests.swift:18:1-18.13>
-    explicit_member_expr <range: TTYASTDumpTestResources/PostfixSelfExpressionTests.swift:18:1-18.8>
-      identifier_expr <range: TTYASTDumpTestResources/PostfixSelfExpressionTests.swift:18:1-18.4>
-        kind: `identifier`, identifier: `foo`
-      identifier: `bar`
+foo.self
+foo.bar.self
