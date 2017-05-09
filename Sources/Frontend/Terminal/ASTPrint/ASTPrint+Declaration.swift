@@ -18,10 +18,7 @@ import AST
 
 extension TopLevelDeclaration : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return statements
-      .map { $0.ttyPrint }
-      .joined(separator: "\n")
-      + "\n"
+    return statements.ttyPrint + "\n"
   }
 }
 
@@ -125,12 +122,24 @@ extension WillSetDidSetBlock : TTYASTPrintRepresentable {
   }
 }
 
-extension ClassDeclaration.Member : TTYASTPrintRepresentable {
+extension PatternInitializer {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
+    let pttrnText = pattern.textDescription
+    guard let initExpr = initializerExpression else {
+      return pttrnText
+    }
+    return "\(pttrnText) = \(initExpr.ttyPrint)"
   }
+}
 
-  func ttyASTPrint(indentation: Int) -> String {
+extension Collection where Iterator.Element == PatternInitializer {
+  var ttyPrint: String {
+    return self.map({ $0.ttyPrint }).joined(separator: ", ")
+  }
+}
+
+extension ClassDeclaration.Member {
+  var ttyPrint: String {
     switch self {
     case .declaration(let decl):
       return decl.ttyPrint
@@ -142,10 +151,6 @@ extension ClassDeclaration.Member : TTYASTPrintRepresentable {
 
 extension ClassDeclaration : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
     let finalText = isFinal ? "final " : ""
@@ -154,23 +159,24 @@ extension ClassDeclaration : TTYASTPrintRepresentable {
     let typeText = typeInheritanceClause?.textDescription ?? ""
     let whereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
     let neckText = "\(genericParameterClauseText)\(typeText)\(whereText)"
-    let membersText = members.map({ $0.ttyASTPrint(indentation: indentation + 1) }).joined(separator: "\n")
-    let memberText = members.isEmpty ? "" : "\n\(membersText)\n"
-    return String(indentation: indentation) + "\(headText)\(neckText) {" +
-      memberText +
-      String(indentation: indentation) + "}"
+    let membersText = members.map({ $0.ttyPrint }).joined(separator: "\n")
+    let memberText = members.isEmpty ? "" : "\n\(membersText.indent)\n"
+    return "\(headText)\(neckText) {" + memberText + "}"
+  }
+}
+
+extension ConstantDeclaration : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
+    let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
+    return "\(attrsText)\(modifiersText)let \(initializerList.ttyPrint)"
   }
 }
 
 extension DeinitializerDeclaration : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    return String(indentation: indentation) +
-      "\(attrsText)deinit \(body.ttyPrint)"
+    return "\(attrsText)deinit \(body.ttyPrint)"
   }
 }
 
@@ -437,33 +443,6 @@ extension SubscriptDeclaration : TTYASTPrintRepresentable {
     let resultText = "-> \(resultAttrsText)\(resultType.textDescription)"
 
     return String(indentation: indentation) + "\(headText) \(resultText) \(body.ttyPrint)"
-  }
-}
-
-extension PatternInitializer : TTYASTPrintRepresentable {
-  var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
-    let pttrnText = pattern.textDescription
-    guard let initExpr = initializerExpression else {
-      return pttrnText
-    }
-    return "\(pttrnText) = \(initExpr.ttyPrint)"
-  }
-}
-
-extension ConstantDeclaration : TTYASTPrintRepresentable {
-  var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
-    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
-    let initsText = initializerList.map({ $0.ttyPrint }).joined(separator: ", ")
-    return String(indentation: indentation) + "\(attrsText)\(modifiersText)let \(initsText)"
   }
 }
 

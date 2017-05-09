@@ -1,96 +1,14 @@
-top_level_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:17:1-26.35>
-  const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:17:1-17.8>
-    pattern: foo
-  const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:18:1-18.13>
-    pattern: foo: Foo
-  const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:19:1-19.19>
-    pattern: foo: Foo
-      identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:19:16-19.19>
-        kind: `identifier`, identifier: `bar`
-  const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:20:1-20.24>
-    pattern_initializers:
-    0: pattern: foo
-      identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:20:11-20.14>
-        kind: `identifier`, identifier: `bar`
-    1: pattern: a
-    2: pattern: x
-      identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:20:23-20.24>
-        kind: `identifier`, identifier: `y`
-  const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:21:1-21.11>
-    attributes: `@a`
-    pattern: foo
-  const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:22:1-22.47>
-    modifiers: private nonmutating static final
-    pattern: foo
-      identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:22:44-22.47>
-        kind: `identifier`, identifier: `bar`
-  const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:23:1-23.23>
-    attributes: `@a`
-    modifiers: fileprivate
-    pattern: foo
-  const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:24:1-24.26>
-    pattern: foo
-      function_call_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:24:11-24.26>
-        identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:24:11-24.14>
-          kind: `identifier`, identifier: `bar`
-        trailing_closure_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:24:15-24.26>
-          statements:
-          0: binary_op_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:24:17-24.24>
-            operator: `==`
-            identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:24:17-24.19>
-              kind: `implicit_param_name`, index: `0`
-            literal_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:24:23-24.24>
-              kind: `int`, literal: `0`, raw_text: `0`
-  const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:1-25.73>
-    pattern_initializers:
-    0: pattern: foo
-      function_call_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:11-25.25>
-        identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:11-25.14>
-          kind: `identifier`, identifier: `bar`
-        trailing_closure_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:15-25.25>
-          statements:
-          0: assign_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:17-25.23>
-            identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:17-25.19>
-              kind: `implicit_param_name`, index: `0`
-            literal_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:22-25.23>
-              kind: `int`, literal: `0`, raw_text: `0`
-    1: pattern: a
-      function_call_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:31-25.46>
-        identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:31-25.32>
-          kind: `identifier`, identifier: `b`
-        trailing_closure_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:33-25.46>
-          parameters: `_`
-          statements:
-          0: literal_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:40-25.44>
-            kind: `bool`, literal: `true`
-    2: pattern: x
-      function_call_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:52-25.73>
-        identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:52-25.53>
-          kind: `identifier`, identifier: `y`
-        trailing_closure_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:54-25.73>
-          parameters: `t`
-          return_type: `Int`
-          statements:
-          0: binary_op_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:68-25.71>
-            operator: `^`
-            identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:68-25.69>
-              kind: `identifier`, identifier: `t`
-            literal_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:25:70-25.71>
-              kind: `int`, literal: `2`, raw_text: `2`
-  const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:26:1-26.35>
-    pattern: foo
-      function_call_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:26:11-26.35>
-        explicit_member_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:26:11-26.33>
-          function_call_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:26:11-26.26>
-            identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:26:11-26.14>
-              kind: `identifier`, identifier: `bar`
-            trailing_closure_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:26:15-26.26>
-              statements:
-              0: binary_op_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:26:17-26.24>
-                operator: `==`
-                identifier_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:26:17-26.19>
-                  kind: `implicit_param_name`, index: `0`
-                literal_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:26:23-26.24>
-                  kind: `int`, literal: `0`, raw_text: `0`
-          identifier: `joined`
-        arguments: <empty>
+let foo
+let foo: Foo
+let foo: Foo = bar
+let foo = bar, a, x = y
+@a let foo
+private nonmutating static final let foo = bar
+@a fileprivate let foo
+let foo = bar { $0 == 0 }
+let foo = bar { $0 = 0 }, a = b { _ in
+  true
+}, x = y { t -> Int in
+  t ^ 2
+}
+let foo = bar { $0 == 0 }.joined()

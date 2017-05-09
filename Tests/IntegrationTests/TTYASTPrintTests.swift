@@ -77,9 +77,9 @@ class TTYASTPrintTests : XCTestCase {
       "WhileStatement",
 
       // declarations
-      // "ClassDeclaration",
-      // "ConstantDeclaration",
-      // "DeinitializerDeclaration",
+      "ClassDeclaration",
+      "ConstantDeclaration",
+      "DeinitializerDeclaration",
       // "EnumDeclaration",
       // "ExtensionDeclaration",
       // "FunctionDeclaration",
