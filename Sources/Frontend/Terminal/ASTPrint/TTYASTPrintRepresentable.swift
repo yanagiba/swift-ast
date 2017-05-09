@@ -17,6 +17,3 @@
 protocol TTYASTPrintRepresentable {
   var ttyPrint: String { get }
 }
-
-protocol TTYASTPrintExpression : TTYASTPrintRepresentable {
-}

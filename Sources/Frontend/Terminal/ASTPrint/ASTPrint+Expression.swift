@@ -93,7 +93,7 @@ extension FunctionCallExpression.Argument : TTYASTPrintRepresentable {
   }
 }
 
-extension FunctionCallExpression : TTYASTPrintExpression {
+extension FunctionCallExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     var parameterText = ""
     if let argumentClause = argumentClause {
@@ -235,12 +235,8 @@ extension TernaryConditionalOperatorExpression : TTYASTPrintRepresentable {
   }
 }
 
-extension TryOperatorExpression : TTYASTPrintExpression {
+extension TryOperatorExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
     let tryText: String
     let exprText: String
     switch kind {

@@ -1,13 +1,3 @@
-top_level_decl <range: TTYASTDumpTestResources/TryOperatorExpressionTests.swift:17:1-19.9>
-  try_expr <range: TTYASTDumpTestResources/TryOperatorExpressionTests.swift:17:1-17.8>
-    kind: `try`
-    identifier_expr <range: TTYASTDumpTestResources/TryOperatorExpressionTests.swift:17:5-17.8>
-      kind: `identifier`, identifier: `foo`
-  try_expr <range: TTYASTDumpTestResources/TryOperatorExpressionTests.swift:18:1-18.9>
-    kind: `optional_try`
-    identifier_expr <range: TTYASTDumpTestResources/TryOperatorExpressionTests.swift:18:6-18.9>
-      kind: `identifier`, identifier: `foo`
-  try_expr <range: TTYASTDumpTestResources/TryOperatorExpressionTests.swift:19:1-19.9>
-    kind: `forced_try`
-    identifier_expr <range: TTYASTDumpTestResources/TryOperatorExpressionTests.swift:19:6-19.9>
-      kind: `identifier`, identifier: `foo`
+try foo
+try? foo
+try! foo

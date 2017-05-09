@@ -57,7 +57,7 @@ class TTYASTPrintTests : XCTestCase {
       "TypeCastingOperatorExpression",
 
       // try expression
-      // "TryOperatorExpression",
+      "TryOperatorExpression",
 
       // statements
       // "BreakStatement",
