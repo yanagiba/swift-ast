@@ -1,17 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/GuardStatementTests.swift:17:1-23.2>
-  guard_stmt <range: TTYASTDumpTestResources/GuardStatementTests.swift:17:1-19.2>
-    conditions:
-    0: identifier_expr <range: TTYASTDumpTestResources/GuardStatementTests.swift:17:7-17.10>
-      kind: `identifier`, identifier: `foo`
-    return_stmt <range: TTYASTDumpTestResources/GuardStatementTests.swift:18:3-18.15>
-      literal_expr <range: TTYASTDumpTestResources/GuardStatementTests.swift:18:10-18.15>
-        kind: `bool`, literal: `false`
-  guard_stmt <range: TTYASTDumpTestResources/GuardStatementTests.swift:21:1-23.2>
-    conditions:
-    0: try_expr <range: TTYASTDumpTestResources/GuardStatementTests.swift:21:7-21.17>
-      kind: `optional_try`
-      function_call_expr <range: TTYASTDumpTestResources/GuardStatementTests.swift:21:12-21.17>
-        identifier_expr <range: TTYASTDumpTestResources/GuardStatementTests.swift:21:12-21.15>
-          kind: `identifier`, identifier: `bar`
-        arguments: <empty>
-    <empty_code_block>
+guard foo else {
+  return false
+}
+guard try? bar() else {}

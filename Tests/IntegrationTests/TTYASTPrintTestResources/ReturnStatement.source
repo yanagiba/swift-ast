@@ -16,3 +16,7 @@
 
 return
 return foo
+return foo { $0.ttyPrint }
+return foo { i in
+  i.ttyPrint
+}

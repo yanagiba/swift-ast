@@ -27,14 +27,10 @@ extension TopLevelDeclaration : TTYASTPrintRepresentable {
 
 extension CodeBlock : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
     if statements.isEmpty {
       return "{}"
     }
-    return "{\n\(statements.ttyASTPrint(indentation: indentation + 1))\n\(String(indentation: indentation))}"
+    return "{\n\(statements.ttyPrint.indent)\n}"
   }
 }
 

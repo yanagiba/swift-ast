@@ -1,2 +1,1 @@
-top_level_decl <range: TTYASTDumpTestResources/FallthroughStatementTests.swift:17:1-17.12>
-  fallthrough_stmt <range: TTYASTDumpTestResources/FallthroughStatementTests.swift:17:1-17.12>
+fallthrough

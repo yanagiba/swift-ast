@@ -1,22 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/WhileStatementTests.swift:17:1-21.2>
-  while_stmt <range: TTYASTDumpTestResources/WhileStatementTests.swift:17:1-17.14>
-    conditions:
-    0: literal_expr <range: TTYASTDumpTestResources/WhileStatementTests.swift:17:7-17.11>
-      kind: `bool`, literal: `true`
-    <empty_code_block>
-  while_stmt <range: TTYASTDumpTestResources/WhileStatementTests.swift:19:1-21.2>
-    conditions:
-    0: function_call_expr <range: TTYASTDumpTestResources/WhileStatementTests.swift:19:7-19.30>
-      identifier_expr <range: TTYASTDumpTestResources/WhileStatementTests.swift:19:7-19.21>
-        kind: `identifier`, identifier: `shouldContinue`
-      arguments:
-      0: kind: `named_expression`, name: `with`
-        identifier_expr <range: TTYASTDumpTestResources/WhileStatementTests.swift:19:28-19.29>
-          kind: `identifier`, identifier: `i`
-    function_call_expr <range: TTYASTDumpTestResources/WhileStatementTests.swift:20:3-20.11>
-      identifier_expr <range: TTYASTDumpTestResources/WhileStatementTests.swift:20:3-20.8>
-        kind: `identifier`, identifier: `print`
-      arguments:
-      0: kind: `expression`
-        identifier_expr <range: TTYASTDumpTestResources/WhileStatementTests.swift:20:9-20.10>
-          kind: `identifier`, identifier: `i`
+while true {}
+while shouldContinue(with: i) {
+  print(i)
+}

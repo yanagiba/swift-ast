@@ -1,52 +1,7 @@
-top_level_decl <range: TTYASTDumpTestResources/ForInStatementTests.swift:17:1-21.18>
-  for_stmt <range: TTYASTDumpTestResources/ForInStatementTests.swift:17:1-17.34>
-    pattern: `i`
-    collection: identifier_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:17:10-17.21>
-      kind: `identifier`, identifier: `aCollection`
-    function_call_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:17:24-17.32>
-      identifier_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:17:24-17.29>
-        kind: `identifier`, identifier: `print`
-      arguments:
-      0: kind: `expression`
-        identifier_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:17:30-17.31>
-          kind: `identifier`, identifier: `i`
-  for_stmt <range: TTYASTDumpTestResources/ForInStatementTests.swift:18:1-18.29>
-    case_matching: `true`
-    pattern: `i`
-    collection: identifier_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:18:15-18.26>
-      kind: `identifier`, identifier: `aCollection`
-    <empty_code_block>
-  for_stmt <range: TTYASTDumpTestResources/ForInStatementTests.swift:19:1-19.45>
-    pattern: `(k, v)`
-    collection: literal_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:19:15-19.34>
-      kind: `dict`
-      0: literal_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:19:16-19.17>
-        kind: `int`, literal: `1`, raw_text: `1`
-      0: literal_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:19:19-19.23>
-        kind: `bool`, literal: `true`
-      1: literal_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:19:25-19.26>
-        kind: `int`, literal: `0`, raw_text: `0`
-      1: literal_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:19:28-19.33>
-        kind: `bool`, literal: `false`
-    where: identifier_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:19:41-19.42>
-      kind: `identifier`, identifier: `v`
-    <empty_code_block>
-  for_stmt <range: TTYASTDumpTestResources/ForInStatementTests.swift:20:1-20.36>
-    pattern: `(index, it)`
-    collection: function_call_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:20:20-20.33>
-      identifier_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:20:20-20.29>
-        kind: `identifier`, identifier: `enumerate`
-      arguments:
-      0: kind: `expression`
-        literal_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:20:30-20.32>
-          kind: `array`, elements: <empty>
-    <empty_code_block>
-  for_stmt <range: TTYASTDumpTestResources/ForInStatementTests.swift:21:1-21.18>
-    pattern: `e`
-    collection: binary_op_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:21:10-21.15>
-      operator: `..<`
-      literal_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:21:10-21.11>
-        kind: `int`, literal: `0`, raw_text: `0`
-      literal_expr <range: TTYASTDumpTestResources/ForInStatementTests.swift:21:14-21.15>
-        kind: `int`, literal: `9`, raw_text: `9`
-    <empty_code_block>
+for i in aCollection {
+  print(i)
+}
+for case i in aCollection {}
+for (k, v) in [1: true, 0: false] where v {}
+for (index, it) in enumerate([]) {}
+for e in 0 ..< 9 {}

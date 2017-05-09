@@ -1,20 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/RepeatWhileStatementTests.swift:17:1-21.32>
-  repeat_stmt <range: TTYASTDumpTestResources/RepeatWhileStatementTests.swift:17:1-17.21>
-    <empty_code_block>
-    condition: literal_expr <range: TTYASTDumpTestResources/RepeatWhileStatementTests.swift:17:17-17.21>
-      kind: `bool`, literal: `true`
-  repeat_stmt <range: TTYASTDumpTestResources/RepeatWhileStatementTests.swift:19:1-21.32>
-    function_call_expr <range: TTYASTDumpTestResources/RepeatWhileStatementTests.swift:20:3-20.11>
-      identifier_expr <range: TTYASTDumpTestResources/RepeatWhileStatementTests.swift:20:3-20.8>
-        kind: `identifier`, identifier: `print`
-      arguments:
-      0: kind: `expression`
-        identifier_expr <range: TTYASTDumpTestResources/RepeatWhileStatementTests.swift:20:9-20.10>
-          kind: `identifier`, identifier: `i`
-    condition: function_call_expr <range: TTYASTDumpTestResources/RepeatWhileStatementTests.swift:21:9-21.32>
-      identifier_expr <range: TTYASTDumpTestResources/RepeatWhileStatementTests.swift:21:9-21.23>
-        kind: `identifier`, identifier: `shouldContinue`
-      arguments:
-      0: kind: `named_expression`, name: `with`
-        identifier_expr <range: TTYASTDumpTestResources/RepeatWhileStatementTests.swift:21:30-21.31>
-          kind: `identifier`, identifier: `i`
+repeat {} while true
+repeat {
+  print(i)
+} while shouldContinue(with: i)

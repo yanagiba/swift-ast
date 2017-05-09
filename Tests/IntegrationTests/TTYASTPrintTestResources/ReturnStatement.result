@@ -1,5 +1,6 @@
-top_level_decl <range: TTYASTDumpTestResources/ReturnStatementTests.swift:17:1-18.11>
-  return_stmt <range: TTYASTDumpTestResources/ReturnStatementTests.swift:17:1-17.7>
-  return_stmt <range: TTYASTDumpTestResources/ReturnStatementTests.swift:18:1-18.11>
-    identifier_expr <range: TTYASTDumpTestResources/ReturnStatementTests.swift:18:8-18.11>
-      kind: `identifier`, identifier: `foo`
+return
+return foo
+return foo { $0.ttyPrint }
+return foo { i in
+  i.ttyPrint
+}

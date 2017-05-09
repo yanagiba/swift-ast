@@ -1,108 +1,29 @@
-top_level_decl <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:1-33.2>
-  switch_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:1-17.14>
-    identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:8-17.11>
-      kind: `identifier`, identifier: `foo`
-    cases: <empty>
-  switch_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:18:1-18.27>
-    identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:18:8-18.11>
-      kind: `identifier`, identifier: `foo`
-    cases:
-    0: kind: `default`
-      tuple_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:18:23-18.25>
-        elements: <empty>
-  switch_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:19:1-19.42>
-    identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:19:8-19.11>
-      kind: `identifier`, identifier: `foo`
-    cases:
-    0: kind: `case`
-      items:
-      0: pattern: `1`
-      function_call_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:19:22-19.30>
-        identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:19:22-19.27>
-          kind: `identifier`, identifier: `print`
-        arguments:
-        0: kind: `expression`
-          literal_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:19:28-19.29>
-            kind: `int`, literal: `1`, raw_text: `1`
-      assign_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:19:32-19.39>
-        identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:19:32-19.35>
-          kind: `identifier`, identifier: `foo`
-        literal_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:19:38-19.39>
-          kind: `int`, literal: `2`, raw_text: `2`
-  switch_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:20:1-20.65>
-    identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:20:8-20.11>
-      kind: `identifier`, identifier: `foo`
-    cases:
-    0: kind: `case`
-      items:
-      0: pattern: `let (x, y)`
-        where: binary_op_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:20:36-20.42>
-          operator: `==`
-          identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:20:36-20.37>
-            kind: `identifier`, identifier: `x`
-          identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:20:41-20.42>
-            kind: `identifier`, identifier: `y`
-      function_call_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:20:44-20.52>
-        identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:20:44-20.49>
-          kind: `identifier`, identifier: `print`
-        arguments:
-        0: kind: `expression`
-          identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:20:50-20.51>
-            kind: `identifier`, identifier: `x`
-      function_call_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:20:54-20.62>
-        identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:20:54-20.59>
-          kind: `identifier`, identifier: `print`
-        arguments:
-        0: kind: `expression`
-          identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:20:60-20.61>
-            kind: `identifier`, identifier: `y`
-  switch_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:21:1-21.53>
-    identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:21:8-21.11>
-      kind: `identifier`, identifier: `foo`
-    cases:
-    0: kind: `case`
-      items:
-      0: pattern: `1`
-      1: pattern: `2`
-      2: pattern: `3`
-      3: pattern: `x`
-        where: binary_op_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:21:36-21.41>
-          operator: `<`
-          identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:21:36-21.37>
-            kind: `identifier`, identifier: `x`
-          literal_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:21:40-21.41>
-            kind: `int`, literal: `0`, raw_text: `0`
-      assign_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:21:43-21.50>
-        identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:21:43-21.46>
-          kind: `identifier`, identifier: `foo`
-        literal_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:21:49-21.50>
-          kind: `int`, literal: `0`, raw_text: `0`
-  switch_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:23:1-33.2>
-    identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:23:8-23.25>
-      kind: `identifier`, identifier: `controlExpression`
-    cases:
-    0: kind: `case`
-      items:
-      0: pattern: `pattern1`
-      identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:25:3-25.13>
-        kind: `identifier`, identifier: `statements`
-    1: kind: `case`
-      items:
-      0: pattern: `pattern2`
-        where: identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:26:21-26.30>
-          kind: `identifier`, identifier: `condition`
-      identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:27:3-27.13>
-        kind: `identifier`, identifier: `statements`
-    2: kind: `case`
-      items:
-      0: pattern: `pattern3`
-        where: identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:28:21-28.30>
-          kind: `identifier`, identifier: `condition`
-      1: pattern: `pattern4`
-        where: identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:29:21-29.30>
-          kind: `identifier`, identifier: `condition`
-      identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:30:3-30.13>
-        kind: `identifier`, identifier: `statements`
-    3: kind: `default`
-      identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:32:3-32.13>
-        kind: `identifier`, identifier: `statements`
+switch foo {}
+switch foo {
+default:
+  ()
+}
+switch foo {
+case 1:
+  print(1)
+  foo = 2
+}
+switch foo {
+case let (x, y) where x == y:
+  print(x)
+  print(y)
+}
+switch foo {
+case 1, 2, 3, x where x < 0:
+  foo = 0
+}
+switch controlExpression {
+case pattern1:
+  statements
+case pattern2 where condition:
+  statements
+case pattern3 where condition, pattern4 where condition:
+  statements
+default:
+  statements
+}

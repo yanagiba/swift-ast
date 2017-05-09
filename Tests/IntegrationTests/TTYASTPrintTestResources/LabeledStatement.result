@@ -1,48 +1,8 @@
-top_level_decl <range: TTYASTDumpTestResources/LabeledStatementTests.swift:17:1-22.22>
-  labeled_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:17:1-17.24>
-    label_name: `foo`
-    for_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:17:6-17.24>
-      pattern: `_`
-      collection: binary_op_expr <range: TTYASTDumpTestResources/LabeledStatementTests.swift:17:15-17.21>
-        operator: `..<`
-        literal_expr <range: TTYASTDumpTestResources/LabeledStatementTests.swift:17:15-17.16>
-          kind: `int`, literal: `0`, raw_text: `0`
-        literal_expr <range: TTYASTDumpTestResources/LabeledStatementTests.swift:17:19-17.21>
-          kind: `int`, literal: `10`, raw_text: `10`
-      <empty_code_block>
-  labeled_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:18:1-18.19>
-    label_name: `foo`
-    while_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:18:6-18.19>
-      conditions:
-      0: literal_expr <range: TTYASTDumpTestResources/LabeledStatementTests.swift:18:12-18.16>
-        kind: `bool`, literal: `true`
-      <empty_code_block>
-  labeled_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:19:1-19.26>
-    label_name: `foo`
-    repeat_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:19:6-19.26>
-      <empty_code_block>
-      condition: literal_expr <range: TTYASTDumpTestResources/LabeledStatementTests.swift:19:22-19.26>
-        kind: `bool`, literal: `true`
-  labeled_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:20:1-20.13>
-    label_name: `foo`
-    if_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:20:6-20.13>
-      conditions:
-      0: identifier_expr <range: TTYASTDumpTestResources/LabeledStatementTests.swift:20:9-20.10>
-        kind: `identifier`, identifier: `x`
-      <empty_code_block>
-  labeled_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:21:1-21.19>
-    label_name: `foo`
-    switch_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:21:6-21.19>
-      identifier_expr <range: TTYASTDumpTestResources/LabeledStatementTests.swift:21:13-21.16>
-        kind: `identifier`, identifier: `bar`
-      cases: <empty>
-  labeled_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:22:1-22.22>
-    label_name: `foo`
-    do_stmt <range: TTYASTDumpTestResources/LabeledStatementTests.swift:22:6-22.22>
-      try_expr <range: TTYASTDumpTestResources/LabeledStatementTests.swift:22:11-22.20>
-        kind: `try`
-        function_call_expr <range: TTYASTDumpTestResources/LabeledStatementTests.swift:22:15-22.20>
-          identifier_expr <range: TTYASTDumpTestResources/LabeledStatementTests.swift:22:15-22.18>
-            kind: `identifier`, identifier: `bar`
-          arguments: <empty>
-      catches: <empty>
+foo: for _ in 0 ..< 10 {}
+foo: while true {}
+foo: repeat {} while true
+foo: if x {}
+foo: switch bar {}
+foo: do {
+  try bar()
+}
