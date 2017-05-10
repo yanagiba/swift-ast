@@ -337,10 +337,6 @@ extension SubscriptDeclaration : TTYASTPrintRepresentable {
 
 extension VariableDeclaration.Body : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
     switch self {
     case .initializerList(let inits):
       return inits.map({ $0.ttyPrint }).joined(separator: ", ")
@@ -360,12 +356,8 @@ extension VariableDeclaration.Body : TTYASTPrintRepresentable {
 
 extension VariableDeclaration : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return ttyASTPrint(indentation: 0)
-  }
-
-  func ttyASTPrint(indentation: Int) -> String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
-    return String(indentation: indentation) + "\(attrsText)\(modifiersText)var \(body.ttyPrint)"
+    return "\(attrsText)\(modifiersText)var \(body.ttyPrint)"
   }
 }
