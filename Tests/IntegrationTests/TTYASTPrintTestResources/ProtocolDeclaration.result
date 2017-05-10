@@ -1,167 +1,67 @@
-top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17:1-65.2>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17:1-17.16>
-    name: Foo
-    <empty_body_block>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:18:1-18.25>
-    name: Foo
-    attributes: `@a @b @c`
-    <empty_body_block>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:19:1-19.28>
-    name: Foo
-    access_level: fileprivate
-    <empty_body_block>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:20:1-20.26>
-    name: Foo
-    attributes: `@a`
-    access_level: public
-    <empty_body_block>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:21:1-21.24>
-    name: Foo
-    parent_types: String
-    <empty_body_block>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:22:1-24.2>
-    name: Foo
-    0: kind: `property`
-      name: Foo
-      type: Bar
-      getter_setter_keyword_block:
-        getter
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:25:1-27.2>
-    name: Foo
-    0: kind: `property`
-      name: Foo
-      attributes: `@a @b @c`
-      type: Bar
-      getter_setter_keyword_block:
-        getter
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:28:1-30.2>
-    name: Foo
-    0: kind: `property`
-      name: Foo
-      modifiers: public
-      type: Bar
-      getter_setter_keyword_block:
-        getter
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:31:1-33.2>
-    name: Foo
-    0: kind: `property`
-      name: Foo
-      attributes: `@a @b @c`
-      modifiers: public
-      type: Bar
-      getter_setter_keyword_block:
-        getter
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:34:1-39.2>
-    name: Foo
-    0: kind: `property`
-      name: Foo
-      type: Bar
-      getter_setter_keyword_block:
-        getter, attributes: `@a`, modifier: `mutating`
-        setter, attributes: `@b`, modifier: `mutating`
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:40:1-42.2>
-    name: Foo
-    0: kind: `method`
-      name: Foo
-      attributes: `@discardableResult`
-      modifiers: public
-      generic_param: `<String>`
-      generic_where: `where A: String`
-      parameters:
-      0: a: A
-      1: b: B
-      2: c: C
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:43:1-47.2>
-    name: Foo
-    0: kind: `non_failable_initializer`
-      attributes: `@x @y`
-      modifiers: public
-      generic_param: `<String>`
-      generic_where: `where A: String`
-      parameters:
-      0: a: A
-      1: b: B
-      2: c: C
-      throws_kind: `throws`
-    1: kind: `optional_failable_initializer`
-      attributes: `@x @y`
-      modifiers: public
-      generic_param: `<String>`
-      generic_where: `where A: String`
-      parameters:
-      0: a: A
-      1: b: B
-      2: c: C
-      throws_kind: `throws`
-    2: kind: `implicit_unwrapped_failable_initializer`
-      attributes: `@x @y`
-      modifiers: public
-      generic_param: `<String>`
-      generic_where: `where A: String`
-      parameters:
-      0: a: A
-      1: b: B
-      2: c: C
-      throws_kind: `throws`
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:48:1-50.2>
-    name: Foo
-    0: kind: `subscript`
-      attributes: `@a`
-      modifiers: fileprivate
-      parameters:
-      0: i: Int
-      1: j: Int
-      type: Self
-      result_attributes: `@b`
-      getter_setter_keyword_block:
-        getter
-        setter
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:51:1-53.2>
-    name: Foo
-    0: kind: `associated_type`
-      name: Foo
-      attributes: `@a`
-      access_level: fileprivate
-      parent_types: Bar
-      assignment_type: bar
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:54:1-58.2>
-    name: Foo
-    0: kind: `compiler_control`
-      compiler_ctrl_stmt <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:55:1-55.8>
-        kind: `if`, condition: ` bar`
-    1: kind: `property`
-      name: Foo
-      type: Bar
-      getter_setter_keyword_block:
-        getter
-    2: kind: `compiler_control`
-      compiler_ctrl_stmt <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:57:1-57.7>
-        kind: `endif`
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:59:1-65.2>
-    name: Foo
-    0: kind: `property`
-      name: Foo
-      type: A
-      getter_setter_keyword_block:
-        getter
-    1: kind: `method`
-      name: Foo
-      attributes: `@a`
-      parameters:
-      0: c: C
-      return_type: `B`
-    2: kind: `implicit_unwrapped_failable_initializer`
-      parameters:
-      0: d: D
-    3: kind: `subscript`
-      parameters:
-      0: i: Int
-      type: E
-      getter_setter_keyword_block:
-        getter
-        setter
-    4: kind: `associated_type`
-      name: Foo
-      access_level: public
-      parent_types: F
-      assignment_type: g
+protocol Foo {}
+@a @b @c protocol Foo {}
+fileprivate protocol Foo {}
+@a public protocol Foo {}
+protocol Foo: String {}
+protocol Foo {
+  var bar: Bar {
+    get
+  }
+}
+protocol Foo {
+  @a @b @c var bar: Bar {
+    get
+  }
+}
+protocol Foo {
+  public var bar: Bar {
+    get
+  }
+}
+protocol Foo {
+  @a @b @c public var bar: Bar {
+    get
+  }
+}
+protocol Foo {
+  var bar: Bar {
+    @a mutating get
+    @b mutating set
+  }
+}
+protocol Foo {
+  @discardableResult public func foo<String>(a: A, b: B, c: C) where A: String
+}
+protocol Foo {
+  @x @y public init<String>(a: A, b: B, c: C) throws where A: String
+  @x @y public init?<String>(a: A, b: B, c: C) throws where A: String
+  @x @y public init!<String>(a: A, b: B, c: C) throws where A: String
+}
+protocol Foo {
+  @a fileprivate subscript(i: Int, j: Int) -> @b Self {
+    get
+    set
+  }
+}
+protocol Foo {
+  @a fileprivate associatedtype foo: Bar = bar
+}
+protocol Foo {
+  #if bar
+  var bar: Bar {
+    get
+  }
+  #endif
+}
+protocol Foo {
+  var a: A {
+    get
+  }
+  @a func b(c: C) -> B
+  init!(d: D)
+  subscript(i: Int) -> E {
+    get
+    set
+  }
+  public associatedtype f: F = g
+}

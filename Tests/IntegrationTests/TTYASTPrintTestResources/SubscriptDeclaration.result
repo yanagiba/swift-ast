@@ -1,72 +1,31 @@
-top_level_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:17:1-47.2>
-  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:17:1-17.23>
-    type: Self
-    <empty_code_block>
-  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:18:1-18.26>
-    attributes: `@a`
-    type: Self
-    <empty_code_block>
-  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:19:1-19.56>
-    modifiers: private nonmutating static final
-    type: Self
-    <empty_code_block>
-  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:20:1-20.38>
-    attributes: `@a`
-    modifiers: fileprivate
-    type: Self
-    <empty_code_block>
-  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:21:1-21.29>
-    parameters:
-    0: i: Int
-    type: Self
-    <empty_code_block>
-  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:22:1-22.45>
-    parameters:
-    0: section: Int
-    1: row: Int
-    type: Self
-    <empty_code_block>
-  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:23:1-23.32>
-    type: Self
-    result_attributes: `@a @b @c`
-    <empty_code_block>
-  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:24:1-27.2>
-    type: Self
-    const_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:25:3-25.14>
-      pattern: foo
-        literal_expr <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:25:13-25.14>
-          kind: `int`, literal: `3`, raw_text: `3`
-    return_stmt <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:26:3-26.19>
-      identifier_expr <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:26:10-26.19>
-        kind: `identifier`, identifier: `_weakSelf`
-  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:28:1-35.2>
-    type: Self
-    getter_setter_block:
-      getter
-        return_stmt <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:30:5-30.16>
-          identifier_expr <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:30:12-30.16>
-            kind: `identifier`, identifier: `_foo`
-      setter
-        assign_expr <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:33:5-33.20>
-          identifier_expr <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:33:5-33.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:33:12-33.20>
-            kind: `identifier`, identifier: `newValue`
-  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:36:1-43.2>
-    type: Self
-    getter_setter_block:
-      getter, attributes: `@a`, modifier: `mutating`
-        return_stmt <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:38:5-38.16>
-          identifier_expr <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:38:12-38.16>
-            kind: `identifier`, identifier: `_foo`
-      setter, name: `newFoo`, attributes: `@a`, modifier: `mutating`
-        assign_expr <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:41:5-41.18>
-          identifier_expr <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:41:5-41.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:41:12-41.18>
-            kind: `identifier`, identifier: `newFoo`
-  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:44:1-47.2>
-    type: Self
-    getter_setter_keyword_block:
-      getter, attributes: `@a @b @c`, modifier: `mutating`
-      setter, attributes: `@x @y @z`, modifier: `nonmutating`
+subscript() -> Self {}
+@a subscript() -> Self {}
+private nonmutating static final subscript() -> Self {}
+@a fileprivate subscript() -> Self {}
+subscript(i: Int) -> Self {}
+subscript(section: Int, row: Int) -> Self {}
+subscript() -> @a @b @c Self {}
+subscript() -> Self {
+  let foo = 3
+  return _weakSelf
+}
+subscript() -> Self {
+  get {
+    return _foo
+  }
+  set {
+    _foo = newValue
+  }
+}
+subscript() -> Self {
+  @a mutating get {
+    return _foo
+  }
+  @a mutating set(newFoo) {
+    _foo = newFoo
+  }
+}
+subscript() -> Self {
+  @a @b @c mutating get
+  @x @y @z nonmutating set
+}

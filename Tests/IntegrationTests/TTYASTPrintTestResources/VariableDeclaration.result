@@ -1,611 +1,264 @@
-top_level_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:17:1-274.34>
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:17:1-17.8>
-    pattern: foo
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:18:1-18.13>
-    pattern: foo: Foo
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:19:1-19.19>
-    pattern: foo: Foo
-      identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:19:16-19.19>
-        kind: `identifier`, identifier: `bar`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:20:1-20.24>
-    pattern_initializers:
-    0: pattern: foo
-      identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:20:11-20.14>
-        kind: `identifier`, identifier: `bar`
-    1: pattern: a
-    2: pattern: x
-      identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:20:23-20.24>
-        kind: `identifier`, identifier: `y`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:21:1-21.16>
-    name: foo
-    type: Foo
-    <empty_code_block>
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:22:1-24.2>
-    name: foo
-    type: Foo
-    return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:23:3-23.14>
-      identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:23:10-23.14>
-        kind: `identifier`, identifier: `_foo`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:25:1-29.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:27:5-27.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:27:12-27.16>
-            kind: `identifier`, identifier: `_foo`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:30:1-34.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter, attributes: `@a @b @c`
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:32:5-32.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:32:12-32.16>
-            kind: `identifier`, identifier: `_foo`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:35:1-39.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter, modifier: `nonmutating`
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:37:5-37.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:37:12-37.16>
-            kind: `identifier`, identifier: `_foo`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:40:1-44.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter, attributes: `@a @b @c`, modifier: `mutating`
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:42:5-42.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:42:12-42.16>
-            kind: `identifier`, identifier: `_foo`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:45:1-49.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter, attributes: `@a @b @c`, modifier: `nonmutating`
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:47:5-47.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:47:12-47.16>
-            kind: `identifier`, identifier: `_foo`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:50:1-57.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:52:5-52.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:52:12-52.16>
-            kind: `identifier`, identifier: `_foo`
-      setter
-        assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:55:5-55.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:55:5-55.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:55:12-55.20>
-            kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:58:1-65.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:60:5-60.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:60:12-60.16>
-            kind: `identifier`, identifier: `_foo`
-      setter, attributes: `@a @b @c`
-        assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:63:5-63.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:63:5-63.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:63:12-63.20>
-            kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:66:1-73.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:68:5-68.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:68:12-68.16>
-            kind: `identifier`, identifier: `_foo`
-      setter, modifier: `nonmutating`
-        assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:71:5-71.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:71:5-71.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:71:12-71.20>
-            kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:74:1-81.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:76:5-76.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:76:12-76.16>
-            kind: `identifier`, identifier: `_foo`
-      setter, attributes: `@a @b @c`, modifier: `mutating`
-        assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:79:5-79.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:79:5-79.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:79:12-79.20>
-            kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:82:1-89.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter, attributes: `@x @y @z`
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:84:5-84.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:84:12-84.16>
-            kind: `identifier`, identifier: `_foo`
-      setter, attributes: `@a @b @c`
-        assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:87:5-87.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:87:5-87.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:87:12-87.20>
-            kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:90:1-97.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter, modifier: `mutating`
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:92:5-92.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:92:12-92.16>
-            kind: `identifier`, identifier: `_foo`
-      setter, modifier: `nonmutating`
-        assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:95:5-95.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:95:5-95.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:95:12-95.20>
-            kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:98:1-105.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter, attributes: `@x @y @z`, modifier: `mutating`
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:100:5-100.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:100:12-100.16>
-            kind: `identifier`, identifier: `_foo`
-      setter, attributes: `@a @b @c`, modifier: `nonmutating`
-        assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:103:5-103.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:103:5-103.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:103:12-103.20>
-            kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:106:1-113.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:108:5-108.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:108:12-108.16>
-            kind: `identifier`, identifier: `_foo`
-      setter, name: `aValue`
-        assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:111:5-111.18>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:111:5-111.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:111:12-111.18>
-            kind: `identifier`, identifier: `aValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:114:1-121.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:119:5-119.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:119:12-119.16>
-            kind: `identifier`, identifier: `_foo`
-      setter
-        assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:116:5-116.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:116:5-116.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:116:12-116.20>
-            kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:122:1-129.2>
-    name: foo
-    type: Foo
-    getter_setter_block:
-      getter, attributes: `@x`, modifier: `nonmutating`
-        return_stmt <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:127:5-127.16>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:127:12-127.16>
-            kind: `identifier`, identifier: `_foo`
-      setter, name: `newValue`, attributes: `@a`, modifier: `mutating`
-        assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:124:5-124.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:124:5-124.9>
-            kind: `identifier`, identifier: `_foo`
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:124:12-124.20>
-            kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:130:1-132.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:133:1-135.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter, attributes: `@a @b @c`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:136:1-138.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter, modifier: `mutating`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:139:1-141.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter, attributes: `@a @b @c`, modifier: `mutating`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:142:1-144.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter
-      setter
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:145:1-148.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter
-      setter, attributes: `@x @y @z`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:149:1-152.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter
-      setter, modifier: `nonmutating`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:153:1-156.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter
-      setter, attributes: `@x @y @z`, modifier: `nonmutating`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:157:1-160.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter, attributes: `@a @b @c`
-      setter, attributes: `@x @y @z`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:161:1-164.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter, modifier: `mutating`
-      setter, modifier: `nonmutating`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:165:1-168.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter, attributes: `@a @b @c`, modifier: `mutating`
-      setter, attributes: `@x @y @z`, modifier: `nonmutating`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:169:1-171.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter
-      setter
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:172:1-175.2>
-    name: foo
-    type: Foo
-    getter_setter_keyword_block:
-      getter, attributes: `@a @b @c`, modifier: `mutating`
-      setter, attributes: `@x @y @z`, modifier: `nonmutating`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:176:1-180.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:176:11-176.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      will_set
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:178:5-178.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:178:5-178.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:178:11-178.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:181:1-185.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:181:11-181.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      will_set, attributes: `@a @b @c`
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:183:5-183.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:183:5-183.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:183:11-183.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:186:1-190.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:186:11-186.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      will_set, name: `newValue`
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:188:5-188.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:188:5-188.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:188:11-188.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:191:1-195.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:191:11-191.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      will_set, name: `newValue`, attributes: `@a @b @c`
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:193:5-193.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:193:5-193.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:193:11-193.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:196:1-200.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:196:11-196.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      did_set
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:198:5-198.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:198:5-198.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:198:11-198.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:201:1-205.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:201:11-201.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      did_set, attributes: `@x @y @z`
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:203:5-203.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:203:5-203.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:203:11-203.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:206:1-210.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:206:11-206.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      did_set, name: `newValue`
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:208:5-208.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:208:5-208.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:208:11-208.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:211:1-215.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:211:11-211.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      did_set, name: `newValue`, attributes: `@x @y @z`
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:213:5-213.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:213:5-213.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:213:11-213.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:216:1-223.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:216:11-216.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      will_set
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:218:5-218.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:218:5-218.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:218:11-218.19>
-              kind: `identifier`, identifier: `newValue`
-      did_set
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:221:5-221.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:221:5-221.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:221:11-221.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:224:1-231.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:224:11-224.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      will_set, name: `newValue`, attributes: `@a`
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:226:5-226.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:226:5-226.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:226:11-226.19>
-              kind: `identifier`, identifier: `newValue`
-      did_set, name: `aValue`, attributes: `@x`
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:229:5-229.18>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:229:5-229.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:229:11-229.17>
-              kind: `identifier`, identifier: `aValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:232:1-239.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:232:11-232.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      will_set
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:237:5-237.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:237:5-237.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:237:11-237.19>
-              kind: `identifier`, identifier: `newValue`
-      did_set
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:234:5-234.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:234:5-234.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:234:11-234.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:240:1-247.2>
-    name: foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:240:11-240.15>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      will_set, name: `newValue`, attributes: `@a`
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:245:5-245.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:245:5-245.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:245:11-245.19>
-              kind: `identifier`, identifier: `newValue`
-      did_set, name: `aValue`, attributes: `@x`
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:242:5-242.18>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:242:5-242.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:242:11-242.17>
-              kind: `identifier`, identifier: `aValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:248:1-255.2>
-    name: foo
-    type: Foo
-    will_set_did_set_block:
-      will_set
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:253:5-253.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:253:5-253.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:253:11-253.19>
-              kind: `identifier`, identifier: `newValue`
-      did_set
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:250:5-250.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:250:5-250.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:250:11-250.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:256:1-263.2>
-    name: foo
-    type: Foo
-    init_expr: identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:256:16-256.20>
-      kind: `identifier`, identifier: `_foo`
-    will_set_did_set_block:
-      will_set
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:261:5-261.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:261:5-261.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:261:11-261.19>
-              kind: `identifier`, identifier: `newValue`
-      did_set
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:258:5-258.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:258:5-258.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:258:11-258.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:264:1-264.11>
-    attributes: `@a`
-    pattern: foo
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:265:1-265.47>
-    modifiers: private nonmutating static final
-    pattern: foo
-      identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:265:44-265.47>
-        kind: `identifier`, identifier: `bar`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:266:1-266.23>
-    attributes: `@a`
-    modifiers: fileprivate
-    pattern: foo
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:267:1-267.26>
-    pattern: foo
-      function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:267:11-267.26>
-        identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:267:11-267.14>
-          kind: `identifier`, identifier: `bar`
-        trailing_closure_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:267:15-267.26>
-          statements:
-          0: binary_op_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:267:17-267.24>
-            operator: `==`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:267:17-267.19>
-              kind: `implicit_param_name`, index: `0`
-            literal_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:267:23-267.24>
-              kind: `int`, literal: `0`, raw_text: `0`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:1-268.73>
-    pattern_initializers:
-    0: pattern: foo
-      function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:11-268.25>
-        identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:11-268.14>
-          kind: `identifier`, identifier: `bar`
-        trailing_closure_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:15-268.25>
-          statements:
-          0: assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:17-268.23>
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:17-268.19>
-              kind: `implicit_param_name`, index: `0`
-            literal_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:22-268.23>
-              kind: `int`, literal: `0`, raw_text: `0`
-    1: pattern: a
-      function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:31-268.46>
-        identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:31-268.32>
-          kind: `identifier`, identifier: `b`
-        trailing_closure_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:33-268.46>
-          parameters: `_`
-          statements:
-          0: literal_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:40-268.44>
-            kind: `bool`, literal: `true`
-    2: pattern: x
-      function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:52-268.73>
-        identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:52-268.53>
-          kind: `identifier`, identifier: `y`
-        trailing_closure_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:54-268.73>
-          parameters: `t`
-          return_type: `Int`
-          statements:
-          0: binary_op_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:68-268.71>
-            operator: `^`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:68-268.69>
-              kind: `identifier`, identifier: `t`
-            literal_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:268:70-268.71>
-              kind: `int`, literal: `2`, raw_text: `2`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:269:1-273.2>
-    name: foo
-    init_expr: function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:269:11-269.26>
-      identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:269:11-269.15>
-        kind: `identifier`, identifier: `_foo`
-      trailing_closure_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:269:16-269.26>
-        statements:
-        0: assign_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:269:18-269.24>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:269:18-269.20>
-            kind: `implicit_param_name`, index: `0`
-          literal_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:269:23-269.24>
-            kind: `int`, literal: `0`, raw_text: `0`
-    will_set_did_set_block:
-      will_set, name: `newValue`
-        function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:271:5-271.20>
-          identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:271:5-271.10>
-            kind: `identifier`, identifier: `print`
-          arguments:
-          0: kind: `expression`
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:271:11-271.19>
-              kind: `identifier`, identifier: `newValue`
-  var_decl <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:274:1-274.34>
-    pattern: foo
-      function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:274:11-274.34>
-        explicit_member_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:274:11-274.32>
-          function_call_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:274:11-274.25>
-            identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:274:11-274.14>
-              kind: `identifier`, identifier: `bar`
-            trailing_closure_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:274:15-274.25>
-              statements:
-              0: binary_op_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:274:16-274.23>
-                operator: `==`
-                identifier_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:274:16-274.18>
-                  kind: `implicit_param_name`, index: `0`
-                literal_expr <range: TTYASTDumpTestResources/VariableDeclarationTests.swift:274:22-274.23>
-                  kind: `int`, literal: `0`, raw_text: `0`
-          identifier: `joined`
-        arguments: <empty>
+var foo
+var foo: Foo
+var foo: Foo = bar
+var foo = bar, a, x = y
+var foo: Foo {}
+var foo: Foo {
+  return _foo
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+}
+var foo: Foo {
+  @a @b @c get {
+    return _foo
+  }
+}
+var foo: Foo {
+  nonmutating get {
+    return _foo
+  }
+}
+var foo: Foo {
+  @a @b @c mutating get {
+    return _foo
+  }
+}
+var foo: Foo {
+  @a @b @c nonmutating get {
+    return _foo
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  @a @b @c set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  nonmutating set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  @a @b @c mutating set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  @x @y @z get {
+    return _foo
+  }
+  @a @b @c set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  mutating get {
+    return _foo
+  }
+  nonmutating set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  @x @y @z mutating get {
+    return _foo
+  }
+  @a @b @c nonmutating set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  set(aValue) {
+    _foo = aValue
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  @x nonmutating get {
+    return _foo
+  }
+  @a mutating set(newValue) {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  get
+}
+var foo: Foo {
+  @a @b @c get
+}
+var foo: Foo {
+  mutating get
+}
+var foo: Foo {
+  @a @b @c mutating get
+}
+var foo: Foo {
+  get
+  set
+}
+var foo: Foo {
+  get
+  @x @y @z set
+}
+var foo: Foo {
+  get
+  nonmutating set
+}
+var foo: Foo {
+  get
+  @x @y @z nonmutating set
+}
+var foo: Foo {
+  @a @b @c get
+  @x @y @z set
+}
+var foo: Foo {
+  mutating get
+  nonmutating set
+}
+var foo: Foo {
+  @a @b @c mutating get
+  @x @y @z nonmutating set
+}
+var foo: Foo {
+  get
+  set
+}
+var foo: Foo {
+  @a @b @c mutating get
+  @x @y @z nonmutating set
+}
+var foo = _foo {
+  willSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @a @b @c willSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  willSet(newValue) {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @a @b @c willSet(newValue) {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  didSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @x @y @z didSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  didSet(newValue) {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @x @y @z didSet(newValue) {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  willSet {
+    print(newValue)
+  }
+  didSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @a willSet(newValue) {
+    print(newValue)
+  }
+  @x didSet(aValue) {
+    print(aValue)
+  }
+}
+var foo = _foo {
+  willSet {
+    print(newValue)
+  }
+  didSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @a willSet(newValue) {
+    print(newValue)
+  }
+  @x didSet(aValue) {
+    print(aValue)
+  }
+}
+var foo: Foo {
+  willSet {
+    print(newValue)
+  }
+  didSet {
+    print(newValue)
+  }
+}
+var foo: Foo = _foo {
+  willSet {
+    print(newValue)
+  }
+  didSet {
+    print(newValue)
+  }
+}
+@a var foo
+private nonmutating static final var foo = bar
+@a fileprivate var foo
+var foo = bar { $0 == 0 }
+var foo = bar { $0 = 0 }, a = b { _ in
+  true
+}, x = y { t -> Int in
+  t ^ 2
+}
+var foo = _foo { $0 = 0 } {
+  willSet(newValue) {
+    print(newValue)
+  }
+}
+var foo = bar { $0 == 0 }.joined()

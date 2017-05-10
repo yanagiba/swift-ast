@@ -1,27 +1,6 @@
-top_level_decl <range: TTYASTDumpTestResources/TypealiasDeclarationTests.swift:17:1-22.33>
-  typealias_decl <range: TTYASTDumpTestResources/TypealiasDeclarationTests.swift:17:1-17.20>
-    name: Foo
-    type: Bar
-  typealias_decl <range: TTYASTDumpTestResources/TypealiasDeclarationTests.swift:18:1-18.29>
-    name: Foo
-    attributes: `@a @b @c`
-    type: Bar
-  typealias_decl <range: TTYASTDumpTestResources/TypealiasDeclarationTests.swift:19:1-19.32>
-    name: Foo
-    access_level: fileprivate
-    type: Bar
-  typealias_decl <range: TTYASTDumpTestResources/TypealiasDeclarationTests.swift:20:1-20.30>
-    name: Foo
-    attributes: `@a`
-    access_level: public
-    type: Bar
-  typealias_decl <range: TTYASTDumpTestResources/TypealiasDeclarationTests.swift:21:1-21.70>
-    name: Foo
-    generic_param: `<A, B: C, D: E, F, G>`
-    type: (a, b, c) throws -> Bar<A, B, C>
-  typealias_decl <range: TTYASTDumpTestResources/TypealiasDeclarationTests.swift:22:1-22.33>
-    name: Foo
-    attributes: `@a`
-    access_level: public
-    generic_param: `<A>`
-    type: Bar
+typealias Foo = Bar
+@a @b @c typealias Foo = Bar
+fileprivate typealias Foo = Bar
+@a public typealias Foo = Bar
+typealias Foo<A, B: C, D: E, F, G> = (a, b, c) throws -> Bar<A, B, C>
+@a public typealias Foo<A> = Bar

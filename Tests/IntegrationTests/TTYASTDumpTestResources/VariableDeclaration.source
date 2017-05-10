@@ -140,19 +140,20 @@ var foo: Foo {
   @a @b @c mutating get
 }
 var foo: Foo {
-  get set
-}
-var foo: Foo {
-  get @x @y @z
+  get
   set
 }
 var foo: Foo {
-  get nonmutating
-  set
+  get
+  @x @y @z set
 }
 var foo: Foo {
-  get @x @y @z
+  get
   nonmutating set
+}
+var foo: Foo {
+  get
+  @x @y @z nonmutating set
 }
 var foo: Foo {
   @a @b @c get
@@ -167,7 +168,8 @@ var foo: Foo {
   @x @y @z nonmutating set
 }
 var foo: Foo {
-  set get
+  set
+  get
 }
 var foo: Foo {
   @x @y @z nonmutating set

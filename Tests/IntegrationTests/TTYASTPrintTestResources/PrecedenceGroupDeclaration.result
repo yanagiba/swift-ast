@@ -1,43 +1,39 @@
-top_level_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:17:1-55.2>
-  precedence_group_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:17:1-17.23>
-    name: foo
-    <no_attributes>
-  precedence_group_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:18:1-20.2>
-    name: foo
-    higherThan: `bar`
-  precedence_group_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:21:1-23.2>
-    name: foo
-    higherThan: `a, b, c`
-  precedence_group_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:24:1-26.2>
-    name: foo
-    lowerThan: `bar`
-  precedence_group_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:27:1-29.2>
-    name: foo
-    lowerThan: `a, b, c`
-  precedence_group_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:30:1-32.2>
-    name: foo
-    assignment: `true`
-  precedence_group_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:33:1-35.2>
-    name: foo
-    assignment: `false`
-  precedence_group_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:36:1-38.2>
-    name: foo
-    associativity: `left`
-  precedence_group_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:39:1-41.2>
-    name: foo
-    associativity: `right`
-  precedence_group_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:42:1-44.2>
-    name: foo
-    associativity: `none`
-  precedence_group_decl <range: TTYASTDumpTestResources/PrecedenceGroupDeclarationTests.swift:45:1-55.2>
-    name: foo
-    attributes:
-    0: higherThan: `bar`
-    1: higherThan: `a, b, c`
-    2: lowerThan: `bar`
-    3: lowerThan: `a, b, c`
-    4: assignment: `true`
-    5: assignment: `false`
-    6: associativity: `left`
-    7: associativity: `right`
-    8: associativity: `none`
+precedencegroup foo {}
+precedencegroup foo {
+  higherThan: bar
+}
+precedencegroup foo {
+  higherThan: a, b, c
+}
+precedencegroup foo {
+  lowerThan: bar
+}
+precedencegroup foo {
+  lowerThan: a, b, c
+}
+precedencegroup foo {
+  assignment: true
+}
+precedencegroup foo {
+  assignment: false
+}
+precedencegroup foo {
+  associativity: left
+}
+precedencegroup foo {
+  associativity: right
+}
+precedencegroup foo {
+  associativity: none
+}
+precedencegroup foo {
+  higherThan: bar
+  higherThan: a, b, c
+  lowerThan: bar
+  lowerThan: a, b, c
+  assignment: true
+  assignment: false
+  associativity: left
+  associativity: right
+  associativity: none
+}
