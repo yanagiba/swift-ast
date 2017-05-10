@@ -1,0 +1,6 @@
+(a, _, (b, c)) = ("test", 9.45, (12, 3))
+foo = bar
+foo = try bar
+foo = try? bar
+foo = try! bar
+foo = bar = true

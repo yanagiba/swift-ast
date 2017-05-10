@@ -1,0 +1,264 @@
+var foo
+var foo: Foo
+var foo: Foo = bar
+var foo = bar, a, x = y
+var foo: Foo {}
+var foo: Foo {
+  return _foo
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+}
+var foo: Foo {
+  @a @b @c get {
+    return _foo
+  }
+}
+var foo: Foo {
+  nonmutating get {
+    return _foo
+  }
+}
+var foo: Foo {
+  @a @b @c mutating get {
+    return _foo
+  }
+}
+var foo: Foo {
+  @a @b @c nonmutating get {
+    return _foo
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  @a @b @c set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  nonmutating set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  @a @b @c mutating set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  @x @y @z get {
+    return _foo
+  }
+  @a @b @c set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  mutating get {
+    return _foo
+  }
+  nonmutating set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  @x @y @z mutating get {
+    return _foo
+  }
+  @a @b @c nonmutating set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  set(aValue) {
+    _foo = aValue
+  }
+}
+var foo: Foo {
+  get {
+    return _foo
+  }
+  set {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  @x nonmutating get {
+    return _foo
+  }
+  @a mutating set(newValue) {
+    _foo = newValue
+  }
+}
+var foo: Foo {
+  get
+}
+var foo: Foo {
+  @a @b @c get
+}
+var foo: Foo {
+  mutating get
+}
+var foo: Foo {
+  @a @b @c mutating get
+}
+var foo: Foo {
+  get
+  set
+}
+var foo: Foo {
+  get
+  @x @y @z set
+}
+var foo: Foo {
+  get
+  nonmutating set
+}
+var foo: Foo {
+  get
+  @x @y @z nonmutating set
+}
+var foo: Foo {
+  @a @b @c get
+  @x @y @z set
+}
+var foo: Foo {
+  mutating get
+  nonmutating set
+}
+var foo: Foo {
+  @a @b @c mutating get
+  @x @y @z nonmutating set
+}
+var foo: Foo {
+  get
+  set
+}
+var foo: Foo {
+  @a @b @c mutating get
+  @x @y @z nonmutating set
+}
+var foo = _foo {
+  willSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @a @b @c willSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  willSet(newValue) {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @a @b @c willSet(newValue) {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  didSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @x @y @z didSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  didSet(newValue) {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @x @y @z didSet(newValue) {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  willSet {
+    print(newValue)
+  }
+  didSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @a willSet(newValue) {
+    print(newValue)
+  }
+  @x didSet(aValue) {
+    print(aValue)
+  }
+}
+var foo = _foo {
+  willSet {
+    print(newValue)
+  }
+  didSet {
+    print(newValue)
+  }
+}
+var foo = _foo {
+  @a willSet(newValue) {
+    print(newValue)
+  }
+  @x didSet(aValue) {
+    print(aValue)
+  }
+}
+var foo: Foo {
+  willSet {
+    print(newValue)
+  }
+  didSet {
+    print(newValue)
+  }
+}
+var foo: Foo = _foo {
+  willSet {
+    print(newValue)
+  }
+  didSet {
+    print(newValue)
+  }
+}
+@a var foo
+private nonmutating static final var foo = bar
+@a fileprivate var foo
+var foo = bar { $0 == 0 }
+var foo = bar { $0 = 0 }, a = b { _ in
+  true
+}, x = y { t -> Int in
+  t ^ 2
+}
+var foo = _foo { $0 = 0 } {
+  willSet(newValue) {
+    print(newValue)
+  }
+}
+var foo = bar { $0 == 0 }.joined()

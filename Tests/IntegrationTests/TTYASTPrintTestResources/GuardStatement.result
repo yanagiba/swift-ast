@@ -1,0 +1,4 @@
+guard foo else {
+  return false
+}
+guard try? bar() else {}

@@ -14,7 +14,6 @@
    limitations under the License.
 */
 
-
 public class BreakStatement : ASTNode, Statement {
   public let labelName: Identifier?
 

@@ -1,0 +1,31 @@
+foo()
+foo(1)
+foo(a: 1)
+foo([:])
+foo(+)
+foo(<+>)
+foo(!)
+foo(....)
+foo(op: +)
+foo(-, op: -, -bar, expr: -bar)
+min(-data.yMax * 0.1, data.yMin)
+assert(!bytes.isEmpty)
+foo(+, a: -, b: b, _)
+map({ $0.textDescription })
+foo() { self.foo = $0 }
+foo(1) { self.foo = $0 }
+foo { self.foo = $0 }
+foo.bar(x)
+foo.bar()
+foo(&bar)
+foo(a: &A.b)
+foo([1, 2, 3].map { i in
+  i ^ 2
+}.joined())
+foo([1, 2, 3].map { i in
+  i ^ 2
+})
+map { i -> String in
+  let j = i ^ 2
+  return "\(j)"
+}

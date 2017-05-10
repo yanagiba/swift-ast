@@ -1,0 +1,4 @@
+repeat {} while true
+repeat {
+  print(i)
+} while shouldContinue(with: i)

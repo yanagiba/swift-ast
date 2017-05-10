@@ -1,0 +1,4 @@
+while true {}
+while shouldContinue(with: i) {
+  print(i)
+}

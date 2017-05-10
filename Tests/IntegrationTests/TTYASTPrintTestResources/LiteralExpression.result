@@ -1,0 +1,21 @@
+nil
+true
+false
+0b0
+0o01_67_24_35
+-0xFF_eb_ca_DA
+10_0.000_3
+-0xa_1.eaP-1_5
+""
+"The quick brown fox jumps over the lazy dog"
+"\("helloworld")a\("foo")\("bar")z"
+"1 2 \(1 + 2)"
+_ = []
+_ = [1, 2, 3]
+_ = [_, [:], foo()]
+_ = [:]
+_ = ["foo": true, "bar": foo { return bar }]
+_ = #file
+_ = #line
+_ = #column
+_ = #function

@@ -1,0 +1,11 @@
+import foo
+import >>
+import A.B.C.<<=
+@a import foo
+import typealias foo
+import struct foo
+import class foo
+import enum foo
+@x @y @z import protocol foo
+import var foo
+import func foo

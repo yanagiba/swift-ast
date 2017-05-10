@@ -1,0 +1,21 @@
+init() {}
+init?() {
+  return nil
+}
+init!() {
+  self.foo = nil
+}
+@a @b @c init() {}
+fileprivate convenience required init() {}
+@a @b @c private override init() {}
+init<A, B: C, D: protocol<E, F, G>>() {}
+init(bar: Bar) {}
+init(bar: inout Bar) {}
+init(_b bar: Bar) {}
+init(_ bar: Bar) {}
+init(i: Int = 12) {}
+init(bar: Bar...) {}
+init(a: A, _ b: B, c: inout C, d: @a D, e: E...) {}
+init(bar: Bar) throws {}
+init(bar: Bar) rethrows {}
+init<A>() where A == Foo {}

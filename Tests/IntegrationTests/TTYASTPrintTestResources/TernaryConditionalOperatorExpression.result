@@ -1,0 +1,4 @@
+condition ? true : false
+c() ? t() : f()
+try? c() ? try t() : try! f()
+a ? b ? c : d : e ? f ? g : h : i

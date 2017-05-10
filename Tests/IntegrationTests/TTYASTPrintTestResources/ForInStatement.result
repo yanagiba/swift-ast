@@ -1,0 +1,7 @@
+for i in aCollection {
+  print(i)
+}
+for case i in aCollection {}
+for (k, v) in [1: true, 0: false] where v {}
+for (index, it) in enumerate([]) {}
+for e in 0 ..< 9 {}

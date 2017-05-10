@@ -1,0 +1,67 @@
+protocol Foo {}
+@a @b @c protocol Foo {}
+fileprivate protocol Foo {}
+@a public protocol Foo {}
+protocol Foo: String {}
+protocol Foo {
+  var bar: Bar {
+    get
+  }
+}
+protocol Foo {
+  @a @b @c var bar: Bar {
+    get
+  }
+}
+protocol Foo {
+  public var bar: Bar {
+    get
+  }
+}
+protocol Foo {
+  @a @b @c public var bar: Bar {
+    get
+  }
+}
+protocol Foo {
+  var bar: Bar {
+    @a mutating get
+    @b mutating set
+  }
+}
+protocol Foo {
+  @discardableResult public func foo<String>(a: A, b: B, c: C) where A: String
+}
+protocol Foo {
+  @x @y public init<String>(a: A, b: B, c: C) throws where A: String
+  @x @y public init?<String>(a: A, b: B, c: C) throws where A: String
+  @x @y public init!<String>(a: A, b: B, c: C) throws where A: String
+}
+protocol Foo {
+  @a fileprivate subscript(i: Int, j: Int) -> @b Self {
+    get
+    set
+  }
+}
+protocol Foo {
+  @a fileprivate associatedtype foo: Bar = bar
+}
+protocol Foo {
+  #if bar
+  var bar: Bar {
+    get
+  }
+  #endif
+}
+protocol Foo {
+  var a: A {
+    get
+  }
+  @a func b(c: C) -> B
+  init!(d: D)
+  subscript(i: Int) -> E {
+    get
+    set
+  }
+  public associatedtype f: F = g
+}

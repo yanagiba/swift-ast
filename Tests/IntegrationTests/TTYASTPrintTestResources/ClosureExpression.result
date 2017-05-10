@@ -1,0 +1,36 @@
+_ = {}
+_ = { self.present(vc, animated: true) }
+_ = {
+  vc.foo = foo
+  self.present(vc, animated: true)
+}
+_ = { [self] in }
+_ = { [weak self] in }
+_ = { [weak self, foo, unowned bar, unowned(safe) abc, unowned(unsafe) xyz] in }
+_ = { [weak self] in
+  self.present(vc, animated: true)
+}
+_ = { () in }
+_ = { (foo) in }
+_ = { (foo: Foo) in }
+_ = { (foo: Foo...) in }
+_ = { (_, b: Bar<B>, c: Foo...) in }
+_ = { (a, b, c) in
+  print(a)
+  print(b)
+  print(c)
+}
+_ = { foo in }
+_ = { foo, _, bar in }
+_ = { a, b, c in
+  print(a)
+  print(b)
+  print(c)
+}
+_ = { () throws in }
+_ = { () -> Foo in }
+_ = { () -> @a @b @c Foo in }
+_ = { () throws -> @foo Bar in }
+_ = { [weak foo = self.foo] (a, b, c) throws -> @x @y @z Bar in
+  print(foo!.title)
+}

@@ -50,7 +50,7 @@ public func terminalMain(
     case .astDump:
       print(topLevelDecl.ttyDump)
     case .astPrint:
-      print(topLevelDecl.ttyASTPrint(indentation: 0))
+      print(topLevelDecl.ttyPrint)
     case .astText:
       print(topLevelDecl.textDescription)
     case .diagnosticsOnly:

@@ -20,6 +20,7 @@ import XCTest
 public func allTests() -> [XCTestCaseEntry] {
   return [
     testCase(TTYASTDumpTests.allTests),
+    testCase(TTYASTPrintTests.allTests),
   ]
 }
 #endif

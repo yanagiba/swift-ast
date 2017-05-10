@@ -1,0 +1,4 @@
+self
+self.foo
+self.init
+self[foo, bar]

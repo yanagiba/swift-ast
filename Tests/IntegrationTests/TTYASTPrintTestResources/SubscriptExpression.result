@@ -1,0 +1,6 @@
+foo[0]
+foo[a, 0, b, 1, 5, _]
+foo[n - 1, n -- 1]
+foo[n + 1]
+foo[bar()]
+foo[try bar()]

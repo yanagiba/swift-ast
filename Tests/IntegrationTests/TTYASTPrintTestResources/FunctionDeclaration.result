@@ -1,0 +1,30 @@
+func foo()
+func <!>()
+infix func <()
+postfix func <()
+prefix func >()
+@a @b @c func foo()
+fileprivate static final override func foo()
+@a @b @c private prefix func √()
+func foo<A, B: C, D: protocol<E, F, G>>()
+func foo(bar: Bar)
+func foo(bar: inout Bar)
+func foo(_b bar: Bar)
+func foo(_ bar: Bar)
+func foo(_: Bar, and _: Bar)
+func foo(i: Int = 12)
+func foo(bar: Bar...)
+func foo(a: A, _ b: B, c: inout C, d: @a D, e: E...)
+func foo(bar: Bar) throws
+func foo(bar: Bar) rethrows
+func foo(bar: Bar) -> @a @b @c Foo
+func foo(bar: Bar) throws -> Foo
+func foo(bar: Bar) rethrows -> Foo
+func foo<A>() where A == Foo
+func foo() {}
+func foo() {
+  print("hello world")
+}
+func foo<A>() where A == Foo {}
+func foo(b: () -> String)
+func foo(b: @autoclosure (Int) rethrows -> String)

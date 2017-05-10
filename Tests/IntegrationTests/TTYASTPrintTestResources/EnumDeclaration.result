@@ -1,0 +1,80 @@
+enum Foo {}
+@a @b @c enum Foo {}
+fileprivate enum Foo {}
+@a public enum Foo {}
+indirect enum Foo {}
+@a public indirect enum Foo {}
+enum Foo<A, B: C, D: E, F, G> {}
+enum Foo: String {}
+enum Foo where Foo == Bar {}
+enum Foo<T>: Array<T> where T: protocol<Int, Double> {}
+enum Foo {
+  let a = 1
+}
+enum Foo {
+  enum Bar {}
+}
+enum Foo {
+  case a
+}
+enum Foo {
+  case a(A)
+}
+enum Foo {
+  case a(A), b, c(A, B, C)
+}
+enum Foo: Int {
+  case a = 1
+}
+enum Foo: Int {
+  case a = 1, b, c = 999
+}
+indirect enum Foo {
+  indirect case a(Foo)
+}
+enum Foo {
+  @a @b @c case a
+}
+indirect enum Foo {
+  @a indirect case a(Foo)
+}
+enum Foo: Int {
+  @a @b @c case a = 1
+}
+enum Foo {
+  case a(A)
+  case b
+  case c(A, B, C)
+}
+enum Foo {
+  let a = 1
+  case a(A)
+  let b = 2
+  case b
+  let c = 3
+  case c(A, B, C)
+  let d = 4
+}
+enum Foo: Int {
+  case a
+  case b = 1
+  case c = 999
+}
+enum Foo: Int {
+  let a = 1
+  case a
+  let b = 2
+  case b = 1
+  let c = 3
+  case c = 999
+  let d = 4
+}
+enum Foo {
+  #if a
+  case a(A)
+  #elseif b
+  case b
+  #else
+  case c(A, B, C)
+  #endif
+}

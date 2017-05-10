@@ -1,0 +1,4 @@
+prefix operator <!>
+infix operator <!>
+infix operator <!> : foo
+postfix operator <!>

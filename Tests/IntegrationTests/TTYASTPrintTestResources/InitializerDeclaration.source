@@ -1,0 +1,37 @@
+/*
+   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+init() {}
+init?() {
+  return nil
+}
+init!() {
+  self.foo = nil
+}
+@a @b @c init() {}
+fileprivate convenience required init() {}
+@a @b @c private override init() {}
+init<A, B: C, D: E & F & G>() {}
+init(bar: Bar) {}
+init(bar: inout Bar) {}
+init(_b bar: Bar) {}
+init(_ bar: Bar) {}
+init(i: Int = 12) {}
+init(bar: Bar...) {}
+init(a: A, _ b: B, c: inout C, d: @a D, e: E...) {}
+init(bar: Bar) throws {}
+init(bar: Bar) rethrows {}
+init<A>() where A == Foo {}

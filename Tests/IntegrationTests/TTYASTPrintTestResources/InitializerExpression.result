@@ -1,0 +1,3 @@
+foo.init
+foo.init(bar:)
+foo.init(a:b:c:)

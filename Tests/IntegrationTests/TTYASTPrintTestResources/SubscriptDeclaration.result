@@ -1,0 +1,31 @@
+subscript() -> Self {}
+@a subscript() -> Self {}
+private nonmutating static final subscript() -> Self {}
+@a fileprivate subscript() -> Self {}
+subscript(i: Int) -> Self {}
+subscript(section: Int, row: Int) -> Self {}
+subscript() -> @a @b @c Self {}
+subscript() -> Self {
+  let foo = 3
+  return _weakSelf
+}
+subscript() -> Self {
+  get {
+    return _foo
+  }
+  set {
+    _foo = newValue
+  }
+}
+subscript() -> Self {
+  @a mutating get {
+    return _foo
+  }
+  @a mutating set(newFoo) {
+    _foo = newFoo
+  }
+}
+subscript() -> Self {
+  @a @b @c mutating get
+  @x @y @z nonmutating set
+}

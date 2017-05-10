@@ -1,0 +1,14 @@
+let foo
+let foo: Foo
+let foo: Foo = bar
+let foo = bar, a, x = y
+@a let foo
+private nonmutating static final let foo = bar
+@a fileprivate let foo
+let foo = bar { $0 == 0 }
+let foo = bar { $0 = 0 }, a = b { _ in
+  true
+}, x = y { t -> Int in
+  t ^ 2
+}
+let foo = bar { $0 == 0 }.joined()

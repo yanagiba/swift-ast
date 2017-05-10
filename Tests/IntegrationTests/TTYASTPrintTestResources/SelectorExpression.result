@@ -1,0 +1,6 @@
+_ = #selector(foo)
+_ = #selector(self.bar)
+_ = #selector(getter: SomeClass.property)
+_ = #selector(setter: SomeClass.property)
+_ = #selector(pillTapped(_:))
+_ = #selector(self.pillTapped(_:))

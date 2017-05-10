@@ -1,0 +1,12 @@
+do {
+  try foo
+}
+do {
+  try expression
+} catch pattern1 {
+  foo()
+} catch pattern2 where condition {
+  bar()
+} catch {
+  all()
+}

@@ -1,0 +1,4 @@
+deinit {
+  NSNotificationCenter.removeObserver(self)
+}
+@a @b @c deinit {}

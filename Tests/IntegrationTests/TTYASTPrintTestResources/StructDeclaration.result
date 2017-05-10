@@ -1,0 +1,29 @@
+struct Foo {}
+@a @b @c struct Foo {}
+fileprivate struct Foo {}
+@a public struct Foo {}
+struct Foo<A, B: C, D: E, F, G> {}
+struct Foo: String {}
+struct Foo where Foo == Bar {}
+struct Foo<T>: Array<T> where T: protocol<Int, Double> {}
+struct Foo {
+  let a = 1
+}
+struct Foo {
+  let a = 1
+  var b = 2
+}
+struct Foo {
+  struct Bar {
+    let b = 2
+  }
+}
+struct Foo {
+  #if a
+  let a = 1
+  #elseif b
+  let b = 2
+  #else
+  let e = 3
+  #endif
+}

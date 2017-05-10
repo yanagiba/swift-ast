@@ -1,0 +1,8 @@
+defer {
+  break
+}
+defer {
+  defer {
+    return
+  }
+}

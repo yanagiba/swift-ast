@@ -1,0 +1,23 @@
+extension Foo {}
+@a @b @c extension Foo {}
+fileprivate extension Foo {}
+@a public extension Foo {}
+extension a.b<x, y>.c.Foo<A, B, C> {}
+extension Foo: String {}
+extension Foo where Foo == Bar {}
+extension Foo {
+  let a = 1
+}
+extension Foo {
+  let a = 1
+  var b = 2
+}
+extension Foo {
+  #if a
+  let a = 1
+  #elseif b
+  let b = 2
+  #else
+  let e = 3
+  #endif
+}

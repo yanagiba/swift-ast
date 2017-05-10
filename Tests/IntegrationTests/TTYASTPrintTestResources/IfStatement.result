@@ -1,0 +1,24 @@
+if true {}
+if cond1 && cond2 || cond3 {
+  print("🌝")
+}
+if (cond1 && cond2 || cond3) {
+  print("🌚")
+}
+if #available(*) {}
+if #available(iOS 10, *) {
+  print("⛰")
+} else if #available(iOS 10.2, *) {
+  print("🏔")
+} else if #available(iOS 10.2.1, *) {
+  print("🗻")
+} else {
+  print("🌋")
+}
+if case .foo(let bar) = foobar {}
+if case 0 ..< 255 = aNumber {}
+if let foo = foo, !foo.isEmpty {}
+if var foo = foo, !foo.isEmpty {}
+if foo < 1 {}
+if foo < bar {}
+if foo < (bar) {}

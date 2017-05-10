@@ -1,0 +1,5 @@
+foo.0
+foo.bar
+foo.bar<a, b, c>
+foo.bar(a:b:c:)
+foo.bar.a<x>.100.b(y:)

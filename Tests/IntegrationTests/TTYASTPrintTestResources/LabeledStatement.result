@@ -1,0 +1,8 @@
+foo: for _ in 0 ..< 10 {}
+foo: while true {}
+foo: repeat {} while true
+foo: if x {}
+foo: switch bar {}
+foo: do {
+  try bar()
+}
