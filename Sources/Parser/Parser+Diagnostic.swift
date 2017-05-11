@@ -46,10 +46,14 @@ public enum ParserErrorKind : DiagnosticKind {
   case leftBraceExpectedForCodeBlock
   case rightBraceExpectedForCodeBlock
 
-  // declaration
+  // declarations
   case badDeclaration
+  /// enum declaration
   case enumExpectedAfterIndirect
+  /// protocol declaration
   case missingPropertyMemberName
+  case missingTypeForPropertyMember
+
   case leftBraceExpectedForDeclarationBody
   case missingExtensionName
   case missingClassName
@@ -75,6 +79,8 @@ public enum ParserErrorKind : DiagnosticKind {
       return "Missing `enum` keyword after `indirect` for indirect enumeration declaration"
     case .missingPropertyMemberName:
       return "Missing property member name"
+    case .missingTypeForPropertyMember:
+      return "Missing property member type"
     case .leftBraceExpectedForDeclarationBody:
       return "Missing opening brace for declaration body"
     case .missingExtensionName:

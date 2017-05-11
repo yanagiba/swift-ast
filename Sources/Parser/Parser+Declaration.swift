@@ -168,7 +168,7 @@ extension Parser {
         throw _raiseFatal(.missingPropertyMemberName)
       }
       guard let typeAnnotation = try parseTypeAnnotation() else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingTypeForPropertyMember)
       }
       guard isGetterSetterBlockHead() else {
         throw _raiseFatal(.dummy)

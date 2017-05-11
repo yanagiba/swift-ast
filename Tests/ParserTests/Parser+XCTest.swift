@@ -20,6 +20,7 @@ import XCTest
 @testable import Source
 @testable import Lexer
 @testable import AST
+@testable import Diagnostic
 
 let sourcePath = "ParserTests/ParserTests.swift"
 
@@ -170,6 +171,44 @@ func parseDeclarationAndTest(_ content: String,
       errorClosure(error)
     } else {
       XCTFail("Failed in parsing declaration `\(content)` with error: \(error)")
+    }
+  }
+}
+
+func parseProblematic(
+  _ content: String,
+  _ expectedDiagnosticLevel: Diagnostic.Level,
+  _ expectedParserErrorKind: ParserErrorKind
+) {
+  class TestParserDiagnosticConsumer : DiagnosticConsumer {
+    var diagnostics: [Diagnostic] = []
+
+    func consume(diagnostics: [Diagnostic]) {
+      self.diagnostics = diagnostics
+    }
+  }
+
+  DiagnosticPool.shared.clear()
+  do {
+    _ = try getParser(content).parse()
+    XCTFail("Failed in catching errors for `\(content)`")
+  } catch {
+    let diagnosticConsumer = TestParserDiagnosticConsumer()
+    DiagnosticPool.shared.report(withConsumer: diagnosticConsumer)
+    let diagnostics = diagnosticConsumer.diagnostics
+    switch diagnostics.count {
+    case 0:
+      XCTFail("Failed in getting any diagnostics.")
+    case 1:
+      let diagnostic = diagnostics[0]
+      XCTAssertEqual(diagnostic.level, expectedDiagnosticLevel)
+      guard let parserError = diagnostic.kind as? ParserErrorKind else {
+        XCTFail("Failed in getting parser error kind.")
+        return
+      }
+      XCTAssertEqual(parserError, expectedParserErrorKind)
+    default:
+      XCTFail("Getting too many diagnostics (\(diagnostics.count)).")
     }
   }
 }

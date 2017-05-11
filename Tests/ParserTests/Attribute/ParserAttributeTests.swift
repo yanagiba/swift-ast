@@ -133,6 +133,10 @@ class ParserAttributeTests: XCTestCase {
     parseAttributesAndTest("@a(h{}t)", "@a(h{}t)")
   }
 
+  func testDiagnostics() {
+    parseProblematic("@ let a = 1", .fatal, .attributeIdentifierExpected)
+  }
+
   static var allTests = [
     ("testAttributeName", testAttributeName),
     ("testEmptyArgumentClause", testEmptyArgumentClause),
@@ -141,5 +145,6 @@ class ParserAttributeTests: XCTestCase {
     ("testEmbeddedSquareToken", testEmbeddedSquareToken),
     ("testEmbeddedBraceToken", testEmbeddedBraceToken),
     ("testHeadingAndTrailingStrings", testHeadingAndTrailingStrings),
+    ("testDiagnostics", testDiagnostics),
   ]
 }
