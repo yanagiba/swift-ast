@@ -36,11 +36,6 @@ class ParserCodeBlockTests: XCTestCase {
     }
   }
 
-  func testDiagnostics() {
-    parseProblematic("defer", .fatal, .leftBraceExpectedForCodeBlock)
-    parseProblematic("defer { print(i)", .fatal, .rightBraceExpectedForCodeBlock)
-  }
-
   func testSourceRange() {
     let declParser = getParser("{import A\nimport B}")
     do {
@@ -68,7 +63,6 @@ class ParserCodeBlockTests: XCTestCase {
 
   static var allTests = [
     ("testSimpleCase", testSimpleCase),
-    ("testDiagnostics", testDiagnostics),
     ("testSourceRange", testSourceRange),
     ("testLexicalParent", testLexicalParent),
   ]

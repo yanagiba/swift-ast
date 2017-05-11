@@ -119,6 +119,7 @@ public func allTests() -> [XCTestCaseEntry] {
     ///////// Others
     testCase(KeywordUsedAsIdentifierTests.allTests),
     testCase(GenericOpeningChevronTests.allTests),
+    testCase(ParserErrorKindTests.allTests),
   ]
 }
 #endif
