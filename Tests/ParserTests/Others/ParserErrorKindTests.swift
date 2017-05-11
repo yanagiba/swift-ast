@@ -16,12 +16,11 @@
 
 import XCTest
 
-@testable import AST
 @testable import Parser
 
 class ParserErrorKindTests : XCTestCase {
   func testAttributes() {
-    parseProblematic("@ let a = 1", .fatal, .attributeIdentifierExpected)
+    parseProblematic("@ let a = 1", .fatal, .missingAttributeName)
   }
 
   func testCodeBlock() {
@@ -31,6 +30,12 @@ class ParserErrorKindTests : XCTestCase {
 
   func testDeclarations() {
     parseProblematic("class foo { return }", .fatal, .badDeclaration)
+
+    // protocol declaration
+    parseProblematic("protocol foo { var }", .fatal, .missingPropertyMemberName)
+    parseProblematic("protocol foo { var bar }", .fatal, .missingTypeForPropertyMember)
+    parseProblematic("protocol foo { var bar: Bar }", .fatal, .missingGetterSetterForPropertyMember)
+    parseProblematic("protocol foo { var bar: Bar { get { return _bar } } }", .fatal, .protocolPropertyMemberWithBody)
 
     // enum declaration
     parseProblematic("indirect", .fatal, .enumExpectedAfterIndirect)

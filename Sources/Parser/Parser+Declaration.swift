@@ -171,11 +171,11 @@ extension Parser {
         throw _raiseFatal(.missingTypeForPropertyMember)
       }
       guard isGetterSetterBlockHead() else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingGetterSetterForPropertyMember)
       }
       let (getterSetterBlock, hasCodeBlock, _) = try parseGetterSetterBlock()
       guard !hasCodeBlock else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.protocolPropertyMemberWithBody)
       }
       let getter = GetterSetterKeywordBlock.GetterKeywordClause(
         attributes: getterSetterBlock.getter.attributes,

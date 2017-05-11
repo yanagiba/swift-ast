@@ -40,7 +40,7 @@ public enum ParserErrorKind : DiagnosticKind {
   case dummy
 
   // attributes
-  case attributeIdentifierExpected
+  case missingAttributeName
 
   // code block
   case leftBraceExpectedForCodeBlock
@@ -53,6 +53,8 @@ public enum ParserErrorKind : DiagnosticKind {
   /// protocol declaration
   case missingPropertyMemberName
   case missingTypeForPropertyMember
+  case missingGetterSetterForPropertyMember
+  case protocolPropertyMemberWithBody
 
   case leftBraceExpectedForDeclarationBody
   case missingExtensionName
@@ -66,21 +68,25 @@ public enum ParserErrorKind : DiagnosticKind {
   public var diagnosticMessage: String {
     switch self {
     case .dummy:
-      return "Dummy diagnostic message"
-    case .attributeIdentifierExpected:
-      return "Expected an attribute identifier"
+      return "dummy diagnostic"
+    case .missingAttributeName:
+      return "expected an attribute name"
     case .leftBraceExpectedForCodeBlock:
-      return "Missing opening brace for code block"
+      return "expected '{'"
     case .rightBraceExpectedForCodeBlock:
-      return "Missing closing brace for code block"
+      return "expected '}'"
     case .badDeclaration:
-      return "Failed in parsing a declaration"
+      return "expected declaration"
     case .enumExpectedAfterIndirect:
-      return "Missing `enum` keyword after `indirect` for indirect enumeration declaration"
+      return "epected 'enum' after 'indirect' for indirect enumeration declaration"
     case .missingPropertyMemberName:
-      return "Missing property member name"
+      return "expected a property name"
     case .missingTypeForPropertyMember:
-      return "Missing property member type"
+      return "property must have an explicit type"
+    case .missingGetterSetterForPropertyMember:
+      return "expected get or set in a protocol property"
+    case .protocolPropertyMemberWithBody:
+      return "protocol properties may not have bodies"
     case .leftBraceExpectedForDeclarationBody:
       return "Missing opening brace for declaration body"
     case .missingExtensionName:
