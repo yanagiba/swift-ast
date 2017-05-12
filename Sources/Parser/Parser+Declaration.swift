@@ -34,12 +34,12 @@ extension Parser {
   func parseCodeBlock() throws -> CodeBlock {
     let startLocation = getStartLocation()
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForCodeBlock)
+      throw _raiseFatal(.leftBraceExpected("code block"))
     }
     let stmts = try parseStatements()
     let endLocation = getEndLocation()
     guard _lexer.match(.rightBrace) else {
-      throw _raiseFatal(.rightBraceExpectedForCodeBlock)
+      throw _raiseFatal(.rightBraceExpected("code block"))
     }
     let codeBlock = CodeBlock(statements: stmts)
     codeBlock.setSourceRange(startLocation, endLocation)
@@ -333,7 +333,7 @@ extension Parser {
     let typeInheritanceClause = try parseTypeInheritanceClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
+      throw _raiseFatal(.leftBraceExpected("protocol declaration body"))
     }
 
     var endLocation = getEndLocation()
@@ -360,15 +360,17 @@ extension Parser {
     func parseAttribute() throws -> PrecedenceGroupDeclaration.Attribute {
       func consumeColon() throws {
         guard _lexer.match(.colon) else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.missingColonAfterAttributeNameInPrecedenceGroup)
         }
       }
 
-      func getIdentifierList() throws -> IdentifierList {
+      func getIdentifierList(
+        forAttribute attributeName: String
+      ) throws -> IdentifierList {
         var ids: [Identifier] = []
         repeat {
           guard case .identifier(let id) = _lexer.read(.dummyIdentifier) else {
-            throw _raiseFatal(.dummy)
+            throw _raiseFatal(.missingPrecedenceGroupRelation(attributeName))
           }
           ids.append(id)
         } while _lexer.match(.comma)
@@ -376,26 +378,26 @@ extension Parser {
       }
 
       switch _lexer.read([.dummyIdentifier, .associativity]) {
-      case .identifier(let keyword):
-        switch keyword {
+      case .identifier(let attributeName):
+        switch attributeName {
         case "higherThan":
           try consumeColon()
-          let ids = try getIdentifierList()
+          let ids = try getIdentifierList(forAttribute: attributeName)
           return .higherThan(ids)
         case "lowerThan":
           try consumeColon()
-          let ids = try getIdentifierList()
+          let ids = try getIdentifierList(forAttribute: attributeName)
           return .lowerThan(ids)
         case "assignment":
           try consumeColon()
           guard case .booleanLiteral(let b) =
             _lexer.read(.dummyBooleanLiteral) else
           {
-            throw _raiseFatal(.dummy)
+            throw _raiseFatal(.expectedBooleanAfterPrecedenceGroupAssignment)
           }
           return .assignment(b)
         default:
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.unknownPrecedenceGroupAttribute(attributeName))
         }
       case .associativity:
         try consumeColon()
@@ -407,10 +409,10 @@ extension Parser {
         case .none:
           return .associativityNone
         default:
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedPrecedenceGroupAssociativity)
         }
       default:
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedPrecedenceGroupAttribute)
       }
     }
 
@@ -420,7 +422,7 @@ extension Parser {
 
     var attrs: [PrecedenceGroupDeclaration.Attribute] = []
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.leftBraceExpected("precedence group declaration"))
     }
 
     var endLocation = getEndLocation()
@@ -556,7 +558,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
+      throw _raiseFatal(.leftBraceExpected("declaration body"))
     }
 
     var endLocation = getEndLocation()
@@ -674,7 +676,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
+      throw _raiseFatal(.leftBraceExpected("declaration body"))
     }
 
     var endLocation = getEndLocation()
@@ -725,7 +727,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
+      throw _raiseFatal(.leftBraceExpected("declaration body"))
     }
 
     var endLocation = getEndLocation()

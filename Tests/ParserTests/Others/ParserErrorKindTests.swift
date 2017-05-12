@@ -24,8 +24,8 @@ class ParserErrorKindTests : XCTestCase {
   }
 
   func testCodeBlock() {
-    parseProblematic("defer", .fatal, .leftBraceExpectedForCodeBlock)
-    parseProblematic("defer { print(i)", .fatal, .rightBraceExpectedForCodeBlock)
+    parseProblematic("defer", .fatal, .leftBraceExpected("code block"))
+    parseProblematic("defer { print(i)", .fatal, .rightBraceExpected("code block"))
   }
 
   func testDeclarations() {
@@ -41,7 +41,19 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("protocol Foo { associatedtype }", .fatal, .missingProtocolAssociatedTypeName)
     parseProblematic("protocol Foo { bar }", .fatal, .badProtocolMember)
     parseProblematic("protocol {}", .fatal, .missingProtocolName)
-    parseProblematic("protocol foo ", .fatal, .leftBraceExpectedForDeclarationBody)
+    parseProblematic("protocol foo ", .fatal, .leftBraceExpected("protocol declaration body"))
+
+    // precedence-group declaration
+    parseProblematic("precedencegroup foo { higherThan bar }", .fatal, .missingColonAfterAttributeNameInPrecedenceGroup)
+    parseProblematic("precedencegroup foo { higherThan: }", .fatal, .missingPrecedenceGroupRelation("higherThan"))
+    parseProblematic("precedencegroup foo { lowerThan: }", .fatal, .missingPrecedenceGroupRelation("lowerThan"))
+    parseProblematic("precedencegroup foo { assignment: 1 }", .fatal, .expectedBooleanAfterPrecedenceGroupAssignment)
+    parseProblematic("precedencegroup foo { assignment: }", .fatal, .expectedBooleanAfterPrecedenceGroupAssignment)
+    parseProblematic("precedencegroup foo { assgnmnt: }", .fatal, .unknownPrecedenceGroupAttribute("assgnmnt"))
+    parseProblematic("precedencegroup foo { associativity: }", .fatal, .expectedPrecedenceGroupAssociativity)
+    parseProblematic("precedencegroup foo { associativity: up }", .fatal, .expectedPrecedenceGroupAssociativity)
+    parseProblematic("precedencegroup foo { return }", .fatal, .expectedPrecedenceGroupAttribute)
+    parseProblematic("precedencegroup foo", .fatal, .leftBraceExpected("precedence group declaration"))
 
     // enum declaration
     parseProblematic("indirect", .fatal, .enumExpectedAfterIndirect)

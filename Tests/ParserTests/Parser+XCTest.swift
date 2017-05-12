@@ -206,7 +206,8 @@ func parseProblematic(
         XCTFail("Failed in getting parser error kind.")
         return
       }
-      XCTAssertEqual(parserError, expectedParserErrorKind)
+      XCTAssertEqual(parserError.diagnosticMessage,
+        expectedParserErrorKind.diagnosticMessage)
     default:
       XCTFail("Getting too many diagnostics (\(diagnostics.count)).")
     }

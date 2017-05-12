@@ -39,16 +39,14 @@ extension Parser {
 public enum ParserErrorKind : DiagnosticKind {
   case dummy
 
+  case leftBraceExpected(String)
+  case rightBraceExpected(String)
+
   // attributes
   case missingAttributeName
 
-  // code block
-  case leftBraceExpectedForCodeBlock
-  case rightBraceExpectedForCodeBlock
-
   // declarations
   case badDeclaration
-  case leftBraceExpectedForDeclarationBody
   /// enum declaration
   case enumExpectedAfterIndirect
   /// protocol declaration
@@ -61,6 +59,13 @@ public enum ParserErrorKind : DiagnosticKind {
   case missingProtocolAssociatedTypeName
   case badProtocolMember
   case missingProtocolName
+  /// precedence-group declaration
+  case missingColonAfterAttributeNameInPrecedenceGroup
+  case missingPrecedenceGroupRelation(String)
+  case expectedBooleanAfterPrecedenceGroupAssignment
+  case unknownPrecedenceGroupAttribute(String)
+  case expectedPrecedenceGroupAssociativity
+  case expectedPrecedenceGroupAttribute
 
   case missingExtensionName
   case missingClassName
@@ -76,10 +81,10 @@ public enum ParserErrorKind : DiagnosticKind {
       return "dummy diagnostic"
     case .missingAttributeName:
       return "expected an attribute name"
-    case .leftBraceExpectedForCodeBlock:
-      return "expected '{' for code block"
-    case .rightBraceExpectedForCodeBlock:
-      return "expected '}' for code block"
+    case .leftBraceExpected(let node):
+      return "expected '{' for \(node)"
+    case .rightBraceExpected(let node):
+      return "expected '}' for \(node)"
     case .badDeclaration:
       return "expected declaration"
     case .enumExpectedAfterIndirect:
@@ -102,8 +107,18 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected protocol member"
     case .missingProtocolName:
       return "expected a protocol name"
-    case .leftBraceExpectedForDeclarationBody:
-      return "expected '{' for declaration body"
+    case .missingColonAfterAttributeNameInPrecedenceGroup:
+      return "expected colon after attribute name in precedence group"
+    case .missingPrecedenceGroupRelation(let attribute):
+      return "expected name of related precedence group after '\(attribute)'"
+    case .expectedBooleanAfterPrecedenceGroupAssignment:
+      return "expected 'true' or 'false' after 'assignment'"
+    case .unknownPrecedenceGroupAttribute(let name):
+      return "'\(name)' is not a valid precedence group attribute"
+    case .expectedPrecedenceGroupAssociativity:
+      return "expected 'none', 'left', or 'right' after 'associativity'"
+    case .expectedPrecedenceGroupAttribute:
+      return "expected attribute identifier in precedence group body"
     case .missingExtensionName:
       return "Missing extension declaration name"
     case .missingClassName:
