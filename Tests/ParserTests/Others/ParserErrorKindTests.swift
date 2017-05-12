@@ -55,6 +55,14 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("precedencegroup foo { return }", .fatal, .expectedPrecedenceGroupAttribute)
     parseProblematic("precedencegroup foo", .fatal, .leftBraceExpected("precedence group declaration"))
 
+    // operator declaration
+    parseProblematic("infix operator a", .fatal, .expectedValidOperator)
+    parseProblematic("infix operator", .fatal, .expectedValidOperator)
+    parseProblematic("infix operator ?", .fatal, .expectedValidOperator)
+    parseProblematic("operator <!>", .fatal, .operatorDeclarationHasNoFixity)
+    parseProblematic("fileprivate operator <!>", .fatal, .operatorDeclarationHasNoFixity)
+    parseProblematic("infix operator <!>:", .fatal, .expectedOperatorNameAfterInfixOperator)
+
     // enum declaration
     parseProblematic("indirect", .fatal, .enumExpectedAfterIndirect)
 

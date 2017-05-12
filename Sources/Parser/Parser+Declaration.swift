@@ -443,14 +443,14 @@ extension Parser {
   ) throws -> OperatorDeclaration {
     func parseOperator(modifier kind: DeclarationModifier) throws -> Operator {
       guard let op = parseVerifiedOperator(againstModifier: kind) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedValidOperator)
       }
 
       return op
     }
 
     guard modifiers.count == 1, let modifier = modifiers.first else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.operatorDeclarationHasNoFixity)
     }
 
     var endLocation = getEndLocation()
@@ -468,13 +468,13 @@ extension Parser {
       if _lexer.match(.colon) {
         endLocation = getEndLocation()
         guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedOperatorNameAfterInfixOperator)
         }
         id = name
       }
       kind = .infix(op, id)
     default:
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.operatorDeclarationHasNoFixity)
     }
     let opDecl = OperatorDeclaration(kind: kind)
     opDecl.setSourceRange(startLocation, endLocation)

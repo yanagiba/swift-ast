@@ -66,6 +66,10 @@ public enum ParserErrorKind : DiagnosticKind {
   case unknownPrecedenceGroupAttribute(String)
   case expectedPrecedenceGroupAssociativity
   case expectedPrecedenceGroupAttribute
+  /// operator declaration
+  case expectedValidOperator
+  case operatorDeclarationHasNoFixity
+  case expectedOperatorNameAfterInfixOperator
 
   case missingExtensionName
   case missingClassName
@@ -119,6 +123,12 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected 'none', 'left', or 'right' after 'associativity'"
     case .expectedPrecedenceGroupAttribute:
       return "expected attribute identifier in precedence group body"
+    case .expectedValidOperator:
+      return "expected operator in an operator declaration"
+    case .operatorDeclarationHasNoFixity:
+      return "operator must be declared as 'prefix', 'postfix', or 'infix'"
+    case .expectedOperatorNameAfterInfixOperator:
+      return "expected operator name in infix operator declaration"
     case .missingExtensionName:
       return "Missing extension declaration name"
     case .missingClassName:
