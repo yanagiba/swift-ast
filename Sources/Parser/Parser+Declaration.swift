@@ -979,11 +979,11 @@ extension Parser {
         }
       }
       guard let localName = internalName else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.unnamedParameter)
       }
 
       guard let typeAnnotation = try parseTypeAnnotation() else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedParameterType)
       }
 
       switch _lexer.look().kind {
@@ -1012,7 +1012,7 @@ extension Parser {
 
     let startLocation = getStartLocation()
     guard _lexer.match(.leftParen) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedParameterOpenParenthesis)
     }
 
     var endLocation = getEndLocation()
@@ -1028,7 +1028,7 @@ extension Parser {
 
     endLocation = getEndLocation()
     guard _lexer.match(.rightParen) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedParameterCloseParenthesis)
     }
     return (params, SourceRange(start: startLocation, end: endLocation))
   }
@@ -1043,17 +1043,11 @@ extension Parser {
       for m in modifiers {
         switch m {
         case .prefix:
-          kind == nil ?
-            kind = .prefix :
-            try _raiseError(.dummy)
+          kind == nil ? kind = .prefix : try _raiseError(.duplicatedFunctionModifiers)
         case .postfix:
-          kind == nil ?
-            kind = .postfix :
-            try _raiseError(.dummy)
+          kind == nil ? kind = .postfix : try _raiseError(.duplicatedFunctionModifiers)
         case .infix:
-          kind == nil ?
-            kind = .infix :
-            try _raiseError(.dummy)
+          kind == nil ? kind = .infix : try _raiseError(.duplicatedFunctionModifiers)
         default:
           break
         }
@@ -1064,7 +1058,7 @@ extension Parser {
       }
 
       guard let name = _lexer.readNamedIdentifier() else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingFunctionName)
       }
       return name
     }

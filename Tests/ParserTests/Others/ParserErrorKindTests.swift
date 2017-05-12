@@ -92,6 +92,17 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("enum { case foo }", .fatal, .missingEnumName)
     parseProblematic("enum Foo case", .fatal, .leftBraceExpected("enum declaration body"))
 
+    // func declaration
+    parseProblematic("func foo(:)", .fatal, .unnamedParameter)
+    parseProblematic("func foo(a)", .fatal, .expectedParameterType)
+    parseProblematic("func foo", .fatal, .expectedParameterOpenParenthesis)
+    parseProblematic("func foo(foo: Foo", .fatal, .expectedParameterCloseParenthesis)
+    parseProblematic("prefix prefix func foo()", .error, .duplicatedFunctionModifiers)
+    parseProblematic("prefix postfix func foo()", .error, .duplicatedFunctionModifiers)
+    parseProblematic("prefix infix func foo()", .error, .duplicatedFunctionModifiers)
+    parseProblematic("func ()", .fatal, .missingFunctionName)
+
+
   }
 
   static var allTests = [

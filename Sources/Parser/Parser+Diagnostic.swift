@@ -85,6 +85,13 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedCaseName
   case missingEnumName
   case enumExpectedAfterIndirect
+  /// function declaration
+  case unnamedParameter
+  case expectedParameterType
+  case expectedParameterOpenParenthesis
+  case expectedParameterCloseParenthesis
+  case duplicatedFunctionModifiers
+  case missingFunctionName
 
   case missingTypealiasName
 
@@ -160,6 +167,18 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expect a case name for enum declaration"
     case .missingEnumName:
       return "expected an enum name"
+    case .unnamedParameter:
+      return "expected parameter name followed by ':'"
+    case .expectedParameterType:
+      return "expected parameter type following ':'"
+    case .expectedParameterOpenParenthesis:
+      return "expected '(' in parameter"
+    case .expectedParameterCloseParenthesis:
+      return "expected ')' in parameter"
+    case .duplicatedFunctionModifiers:
+      return "previous 'prefix', 'postfix', or 'infix' modifier has been overrided"
+    case .missingFunctionName:
+      return "expected a function name"
     case .missingTypealiasName:
       return "Missing typealias declaration name"
     }
