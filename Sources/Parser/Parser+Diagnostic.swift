@@ -47,8 +47,6 @@ public enum ParserErrorKind : DiagnosticKind {
 
   // declarations
   case badDeclaration
-  /// enum declaration
-  case enumExpectedAfterIndirect
   /// protocol declaration
   case missingPropertyMemberName
   case missingTypeForPropertyMember
@@ -70,13 +68,24 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedValidOperator
   case operatorDeclarationHasNoFixity
   case expectedOperatorNameAfterInfixOperator
-
+  /// subscript declaration
+  case expectedArrowSubscript
+  /// extension declaration
   case missingExtensionName
+  /// class declaration
   case missingClassName
+  /// struct declaration
   case missingStructName
+  /// enum declaration
   case indirectWithRawValueStyle
+  case missingTypeForRawValueEnumDeclaration
+  case unionStyleMixWithRawValueStyle
+  case expectedEnumDeclarationCaseMember
+  case nonliteralEnumCaseRawValue
+  case expectedCaseName
   case missingEnumName
-  case leftBraceExpectedForEnumCase
+  case enumExpectedAfterIndirect
+
   case missingTypealiasName
 
   public var diagnosticMessage: String {
@@ -91,8 +100,6 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected '}' for \(node)"
     case .badDeclaration:
       return "expected declaration"
-    case .enumExpectedAfterIndirect:
-      return "epected 'enum' after 'indirect' for indirect enumeration declaration"
     case .missingPropertyMemberName:
       return "expected a property name"
     case .missingTypeForPropertyMember:
@@ -129,18 +136,30 @@ public enum ParserErrorKind : DiagnosticKind {
       return "operator must be declared as 'prefix', 'postfix', or 'infix'"
     case .expectedOperatorNameAfterInfixOperator:
       return "expected operator name in infix operator declaration"
+    case .expectedArrowSubscript:
+      return "expected '->' for subscript declaration"
     case .missingExtensionName:
-      return "Missing extension declaration name"
+      return "expected type name in extension declaration"
     case .missingClassName:
-      return "Missing class declaration name"
+      return "expected a class name"
     case .missingStructName:
-      return "Missing struct declaration name"
+      return "expected a struct name"
+    case .enumExpectedAfterIndirect:
+      return "epected 'enum' after 'indirect' for indirect enumeration declaration"
     case .indirectWithRawValueStyle:
-      return "`indirect` is invalid in raw-value style enum declaration"
+      return "'indirect' is invalid in raw-value style enum declaration"
+    case .missingTypeForRawValueEnumDeclaration:
+      return "expected type for raw-value style enum declaration"
+    case .unionStyleMixWithRawValueStyle:
+      return "expected a raw-value style enum case"
+    case .expectedEnumDeclarationCaseMember:
+      return "expected a 'case' member"
+    case .nonliteralEnumCaseRawValue:
+      return "raw value for enum case must be a literal"
+    case .expectedCaseName:
+      return "expect a case name for enum declaration"
     case .missingEnumName:
-      return "Missing enum declaration name"
-    case .leftBraceExpectedForEnumCase:
-      return "Missing opening brace for enum case"
+      return "expected an enum name"
     case .missingTypealiasName:
       return "Missing typealias declaration name"
     }

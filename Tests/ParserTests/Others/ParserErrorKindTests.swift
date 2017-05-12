@@ -63,8 +63,34 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("fileprivate operator <!>", .fatal, .operatorDeclarationHasNoFixity)
     parseProblematic("infix operator <!>:", .fatal, .expectedOperatorNameAfterInfixOperator)
 
+    // subscript declaration
+    parseProblematic("subscript()", .fatal, .expectedArrowSubscript)
+
+    // extension declaration
+    parseProblematic("extension {}", .fatal, .missingExtensionName)
+    parseProblematic("extension foo", .fatal, .leftBraceExpected("extension declaration body"))
+
+    // class declaration
+    parseProblematic("class {}", .fatal, .missingClassName)
+    parseProblematic("class foo", .fatal, .leftBraceExpected("class declaration body"))
+
+    // struct declaration
+    parseProblematic("struct {}", .fatal, .missingStructName)
+    parseProblematic("struct foo", .fatal, .leftBraceExpected("struct declaration body"))
+
     // enum declaration
+    parseProblematic("indirect enum Foo: String { case a = \"A\" }", .fatal, .indirectWithRawValueStyle)
     parseProblematic("indirect", .fatal, .enumExpectedAfterIndirect)
+    parseProblematic("enum Foo { case i = 1 }", .fatal, .missingTypeForRawValueEnumDeclaration)
+    parseProblematic("enum Foo { case j(Int) indirect case i = 1 }", .fatal, .indirectWithRawValueStyle)
+    parseProblematic("enum Foo: Int { case j = 1 case i(Int) }", .fatal, .unionStyleMixWithRawValueStyle)
+    // parseProblematic("enum Foo { @a }", .fatal, .expectedEnumDeclarationCaseMember)
+    parseProblematic("enum Foo { case }", .fatal, .expectedCaseName)
+    parseProblematic("enum Foo { case = }", .fatal, .expectedCaseName)
+    parseProblematic("enum Foo: Int { case i = j }", .fatal, .nonliteralEnumCaseRawValue)
+    parseProblematic("enum Foo: Int { case i = 1, j = 2, k(Int) }", .fatal, .unionStyleMixWithRawValueStyle)
+    parseProblematic("enum { case foo }", .fatal, .missingEnumName)
+    parseProblematic("enum Foo case", .fatal, .leftBraceExpected("enum declaration body"))
 
   }
 

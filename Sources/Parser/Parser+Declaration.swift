@@ -488,7 +488,7 @@ extension Parser {
   ) throws -> SubscriptDeclaration {
     let (params, _) = try parseParameterClause()
     guard _lexer.match(.arrow) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedArrowSubscript)
     }
     let resultAttributes = try parseAttributes()
     let type = try parseType()
@@ -558,7 +558,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpected("declaration body"))
+      throw _raiseFatal(.leftBraceExpected("extension declaration body"))
     }
 
     var endLocation = getEndLocation()
@@ -676,7 +676,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpected("declaration body"))
+      throw _raiseFatal(.leftBraceExpected("class declaration body"))
     }
 
     var endLocation = getEndLocation()
@@ -727,7 +727,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpected("declaration body"))
+      throw _raiseFatal(.leftBraceExpected("struct declaration body"))
     }
 
     var endLocation = getEndLocation()
@@ -805,7 +805,7 @@ extension Parser {
       }
 
       guard hasTypeInheritance else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingTypeForRawValueEnumDeclaration)
       }
       var verifiedMembers: [EnumDeclaration.Member] = []
       for member in members {
@@ -819,7 +819,7 @@ extension Parser {
           var newCases: [EnumDeclaration.RawValueStyleEnumCase.Case] = []
           for c in union.cases {
             if c.tuple != nil {
-              throw _raiseFatal(.dummy)
+              throw _raiseFatal(.unionStyleMixWithRawValueStyle)
             }
             newCases.append(
               EnumDeclaration.RawValueStyleEnumCase.Case(name: c.name))
@@ -852,7 +852,8 @@ extension Parser {
       let isIndirect = _lexer.match(.indirect)
 
       guard _lexer.match(.case) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedEnumDeclarationCaseMember)
+        // Note: ^ don't think we will reach this, because we have guard on `isCaseMember`
       }
 
       typealias CaseComponent = (
@@ -863,7 +864,7 @@ extension Parser {
       var caseComponents: [CaseComponent] = []
       repeat {
         guard let s = _lexer.readNamedIdentifier() else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedCaseName)
         }
         let startLocation = getStartLocation()
         switch _lexer.read([.leftParen, .assignmentOperator]) {
@@ -885,7 +886,7 @@ extension Parser {
           case let .staticStringLiteral(ss, _):
             caseComponents.append((s, nil, .string(ss)))
           default:
-            throw _raiseFatal(.dummy)
+            throw _raiseFatal(.nonliteralEnumCaseRawValue)
           }
         default:
           caseComponents.append((s, nil, nil))
@@ -904,7 +905,7 @@ extension Parser {
           throw _raiseFatal(.indirectWithRawValueStyle)
         }
         guard unionCases.flatMap({ $0.tuple }).isEmpty else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.unionStyleMixWithRawValueStyle)
         }
         let rawValueCaseMember = EnumDeclaration.RawValueStyleEnumCase(
           attributes: attributes, cases: rawValueCases)
@@ -929,7 +930,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForEnumCase)
+      throw _raiseFatal(.leftBraceExpected("enum declaration body"))
     }
 
     var endLocation = getEndLocation()
