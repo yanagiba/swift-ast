@@ -36,6 +36,12 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("protocol foo { var bar }", .fatal, .missingTypeForPropertyMember)
     parseProblematic("protocol foo { var bar: Bar }", .fatal, .missingGetterSetterForPropertyMember)
     parseProblematic("protocol foo { var bar: Bar { get { return _bar } } }", .fatal, .protocolPropertyMemberWithBody)
+    parseProblematic("protocol foo { func foo() { return _foo } }", .fatal, .protocolMethodMemberWithBody)
+    parseProblematic("protocol foo { subscript() -> Self {} }", .fatal, .missingProtocolSubscriptGetSetSpecifier)
+    parseProblematic("protocol Foo { associatedtype }", .fatal, .missingProtocolAssociatedTypeName)
+    parseProblematic("protocol Foo { bar }", .fatal, .badProtocolMember)
+    parseProblematic("protocol {}", .fatal, .missingProtocolName)
+    parseProblematic("protocol foo ", .fatal, .leftBraceExpectedForDeclarationBody)
 
     // enum declaration
     parseProblematic("indirect", .fatal, .enumExpectedAfterIndirect)

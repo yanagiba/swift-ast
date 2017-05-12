@@ -48,6 +48,7 @@ public enum ParserErrorKind : DiagnosticKind {
 
   // declarations
   case badDeclaration
+  case leftBraceExpectedForDeclarationBody
   /// enum declaration
   case enumExpectedAfterIndirect
   /// protocol declaration
@@ -55,8 +56,12 @@ public enum ParserErrorKind : DiagnosticKind {
   case missingTypeForPropertyMember
   case missingGetterSetterForPropertyMember
   case protocolPropertyMemberWithBody
+  case protocolMethodMemberWithBody
+  case missingProtocolSubscriptGetSetSpecifier
+  case missingProtocolAssociatedTypeName
+  case badProtocolMember
+  case missingProtocolName
 
-  case leftBraceExpectedForDeclarationBody
   case missingExtensionName
   case missingClassName
   case missingStructName
@@ -72,9 +77,9 @@ public enum ParserErrorKind : DiagnosticKind {
     case .missingAttributeName:
       return "expected an attribute name"
     case .leftBraceExpectedForCodeBlock:
-      return "expected '{'"
+      return "expected '{' for code block"
     case .rightBraceExpectedForCodeBlock:
-      return "expected '}'"
+      return "expected '}' for code block"
     case .badDeclaration:
       return "expected declaration"
     case .enumExpectedAfterIndirect:
@@ -87,8 +92,18 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected get or set in a protocol property"
     case .protocolPropertyMemberWithBody:
       return "protocol properties may not have bodies"
+    case .protocolMethodMemberWithBody:
+      return "protocol methods may not have bodies"
+    case .missingProtocolSubscriptGetSetSpecifier:
+      return "subscript in protocol must have explicit { get } or { get set } specifier"
+    case .missingProtocolAssociatedTypeName:
+      return "expected an associated type name"
+    case .badProtocolMember:
+      return "expected protocol member"
+    case .missingProtocolName:
+      return "expected a protocol name"
     case .leftBraceExpectedForDeclarationBody:
-      return "Missing opening brace for declaration body"
+      return "expected '{' for declaration body"
     case .missingExtensionName:
       return "Missing extension declaration name"
     case .missingClassName:

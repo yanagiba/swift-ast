@@ -203,7 +203,7 @@ extension Parser {
       let funcDecl = try parseFunctionDeclaration(
         withAttributes: attrs, modifiers: modifiers, startLocation: .DUMMY)
       guard funcDecl.body == nil else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.protocolMethodMemberWithBody)
       }
 
       let member = ProtocolDeclaration.MethodMember(
@@ -246,7 +246,7 @@ extension Parser {
       guard case .getterSetterKeywordBlock(let getterSetterKeywordBlock) =
         subscriptDecl.body else
       {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingProtocolSubscriptGetSetSpecifier)
       }
 
       let member = ProtocolDeclaration.SubscriptMember(
@@ -269,7 +269,7 @@ extension Parser {
       }
 
       guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingProtocolAssociatedTypeName)
       }
 
       let typeInheritanceClause = try parseTypeInheritanceClause()
@@ -316,7 +316,7 @@ extension Parser {
           return try parseAssociatedType(
             withAttributes: attrs, modifiers: modifiers)
         }
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.badProtocolMember)
       }
     }
 
@@ -326,7 +326,7 @@ extension Parser {
     }
 
     guard let name = _lexer.look().kind.structName else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.missingProtocolName)
     }
     _lexer.advance()
 
