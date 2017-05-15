@@ -54,6 +54,7 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("precedencegroup foo { associativity: up }", .fatal, .expectedPrecedenceGroupAssociativity)
     parseProblematic("precedencegroup foo { return }", .fatal, .expectedPrecedenceGroupAttribute)
     parseProblematic("precedencegroup foo", .fatal, .leftBraceExpected("precedence group declaration"))
+    parseProblematic("precedencegroup", .fatal, .missingPrecedenceName)
 
     // operator declaration
     parseProblematic("infix operator a", .fatal, .expectedValidOperator)
@@ -118,6 +119,16 @@ class ParserErrorKindTests : XCTestCase {
     // parseProblematic("var foo: Int ( didSet {}}", .fatal, .leftBraceExpected("willSet/didSet block")) // TODO
     parseProblematic("var foo: Int { willSet {}", .fatal, .rightBraceExpected("willSet/didSet block"))
     parseProblematic("var foo: Int { didSet {}", .fatal, .rightBraceExpected("willSet/didSet block"))
+    parseProblematic("var foo: Int { set() {}", .fatal, .expectedAccesorName("setter"))
+    parseProblematic("var foo: Int { set(bar }", .fatal, .expectedAccesorNameCloseParenthesis("setter"))
+    // parseProblematic("var foo: Int ( get {}}", .fatal, .leftBraceExpected("getter/setter block")) // TODO
+    // parseProblematic("var foo: Int ( set {}}", .fatal, .leftBraceExpected("getter/setter block")) // TODO
+    parseProblematic("var foo: Int { get {}", .fatal, .rightBraceExpected("getter/setter block"))
+    parseProblematic("var foo: Int { set {}", .fatal, .rightBraceExpected("getter/setter block"))
+    parseProblematic("var foo: Int { set {} }", .fatal, .varSetWithoutGet)
+
+    // import declaration
+    parseProblematic("import", .fatal, .missingModuleNameImportDecl)
   }
 
   static var allTests = [

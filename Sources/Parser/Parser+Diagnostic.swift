@@ -64,6 +64,7 @@ public enum ParserErrorKind : DiagnosticKind {
   case unknownPrecedenceGroupAttribute(String)
   case expectedPrecedenceGroupAssociativity
   case expectedPrecedenceGroupAttribute
+  case missingPrecedenceName
   /// operator declaration
   case expectedValidOperator
   case operatorDeclarationHasNoFixity
@@ -99,6 +100,9 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedAccesorName(String)
   case expectedAccesorNameCloseParenthesis(String)
   case expectedWillSetOrDidSet
+  case varSetWithoutGet
+  /// import declaration
+  case missingModuleNameImportDecl
 
   public var diagnosticMessage: String {
     switch self {
@@ -142,6 +146,8 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected 'none', 'left', or 'right' after 'associativity'"
     case .expectedPrecedenceGroupAttribute:
       return "expected attribute identifier in precedence group body"
+    case .missingPrecedenceName:
+      return "expected a precedence group name"
     case .expectedValidOperator:
       return "expected operator in an operator declaration"
     case .operatorDeclarationHasNoFixity:
@@ -194,6 +200,10 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected ')' after \(accessorType) parameter name"
     case .expectedWillSetOrDidSet:
       return "expected 'willSet' or 'didSet' to start a willSet/didSet block"
+    case .varSetWithoutGet:
+      return "variable with a setter must also have a getter"
+    case .missingModuleNameImportDecl:
+      return "expected module name or operator in import declaration"
     }
   }
 }

@@ -417,7 +417,7 @@ extension Parser {
     }
 
     guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.missingPrecedenceName)
     }
 
     var attrs: [PrecedenceGroupDeclaration.Attribute] = []
@@ -1340,10 +1340,10 @@ extension Parser {
       var setterName: String? = nil
       if _lexer.match(.leftParen) {
         guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedAccesorName("setter"))
         }
         guard _lexer.match(.rightParen) else {
-           throw _raiseFatal(.dummy)
+           throw _raiseFatal(.expectedAccesorNameCloseParenthesis("setter"))
         }
         setterName = name
       }
@@ -1357,7 +1357,7 @@ extension Parser {
     }
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.leftBraceExpected("getter/setter block"))
     }
 
     let attrs = try parseAttributes()
@@ -1388,11 +1388,11 @@ extension Parser {
 
     let endLocation = getEndLocation()
     guard _lexer.match(.rightBrace) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.rightBraceExpected("getter/setter block"))
     }
 
     guard let getter = getterClause else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.varSetWithoutGet)
     }
 
     return (
@@ -1485,7 +1485,7 @@ extension Parser {
         .postfixOperator(let op):
         path.append(op)
       default:
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingModuleNameImportDecl)
       }
     } while _lexer.match(.dot)
 
