@@ -36,7 +36,7 @@ foo.bar()
 foo(&bar)
 foo(a: &A.b)
 foo([1,2,3].map { i in i^2 }.joined())
-foo([1,2,3].map { i in i^2 }
+foo([1,2,3].map { i in i^2 })
 map { i -> String in
   let j = i ^ 2
   return "\(j)"
