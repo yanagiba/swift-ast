@@ -129,7 +129,7 @@ extension Parser {
         var trueExpr = try parseExpression(config: config)
         trueExpr = trueTryKind.wrap(expr: trueExpr)
         guard _lexer.match(.colon) else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedColonAfterTrueExpr)
         }
         let falseTryKind = parseTryKind()
         var falseExpr: Expression = try parsePrefixExpression(config: config)
@@ -196,7 +196,7 @@ extension Parser {
     case .prefixAmp:
       let endLocation = getEndLocation()
       guard case let .identifier(name) = _lexer.read(.dummyIdentifier) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedIdentifierForInOutExpr)
       }
       let inoutExpr = InOutExpression(identifier: name)
       inoutExpr.setSourceRange(startLocation, endLocation)
@@ -270,7 +270,7 @@ extension Parser {
         let exprList = try parseExpressionList()
         let endLocation = getEndLocation()
         if !_lexer.match(.rightSquare) {
-            try _raiseError(.dummy)
+            throw _raiseFatal(.expectedCloseSquareExprList)
         }
         let subscriptExpr = SubscriptExpression(
           postfixExpression: resultExpr, expressionList: exprList)
@@ -338,7 +338,7 @@ extension Parser {
       repeat {
         if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare {
           guard let id = _lexer.readNamedIdentifier() else {
-            throw _raiseFatal(.dummy)
+            throw _raiseFatal(.expectedParameterNameFuncCall)
           }
           _lexer.advance()
           switch _lexer.read(.prefixAmp) {
@@ -406,7 +406,7 @@ extension Parser {
 
     endLocation = getEndLocation()
     if !_lexer.match(.rightParen) {
-        try _raiseError(.dummy)
+        throw _raiseFatal(.expectedCloseParenFuncCall)
     }
 
     let funcCallExpr: FunctionCallExpression
@@ -465,10 +465,10 @@ extension Parser {
     var argumentNames = [String]()
     repeat {
       guard let argumentName = _lexer.readNamedIdentifierOrWildcard() else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedArgumentLabel)
       }
       guard _lexer.match(.colon) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedColonAfterArgumentLabel)
       }
       argumentNames.append(argumentName)
       endLocation = getEndLocation()
@@ -539,7 +539,7 @@ extension Parser {
       return memberExpr
     case .floatingPointLiteral(_, let raw):
       guard let (first, second) = splitDoubleRawToTwoIntegers(raw) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedTupleIndexExplicitMemberExpr)
       }
       let firstExplitMemberExpr =
         ExplicitMemberExpression(kind: .tuple(expr, first))
@@ -552,7 +552,7 @@ extension Parser {
     default:
       endLocation = getEndLocation()
       guard let id = _lexer.readNamedIdentifier() else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedMemberNameExplicitMemberExpr)
       }
 
       let memberExpr: ExplicitMemberExpression
@@ -662,7 +662,7 @@ extension Parser {
         }
         return idExpr
       }
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedExpr)
     }
   }
 
@@ -687,7 +687,7 @@ extension Parser {
     repeat {
       if _lexer.look(ahead: 1).kind == .colon {
         guard let name = _lexer.readNamedIdentifierOrWildcard() else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedTupleArgumentLabel)
         }
         _lexer.advance()
         let expr = try parseExpression()
@@ -701,7 +701,7 @@ extension Parser {
 
     endLocation = getEndLocation()
     if !_lexer.match(.rightParen) {
-        try _raiseError(.dummy)
+        throw _raiseFatal(.expectedCloseParenTuple)
     }
 
     // handle parenthesized expression

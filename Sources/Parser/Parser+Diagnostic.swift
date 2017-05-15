@@ -104,6 +104,20 @@ public enum ParserErrorKind : DiagnosticKind {
   /// import declaration
   case missingModuleNameImportDecl
 
+  // expressions
+  case expectedColonAfterTrueExpr
+  case expectedIdentifierForInOutExpr
+  case expectedCloseSquareExprList
+  case expectedParameterNameFuncCall
+  case expectedCloseParenFuncCall
+  case expectedArgumentLabel
+  case expectedColonAfterArgumentLabel
+  case expectedTupleIndexExplicitMemberExpr
+  case expectedMemberNameExplicitMemberExpr
+  case expectedExpr
+  case expectedTupleArgumentLabel
+  case expectedCloseParenTuple
+
   public var diagnosticMessage: String {
     switch self {
     case .dummy:
@@ -204,6 +218,30 @@ public enum ParserErrorKind : DiagnosticKind {
       return "variable with a setter must also have a getter"
     case .missingModuleNameImportDecl:
       return "expected module name or operator in import declaration"
+    case .expectedColonAfterTrueExpr:
+      return "expected ':' after '? ...' in ternary expression"
+    case .expectedIdentifierForInOutExpr:
+      return "expected an identifier after '&'"
+    case .expectedCloseSquareExprList:
+      return "expected ']' in expression list"
+    case .expectedParameterNameFuncCall:
+      return "expected parameter name in function call"
+    case .expectedCloseParenFuncCall:
+      return "expected ')' to complete function-call expression"
+    case .expectedArgumentLabel:
+      return "expected argument label"
+    case .expectedColonAfterArgumentLabel:
+      return "expected ':' after argument label"
+    case .expectedTupleIndexExplicitMemberExpr:
+      return "expected a valid tuple index"
+    case .expectedMemberNameExplicitMemberExpr:
+      return "expected member name following '.'"
+    case .expectedExpr:
+      return "expected expression"
+    case .expectedTupleArgumentLabel:
+      return "expected an argument label for tuple expression"
+    case .expectedCloseParenTuple:
+      return "expected ')' to complete a tuple expression"
     }
   }
 }

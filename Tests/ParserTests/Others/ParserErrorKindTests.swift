@@ -131,9 +131,25 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("import", .fatal, .missingModuleNameImportDecl)
   }
 
+  func testExpressions() {
+    parseProblematic("foo ? bar abc", .fatal, .expectedColonAfterTrueExpr)
+    parseProblematic("&", .fatal, .expectedIdentifierForInOutExpr)
+    parseProblematic("foo[a, b, c", .fatal, .expectedCloseSquareExprList)
+    parseProblematic("foo(~: Foo)", .fatal, .expectedParameterNameFuncCall)
+    parseProblematic("foo(a, b, c", .fatal, .expectedCloseParenFuncCall)
+    // parseProblematic("foo.init(foo::)", .fatal, .expectedArgumentLabel) // TODO
+    // parseProblematic("foo.init(foo:bar)", .fatal, .expectedColonAfterArgumentLabel) // TODO
+    parseProblematic("foo.1_2.23", .fatal, .expectedTupleIndexExplicitMemberExpr)
+    parseProblematic("foo.", .fatal, .expectedMemberNameExplicitMemberExpr)
+    parseProblematic("let foo = *", .fatal, .expectedExpr)
+    parseProblematic("let foo = (-: 3)", .fatal, .expectedTupleArgumentLabel)
+    parseProblematic("let foo = (a: 3", .fatal, .expectedCloseParenTuple)
+  }
+
   static var allTests = [
     ("testAttributes", testAttributes),
     ("testCodeBlock", testCodeBlock),
     ("testDeclarations", testDeclarations),
+    ("testExpressions", testExpressions),
   ]
 }
