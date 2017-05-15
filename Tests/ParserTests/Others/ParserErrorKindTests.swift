@@ -102,7 +102,22 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("prefix infix func foo()", .error, .duplicatedFunctionModifiers)
     parseProblematic("func ()", .fatal, .missingFunctionName)
 
+    // func declaration
+    parseProblematic("typealias", .fatal, .missingTypealiasName)
+    parseProblematic("typealias =", .fatal, .missingTypealiasName)
+    parseProblematic("typealias foo", .fatal, .expectedEqualInTypealias)
 
+    // var/let declaration
+    parseProblematic("var foo: Int { willSet() {} }", .fatal, .expectedAccesorName("willSet"))
+    parseProblematic("var foo: Int { didSet() {} }", .fatal, .expectedAccesorName("didSet"))
+    parseProblematic("var foo: Int { didSet {} willSet() {} }", .fatal, .expectedAccesorName("willSet"))
+    parseProblematic("var foo: Int { willSet {} didSet() {} }", .fatal, .expectedAccesorName("didSet"))
+    parseProblematic("var foo: Int { willSet(bar }", .fatal, .expectedAccesorNameCloseParenthesis("willSet"))
+    parseProblematic("var foo: Int { didSet(bar }", .fatal, .expectedAccesorNameCloseParenthesis("didSet"))
+    // parseProblematic("var foo: Int ( willSet {}}", .fatal, .leftBraceExpected("willSet/didSet block")) // TODO
+    // parseProblematic("var foo: Int ( didSet {}}", .fatal, .leftBraceExpected("willSet/didSet block")) // TODO
+    parseProblematic("var foo: Int { willSet {}", .fatal, .rightBraceExpected("willSet/didSet block"))
+    parseProblematic("var foo: Int { didSet {}", .fatal, .rightBraceExpected("willSet/didSet block"))
   }
 
   static var allTests = [

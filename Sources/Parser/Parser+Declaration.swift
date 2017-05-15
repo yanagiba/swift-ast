@@ -1129,7 +1129,7 @@ extension Parser {
     }
     let genericParameterClause = try parseGenericParameterClause()
     guard _lexer.match(.assignmentOperator) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedEqualInTypealias)
     }
     let assignment = try parseType()
     let typealiasDecl = TypealiasDeclaration(
@@ -1247,14 +1247,14 @@ extension Parser {
   private func parseWillSetDidSetBlock() throws ->
     (WillSetDidSetBlock, SourceLocation)
   {
-    func parseSet() throws -> (Identifier?, CodeBlock) {
+    func parseSet(_ accessorType: String) throws -> (Identifier?, CodeBlock) {
       var setterName: String? = nil
       if _lexer.match(.leftParen) {
         guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedAccesorName(accessorType))
         }
         guard _lexer.match(.rightParen) else {
-           throw _raiseFatal(.dummy)
+           throw _raiseFatal(.expectedAccesorNameCloseParenthesis(accessorType))
         }
         setterName = name
       }
@@ -1263,7 +1263,7 @@ extension Parser {
     }
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.leftBraceExpected("willSet/didSet block"))
     }
 
     let attrs = try parseAttributes()
@@ -1272,26 +1272,26 @@ extension Parser {
     var didSetClause: WillSetDidSetBlock.DidSetClause? = nil
 
     if _lexer.match(.willSet) {
-      let (setterName, codeBlock) = try parseSet()
+      let (setterName, codeBlock) = try parseSet("willSet")
       willSetClause = WillSetDidSetBlock.WillSetClause(
         attributes: attrs, name: setterName, codeBlock: codeBlock)
 
       let didSetAttrs = try parseAttributes()
       if _lexer.match(.didSet) {
-        let (didSetSetterName, didSetCodeBlock) = try parseSet()
+        let (didSetSetterName, didSetCodeBlock) = try parseSet("didSet")
         didSetClause = WillSetDidSetBlock.DidSetClause(
           attributes: didSetAttrs,
           name: didSetSetterName,
           codeBlock: didSetCodeBlock)
       }
     } else if _lexer.match(.didSet) {
-      let (setterName, codeBlock) = try parseSet()
+      let (setterName, codeBlock) = try parseSet("didSet")
       didSetClause = WillSetDidSetBlock.DidSetClause(
         attributes: attrs, name: setterName, codeBlock: codeBlock)
 
       let willSetAttrs = try parseAttributes()
       if _lexer.match(.willSet) {
-        let (willSetSetterName, willSetCodeBlock) = try parseSet()
+        let (willSetSetterName, willSetCodeBlock) = try parseSet("willSet")
         willSetClause = WillSetDidSetBlock.WillSetClause(
           attributes: willSetAttrs,
           name: willSetSetterName,
@@ -1301,7 +1301,7 @@ extension Parser {
 
     let endLocation = getEndLocation()
     guard _lexer.match(.rightBrace) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.rightBraceExpected("willSet/didSet block"))
     }
 
     switch (willSetClause, didSetClause) {
@@ -1316,7 +1316,7 @@ extension Parser {
         endLocation
       )
     default:
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedWillSetOrDidSet)
     }
   }
 

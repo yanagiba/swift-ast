@@ -209,6 +209,9 @@ func parseProblematic(
     XCTAssertEqual(parserError.diagnosticMessage,
       expectedParserErrorKind.diagnosticMessage)
   default:
+    for d in diagnostics {
+      print("\(d.location) \(d.level): \(d.kind.diagnosticMessage)")
+    }
     XCTFail("Getting too many diagnostics (\(diagnostics.count)).")
   }
 }

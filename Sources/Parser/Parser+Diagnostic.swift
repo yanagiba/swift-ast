@@ -92,8 +92,13 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedParameterCloseParenthesis
   case duplicatedFunctionModifiers
   case missingFunctionName
-
+  /// typealias declaration
   case missingTypealiasName
+  case expectedEqualInTypealias
+  /// variable/constant declaration
+  case expectedAccesorName(String)
+  case expectedAccesorNameCloseParenthesis(String)
+  case expectedWillSetOrDidSet
 
   public var diagnosticMessage: String {
     switch self {
@@ -180,7 +185,15 @@ public enum ParserErrorKind : DiagnosticKind {
     case .missingFunctionName:
       return "expected a function name"
     case .missingTypealiasName:
-      return "Missing typealias declaration name"
+      return "expected a typealias name"
+    case .expectedEqualInTypealias:
+      return "expected '=' in type alias declaration"
+    case .expectedAccesorName(let accessorType):
+      return "expected \(accessorType) parameter name"
+    case .expectedAccesorNameCloseParenthesis(let accessorType):
+      return "expected ')' after \(accessorType) parameter name"
+    case .expectedWillSetOrDidSet:
+      return "expected 'willSet' or 'didSet' to start a willSet/didSet block"
     }
   }
 }
