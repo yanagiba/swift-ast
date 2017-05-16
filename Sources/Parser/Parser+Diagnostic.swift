@@ -135,6 +135,10 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedClosureParameterName
   case expectedIdentifierAfterDot
 
+  // generics
+  case expectedRightChevron(String)
+  case expectedGenericsParameterName
+
   public var diagnosticMessage: String {
     switch self {
     case .dummy:
@@ -293,6 +297,10 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected the name of a closure parameter"
     case .expectedIdentifierAfterDot:
       return "expected identifier after '.'"
+    case .expectedRightChevron(let node):
+      return "expected '>' to complete \(node)"
+    case .expectedGenericsParameterName:
+      return "expected an identifier to name generic parameter"
     }
   }
 }

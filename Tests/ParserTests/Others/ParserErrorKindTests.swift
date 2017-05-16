@@ -169,10 +169,16 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("_ = ._", .fatal, .expectedIdentifierAfterDot)
   }
 
+  func testGenerics() {
+    parseProblematic("init<A, B() {}", .error, .expectedRightChevron("generic parameter list"))
+    parseProblematic("init<A,>() {}", .fatal, .expectedGenericsParameterName)
+  }
+
   static var allTests = [
     ("testAttributes", testAttributes),
     ("testCodeBlock", testCodeBlock),
     ("testDeclarations", testDeclarations),
     ("testExpressions", testExpressions),
+    ("testGenerics", testGenerics),
   ]
 }

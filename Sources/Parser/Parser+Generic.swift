@@ -29,7 +29,7 @@ extension Parser {
       parameters.append(param)
     } while _lexer.match(.comma)
     if !_matchRightChevron() {
-        try _raiseError(.dummy)
+        try _raiseError(.expectedRightChevron("generic parameter list"))
     }
     return GenericParameterClause(parameterList: parameters)
   }
@@ -38,7 +38,7 @@ extension Parser {
     throws -> GenericParameterClause.GenericParameter
   {
     guard case let .identifier(name) = _lexer.read(.dummyIdentifier) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedGenericsParameterName)
     }
     guard _lexer.match(.colon) else {
       return .identifier(name)
