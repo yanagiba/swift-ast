@@ -143,6 +143,12 @@ public enum ParserErrorKind : DiagnosticKind {
   case requiresDoubleEqualForSameTypeRequirement
   case expectedRequirementDelimiter
 
+  // patterns
+  case expectedPattern
+  case expectedCaseNamePattern
+  case expectedTuplePatternCloseParenthesis
+  case expectedIdentifierTuplePattern
+
   public var diagnosticMessage: String {
     switch self {
     case .dummy:
@@ -313,6 +319,14 @@ public enum ParserErrorKind : DiagnosticKind {
       return "use '==' for same-type requirements rather than '='"
     case .expectedRequirementDelimiter:
       return "expected ':' or '==' to indicate a conformance or same-type requirement"
+    case .expectedPattern:
+      return "expected pattern"
+    case .expectedCaseNamePattern:
+      return "expected a case name following '.'"
+    case .expectedTuplePatternCloseParenthesis:
+      return "expected ')' at end of tuple pattern"
+    case .expectedIdentifierTuplePattern:
+      return "expected an identifier or '_' for tuple pattern"
     }
   }
 }

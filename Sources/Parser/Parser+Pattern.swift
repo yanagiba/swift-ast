@@ -165,7 +165,7 @@ extension Parser {
         let expr = try parseExpression(config: updatedConfig)
         return ExpressionPattern(expression: expr)
       }
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedPattern)
     }
   }
 
@@ -217,7 +217,7 @@ extension Parser {
   ) throws -> EnumCasePattern {
     let endLocation = getEndLocation()
     guard let name = _lexer.readNamedIdentifier() else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedCaseNamePattern)
     }
 
     let tupleStartLocation = getStartLocation()
@@ -277,7 +277,7 @@ extension Parser {
       fromTupleConfig.fromTuplePattern = true
       if _lexer.look(ahead: 1).kind == .colon {
         guard let id = _lexer.readNamedIdentifierOrWildcard() else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedIdentifierTuplePattern)
         }
         _lexer.advance()
         let pattern = try parsePattern(config: fromTupleConfig)
@@ -290,7 +290,7 @@ extension Parser {
 
     endLocation = getEndLocation()
     if !_lexer.match(.rightParen) {
-      try _raiseError(.dummy)
+      throw _raiseFatal(.expectedTuplePatternCloseParenthesis)
     }
 
     let tuplePttrn = TuplePattern(elementList: elements)

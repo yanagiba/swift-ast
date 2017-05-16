@@ -179,11 +179,19 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("extension Foo where Self -", .fatal, .expectedRequirementDelimiter)
   }
 
+  func testPatterns() {
+    parseProblematic("for func in _ {}", .fatal, .expectedPattern)
+    parseProblematic("switch foo { case ._ }", .fatal, .expectedCaseNamePattern)
+    parseProblematic("switch foo { case (let a, let b }", .fatal, .expectedTuplePatternCloseParenthesis)
+    parseProblematic("for (a,b,?:foo) in _ {}", .fatal, .expectedIdentifierTuplePattern)
+  }
+
   static var allTests = [
     ("testAttributes", testAttributes),
     ("testCodeBlock", testCodeBlock),
     ("testDeclarations", testDeclarations),
     ("testExpressions", testExpressions),
     ("testGenerics", testGenerics),
+    ("testPatterns", testPatterns),
   ]
 }
