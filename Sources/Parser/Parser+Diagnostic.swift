@@ -117,6 +117,23 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedExpr
   case expectedTupleArgumentLabel
   case expectedCloseParenTuple
+  case expectedIdentifierAfterSuperDotExpr
+  case expectedDotOrSubscriptAfterSuper
+  case expectedIdentifierAfterSelfDotExpr
+  case expectedObjectLiteralIdentifier
+  case expectedOpenParenKeyPathExpr
+  case expectedCloseParenKeyPathExpr
+  case expectedOpenParenSelectorExpr
+  case expectedColonAfterPropertyKeywordSelectorExpr(String)
+  case expectedCloseParenSelectorExpr
+  case expectedCloseSquareDictionaryLiteral
+  case expectedColonDictionaryLiteral
+  case expectedCloseSquareArrayLiteral
+  case extraTokenStringInterpolation
+  case expectedStringInterpolation
+  case expectedUnownedSafeOrUnsafe
+  case expectedClosureParameterName
+  case expectedIdentifierAfterDot
 
   public var diagnosticMessage: String {
     switch self {
@@ -242,6 +259,40 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected an argument label for tuple expression"
     case .expectedCloseParenTuple:
       return "expected ')' to complete a tuple expression"
+    case .expectedIdentifierAfterSuperDotExpr:
+      return "expected identifier or 'init' after super '.' expression"
+    case .expectedDotOrSubscriptAfterSuper:
+      return "expected '.' or '[' after 'super'"
+    case .expectedIdentifierAfterSelfDotExpr:
+      return "expected identifier or 'init' after self '.' expression"
+    case .expectedObjectLiteralIdentifier:
+      return "expected a valid identifier after '#' in object literal expression"
+    case .expectedOpenParenKeyPathExpr:
+      return "expected '(' following '#keyPath'"
+    case .expectedCloseParenKeyPathExpr:
+      return "expected ')' to complete '#keyPath' expression"
+    case .expectedOpenParenSelectorExpr:
+      return "expected '(' following '#selector'"
+    case .expectedColonAfterPropertyKeywordSelectorExpr(let accessorType):
+      return "expected ':' following '\(accessorType)'"
+    case .expectedCloseParenSelectorExpr:
+      return "expected ')' to complete '#selector' expression"
+    case .expectedCloseSquareDictionaryLiteral:
+      return "expected ']' in dictionary literal expression"
+    case .expectedColonDictionaryLiteral:
+      return "expected ':' in dictionary literal"
+    case .expectedCloseSquareArrayLiteral:
+      return "expected ']' in array literal expression"
+    case .extraTokenStringInterpolation:
+      return "extra tokens after interpolated string expression"
+    case .expectedStringInterpolation:
+      return "expected an interpolated string expression"
+    case .expectedUnownedSafeOrUnsafe:
+      return "expected 'safe' or 'unsafe' for 'unowned' specifier"
+    case .expectedClosureParameterName:
+      return "expected the name of a closure parameter"
+    case .expectedIdentifierAfterDot:
+      return "expected identifier after '.'"
     }
   }
 }
