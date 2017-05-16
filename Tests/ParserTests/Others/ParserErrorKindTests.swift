@@ -172,6 +172,11 @@ class ParserErrorKindTests : XCTestCase {
   func testGenerics() {
     parseProblematic("init<A, B() {}", .error, .expectedRightChevron("generic parameter list"))
     parseProblematic("init<A,>() {}", .fatal, .expectedGenericsParameterName)
+    parseProblematic("init<A:>() {}", .fatal, .expectedGenericTypeRestriction("A"))
+    parseProblematic("extension Foo where == Bar", .fatal, .expectedGenericRequirementName)
+    parseProblematic("extension Foo where Self:", .fatal, .expectedGenericTypeRestriction("Self"))
+    parseProblematic("extension Foo where Self =", .fatal, .requiresDoubleEqualForSameTypeRequirement)
+    parseProblematic("extension Foo where Self -", .fatal, .expectedRequirementDelimiter)
   }
 
   static var allTests = [

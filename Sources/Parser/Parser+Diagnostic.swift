@@ -138,6 +138,10 @@ public enum ParserErrorKind : DiagnosticKind {
   // generics
   case expectedRightChevron(String)
   case expectedGenericsParameterName
+  case expectedGenericTypeRestriction(String)
+  case expectedGenericRequirementName
+  case requiresDoubleEqualForSameTypeRequirement
+  case expectedRequirementDelimiter
 
   public var diagnosticMessage: String {
     switch self {
@@ -301,6 +305,14 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected '>' to complete \(node)"
     case .expectedGenericsParameterName:
       return "expected an identifier to name generic parameter"
+    case .expectedGenericTypeRestriction(let restricting):
+      return "expected a class type or protocol-constrained type restricting '\(restricting)'"
+    case .expectedGenericRequirementName:
+      return "expected an identifier or 'Self' for generic requirement"
+    case .requiresDoubleEqualForSameTypeRequirement:
+      return "use '==' for same-type requirements rather than '='"
+    case .expectedRequirementDelimiter:
+      return "expected ':' or '==' to indicate a conformance or same-type requirement"
     }
   }
 }
