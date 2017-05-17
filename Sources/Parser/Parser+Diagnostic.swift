@@ -149,6 +149,25 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedTuplePatternCloseParenthesis
   case expectedIdentifierTuplePattern
 
+  // statements
+  case statementSameLineWithoutSemicolon
+  case expectedOpenParenSourceLocation
+  case expectedValidCompilerCtrlKeyword
+  case invalidLabelOnStatement
+  case expectedCaseColon
+  case expectedDefaultColon
+  case caseStmtWithoutBody(String)
+  case expectedWhileAfterRepeatBody
+  case expectedEqualInConditionalBinding
+  case expectedAvailableKeyword
+  case expectedOpenParenAvailabilityCondition
+  case expectedAvailabilityVersionNumber
+  case expectedMinorVersionAvailability
+  case attributeAvailabilityPlatform
+  case expectedCloseParenAvailabilityCondition
+  case expectedForEachIn
+  case expectedElseAfterGuard
+
   public var diagnosticMessage: String {
     switch self {
     case .dummy:
@@ -327,6 +346,40 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected ')' at end of tuple pattern"
     case .expectedIdentifierTuplePattern:
       return "expected an identifier or '_' for tuple pattern"
+    case .statementSameLineWithoutSemicolon:
+      return "consecutive statements on a line must be separated by ';'"
+    case .expectedOpenParenSourceLocation:
+      return "expected '(' following '#sourceLocation'"
+    case .expectedValidCompilerCtrlKeyword:
+      return "expected a valid keyword after '#' in compiler-control statement"
+    case .invalidLabelOnStatement:
+      return "labels are only valid on loops, if, and switch statements"
+    case .expectedCaseColon:
+      return "expected ':' after case items"
+    case .expectedDefaultColon:
+      return "expected ':' after 'default'"
+    case .caseStmtWithoutBody(let kind):
+      return "'\(kind)' label in a 'switch' should have at least one executable statement"
+    case .expectedWhileAfterRepeatBody:
+      return "expected 'while' after body of 'repeat' statement"
+    case .expectedEqualInConditionalBinding:
+      return "expected '=' in conditional binding"
+    case .expectedAvailableKeyword:
+      return "expected '#available' in availability checking"
+    case .expectedOpenParenAvailabilityCondition:
+      return "expected '(' following '#available'"
+    case .expectedAvailabilityVersionNumber:
+      return "expected a version number for availability checking"
+    case .expectedMinorVersionAvailability:
+      return "expected a minor version number for availability checking"
+    case .attributeAvailabilityPlatform:
+      return "expected platform name or '*' for availability checking"
+    case .expectedCloseParenAvailabilityCondition:
+      return "expected ')' in availability checking"
+    case .expectedForEachIn:
+      return "expected 'in' after for-each pattern"
+    case .expectedElseAfterGuard:
+      return "expected 'else' after 'guard' condition"
     }
   }
 }

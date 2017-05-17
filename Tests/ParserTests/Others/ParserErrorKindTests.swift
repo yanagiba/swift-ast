@@ -186,6 +186,31 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("for (a,b,?:foo) in _ {}", .fatal, .expectedIdentifierTuplePattern)
   }
 
+  func testStatements() {
+    parseProblematic("print(a) print(b)", .error, .statementSameLineWithoutSemicolon)
+    parseProblematic("#sourceLocation", .fatal, .expectedOpenParenSourceLocation)
+    parseProblematic("#foo", .fatal, .expectedValidCompilerCtrlKeyword)
+    parseProblematic("#func", .fatal, .expectedValidCompilerCtrlKeyword)
+    // parseProblematic("foo: return bar", .fatal, .invalidLabelOnStatement)
+    parseProblematic("switch foo ", .fatal, .leftBraceExpected("switch statement"))
+    parseProblematic("switch foo { case a }", .fatal, .expectedCaseColon)
+    parseProblematic("switch foo { default }", .fatal, .expectedDefaultColon)
+    parseProblematic("switch foo { case a: }", .fatal, .caseStmtWithoutBody("case"))
+    parseProblematic("switch foo { default: }", .fatal, .caseStmtWithoutBody("default"))
+    parseProblematic("switch foo { default: break", .fatal, .rightBraceExpected("switch statement"))
+    parseProblematic("repeat {}", .fatal, .expectedWhileAfterRepeatBody)
+    parseProblematic("if case .foo == bar {}", .fatal, .expectedEqualInConditionalBinding)
+    parseProblematic("if #availability", .fatal, .expectedAvailableKeyword)
+    parseProblematic("if #available", .fatal, .expectedOpenParenAvailabilityCondition)
+    parseProblematic("if #available(iOS 1_0.23)", .fatal, .expectedMinorVersionAvailability)
+    parseProblematic("if #available(iOS _)", .fatal, .expectedAvailabilityVersionNumber)
+    parseProblematic("if #available()", .fatal, .attributeAvailabilityPlatform)
+    parseProblematic("if #available(newtonOS)", .fatal, .attributeAvailabilityPlatform)
+    parseProblematic("if #available(iOS 10.0", .fatal, .expectedCloseParenAvailabilityCondition)
+    parseProblematic("for a im", .fatal, .expectedForEachIn)
+    parseProblematic("guard foo { return }", .fatal, .expectedElseAfterGuard)
+  }
+
   static var allTests = [
     ("testAttributes", testAttributes),
     ("testCodeBlock", testCodeBlock),
@@ -193,5 +218,6 @@ class ParserErrorKindTests : XCTestCase {
     ("testExpressions", testExpressions),
     ("testGenerics", testGenerics),
     ("testPatterns", testPatterns),
+    ("testStatements", testStatements),
   ]
 }
