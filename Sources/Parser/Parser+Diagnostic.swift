@@ -172,6 +172,9 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedType
   case expectedCloseSquareArrayType
   case expectedCloseSquareDictionaryType
+  case expectedCloseParenParenthesizedType
+  case tupleTypeMultipleLabels
+  case tupleTypeVariadicElement
 
   public var diagnosticMessage: String {
     switch self {
@@ -391,6 +394,12 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected ']' in array type"
     case .expectedCloseSquareDictionaryType:
       return "expected ']' in dictionary type"
+    case .expectedCloseParenParenthesizedType:
+      return "expected ')' at end of tuple list"
+    case .tupleTypeMultipleLabels:
+      return "tuple element cannot have two labels"
+    case .tupleTypeVariadicElement:
+      return "tuple element cannot be variadic"
     }
   }
 }

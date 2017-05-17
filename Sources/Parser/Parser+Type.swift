@@ -154,7 +154,7 @@ extension Parser {
 
     endLocation = getEndLocation()
     if !_lexer.match(.rightParen) {
-      try _raiseError(.dummy)
+      throw _raiseFatal(.expectedCloseParenParenthesizedType)
     }
 
     let parenType = ParenthesizedType(elements: elements)
@@ -163,11 +163,7 @@ extension Parser {
   }
 
   func parseTupleType(_ startLocation: SourceLocation) throws -> TupleType {
-    let parenthesizedType = try parseParenthesizedType(startLocation)
-    guard let tupleType = parenthesizedType.toTupleType() else {
-      throw _raiseFatal(.dummy)
-    }
-    return tupleType
+    return try parseParenthesizedType(startLocation).toTupleType()
   }
 
   private func parseParenthesizedTypeElement()
@@ -301,10 +297,19 @@ extension Parser {
     _ type: Type, attributes attrs: Attributes = []
   ) throws -> Type {
     func getAtomicType() throws -> Type {
-      guard let atomicType = type.toAtomic() else {
-        throw _raiseFatal(.dummy)
+      do {
+        if let parenthesizedType = type as? ParenthesizedType {
+          return try parenthesizedType.toTupleType()
+        }
+        return type
+      } catch let e as ParenthesizedType.TupleConversionError {
+        switch e {
+        case .isVariadic:
+          throw _raiseFatal(.tupleTypeVariadicElement)
+        case .multipleLabels:
+          throw _raiseFatal(.tupleTypeMultipleLabels)
+        }
       }
-      return atomicType
     }
 
     if _lexer.matchUnicodeScalar("?", immediateFollow: true) {
@@ -432,6 +437,11 @@ extension Parser {
 }
 
 fileprivate class ParenthesizedType : Type {
+  fileprivate enum TupleConversionError : Error {
+    case isVariadic
+    case multipleLabels
+  }
+
   fileprivate class Element {
     fileprivate let externalName: String?
     fileprivate let localName: String?
@@ -468,11 +478,13 @@ fileprivate class ParenthesizedType : Type {
 
   fileprivate var sourceRange: SourceRange = .EMPTY
 
-  fileprivate func toTupleType() -> TupleType? {
+  fileprivate func toTupleType() throws -> TupleType {
     var tupleElements: [TupleType.Element] = []
     for e in elements {
-      if e.isVariadic || e.externalName != nil {
-        return nil
+      if e.externalName != nil {
+        throw TupleConversionError.multipleLabels
+      } else if e.isVariadic {
+        throw TupleConversionError.isVariadic
       } else if let name = e.localName {
         let tupleElement = TupleType.Element(
           type: e.type,
@@ -488,16 +500,5 @@ fileprivate class ParenthesizedType : Type {
     let tupleType = TupleType(elements: tupleElements)
     tupleType.setSourceRange(sourceRange)
     return tupleType
-  }
-}
-
-fileprivate extension Type {
-  fileprivate func toAtomic() -> Type? {
-    switch self {
-    case let parenthesizedType as ParenthesizedType:
-      return parenthesizedType.toTupleType()
-    default:
-      return self
-    }
   }
 }
