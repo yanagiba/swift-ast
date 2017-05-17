@@ -168,6 +168,11 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedForEachIn
   case expectedElseAfterGuard
 
+  // types
+  case expectedType
+  case expectedCloseSquareArrayType
+  case expectedCloseSquareDictionaryType
+
   public var diagnosticMessage: String {
     switch self {
     case .dummy:
@@ -380,6 +385,12 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected 'in' after for-each pattern"
     case .expectedElseAfterGuard:
       return "expected 'else' after 'guard' condition"
+    case .expectedType:
+      return "expected type"
+    case .expectedCloseSquareArrayType:
+      return "expected ']' in array type"
+    case .expectedCloseSquareDictionaryType:
+      return "expected ']' in dictionary type"
     }
   }
 }

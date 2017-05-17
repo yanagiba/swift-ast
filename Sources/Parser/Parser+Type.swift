@@ -75,7 +75,7 @@ extension Parser {
       if let idHead = _lexer.readNamedIdentifier() {
         return try parseIdentifierType(idHead, lookedRange)
       } else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedType)
       }
     }
   }
@@ -125,13 +125,13 @@ extension Parser {
       let valueType = try parseType()
       endLocation = getEndLocation()
       guard _lexer.match(.rightSquare) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedCloseSquareDictionaryType)
       }
       let dictType = DictionaryType(keyType: type, valueType: valueType)
       dictType.setSourceRange(startLocation, endLocation)
       return dictType
     default:
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedCloseSquareArrayType)
     }
   }
 

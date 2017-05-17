@@ -211,6 +211,12 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("guard foo { return }", .fatal, .expectedElseAfterGuard)
   }
 
+  func testTypes() {
+    parseProblematic("let foo: _", .fatal, .expectedType)
+    parseProblematic("let foo: [Foo", .fatal, .expectedCloseSquareArrayType)
+    parseProblematic("let foo: [Foo:Bar", .fatal, .expectedCloseSquareDictionaryType)
+  }
+
   static var allTests = [
     ("testAttributes", testAttributes),
     ("testCodeBlock", testCodeBlock),
@@ -219,5 +225,6 @@ class ParserErrorKindTests : XCTestCase {
     ("testGenerics", testGenerics),
     ("testPatterns", testPatterns),
     ("testStatements", testStatements),
+    ("testTypes", testTypes),
   ]
 }
