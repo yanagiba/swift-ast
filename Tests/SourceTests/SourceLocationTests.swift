@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,20 +16,18 @@
 
 import XCTest
 
-import CanaryTests
-import SourceTests
-import ASTTests
-import LexerTests
-import ParserTests
-import ASTVisitorTests
-import IntegrationTests
+@testable import Source
 
-var tests = [XCTestCaseEntry]()
-tests += CanaryTests.allTests()
-tests += SourceTests.allTests()
-tests += ASTTests.allTests()
-tests += LexerTests.allTests()
-tests += ParserTests.allTests()
-tests += ASTVisitorTests.allTests()
-tests += IntegrationTests.allTests()
-XCTMain(tests)
+class SourceLocationTests : XCTestCase {
+  func testDummyLocation() {
+    let loc = SourceLocation.DUMMY
+    XCTAssertEqual(loc.path, "dummy")
+    XCTAssertEqual(loc.line, 0)
+    XCTAssertEqual(loc.column, 0)
+    XCTAssertEqual(loc.description, "dummy:0:0")
+  }
+
+  static var allTests = [
+    ("testDummyLocation", testDummyLocation),
+  ]
+}
