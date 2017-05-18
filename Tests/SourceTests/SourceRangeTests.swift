@@ -28,7 +28,7 @@ class SourceRangeTests : XCTestCase {
     XCTAssertEqual(range.end.path, "dummy")
     XCTAssertEqual(range.end.line, 0)
     XCTAssertEqual(range.end.column, 0)
-    XCTAssertEqual(range.description, "dummy:0:0-0.0")
+    XCTAssertEqual(range.description, "dummy:0:0-0:0")
   }
 
   static var allTests = [

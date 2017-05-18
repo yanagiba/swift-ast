@@ -1,9 +1,9 @@
-top_level_decl <range: TTYASTDumpTestResources/OperatorDeclarationTests.swift:17:1-20.21>
-  op_decl <range: TTYASTDumpTestResources/OperatorDeclarationTests.swift:17:1-17.20>
+top_level_decl <range: TTYASTDumpTestResources/OperatorDeclarationTests.swift:17:1-20:21>
+  op_decl <range: TTYASTDumpTestResources/OperatorDeclarationTests.swift:17:1-17:20>
     kind: `prefix`, operator: `<!>`
-  op_decl <range: TTYASTDumpTestResources/OperatorDeclarationTests.swift:18:1-18.19>
+  op_decl <range: TTYASTDumpTestResources/OperatorDeclarationTests.swift:18:1-18:19>
     kind: `infix`, operator: `<!>`
-  op_decl <range: TTYASTDumpTestResources/OperatorDeclarationTests.swift:19:1-19.23>
+  op_decl <range: TTYASTDumpTestResources/OperatorDeclarationTests.swift:19:1-19:23>
     kind: `infix`, operator: `<!>`, precedence_group_name: `foo`
-  op_decl <range: TTYASTDumpTestResources/OperatorDeclarationTests.swift:20:1-20.21>
+  op_decl <range: TTYASTDumpTestResources/OperatorDeclarationTests.swift:20:1-20:21>
     kind: `postfix`, operator: `<!>`

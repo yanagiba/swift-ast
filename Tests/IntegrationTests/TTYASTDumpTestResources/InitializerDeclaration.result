@@ -1,67 +1,67 @@
-top_level_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:17:1-37.28>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:17:1-17.10>
+top_level_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:17:1-37:28>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:17:1-17:10>
     kind: `non_failable`
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:18:1-20.2>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:18:1-20:2>
     kind: `optional_failable`
-    return_stmt <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:19:3-19.13>
-      literal_expr <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:19:10-19.13>
+    return_stmt <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:19:3-19:13>
+      literal_expr <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:19:10-19:13>
         kind: `nil`, literal: `nil`
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:21:1-23.2>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:21:1-23:2>
     kind: `implicit_unwrapped_failable`
-    assign_expr <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:22:3-22.17>
-      self_expr <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:22:3-22.11>
+    assign_expr <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:22:3-22:17>
+      self_expr <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:22:3-22:11>
         kind: `method`, method_name: `foo`
-      literal_expr <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:22:14-22.17>
+      literal_expr <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:22:14-22:17>
         kind: `nil`, literal: `nil`
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:24:1-24.19>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:24:1-24:19>
     attributes: `@a @b @c`
     kind: `non_failable`
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:25:1-25.43>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:25:1-25:43>
     modifiers: fileprivate convenience required
     kind: `non_failable`
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:26:1-26.36>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:26:1-26:36>
     attributes: `@a @b @c`
     modifiers: private override
     kind: `non_failable`
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:27:1-27.33>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:27:1-27:33>
     generic_param: `<A, B: C, D: protocol<E, F, G>>`
     kind: `non_failable`
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:28:1-28.18>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:28:1-28:18>
     kind: `non_failable`
     parameters:
     0: bar: Bar
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:29:1-29.24>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:29:1-29:24>
     kind: `non_failable`
     parameters:
     0: bar: inout Bar
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:30:1-30.21>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:30:1-30:21>
     kind: `non_failable`
     parameters:
     0: _b bar: Bar
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:31:1-31.20>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:31:1-31:20>
     kind: `non_failable`
     parameters:
     0: _ bar: Bar
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:32:1-32.21>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:32:1-32:21>
     kind: `non_failable`
     parameters:
     0: i: Int = 12
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:33:1-33.21>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:33:1-33:21>
     kind: `non_failable`
     parameters:
     0: bar: Bar...
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:34:1-34.52>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:34:1-34:52>
     kind: `non_failable`
     parameters:
     0: a: A
@@ -70,17 +70,17 @@ top_level_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift
     3: d: @a D
     4: e: E...
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:35:1-35.25>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:35:1-35:25>
     kind: `non_failable`
     parameters:
     0: bar: Bar
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:36:1-36.27>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:36:1-36:27>
     kind: `non_failable`
     parameters:
     0: bar: Bar
     <empty_code_block>
-  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:37:1-37.28>
+  init_decl <range: TTYASTDumpTestResources/InitializerDeclarationTests.swift:37:1-37:28>
     generic_param: `<A>`
     generic_where: `where A == Foo`
     kind: `non_failable`

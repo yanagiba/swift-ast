@@ -1,32 +1,32 @@
-top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17:1-65.2>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17:1-17.16>
+top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17:1-65:2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17:1-17:16>
     name: Foo
     <empty_body_block>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:18:1-18.25>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:18:1-18:25>
     name: Foo
     attributes: `@a @b @c`
     <empty_body_block>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:19:1-19.28>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:19:1-19:28>
     name: Foo
     access_level: fileprivate
     <empty_body_block>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:20:1-20.26>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:20:1-20:26>
     name: Foo
     attributes: `@a`
     access_level: public
     <empty_body_block>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:21:1-21.24>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:21:1-21:24>
     name: Foo
     parent_types: String
     <empty_body_block>
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:22:1-24.2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:22:1-24:2>
     name: Foo
     0: kind: `property`
       name: Foo
       type: Bar
       getter_setter_keyword_block:
         getter
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:25:1-27.2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:25:1-27:2>
     name: Foo
     0: kind: `property`
       name: Foo
@@ -34,7 +34,7 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
       type: Bar
       getter_setter_keyword_block:
         getter
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:28:1-30.2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:28:1-30:2>
     name: Foo
     0: kind: `property`
       name: Foo
@@ -42,7 +42,7 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
       type: Bar
       getter_setter_keyword_block:
         getter
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:31:1-33.2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:31:1-33:2>
     name: Foo
     0: kind: `property`
       name: Foo
@@ -51,7 +51,7 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
       type: Bar
       getter_setter_keyword_block:
         getter
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:34:1-39.2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:34:1-39:2>
     name: Foo
     0: kind: `property`
       name: Foo
@@ -59,7 +59,7 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
       getter_setter_keyword_block:
         getter, attributes: `@a`, modifier: `mutating`
         setter, attributes: `@b`, modifier: `mutating`
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:40:1-42.2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:40:1-42:2>
     name: Foo
     0: kind: `method`
       name: Foo
@@ -71,7 +71,7 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
       0: a: A
       1: b: B
       2: c: C
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:43:1-47.2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:43:1-47:2>
     name: Foo
     0: kind: `non_failable_initializer`
       attributes: `@x @y`
@@ -103,7 +103,7 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
       1: b: B
       2: c: C
       throws_kind: `throws`
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:48:1-50.2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:48:1-50:2>
     name: Foo
     0: kind: `subscript`
       attributes: `@a`
@@ -116,7 +116,7 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
       getter_setter_keyword_block:
         getter
         setter
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:51:1-53.2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:51:1-53:2>
     name: Foo
     0: kind: `associated_type`
       name: Foo
@@ -124,10 +124,10 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
       access_level: fileprivate
       parent_types: Bar
       assignment_type: bar
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:54:1-58.2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:54:1-58:2>
     name: Foo
     0: kind: `compiler_control`
-      compiler_ctrl_stmt <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:55:1-55.8>
+      compiler_ctrl_stmt <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:55:1-55:8>
         kind: `if`, condition: ` bar`
     1: kind: `property`
       name: Foo
@@ -135,9 +135,9 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
       getter_setter_keyword_block:
         getter
     2: kind: `compiler_control`
-      compiler_ctrl_stmt <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:57:1-57.7>
+      compiler_ctrl_stmt <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:57:1-57:7>
         kind: `endif`
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:59:1-65.2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:59:1-65:2>
     name: Foo
     0: kind: `property`
       name: Foo

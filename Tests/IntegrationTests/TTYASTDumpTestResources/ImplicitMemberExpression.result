@@ -1,5 +1,5 @@
-top_level_decl <range: TTYASTDumpTestResources/ImplicitMemberExpressionTests.swift:17:1-17.9>
-  assign_expr <range: TTYASTDumpTestResources/ImplicitMemberExpressionTests.swift:17:1-17.9>
-    wildcard_expr <range: TTYASTDumpTestResources/ImplicitMemberExpressionTests.swift:17:1-17.2>
-    implicit_member_expr <range: TTYASTDumpTestResources/ImplicitMemberExpressionTests.swift:17:5-17.9>
+top_level_decl <range: TTYASTDumpTestResources/ImplicitMemberExpressionTests.swift:17:1-17:9>
+  assign_expr <range: TTYASTDumpTestResources/ImplicitMemberExpressionTests.swift:17:1-17:9>
+    wildcard_expr <range: TTYASTDumpTestResources/ImplicitMemberExpressionTests.swift:17:1-17:2>
+    implicit_member_expr <range: TTYASTDumpTestResources/ImplicitMemberExpressionTests.swift:17:5-17:9>
       identifier: `identifier`
