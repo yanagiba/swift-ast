@@ -213,7 +213,7 @@ top_level_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift
                   kind: `int`, literal: `2`, raw_text: `2`
           identifier: `joined`
         arguments: <empty>
-  function_call_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:39:1-40.4>
+  function_call_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:39:1-39.30>
     identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:39:1-39.4>
       kind: `identifier`, identifier: `foo`
     arguments:

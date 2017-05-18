@@ -67,12 +67,16 @@ class ParserTypeInheritanceClauseTests: XCTestCase {
     waitForExpectations(timeout: 3)
   }
 
-  func testClassRequirementMustBeTheFirst() { // TODO: definitely need better handling of this, this current emits a `error: Expected identifier for type name.` in the console
-    parseTypeInheritanceClauseAndTest(": A, class, B") {
-      XCTAssertFalse($0.classRequirement)
-      XCTAssertEqual($0.typeInheritanceList.count, 2)
-      XCTAssertEqual($0.textDescription, ": A, B")
+  func testClassRequirementMustBeTheFirst() {
+    let typeParser = getParser(": A, class, B")
+    let nilExpectation = expectation(description: "Expect type inheritance clause to be nil.")
+    do {
+      try typeParser.parseTypeInheritanceClause()
+      XCTFail("Should not get a type inheritance clause.")
+    } catch {
+      nilExpectation.fulfill()
     }
+    waitForExpectations(timeout: 3)
   }
 
   static var allTests = [

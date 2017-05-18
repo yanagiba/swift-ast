@@ -75,7 +75,7 @@ extension Parser {
       if let idHead = _lexer.readNamedIdentifier() {
         return try parseIdentifierType(idHead, lookedRange)
       } else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedType)
       }
     }
   }
@@ -125,13 +125,13 @@ extension Parser {
       let valueType = try parseType()
       endLocation = getEndLocation()
       guard _lexer.match(.rightSquare) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedCloseSquareDictionaryType)
       }
       let dictType = DictionaryType(keyType: type, valueType: valueType)
       dictType.setSourceRange(startLocation, endLocation)
       return dictType
     default:
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedCloseSquareArrayType)
     }
   }
 
@@ -154,7 +154,7 @@ extension Parser {
 
     endLocation = getEndLocation()
     if !_lexer.match(.rightParen) {
-      try _raiseError(.dummy)
+      throw _raiseFatal(.expectedCloseParenParenthesizedType)
     }
 
     let parenType = ParenthesizedType(elements: elements)
@@ -163,11 +163,7 @@ extension Parser {
   }
 
   func parseTupleType(_ startLocation: SourceLocation) throws -> TupleType {
-    let parenthesizedType = try parseParenthesizedType(startLocation)
-    guard let tupleType = parenthesizedType.toTupleType() else {
-      throw _raiseFatal(.dummy)
-    }
-    return tupleType
+    return try parseParenthesizedType(startLocation).toTupleType()
   }
 
   private func parseParenthesizedTypeElement()
@@ -236,7 +232,7 @@ extension Parser {
       return ParenthesizedType.Element(type: nonLabeledType)
     }
     guard let typeAnnotation = try parseTypeAnnotation() else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedTypeInTuple)
     }
     return ParenthesizedType.Element(
       type: typeAnnotation.type,
@@ -255,7 +251,7 @@ extension Parser {
     repeat {
       let idTypeRange = getLookedRange()
       guard case let .identifier(idHead) = _lexer.read(.dummyIdentifier) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedIdentifierTypeForProtocolComposition)
       }
       let idType = try parseIdentifierType(idHead, idTypeRange)
       protocolTypes.append(idType)
@@ -270,8 +266,8 @@ extension Parser {
   func parseOldSyntaxProtocolCompositionType(
     _ startLocation: SourceLocation
   ) throws -> ProtocolCompositionType {
-    if !_lexer.matchUnicodeScalar("<") {
-      try _raiseError(.dummy)
+    guard _lexer.matchUnicodeScalar("<") else {
+      throw _raiseFatal(.expectedLeftChevronProtocolComposition)
     }
 
     if _lexer.matchUnicodeScalar(">") {
@@ -282,14 +278,14 @@ extension Parser {
     repeat {
       let nestedRange = getLookedRange()
       guard case let .identifier(idHead) = _lexer.read(.dummyIdentifier) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedIdentifierTypeForProtocolComposition)
       }
       protocolTypes.append(try parseIdentifierType(idHead, nestedRange))
     } while _lexer.match(.comma)
 
     let endLocation = getEndLocation()
-    if !_lexer.matchUnicodeScalar(">") {
-      try _raiseError(.dummy)
+    guard _lexer.matchUnicodeScalar(">") else {
+      throw _raiseFatal(.expectedRightChevronProtocolComposition)
     }
 
     let protoType = ProtocolCompositionType(protocolTypes: protocolTypes)
@@ -301,10 +297,19 @@ extension Parser {
     _ type: Type, attributes attrs: Attributes = []
   ) throws -> Type {
     func getAtomicType() throws -> Type {
-      guard let atomicType = type.toAtomic() else {
-        throw _raiseFatal(.dummy)
+      do {
+        if let parenthesizedType = type as? ParenthesizedType {
+          return try parenthesizedType.toTupleType()
+        }
+        return type
+      } catch let e as ParenthesizedType.TupleConversionError {
+        switch e {
+        case .isVariadic:
+          throw _raiseFatal(.tupleTypeVariadicElement)
+        case .multipleLabels:
+          throw _raiseFatal(.tupleTypeMultipleLabels)
+        }
       }
-      return atomicType
     }
 
     if _lexer.matchUnicodeScalar("?", immediateFollow: true) {
@@ -340,13 +345,13 @@ extension Parser {
     switch examined.1 {
     case .throws:
       guard _lexer.match(.arrow) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.throwsInWrongPosition("throws"))
       }
       parsedType = try parseFunctionType(
         attributes: attrs, type: type, throwKind: .throwing)
     case .rethrows:
       guard _lexer.match(.arrow) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.throwsInWrongPosition("rethrows"))
       }
       parsedType = try parseFunctionType(
         attributes: attrs, type: type, throwKind: .rethrowing)
@@ -369,7 +374,7 @@ extension Parser {
       case .Protocol:
         metatypeType = MetatypeType(referenceType: atomicType, kind: .protocol)
       default:
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.wrongIdentifierForMetatypeType)
       }
       metatypeType.setSourceRange(type.sourceLocation, metatypeEndLocation)
       parsedType = metatypeType
@@ -383,7 +388,7 @@ extension Parser {
     attributes attrs: Attributes, type: Type, throwKind: ThrowsKind
   ) throws -> Type {
     guard let parenthesizedType = type as? ParenthesizedType else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedFunctionTypeArguments)
     }
     let funcArguments = parenthesizedType.elements.map {
       FunctionType.Argument(type: $0.type,
@@ -418,12 +423,12 @@ extension Parser {
     repeat {
       let typeSourceRange = getLookedRange()
       if _lexer.match(.class) {
-        try _raiseError(.dummy)
+        throw _raiseFatal(.lateClassRequirement)
       } else if let idHead = _lexer.readNamedIdentifier() {
         let type = try parseIdentifierType(idHead, typeSourceRange)
         types.append(type)
       } else {
-        try _raiseError(.dummy)
+        throw _raiseFatal(.expectedTypeRestriction)
       }
     } while _lexer.match(.comma)
     return TypeInheritanceClause(
@@ -432,6 +437,11 @@ extension Parser {
 }
 
 fileprivate class ParenthesizedType : Type {
+  fileprivate enum TupleConversionError : Error {
+    case isVariadic
+    case multipleLabels
+  }
+
   fileprivate class Element {
     fileprivate let externalName: String?
     fileprivate let localName: String?
@@ -468,11 +478,13 @@ fileprivate class ParenthesizedType : Type {
 
   fileprivate var sourceRange: SourceRange = .EMPTY
 
-  fileprivate func toTupleType() -> TupleType? {
+  fileprivate func toTupleType() throws -> TupleType {
     var tupleElements: [TupleType.Element] = []
     for e in elements {
-      if e.isVariadic || e.externalName != nil {
-        return nil
+      if e.externalName != nil {
+        throw TupleConversionError.multipleLabels
+      } else if e.isVariadic {
+        throw TupleConversionError.isVariadic
       } else if let name = e.localName {
         let tupleElement = TupleType.Element(
           type: e.type,
@@ -488,16 +500,5 @@ fileprivate class ParenthesizedType : Type {
     let tupleType = TupleType(elements: tupleElements)
     tupleType.setSourceRange(sourceRange)
     return tupleType
-  }
-}
-
-fileprivate extension Type {
-  fileprivate func toAtomic() -> Type? {
-    switch self {
-    case let parenthesizedType as ParenthesizedType:
-      return parenthesizedType.toTupleType()
-    default:
-      return self
-    }
   }
 }

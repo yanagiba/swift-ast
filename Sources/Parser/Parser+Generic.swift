@@ -29,7 +29,7 @@ extension Parser {
       parameters.append(param)
     } while _lexer.match(.comma)
     if !_matchRightChevron() {
-        try _raiseError(.dummy)
+        try _raiseError(.expectedRightChevron("generic parameter list"))
     }
     return GenericParameterClause(parameterList: parameters)
   }
@@ -38,7 +38,7 @@ extension Parser {
     throws -> GenericParameterClause.GenericParameter
   {
     guard case let .identifier(name) = _lexer.read(.dummyIdentifier) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedGenericsParameterName)
     }
     guard _lexer.match(.colon) else {
       return .identifier(name)
@@ -63,7 +63,7 @@ extension Parser {
       let typeIdentifierForAny = TypeIdentifier(names: [typeName])
       return .typeConformance(name, typeIdentifierForAny)
     default:
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedGenericTypeRestriction(name))
     }
   }
 
@@ -88,7 +88,7 @@ extension Parser {
     case .Self:
       idTypeName = "Self"
     default:
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedGenericRequirementName)
     }
 
     let idType = try parseIdentifierType(idTypeName, idTypeRange)
@@ -107,13 +107,15 @@ extension Parser {
         let type = try parseOldSyntaxProtocolCompositionType(typeStartLocation)
         return .protocolConformance(idType, type)
       } else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedGenericTypeRestriction(idType.textDescription))
       }
     case .binaryOperator("=="):
       let type = try parseType()
       return .sameType(idType, type)
+    case .assignmentOperator:
+      throw _raiseFatal(.requiresDoubleEqualForSameTypeRequirement)
     default:
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedRequirementDelimiter)
     }
   }
 

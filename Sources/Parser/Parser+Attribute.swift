@@ -29,7 +29,7 @@ extension Parser {
 
   private func parseAttribute() throws -> Attribute {
     guard case let .identifier(name) = _lexer.read(.dummyIdentifier) else {
-      throw _raiseFatal(.attributeIdentifierExpected)
+      throw _raiseFatal(.missingAttributeName)
     }
     let leftParenCp = _lexer.checkPoint()
     guard _lexer.matchUnicodeScalar("(", immediateFollow: true) else {

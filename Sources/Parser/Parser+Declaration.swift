@@ -34,12 +34,12 @@ extension Parser {
   func parseCodeBlock() throws -> CodeBlock {
     let startLocation = getStartLocation()
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForCodeBlock)
+      throw _raiseFatal(.leftBraceExpected("code block"))
     }
     let stmts = try parseStatements()
     let endLocation = getEndLocation()
     guard _lexer.match(.rightBrace) else {
-      throw _raiseFatal(.rightBraceExpectedForCodeBlock)
+      throw _raiseFatal(.rightBraceExpected("code block"))
     }
     let codeBlock = CodeBlock(statements: stmts)
     codeBlock.setSourceRange(startLocation, endLocation)
@@ -168,14 +168,14 @@ extension Parser {
         throw _raiseFatal(.missingPropertyMemberName)
       }
       guard let typeAnnotation = try parseTypeAnnotation() else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingTypeForPropertyMember)
       }
       guard isGetterSetterBlockHead() else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingGetterSetterForPropertyMember)
       }
       let (getterSetterBlock, hasCodeBlock, _) = try parseGetterSetterBlock()
       guard !hasCodeBlock else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.protocolPropertyMemberWithBody)
       }
       let getter = GetterSetterKeywordBlock.GetterKeywordClause(
         attributes: getterSetterBlock.getter.attributes,
@@ -203,7 +203,7 @@ extension Parser {
       let funcDecl = try parseFunctionDeclaration(
         withAttributes: attrs, modifiers: modifiers, startLocation: .DUMMY)
       guard funcDecl.body == nil else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.protocolMethodMemberWithBody)
       }
 
       let member = ProtocolDeclaration.MethodMember(
@@ -246,7 +246,7 @@ extension Parser {
       guard case .getterSetterKeywordBlock(let getterSetterKeywordBlock) =
         subscriptDecl.body else
       {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingProtocolSubscriptGetSetSpecifier)
       }
 
       let member = ProtocolDeclaration.SubscriptMember(
@@ -269,7 +269,7 @@ extension Parser {
       }
 
       guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingProtocolAssociatedTypeName)
       }
 
       let typeInheritanceClause = try parseTypeInheritanceClause()
@@ -316,7 +316,7 @@ extension Parser {
           return try parseAssociatedType(
             withAttributes: attrs, modifiers: modifiers)
         }
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.badProtocolMember)
       }
     }
 
@@ -326,14 +326,14 @@ extension Parser {
     }
 
     guard let name = _lexer.look().kind.structName else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.missingProtocolName)
     }
     _lexer.advance()
 
     let typeInheritanceClause = try parseTypeInheritanceClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
+      throw _raiseFatal(.leftBraceExpected("protocol declaration body"))
     }
 
     var endLocation = getEndLocation()
@@ -360,15 +360,17 @@ extension Parser {
     func parseAttribute() throws -> PrecedenceGroupDeclaration.Attribute {
       func consumeColon() throws {
         guard _lexer.match(.colon) else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.missingColonAfterAttributeNameInPrecedenceGroup)
         }
       }
 
-      func getIdentifierList() throws -> IdentifierList {
+      func getIdentifierList(
+        forAttribute attributeName: String
+      ) throws -> IdentifierList {
         var ids: [Identifier] = []
         repeat {
           guard case .identifier(let id) = _lexer.read(.dummyIdentifier) else {
-            throw _raiseFatal(.dummy)
+            throw _raiseFatal(.missingPrecedenceGroupRelation(attributeName))
           }
           ids.append(id)
         } while _lexer.match(.comma)
@@ -376,26 +378,26 @@ extension Parser {
       }
 
       switch _lexer.read([.dummyIdentifier, .associativity]) {
-      case .identifier(let keyword):
-        switch keyword {
+      case .identifier(let attributeName):
+        switch attributeName {
         case "higherThan":
           try consumeColon()
-          let ids = try getIdentifierList()
+          let ids = try getIdentifierList(forAttribute: attributeName)
           return .higherThan(ids)
         case "lowerThan":
           try consumeColon()
-          let ids = try getIdentifierList()
+          let ids = try getIdentifierList(forAttribute: attributeName)
           return .lowerThan(ids)
         case "assignment":
           try consumeColon()
           guard case .booleanLiteral(let b) =
             _lexer.read(.dummyBooleanLiteral) else
           {
-            throw _raiseFatal(.dummy)
+            throw _raiseFatal(.expectedBooleanAfterPrecedenceGroupAssignment)
           }
           return .assignment(b)
         default:
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.unknownPrecedenceGroupAttribute(attributeName))
         }
       case .associativity:
         try consumeColon()
@@ -407,20 +409,20 @@ extension Parser {
         case .none:
           return .associativityNone
         default:
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedPrecedenceGroupAssociativity)
         }
       default:
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedPrecedenceGroupAttribute)
       }
     }
 
     guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.missingPrecedenceName)
     }
 
     var attrs: [PrecedenceGroupDeclaration.Attribute] = []
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.leftBraceExpected("precedence group declaration"))
     }
 
     var endLocation = getEndLocation()
@@ -441,14 +443,14 @@ extension Parser {
   ) throws -> OperatorDeclaration {
     func parseOperator(modifier kind: DeclarationModifier) throws -> Operator {
       guard let op = parseVerifiedOperator(againstModifier: kind) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedValidOperator)
       }
 
       return op
     }
 
     guard modifiers.count == 1, let modifier = modifiers.first else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.operatorDeclarationHasNoFixity)
     }
 
     var endLocation = getEndLocation()
@@ -466,13 +468,13 @@ extension Parser {
       if _lexer.match(.colon) {
         endLocation = getEndLocation()
         guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedOperatorNameAfterInfixOperator)
         }
         id = name
       }
       kind = .infix(op, id)
     default:
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.operatorDeclarationHasNoFixity)
     }
     let opDecl = OperatorDeclaration(kind: kind)
     opDecl.setSourceRange(startLocation, endLocation)
@@ -486,7 +488,7 @@ extension Parser {
   ) throws -> SubscriptDeclaration {
     let (params, _) = try parseParameterClause()
     guard _lexer.match(.arrow) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedArrowSubscript)
     }
     let resultAttributes = try parseAttributes()
     let type = try parseType()
@@ -556,7 +558,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
+      throw _raiseFatal(.leftBraceExpected("extension declaration body"))
     }
 
     var endLocation = getEndLocation()
@@ -674,7 +676,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
+      throw _raiseFatal(.leftBraceExpected("class declaration body"))
     }
 
     var endLocation = getEndLocation()
@@ -725,7 +727,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForDeclarationBody)
+      throw _raiseFatal(.leftBraceExpected("struct declaration body"))
     }
 
     var endLocation = getEndLocation()
@@ -803,7 +805,7 @@ extension Parser {
       }
 
       guard hasTypeInheritance else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingTypeForRawValueEnumDeclaration)
       }
       var verifiedMembers: [EnumDeclaration.Member] = []
       for member in members {
@@ -817,7 +819,7 @@ extension Parser {
           var newCases: [EnumDeclaration.RawValueStyleEnumCase.Case] = []
           for c in union.cases {
             if c.tuple != nil {
-              throw _raiseFatal(.dummy)
+              throw _raiseFatal(.unionStyleMixWithRawValueStyle)
             }
             newCases.append(
               EnumDeclaration.RawValueStyleEnumCase.Case(name: c.name))
@@ -850,7 +852,8 @@ extension Parser {
       let isIndirect = _lexer.match(.indirect)
 
       guard _lexer.match(.case) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedEnumDeclarationCaseMember)
+        // Note: ^ don't think we will reach this, because we have guard on `isCaseMember`
       }
 
       typealias CaseComponent = (
@@ -861,7 +864,7 @@ extension Parser {
       var caseComponents: [CaseComponent] = []
       repeat {
         guard let s = _lexer.readNamedIdentifier() else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedCaseName)
         }
         let startLocation = getStartLocation()
         switch _lexer.read([.leftParen, .assignmentOperator]) {
@@ -883,7 +886,7 @@ extension Parser {
           case let .staticStringLiteral(ss, _):
             caseComponents.append((s, nil, .string(ss)))
           default:
-            throw _raiseFatal(.dummy)
+            throw _raiseFatal(.nonliteralEnumCaseRawValue)
           }
         default:
           caseComponents.append((s, nil, nil))
@@ -902,7 +905,7 @@ extension Parser {
           throw _raiseFatal(.indirectWithRawValueStyle)
         }
         guard unionCases.flatMap({ $0.tuple }).isEmpty else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.unionStyleMixWithRawValueStyle)
         }
         let rawValueCaseMember = EnumDeclaration.RawValueStyleEnumCase(
           attributes: attributes, cases: rawValueCases)
@@ -927,7 +930,7 @@ extension Parser {
     let genericWhereClause = try parseGenericWhereClause()
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpectedForEnumCase)
+      throw _raiseFatal(.leftBraceExpected("enum declaration body"))
     }
 
     var endLocation = getEndLocation()
@@ -976,11 +979,11 @@ extension Parser {
         }
       }
       guard let localName = internalName else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.unnamedParameter)
       }
 
       guard let typeAnnotation = try parseTypeAnnotation() else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedParameterType)
       }
 
       switch _lexer.look().kind {
@@ -1009,7 +1012,7 @@ extension Parser {
 
     let startLocation = getStartLocation()
     guard _lexer.match(.leftParen) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedParameterOpenParenthesis)
     }
 
     var endLocation = getEndLocation()
@@ -1025,7 +1028,7 @@ extension Parser {
 
     endLocation = getEndLocation()
     guard _lexer.match(.rightParen) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedParameterCloseParenthesis)
     }
     return (params, SourceRange(start: startLocation, end: endLocation))
   }
@@ -1040,17 +1043,11 @@ extension Parser {
       for m in modifiers {
         switch m {
         case .prefix:
-          kind == nil ?
-            kind = .prefix :
-            try _raiseError(.dummy)
+          kind == nil ? kind = .prefix : try _raiseError(.duplicatedFunctionModifiers)
         case .postfix:
-          kind == nil ?
-            kind = .postfix :
-            try _raiseError(.dummy)
+          kind == nil ? kind = .postfix : try _raiseError(.duplicatedFunctionModifiers)
         case .infix:
-          kind == nil ?
-            kind = .infix :
-            try _raiseError(.dummy)
+          kind == nil ? kind = .infix : try _raiseError(.duplicatedFunctionModifiers)
         default:
           break
         }
@@ -1061,7 +1058,7 @@ extension Parser {
       }
 
       guard let name = _lexer.readNamedIdentifier() else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingFunctionName)
       }
       return name
     }
@@ -1132,7 +1129,7 @@ extension Parser {
     }
     let genericParameterClause = try parseGenericParameterClause()
     guard _lexer.match(.assignmentOperator) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedEqualInTypealias)
     }
     let assignment = try parseType()
     let typealiasDecl = TypealiasDeclaration(
@@ -1250,14 +1247,14 @@ extension Parser {
   private func parseWillSetDidSetBlock() throws ->
     (WillSetDidSetBlock, SourceLocation)
   {
-    func parseSet() throws -> (Identifier?, CodeBlock) {
+    func parseSet(_ accessorType: String) throws -> (Identifier?, CodeBlock) {
       var setterName: String? = nil
       if _lexer.match(.leftParen) {
         guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedAccesorName(accessorType))
         }
         guard _lexer.match(.rightParen) else {
-           throw _raiseFatal(.dummy)
+           throw _raiseFatal(.expectedAccesorNameCloseParenthesis(accessorType))
         }
         setterName = name
       }
@@ -1266,7 +1263,7 @@ extension Parser {
     }
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.leftBraceExpected("willSet/didSet block"))
     }
 
     let attrs = try parseAttributes()
@@ -1275,26 +1272,26 @@ extension Parser {
     var didSetClause: WillSetDidSetBlock.DidSetClause? = nil
 
     if _lexer.match(.willSet) {
-      let (setterName, codeBlock) = try parseSet()
+      let (setterName, codeBlock) = try parseSet("willSet")
       willSetClause = WillSetDidSetBlock.WillSetClause(
         attributes: attrs, name: setterName, codeBlock: codeBlock)
 
       let didSetAttrs = try parseAttributes()
       if _lexer.match(.didSet) {
-        let (didSetSetterName, didSetCodeBlock) = try parseSet()
+        let (didSetSetterName, didSetCodeBlock) = try parseSet("didSet")
         didSetClause = WillSetDidSetBlock.DidSetClause(
           attributes: didSetAttrs,
           name: didSetSetterName,
           codeBlock: didSetCodeBlock)
       }
     } else if _lexer.match(.didSet) {
-      let (setterName, codeBlock) = try parseSet()
+      let (setterName, codeBlock) = try parseSet("didSet")
       didSetClause = WillSetDidSetBlock.DidSetClause(
         attributes: attrs, name: setterName, codeBlock: codeBlock)
 
       let willSetAttrs = try parseAttributes()
       if _lexer.match(.willSet) {
-        let (willSetSetterName, willSetCodeBlock) = try parseSet()
+        let (willSetSetterName, willSetCodeBlock) = try parseSet("willSet")
         willSetClause = WillSetDidSetBlock.WillSetClause(
           attributes: willSetAttrs,
           name: willSetSetterName,
@@ -1304,7 +1301,7 @@ extension Parser {
 
     let endLocation = getEndLocation()
     guard _lexer.match(.rightBrace) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.rightBraceExpected("willSet/didSet block"))
     }
 
     switch (willSetClause, didSetClause) {
@@ -1319,7 +1316,7 @@ extension Parser {
         endLocation
       )
     default:
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedWillSetOrDidSet)
     }
   }
 
@@ -1343,10 +1340,10 @@ extension Parser {
       var setterName: String? = nil
       if _lexer.match(.leftParen) {
         guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
-          throw _raiseFatal(.dummy)
+          throw _raiseFatal(.expectedAccesorName("setter"))
         }
         guard _lexer.match(.rightParen) else {
-           throw _raiseFatal(.dummy)
+           throw _raiseFatal(.expectedAccesorNameCloseParenthesis("setter"))
         }
         setterName = name
       }
@@ -1360,7 +1357,7 @@ extension Parser {
     }
 
     guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.leftBraceExpected("getter/setter block"))
     }
 
     let attrs = try parseAttributes()
@@ -1391,11 +1388,11 @@ extension Parser {
 
     let endLocation = getEndLocation()
     guard _lexer.match(.rightBrace) else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.rightBraceExpected("getter/setter block"))
     }
 
     guard let getter = getterClause else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.varSetWithoutGet)
     }
 
     return (
@@ -1488,7 +1485,7 @@ extension Parser {
         .postfixOperator(let op):
         path.append(op)
       default:
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.missingModuleNameImportDecl)
       }
     } while _lexer.match(.dot)
 

@@ -63,6 +63,10 @@ public class DiagnosticPool {
 
   public func report(withConsumer consumer: DiagnosticConsumer) {
     consumer.consume(diagnostics: _diagnostics)
+    clear()
+  }
+
+  public func clear() {
     DiagnosticPool.shared._diagnostics = []
   }
 
