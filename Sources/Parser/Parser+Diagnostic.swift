@@ -176,6 +176,14 @@ public enum ParserErrorKind : DiagnosticKind {
   case tupleTypeMultipleLabels
   case tupleTypeVariadicElement
   case expectedTypeInTuple
+  case expectedIdentifierTypeForProtocolComposition
+  case expectedLeftChevronProtocolComposition
+  case expectedRightChevronProtocolComposition
+  case expectedFunctionTypeArguments
+  case throwsInWrongPosition(String)
+  case wrongIdentifierForMetatypeType
+  case lateClassRequirement
+  case expectedTypeRestriction
 
   public var diagnosticMessage: String {
     switch self {
@@ -403,6 +411,22 @@ public enum ParserErrorKind : DiagnosticKind {
       return "tuple element cannot be variadic"
     case .expectedTypeInTuple:
       return "expected a type for tuple element"
+    case .expectedIdentifierTypeForProtocolComposition:
+      return "expected an identifier type for protocol-constrained type"
+    case .expectedLeftChevronProtocolComposition:
+      return "expected '<' following 'protocol'"
+    case .expectedRightChevronProtocolComposition:
+      return "expected '>' to complete protocol-constrained type"
+    case .expectedFunctionTypeArguments:
+      return "expected arguments for function type"
+    case .throwsInWrongPosition(let throwingKind):
+      return "'\(throwingKind)' may only occur before '->'"
+    case .wrongIdentifierForMetatypeType:
+      return "expected 'Type' or 'Protocol' following '.' for metatype type"
+    case .lateClassRequirement:
+      return "'class' must come first in the requirement list"
+    case .expectedTypeRestriction:
+      return "expected a type in the requirement list"
     }
   }
 }

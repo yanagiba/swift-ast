@@ -251,7 +251,7 @@ extension Parser {
     repeat {
       let idTypeRange = getLookedRange()
       guard case let .identifier(idHead) = _lexer.read(.dummyIdentifier) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedIdentifierTypeForProtocolComposition)
       }
       let idType = try parseIdentifierType(idHead, idTypeRange)
       protocolTypes.append(idType)
@@ -266,8 +266,8 @@ extension Parser {
   func parseOldSyntaxProtocolCompositionType(
     _ startLocation: SourceLocation
   ) throws -> ProtocolCompositionType {
-    if !_lexer.matchUnicodeScalar("<") {
-      try _raiseError(.dummy)
+    guard _lexer.matchUnicodeScalar("<") else {
+      throw _raiseFatal(.expectedLeftChevronProtocolComposition)
     }
 
     if _lexer.matchUnicodeScalar(">") {
@@ -278,14 +278,14 @@ extension Parser {
     repeat {
       let nestedRange = getLookedRange()
       guard case let .identifier(idHead) = _lexer.read(.dummyIdentifier) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedIdentifierTypeForProtocolComposition)
       }
       protocolTypes.append(try parseIdentifierType(idHead, nestedRange))
     } while _lexer.match(.comma)
 
     let endLocation = getEndLocation()
-    if !_lexer.matchUnicodeScalar(">") {
-      try _raiseError(.dummy)
+    guard _lexer.matchUnicodeScalar(">") else {
+      throw _raiseFatal(.expectedRightChevronProtocolComposition)
     }
 
     let protoType = ProtocolCompositionType(protocolTypes: protocolTypes)
@@ -345,13 +345,13 @@ extension Parser {
     switch examined.1 {
     case .throws:
       guard _lexer.match(.arrow) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.throwsInWrongPosition("throws"))
       }
       parsedType = try parseFunctionType(
         attributes: attrs, type: type, throwKind: .throwing)
     case .rethrows:
       guard _lexer.match(.arrow) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.throwsInWrongPosition("rethrows"))
       }
       parsedType = try parseFunctionType(
         attributes: attrs, type: type, throwKind: .rethrowing)
@@ -374,7 +374,7 @@ extension Parser {
       case .Protocol:
         metatypeType = MetatypeType(referenceType: atomicType, kind: .protocol)
       default:
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.wrongIdentifierForMetatypeType)
       }
       metatypeType.setSourceRange(type.sourceLocation, metatypeEndLocation)
       parsedType = metatypeType
@@ -388,7 +388,7 @@ extension Parser {
     attributes attrs: Attributes, type: Type, throwKind: ThrowsKind
   ) throws -> Type {
     guard let parenthesizedType = type as? ParenthesizedType else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedFunctionTypeArguments)
     }
     let funcArguments = parenthesizedType.elements.map {
       FunctionType.Argument(type: $0.type,
@@ -423,12 +423,12 @@ extension Parser {
     repeat {
       let typeSourceRange = getLookedRange()
       if _lexer.match(.class) {
-        try _raiseError(.dummy)
+        throw _raiseFatal(.lateClassRequirement)
       } else if let idHead = _lexer.readNamedIdentifier() {
         let type = try parseIdentifierType(idHead, typeSourceRange)
         types.append(type)
       } else {
-        try _raiseError(.dummy)
+        throw _raiseFatal(.expectedTypeRestriction)
       }
     } while _lexer.match(.comma)
     return TypeInheritanceClause(

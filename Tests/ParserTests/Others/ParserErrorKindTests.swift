@@ -219,6 +219,16 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("let foo: (x y: Foo)", .fatal, .tupleTypeMultipleLabels)
     parseProblematic("let foo: (x: Foo...)", .fatal, .tupleTypeVariadicElement)
     // parseProblematic("let foo: (x)", .fatal, .expectedTypeInTuple)
+    parseProblematic("let foo: F & O & _", .fatal, .expectedIdentifierTypeForProtocolComposition)
+    parseProblematic("let foo: protocol", .fatal, .expectedLeftChevronProtocolComposition)
+    parseProblematic("let foo: protocol<a,b", .fatal, .expectedRightChevronProtocolComposition)
+    parseProblematic("let foo: protocol<a,_", .fatal, .expectedIdentifierTypeForProtocolComposition)
+    parseProblematic("let foo: I throws -> J)", .fatal, .expectedFunctionTypeArguments)
+    parseProblematic("let foo: () throws)", .fatal, .throwsInWrongPosition("throws"))
+    parseProblematic("let foo: () rethrows)", .fatal, .throwsInWrongPosition("rethrows"))
+    parseProblematic("let foo: Foo._)", .fatal, .wrongIdentifierForMetatypeType)
+    parseProblematic("protocol Foo : Bar, class)", .fatal, .lateClassRequirement)
+    parseProblematic("protocol Foo : class, _)", .fatal, .expectedTypeRestriction)
   }
 
   static var allTests = [
