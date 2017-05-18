@@ -72,6 +72,12 @@ let package = Package(
       name: "CanaryTests"
     ),
     Target(
+      name: "ASTTests",
+      dependencies: [
+        "AST",
+      ]
+    ),
+    Target(
       name: "LexerTests",
       dependencies: [
         "Lexer",

@@ -42,7 +42,7 @@ extension SourceRange {
   public static let INVALID = SourceRange(start: .INVALID, end: .INVALID)
 
   public var isValid: Bool {
-    return start.isValid && end.isValid
+    return start.isValid || end.isValid
   }
 }
 
