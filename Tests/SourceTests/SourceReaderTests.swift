@@ -20,19 +20,36 @@ import XCTest
 
 class SourceReaderTests : XCTestCase {
   func testReading() {
+    testPath(#file)
+  }
+
+  func testReadingFromCurrentPath() {
+    testPath("Tests/SourceTests/SourceReaderTests.swift")
+  }
+
+  func testReadingFromParentPath() {
+    let currentDirectory = FileManager.default.currentDirectoryPath
+    if let parentDir = currentDirectory.components(separatedBy: "/").last {
+      testPath("../\(parentDir)/Tests/SourceTests/SourceReaderTests.swift")
+    }
+  }
+
+  private func testPath(_ path: String) {
     do {
-      let sourceFile = try SourceReader.read(at: #file)
+      let sourceFile = try SourceReader.read(at: path)
       XCTAssertTrue(sourceFile.path.hasSuffix("Tests/SourceTests/SourceReaderTests.swift"))
       XCTAssertTrue(sourceFile.content.contains("Ryuichi Saito"))
       XCTAssertTrue(sourceFile.content.contains("SourceReaderTests"))
       XCTAssertTrue(sourceFile.content.contains("XCTAssertTrue(sourceFile.content.contains"))
       XCTAssertTrue(sourceFile.content.contains("(\"testReading\", testReading),"))
     } catch {
-      XCTFail("Failed in reading file \(#file)")
+      XCTFail("Failed in reading file \(path)")
     }
   }
 
   static var allTests = [
     ("testReading", testReading),
+    ("testReadingFromCurrentPath", testReadingFromCurrentPath),
+    ("testReadingFromParentPath", testReadingFromParentPath),
   ]
 }
