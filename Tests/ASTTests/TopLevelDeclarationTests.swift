@@ -16,11 +16,16 @@
 
 import XCTest
 
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(LocatableNodeTests.allTests),
-    testCase(TopLevelDeclarationTests.allTests),
+@testable import AST
+@testable import Source
+
+class TopLevelDeclarationTests : XCTestCase {
+  func testEmptyContent() {
+    let topLevelDecl = TopLevelDeclaration()
+    XCTAssertEqual(topLevelDecl.sourceRange, .EMPTY)
+  }
+
+  static var allTests = [
+    ("testEmptyContent", testEmptyContent),
   ]
 }
-#endif
