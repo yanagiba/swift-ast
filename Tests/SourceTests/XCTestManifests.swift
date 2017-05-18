@@ -21,6 +21,7 @@ public func allTests() -> [XCTestCaseEntry] {
   return [
     testCase(SourceLocationTests.allTests),
     testCase(SourceRangeTests.allTests),
+    testCase(SourceReaderTests.allTests),
   ]
 }
 #endif
