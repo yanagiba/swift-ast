@@ -175,6 +175,7 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedCloseParenParenthesizedType
   case tupleTypeMultipleLabels
   case tupleTypeVariadicElement
+  case expectedTypeInTuple
 
   public var diagnosticMessage: String {
     switch self {
@@ -400,6 +401,8 @@ public enum ParserErrorKind : DiagnosticKind {
       return "tuple element cannot have two labels"
     case .tupleTypeVariadicElement:
       return "tuple element cannot be variadic"
+    case .expectedTypeInTuple:
+      return "expected a type for tuple element"
     }
   }
 }

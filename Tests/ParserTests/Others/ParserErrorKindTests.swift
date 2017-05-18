@@ -218,6 +218,7 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("let foo: (Foo, Bar", .fatal, .expectedCloseParenParenthesizedType)
     parseProblematic("let foo: (x y: Foo)", .fatal, .tupleTypeMultipleLabels)
     parseProblematic("let foo: (x: Foo...)", .fatal, .tupleTypeVariadicElement)
+    // parseProblematic("let foo: (x)", .fatal, .expectedTypeInTuple)
   }
 
   static var allTests = [

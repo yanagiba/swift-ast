@@ -232,7 +232,7 @@ extension Parser {
       return ParenthesizedType.Element(type: nonLabeledType)
     }
     guard let typeAnnotation = try parseTypeAnnotation() else {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedTypeInTuple)
     }
     return ParenthesizedType.Element(
       type: typeAnnotation.type,
