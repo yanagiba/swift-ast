@@ -78,7 +78,19 @@ let package = Package(
       ]
     ),
     Target(
+      name: "DiagnosticTests",
+      dependencies: [
+        "Diagnostic",
+      ]
+    ),
+    Target(
       name: "ASTTests",
+      dependencies: [
+        "AST",
+      ]
+    ),
+    Target(
+      name: "ASTVisitorTests",
       dependencies: [
         "AST",
       ]
@@ -93,12 +105,6 @@ let package = Package(
       name: "ParserTests",
       dependencies: [
         "Parser",
-      ]
-    ),
-    Target(
-      name: "ASTVisitorTests",
-      dependencies: [
-        "AST",
       ]
     ),
     Target(
