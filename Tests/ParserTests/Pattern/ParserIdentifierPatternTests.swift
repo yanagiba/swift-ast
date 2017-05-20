@@ -31,6 +31,29 @@ class ParserIdentifierPatternTests: XCTestCase {
     })
   }
 
+  func testKeywordsUsedAsIdentifier() {
+    let keywords = [
+      "Any",
+      "Self",
+      "get",
+      "set",
+      "left",
+      "right",
+      "open",
+    ]
+    for keyword in keywords {
+      parsePatternAndTest(keyword, keyword, testClosure: { pttrn in
+        guard let idPattern = pttrn as? IdentifierPattern else {
+          XCTFail("Failed in parsing an id pattern.")
+          return
+        }
+
+        XCTAssertEqual(idPattern.identifier, keyword)
+        XCTAssertNil(idPattern.typeAnnotation)
+      })
+    }
+  }
+
   func testTypeAnnotation() {
     parsePatternAndTest("foo   :   Bar", "foo: Bar", testClosure: { pttrn in
       guard let idPattern = pttrn as? IdentifierPattern else {
@@ -54,6 +77,7 @@ class ParserIdentifierPatternTests: XCTestCase {
 
   static var allTests = [
     ("testParseIdentifierPattern", testParseIdentifierPattern),
+    ("testKeywordsUsedAsIdentifier", testKeywordsUsedAsIdentifier),
     ("testTypeAnnotation", testTypeAnnotation),
     ("testSourceRange", testSourceRange),
   ]
