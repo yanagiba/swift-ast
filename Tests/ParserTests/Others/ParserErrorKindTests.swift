@@ -69,6 +69,7 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("operator <!>", .fatal, .operatorDeclarationHasNoFixity)
     parseProblematic("fileprivate operator <!>", .fatal, .operatorDeclarationHasNoFixity)
     parseProblematic("infix operator <!>:", .fatal, .expectedOperatorNameAfterInfixOperator)
+    parseProblematic("infix operator <!> {}", .warning, .operatorHasBody)
 
     // subscript declaration
     parseProblematic("subscript()", .fatal, .expectedArrowSubscript)

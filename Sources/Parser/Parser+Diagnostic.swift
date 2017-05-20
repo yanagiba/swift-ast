@@ -69,6 +69,7 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedValidOperator
   case operatorDeclarationHasNoFixity
   case expectedOperatorNameAfterInfixOperator
+  case operatorHasBody
   /// subscript declaration
   case expectedArrowSubscript
   /// extension declaration
@@ -235,6 +236,8 @@ public enum ParserErrorKind : DiagnosticKind {
       return "operator must be declared as 'prefix', 'postfix', or 'infix'"
     case .expectedOperatorNameAfterInfixOperator:
       return "expected operator name in infix operator declaration"
+    case .operatorHasBody:
+      return "operator should no longer be declared with body"
     case .expectedArrowSubscript:
       return "expected '->' for subscript declaration"
     case .missingExtensionName:
