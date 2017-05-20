@@ -336,7 +336,7 @@ extension Parser {
     }
 
     let examined = _lexer.examine([
-      .throws, .rethrows, .arrow, .postfixQuestion, .postfixExclaim, .dot,
+      .throws, .rethrows, .arrow, .dot,
     ])
     guard examined.0 else {
       return try getAtomicType()
@@ -358,12 +358,6 @@ extension Parser {
     case .arrow:
       parsedType = try parseFunctionType(
         attributes: attrs, type: type, throwKind: .nothrowing)
-    case .postfixQuestion:
-      let atomicType = try getAtomicType()
-      parsedType = OptionalType(wrappedType: atomicType)
-    case .postfixExclaim:
-      let atomicType = try getAtomicType()
-      parsedType = ImplicitlyUnwrappedOptionalType(wrappedType: atomicType)
     case .dot:
       let atomicType = try getAtomicType()
       let metatypeEndLocation = getEndLocation()
