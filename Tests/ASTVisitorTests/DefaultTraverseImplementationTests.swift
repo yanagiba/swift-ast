@@ -90,6 +90,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       members: [
         .declaration(StructDeclaration(name: "test")),
         .compilerControl(CompilerControlStatement(kind: .endif)),
+        .rawValue(EnumDeclaration.RawValueStyleEnumCase(cases: [])),
       ]
     )
     do {
@@ -132,7 +133,8 @@ class DefaultTraverseImplementationTests : XCTestCase {
             defaultArgumentClause: WildcardExpression()
           ),
         ]
-      )
+      ),
+      body: CodeBlock()
     )
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
@@ -199,6 +201,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
     let node = ProtocolDeclaration(
       name: "test",
       members: [
+        .associatedType(ProtocolDeclaration.AssociativityTypeMember(name: "test")),
         .method(ProtocolDeclaration.MethodMember(
           name: "test",
           signature: FunctionSignature(
@@ -312,6 +315,21 @@ class DefaultTraverseImplementationTests : XCTestCase {
     }
   }
 
+  func testVisitSubscriptDeclarationWithGetterSetterKeywordBlock() {
+    let node = SubscriptDeclaration(
+      resultType: AnyType(),
+      getterSetterKeywordBlock: GetterSetterKeywordBlock(
+        getter: GetterSetterKeywordBlock.GetterKeywordClause()
+      )
+    )
+    do {
+      let result = try defaultVisitor.traverse(node as Declaration)
+      XCTAssertTrue(result)
+    } catch {
+      XCTFail("Failed in visiting SubscriptDeclaration with getter-setter block")
+    }
+  }
+
   func testVisitTypealiasDeclaration() {
     let node = TypealiasDeclaration(name: "test", assignment: AnyType())
     do {
@@ -374,6 +392,22 @@ class DefaultTraverseImplementationTests : XCTestCase {
       willSetDidSetBlock: WillSetDidSetBlock(
         willSetClause: WillSetDidSetBlock.WillSetClause(codeBlock: CodeBlock()),
         didSetClause: WillSetDidSetBlock.DidSetClause(codeBlock: CodeBlock())
+      )
+    )
+    do {
+      let result = try defaultVisitor.traverse(node as Declaration)
+      XCTAssertTrue(result)
+    } catch {
+      XCTFail("Failed in visiting VariableDeclaration")
+    }
+  }
+
+  func testVisitVariableDeclarationWithGetterSetterKeywordBlock() {
+    let node = VariableDeclaration(
+      variableName: "test",
+      typeAnnotation: TypeAnnotation(type: AnyType()),
+      getterSetterKeywordBlock: GetterSetterKeywordBlock(
+        getter: GetterSetterKeywordBlock.GetterKeywordClause()
       )
     )
     do {
@@ -476,6 +510,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
         .case(WildcardPattern(), WildcardExpression()),
         .let(WildcardPattern(), WildcardExpression()),
         .var(WildcardPattern(), WildcardExpression()),
+        .availability(AvailabilityCondition(arguments: [])),
       ],
       codeBlock: CodeBlock()
     )
@@ -542,8 +577,11 @@ class DefaultTraverseImplementationTests : XCTestCase {
     let node = SwitchStatement(
       expression: WildcardExpression(),
       cases: [
-        .case([SwitchStatement.Case.Item(pattern: WildcardPattern(), whereExpression: WildcardExpression())], []),
-        .default([]),
+        .case([SwitchStatement.Case.Item(
+          pattern: WildcardPattern(),
+          whereExpression: WildcardExpression())],
+          [WildcardExpression()]),
+        .default([WildcardExpression()]),
       ]
     )
     do {
@@ -655,6 +693,8 @@ class DefaultTraverseImplementationTests : XCTestCase {
         .namedExpression("test", WildcardExpression()),
         .memoryReference(WildcardExpression()),
         .namedMemoryReference("test", WildcardExpression()),
+        .operator("test"),
+        .namedOperator("test", "test"),
       ],
       trailingClosure: ClosureExpression()
     )
@@ -796,6 +836,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       SelectorExpression(kind: .selector(WildcardExpression())),
       SelectorExpression(kind: .getter(WildcardExpression())),
       SelectorExpression(kind: .setter(WildcardExpression())),
+      SelectorExpression(kind: .selfMember("test", [])),
     ]
     do {
       for node in nodes {
@@ -808,10 +849,15 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitSelfExpression() {
-    let node = SelfExpression(kind: .subscript([WildcardExpression()]))
+    let nodes = [
+      SelfExpression(kind: .subscript([WildcardExpression()])),
+      SelfExpression(kind: .initializer),
+    ]
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
-      XCTAssertTrue(result)
+      for node in nodes {
+        let result = try defaultVisitor.traverse(node as Expression)
+        XCTAssertTrue(result)
+      }
     } catch {
       XCTFail("Failed in visiting SelfExpression")
     }
@@ -831,10 +877,15 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitSuperclassExpression() {
-    let node = SuperclassExpression(kind: .subscript([WildcardExpression()]))
+    let nodes = [
+      SuperclassExpression(kind: .subscript([WildcardExpression()])),
+      SuperclassExpression(kind: .initializer),
+    ]
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
-      XCTAssertTrue(result)
+      for node in nodes {
+        let result = try defaultVisitor.traverse(node as Expression)
+        XCTAssertTrue(result)
+      }
     } catch {
       XCTFail("Failed in visiting SuperclassExpression")
     }
@@ -931,11 +982,13 @@ class DefaultTraverseImplementationTests : XCTestCase {
     ("testVisitStructDeclaration", testVisitStructDeclaration),
     ("testVisitSubscriptDeclarationWithCodeBlock", testVisitSubscriptDeclarationWithCodeBlock),
     ("testVisitSubscriptDeclarationWithGetterSetterBlock", testVisitSubscriptDeclarationWithGetterSetterBlock),
+    ("testVisitSubscriptDeclarationWithGetterSetterKeywordBlock", testVisitSubscriptDeclarationWithGetterSetterKeywordBlock),
     ("testVisitTypealiasDeclaration", testVisitTypealiasDeclaration),
     ("testVisitVariableDeclarationWithInitializerList", testVisitVariableDeclarationWithInitializerList),
     ("testVisitVariableDeclarationWithCodeBlock", testVisitVariableDeclarationWithCodeBlock),
     ("testVisitVariableDeclarationWithGetterSetterBlock", testVisitVariableDeclarationWithGetterSetterBlock),
     ("testVisitVariableDeclarationWithWillSetDidSetBlock", testVisitVariableDeclarationWithWillSetDidSetBlock),
+    ("testVisitVariableDeclarationWithGetterSetterKeywordBlock", testVisitVariableDeclarationWithGetterSetterKeywordBlock),
     ("testVisitBreakStatement", testVisitBreakStatement),
     ("testVisitCompilerControlStatement", testVisitCompilerControlStatement),
     ("testVisitContinueStatement", testVisitContinueStatement),
