@@ -697,12 +697,11 @@ extension ASTVisitor {
   public func traverse(_ expr: SelfExpression) throws -> Bool {
     guard try visit(expr) else { return false }
 
-    switch expr.kind {
-    case .subscript(let exprs):
+    if case .subscript(let exprs) = expr.kind {
       return try traverse(exprs)
-    default:
-      return true
     }
+
+    return true
   }
 
   public func traverse(_ expr: SubscriptExpression) throws -> Bool {
@@ -715,12 +714,11 @@ extension ASTVisitor {
   public func traverse(_ expr: SuperclassExpression) throws -> Bool {
     guard try visit(expr) else { return false }
 
-    switch expr.kind {
-    case .subscript(let exprs):
+    if case .subscript(let exprs) = expr.kind {
       return try traverse(exprs)
-    default:
-      return true
     }
+
+    return true
   }
 
   public func traverse(_ expr: TernaryConditionalOperatorExpression) throws -> Bool {

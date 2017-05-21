@@ -190,6 +190,88 @@ class LexerTests: XCTestCase {
     }
   }
 
+  func testEqutables() {
+    XCTAssertTrue(Token.Kind.eof.isEqual(toKindOf: .eof))
+    XCTAssertTrue(Token.Kind.eof.isEqual(to: .eof))
+    XCTAssertTrue(Token.Kind.hash.isEqual(toKindOf: .hash))
+    XCTAssertTrue(Token.Kind.hash.isEqual(to: .hash))
+
+    XCTAssertTrue(Token.Kind.invalid(.unicodeLiteralExpected).isEqual(toKindOf: .invalid(.unicodeLiteralExpected)))
+    XCTAssertTrue(Token.Kind.invalid(.digitCharExpected).isEqual(toKindOf: .invalid(.closingBacktickExpected)))
+    XCTAssertTrue(Token.Kind.invalid(.badNumber).isEqual(to: .invalid(.badNumber)))
+    XCTAssertFalse(Token.Kind.invalid(.dotOperatorRequiresTwoDots).isEqual(to: .invalid(.identifierHeadExpected)))
+
+    XCTAssertTrue(Token.Kind.prefixOperator("😄").isEqual(toKindOf: .prefixOperator("😄")))
+    XCTAssertTrue(Token.Kind.prefixOperator("😄").isEqual(toKindOf: .prefixOperator("😃")))
+    XCTAssertTrue(Token.Kind.prefixOperator("😈").isEqual(to: .prefixOperator("😈")))
+    XCTAssertFalse(Token.Kind.prefixOperator("🍙").isEqual(to: .prefixOperator("🍘")))
+
+    XCTAssertTrue(Token.Kind.binaryOperator("😄").isEqual(toKindOf: .binaryOperator("😄")))
+    XCTAssertTrue(Token.Kind.binaryOperator("😄").isEqual(toKindOf: .binaryOperator("😃")))
+    XCTAssertTrue(Token.Kind.binaryOperator("😈").isEqual(to: .binaryOperator("😈")))
+    XCTAssertFalse(Token.Kind.binaryOperator("🍙").isEqual(to: .binaryOperator("🍘")))
+
+    XCTAssertTrue(Token.Kind.postfixOperator("😄").isEqual(toKindOf: .postfixOperator("😄")))
+    XCTAssertTrue(Token.Kind.postfixOperator("😄").isEqual(toKindOf: .postfixOperator("😃")))
+    XCTAssertTrue(Token.Kind.postfixOperator("😈").isEqual(to: .postfixOperator("😈")))
+    XCTAssertFalse(Token.Kind.postfixOperator("🍙").isEqual(to: .postfixOperator("🍘")))
+
+    XCTAssertTrue(Token.Kind.identifier("😄").isEqual(toKindOf: .identifier("😄")))
+    XCTAssertTrue(Token.Kind.identifier("😄").isEqual(toKindOf: .identifier("😃")))
+    XCTAssertTrue(Token.Kind.identifier("😈").isEqual(to: .identifier("😈")))
+    XCTAssertFalse(Token.Kind.identifier("🍙").isEqual(to: .identifier("🍘")))
+
+    XCTAssertTrue(Token.Kind.implicitParameterName(1).isEqual(toKindOf: .implicitParameterName(1)))
+    XCTAssertTrue(Token.Kind.implicitParameterName(2).isEqual(toKindOf: .implicitParameterName(3)))
+    XCTAssertTrue(Token.Kind.implicitParameterName(4).isEqual(to: .implicitParameterName(4)))
+    XCTAssertFalse(Token.Kind.implicitParameterName(5).isEqual(to: .implicitParameterName(6)))
+
+    XCTAssertTrue(
+      Token.Kind.integerLiteral(1, rawRepresentation: "2", onlyContainPositiveDecimals: true).isEqual(to:
+        .integerLiteral(1, rawRepresentation: "2", onlyContainPositiveDecimals: false)))
+    XCTAssertFalse(
+      Token.Kind.integerLiteral(1, rawRepresentation: "2", onlyContainPositiveDecimals: true).isEqual(to:
+        .integerLiteral(2, rawRepresentation: "2", onlyContainPositiveDecimals: false)))
+    XCTAssertFalse(
+      Token.Kind.integerLiteral(1, rawRepresentation: "1", onlyContainPositiveDecimals: true).isEqual(to:
+        .integerLiteral(1, rawRepresentation: "2", onlyContainPositiveDecimals: false)))
+
+    XCTAssertTrue(
+      Token.Kind.floatingPointLiteral(1, rawRepresentation: "2").isEqual(to:
+        .floatingPointLiteral(1, rawRepresentation: "2")))
+    XCTAssertFalse(
+      Token.Kind.floatingPointLiteral(1, rawRepresentation: "2").isEqual(to:
+        .floatingPointLiteral(2, rawRepresentation: "2")))
+    XCTAssertFalse(
+      Token.Kind.floatingPointLiteral(1, rawRepresentation: "1").isEqual(to:
+        .floatingPointLiteral(1, rawRepresentation: "2")))
+
+    XCTAssertTrue(
+      Token.Kind.staticStringLiteral("1", rawRepresentation: "2").isEqual(to:
+        .staticStringLiteral("1", rawRepresentation: "2")))
+    XCTAssertFalse(
+      Token.Kind.staticStringLiteral("1", rawRepresentation: "2").isEqual(to:
+        .staticStringLiteral("2", rawRepresentation: "2")))
+    XCTAssertFalse(
+      Token.Kind.staticStringLiteral("1", rawRepresentation: "1").isEqual(to:
+        .staticStringLiteral("1", rawRepresentation: "2")))
+
+    XCTAssertTrue(
+      Token.Kind.interpolatedStringLiteralHead("1", rawRepresentation: "2").isEqual(to:
+        .interpolatedStringLiteralHead("1", rawRepresentation: "2")))
+    XCTAssertFalse(
+      Token.Kind.interpolatedStringLiteralHead("1", rawRepresentation: "2").isEqual(to:
+        .interpolatedStringLiteralHead("2", rawRepresentation: "2")))
+    XCTAssertFalse(
+      Token.Kind.interpolatedStringLiteralHead("1", rawRepresentation: "1").isEqual(to:
+        .interpolatedStringLiteralHead("1", rawRepresentation: "2")))
+
+    XCTAssertTrue(Token.Kind.booleanLiteral(true).isEqual(toKindOf: .booleanLiteral(true)))
+    XCTAssertTrue(Token.Kind.booleanLiteral(true).isEqual(toKindOf: .booleanLiteral(false)))
+    XCTAssertTrue(Token.Kind.booleanLiteral(false).isEqual(to: .booleanLiteral(false)))
+    XCTAssertFalse(Token.Kind.booleanLiteral(false).isEqual(to: .booleanLiteral(true)))
+  }
+
   static var allTests = [
     ("testEmptyContent", testEmptyContent),
     ("testArrow", testArrow),
@@ -210,5 +292,6 @@ class LexerTests: XCTestCase {
     ("testAllSpacesAreSkipped", testAllSpacesAreSkipped),
     ("testLineFeed", testLineFeed),
     ("testSegmentShowUpAtInvalidLocation", testSegmentShowUpAtInvalidLocation),
+    ("testEqutables", testEqutables),
   ]
 }

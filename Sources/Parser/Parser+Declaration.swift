@@ -476,6 +476,12 @@ extension Parser {
     default:
       throw _raiseFatal(.operatorDeclarationHasNoFixity)
     }
+
+    if _lexer.look().kind == .leftBrace {
+      _ = try parseCodeBlock()
+      try _raiseWarning(.operatorHasBody)
+    }
+
     let opDecl = OperatorDeclaration(kind: kind)
     opDecl.setSourceRange(startLocation, endLocation)
     return opDecl

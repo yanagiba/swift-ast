@@ -17,15 +17,21 @@
 import XCTest
 
 import CanaryTests
+import SourceTests
+import ASTTests
+import ASTVisitorTests
+import DiagnosticTests
 import LexerTests
 import ParserTests
-import ASTVisitorTests
 import IntegrationTests
 
 var tests = [XCTestCaseEntry]()
 tests += CanaryTests.allTests()
+tests += SourceTests.allTests()
+tests += ASTTests.allTests()
+tests += ASTVisitorTests.allTests()
+tests += DiagnosticTests.allTests()
 tests += LexerTests.allTests()
 tests += ParserTests.allTests()
-tests += ASTVisitorTests.allTests()
 tests += IntegrationTests.allTests()
 XCTMain(tests)

@@ -72,6 +72,10 @@ class LexerNumericLiteralTests: XCTestCase {
     let decimals: [(testString: String, expectedInt: Int)] = [
       ("0", 0),
       ("1", 1),
+      ("000", 0),
+      ("0_00", 0),
+      ("01", 1),
+      ("09", 9),
       ("100", 100),
       ("300_200_100", 3_0020_0100),
       ("-123", -123),
@@ -117,6 +121,7 @@ class LexerNumericLiteralTests: XCTestCase {
   func testDecimalFloatingLiterals() {
     let decimals: [(testString: String, expectedDouble: Double)] = [
       ("0.0", 0),
+      ("0E2", 0),
       ("1.1", 1.1),
       ("1.0001", 1.0001),
       ("10_0.3_00", 100.3),

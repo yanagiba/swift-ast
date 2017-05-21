@@ -1,29 +1,29 @@
-top_level_decl <range: TTYASTDumpTestResources/DoStatementTests.swift:17:1-29.2>
-  do_stmt <range: TTYASTDumpTestResources/DoStatementTests.swift:17:1-19.2>
-    try_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:18:3-18.10>
+top_level_decl <range: TTYASTDumpTestResources/DoStatementTests.swift:17:1-29:2>
+  do_stmt <range: TTYASTDumpTestResources/DoStatementTests.swift:17:1-19:2>
+    try_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:18:3-18:10>
       kind: `try`
-      identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:18:7-18.10>
+      identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:18:7-18:10>
         kind: `identifier`, identifier: `foo`
     catches: <empty>
-  do_stmt <range: TTYASTDumpTestResources/DoStatementTests.swift:21:1-29.2>
-    try_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:22:3-22.17>
+  do_stmt <range: TTYASTDumpTestResources/DoStatementTests.swift:21:1-29:2>
+    try_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:22:3-22:17>
       kind: `try`
-      identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:22:7-22.17>
+      identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:22:7-22:17>
         kind: `identifier`, identifier: `expression`
     catches:
     0: pattern: `pattern1`
-      function_call_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:24:3-24.8>
-        identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:24:3-24.6>
+      function_call_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:24:3-24:8>
+        identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:24:3-24:6>
           kind: `identifier`, identifier: `foo`
         arguments: <empty>
-    1: pattern: `pattern2`, where: `identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:25:24-25.33>
+    1: pattern: `pattern2`, where: `identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:25:24-25:33>
     kind: `identifier`, identifier: `condition``
-      function_call_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:26:3-26.8>
-        identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:26:3-26.6>
+      function_call_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:26:3-26:8>
+        identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:26:3-26:6>
           kind: `identifier`, identifier: `bar`
         arguments: <empty>
     2: <catch_all>
-      function_call_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:28:3-28.8>
-        identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:28:3-28.6>
+      function_call_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:28:3-28:8>
+        identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:28:3-28:6>
           kind: `identifier`, identifier: `all`
         arguments: <empty>

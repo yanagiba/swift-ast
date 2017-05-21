@@ -19,10 +19,9 @@ import XCTest
 #if !os(macOS)
 public func allTests() -> [XCTestCaseEntry] {
   return [
-    testCase(DefaultVisitImplementationTests.allTests),
-    testCase(DefaultTraverseImplementationTests.allTests),
-    testCase(ASTVisitorTopLevelDeclTraversalTests.allTests),
-    testCase(ASTVisitorCodeBlockTraversalTests.allTests),
+    testCase(SourceLocationTests.allTests),
+    testCase(SourceRangeTests.allTests),
+    testCase(SourceReaderTests.allTests),
   ]
 }
 #endif

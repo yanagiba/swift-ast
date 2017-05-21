@@ -50,15 +50,6 @@ extension Parser {
     case .binaryOperator(let op):
       verifiedOperator =
         checkOperatorReservation(againstModifier: kind, op: op)
-    case .postfixOperator(let op):
-      verifiedOperator =
-        checkOperatorReservation(againstModifier: kind, op: op)
-    case .postfixExclaim:
-      verifiedOperator =
-        checkOperatorReservation(againstModifier: kind, op: "!")
-    case .rightChevron:
-      verifiedOperator =
-        checkOperatorReservation(againstModifier: kind, op: ">")
     case .prefixAmp:
       verifiedOperator =
         checkOperatorReservation(againstModifier: kind, op: "&")
@@ -68,6 +59,18 @@ extension Parser {
     case .binaryQuestion, .postfixQuestion, .prefixQuestion:
       verifiedOperator =
         checkOperatorReservation(againstModifier: kind, op: "?")
+    // Note: these scenarios should never happen from a lexical point of view,
+    //       and once they are parsed as postfix operator,
+    //       then they will be treated like that afterwards
+    // case .postfixOperator(let op):
+    //   verifiedOperator =
+    //     checkOperatorReservation(againstModifier: kind, op: op)
+    // case .postfixExclaim:
+    //   verifiedOperator =
+    //     checkOperatorReservation(againstModifier: kind, op: "!")
+    // case .rightChevron:
+    //   verifiedOperator =
+    //     checkOperatorReservation(againstModifier: kind, op: ">")
     default:
       break
     }

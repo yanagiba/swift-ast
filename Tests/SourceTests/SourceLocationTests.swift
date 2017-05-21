@@ -14,10 +14,20 @@
    limitations under the License.
 */
 
-public typealias DeclarationList = [Declaration]
+import XCTest
 
-extension Collection where Iterator.Element == Declaration {
-  public var textDescription: String {
-    return self.map({ $0.textDescription }).joined(separator: "\n")
+@testable import Source
+
+class SourceLocationTests : XCTestCase {
+  func testDummyLocation() {
+    let loc = SourceLocation.DUMMY
+    XCTAssertEqual(loc.path, "dummy")
+    XCTAssertEqual(loc.line, 0)
+    XCTAssertEqual(loc.column, 0)
+    XCTAssertEqual(loc.description, "dummy:0:0")
   }
+
+  static var allTests = [
+    ("testDummyLocation", testDummyLocation),
+  ]
 }

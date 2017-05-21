@@ -16,13 +16,22 @@
 
 import XCTest
 
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(DefaultVisitImplementationTests.allTests),
-    testCase(DefaultTraverseImplementationTests.allTests),
-    testCase(ASTVisitorTopLevelDeclTraversalTests.allTests),
-    testCase(ASTVisitorCodeBlockTraversalTests.allTests),
+@testable import Source
+
+class SourceRangeTests : XCTestCase {
+  func testDummyRange() {
+    let range = SourceRange.EMPTY
+    XCTAssertEqual(range, SourceRange(start: .DUMMY, end: .DUMMY))
+    XCTAssertEqual(range.start.path, "dummy")
+    XCTAssertEqual(range.start.line, 0)
+    XCTAssertEqual(range.start.column, 0)
+    XCTAssertEqual(range.end.path, "dummy")
+    XCTAssertEqual(range.end.line, 0)
+    XCTAssertEqual(range.end.column, 0)
+    XCTAssertEqual(range.description, "dummy:0:0-0:0")
+  }
+
+  static var allTests = [
+    ("testDummyRange", testDummyRange),
   ]
 }
-#endif

@@ -60,9 +60,16 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("infix operator a", .fatal, .expectedValidOperator)
     parseProblematic("infix operator", .fatal, .expectedValidOperator)
     parseProblematic("infix operator ?", .fatal, .expectedValidOperator)
+    parseProblematic("prefix operator &", .fatal, .expectedValidOperator)
+    parseProblematic("prefix operator <", .fatal, .expectedValidOperator)
+    parseProblematic("prefix operator ?", .fatal, .expectedValidOperator)
+    parseProblematic("postfix operator !", .fatal, .expectedValidOperator)
+    parseProblematic("postfix operator >", .fatal, .expectedValidOperator)
+    parseProblematic("postfix operator ?", .fatal, .expectedValidOperator)
     parseProblematic("operator <!>", .fatal, .operatorDeclarationHasNoFixity)
     parseProblematic("fileprivate operator <!>", .fatal, .operatorDeclarationHasNoFixity)
     parseProblematic("infix operator <!>:", .fatal, .expectedOperatorNameAfterInfixOperator)
+    parseProblematic("infix operator <!> {}", .warning, .operatorHasBody)
 
     // subscript declaration
     parseProblematic("subscript()", .fatal, .expectedArrowSubscript)
@@ -102,6 +109,7 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("prefix postfix func foo()", .error, .duplicatedFunctionModifiers)
     parseProblematic("prefix infix func foo()", .error, .duplicatedFunctionModifiers)
     parseProblematic("func ()", .fatal, .missingFunctionName)
+    parseProblematic("func ?()", .fatal, .missingFunctionName)
 
     // func declaration
     parseProblematic("typealias", .fatal, .missingTypealiasName)

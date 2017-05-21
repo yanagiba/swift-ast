@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/BreakStatementTests.swift:17:1-18.6>
-  break_stmt <range: TTYASTDumpTestResources/BreakStatementTests.swift:17:1-17.10>
+top_level_decl <range: TTYASTDumpTestResources/BreakStatementTests.swift:17:1-18:6>
+  break_stmt <range: TTYASTDumpTestResources/BreakStatementTests.swift:17:1-17:10>
     label_name: `foo`
-  break_stmt <range: TTYASTDumpTestResources/BreakStatementTests.swift:18:1-18.6>
+  break_stmt <range: TTYASTDumpTestResources/BreakStatementTests.swift:18:1-18:6>

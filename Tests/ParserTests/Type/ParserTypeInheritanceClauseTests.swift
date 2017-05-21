@@ -71,7 +71,7 @@ class ParserTypeInheritanceClauseTests: XCTestCase {
     let typeParser = getParser(": A, class, B")
     let nilExpectation = expectation(description: "Expect type inheritance clause to be nil.")
     do {
-      try typeParser.parseTypeInheritanceClause()
+      _ = try typeParser.parseTypeInheritanceClause()
       XCTFail("Should not get a type inheritance clause.")
     } catch {
       nilExpectation.fulfill()

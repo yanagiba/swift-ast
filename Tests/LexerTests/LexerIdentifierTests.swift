@@ -40,6 +40,12 @@ class LexerIdentifierTests: XCTestCase {
     }
   }
 
+  func testBacktickIdentifierMissingClosingBacktick() {
+    lexAndTest("`class") { t in
+      XCTAssertEqual(t, .invalid(.closingBacktickExpected))
+    }
+  }
+
   func testImplicitParameterName() {
     let decimalDigits = [0, 1, 12, 123]
     decimalDigits.forEach { d in
@@ -50,9 +56,26 @@ class LexerIdentifierTests: XCTestCase {
     }
   }
 
+  func testStructName() {
+    lexAndTest("foo") { t in
+      XCTAssertEqual(t.structName, "foo")
+    }
+    lexAndTest("Type") { t in
+      XCTAssertEqual(t.structName, "Type")
+    }
+    lexAndTest("Protocol") { t in
+      XCTAssertEqual(t.structName, "Protocol")
+    }
+    lexAndTest("class") { t in
+      XCTAssertNil(t.structName)
+    }
+  }
+
   static var allTests = [
     ("testIdentifiers", testIdentifiers),
     ("testBacktickIdentifiers", testBacktickIdentifiers),
+    ("testBacktickIdentifierMissingClosingBacktick", testBacktickIdentifierMissingClosingBacktick),
     ("testImplicitParameterName", testImplicitParameterName),
+    ("testStructName", testStructName),
   ]
 }

@@ -42,12 +42,12 @@ extension SourceRange {
   public static let INVALID = SourceRange(start: .INVALID, end: .INVALID)
 
   public var isValid: Bool {
-    return start.isValid && end.isValid
+    return start.isValid || end.isValid
   }
 }
 
 extension SourceRange : CustomStringConvertible {
   public var description: String {
-    return "\(start.path):\(start.line):\(start.column)-\(end.line).\(end.column)"
+    return "\(start.path):\(start.line):\(start.column)-\(end.line):\(end.column)"
   }
 }
