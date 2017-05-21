@@ -20,7 +20,7 @@ import XCTest
 
 /// Just to make sure that we have implemented the `visit` methods
 /// for all AST nodes that we defined
-class ASTVisitorDefaultImplementationTests : XCTestCase {
+class DefaultVisitImplementationTests : XCTestCase {
   struct DefaultVisitor : ASTVisitor {}
   private let defaultVisitor = DefaultVisitor()
 
