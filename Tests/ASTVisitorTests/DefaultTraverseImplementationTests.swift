@@ -45,7 +45,13 @@ class DefaultTraverseImplementationTests : XCTestCase {
   // Declarations
 
   func testVisitClassDeclaration() {
-    let node = ClassDeclaration(name: "test")
+    let node = ClassDeclaration(
+      name: "test",
+      members: [
+        .declaration(StructDeclaration(name: "test")),
+        .compilerControl(CompilerControlStatement(kind: .endif)),
+      ]
+    )
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
@@ -55,7 +61,11 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitConstantDeclaration() {
-    let node = ConstantDeclaration(initializerList: [])
+    let node = ConstantDeclaration(initializerList: [
+      PatternInitializer(pattern: WildcardPattern()),
+      PatternInitializer(
+        pattern: WildcardPattern(), initializerExpression: WildcardExpression())
+    ])
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
@@ -75,7 +85,13 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitEnumDeclaration() {
-    let node = EnumDeclaration(name: "test")
+    let node = EnumDeclaration(
+      name: "test",
+      members: [
+        .declaration(StructDeclaration(name: "test")),
+        .compilerControl(CompilerControlStatement(kind: .endif)),
+      ]
+    )
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
@@ -86,7 +102,13 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitExtensionDeclaration() {
     let node = ExtensionDeclaration(
-      type: TypeIdentifier(), typeInheritanceClause: nil)
+      type: TypeIdentifier(),
+      typeInheritanceClause: nil,
+      members: [
+        .declaration(StructDeclaration(name: "test")),
+        .compilerControl(CompilerControlStatement(kind: .endif)),
+      ]
+    )
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
@@ -96,7 +118,22 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitFunctionDeclaration() {
-    let node = FunctionDeclaration(name: "test", signature: FunctionSignature())
+    let node = FunctionDeclaration(
+      name: "test",
+      signature: FunctionSignature(
+        parameterList: [
+          FunctionSignature.Parameter(
+            localName: "test",
+            typeAnnotation: TypeAnnotation(type: AnyType())
+          ),
+          FunctionSignature.Parameter(
+            localName: "test",
+            typeAnnotation: TypeAnnotation(type: AnyType()),
+            defaultArgumentClause: WildcardExpression()
+          ),
+        ]
+      )
+    )
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
@@ -116,7 +153,20 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitInitializerDeclaration() {
-    let node = InitializerDeclaration(body: CodeBlock())
+    let node = InitializerDeclaration(
+      parameterList: [
+        FunctionSignature.Parameter(
+          localName: "test",
+          typeAnnotation: TypeAnnotation(type: AnyType())
+        ),
+        FunctionSignature.Parameter(
+          localName: "test",
+          typeAnnotation: TypeAnnotation(type: AnyType()),
+          defaultArgumentClause: WildcardExpression()
+        ),
+      ],
+      body: CodeBlock()
+    )
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
@@ -146,7 +196,58 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitProtocolDeclaration() {
-    let node = ProtocolDeclaration(name: "test")
+    let node = ProtocolDeclaration(
+      name: "test",
+      members: [
+        .method(ProtocolDeclaration.MethodMember(
+          name: "test",
+          signature: FunctionSignature(
+            parameterList: [
+              FunctionSignature.Parameter(
+                localName: "test",
+                typeAnnotation: TypeAnnotation(type: AnyType())
+              ),
+              FunctionSignature.Parameter(
+                localName: "test",
+                typeAnnotation: TypeAnnotation(type: AnyType()),
+                defaultArgumentClause: WildcardExpression()
+              ),
+            ]
+          )
+        )),
+        .initializer(ProtocolDeclaration.InitializerMember(
+          parameterList: [
+            FunctionSignature.Parameter(
+              localName: "test",
+              typeAnnotation: TypeAnnotation(type: AnyType())
+            ),
+            FunctionSignature.Parameter(
+              localName: "test",
+              typeAnnotation: TypeAnnotation(type: AnyType()),
+              defaultArgumentClause: WildcardExpression()
+            ),
+          ]
+        )),
+        .subscript(ProtocolDeclaration.SubscriptMember(
+          parameterList: [
+            FunctionSignature.Parameter(
+              localName: "test",
+              typeAnnotation: TypeAnnotation(type: AnyType())
+            ),
+            FunctionSignature.Parameter(
+              localName: "test",
+              typeAnnotation: TypeAnnotation(type: AnyType()),
+              defaultArgumentClause: WildcardExpression()
+            ),
+          ],
+          resultType: AnyType(),
+          getterSetterKeywordBlock: GetterSetterKeywordBlock(
+            getter: GetterSetterKeywordBlock.GetterKeywordClause()
+          )
+        )),
+        .compilerControl(CompilerControlStatement(kind: .endif)),
+      ]
+    )
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
@@ -156,7 +257,13 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitStructDeclaration() {
-    let node = StructDeclaration(name: "test")
+    let node = StructDeclaration(
+      name: "test",
+      members: [
+        .declaration(StructDeclaration(name: "test")),
+        .compilerControl(CompilerControlStatement(kind: .endif)),
+      ]
+    )
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
@@ -165,14 +272,43 @@ class DefaultTraverseImplementationTests : XCTestCase {
     }
   }
 
-  func testVisitSubscriptDeclaration() {
+  func testVisitSubscriptDeclarationWithCodeBlock() {
     let node = SubscriptDeclaration(
-      resultType: AnyType(), codeBlock: CodeBlock())
+      parameterList: [
+        FunctionSignature.Parameter(
+          localName: "test",
+          typeAnnotation: TypeAnnotation(type: AnyType())
+        ),
+        FunctionSignature.Parameter(
+          localName: "test",
+          typeAnnotation: TypeAnnotation(type: AnyType()),
+          defaultArgumentClause: WildcardExpression()
+        ),
+      ],
+      resultType: AnyType(),
+      codeBlock: CodeBlock()
+    )
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
     } catch {
-      XCTFail("Failed in visiting SubscriptDeclaration")
+      XCTFail("Failed in visiting SubscriptDeclaration with code block")
+    }
+  }
+
+  func testVisitSubscriptDeclarationWithGetterSetterBlock() {
+    let node = SubscriptDeclaration(
+      resultType: AnyType(),
+      getterSetterBlock: GetterSetterBlock(
+        getter: GetterSetterBlock.GetterClause(codeBlock: CodeBlock()),
+        setter: GetterSetterBlock.SetterClause(codeBlock: CodeBlock())
+      )
+    )
+    do {
+      let result = try defaultVisitor.traverse(node as Declaration)
+      XCTAssertTrue(result)
+    } catch {
+      XCTFail("Failed in visiting SubscriptDeclaration with getter-setter block")
     }
   }
 
@@ -186,8 +322,60 @@ class DefaultTraverseImplementationTests : XCTestCase {
     }
   }
 
-  func testVisitVariableDeclaration() {
-    let node = VariableDeclaration(initializerList: [])
+  func testVisitVariableDeclarationWithInitializerList() {
+    let node = VariableDeclaration(initializerList: [
+      PatternInitializer(pattern: WildcardPattern()),
+      PatternInitializer(
+        pattern: WildcardPattern(), initializerExpression: WildcardExpression())
+    ])
+    do {
+      let result = try defaultVisitor.traverse(node as Declaration)
+      XCTAssertTrue(result)
+    } catch {
+      XCTFail("Failed in visiting VariableDeclaration")
+    }
+  }
+
+  func testVisitVariableDeclarationWithCodeBlock() {
+    let node = VariableDeclaration(
+      variableName: "test",
+      typeAnnotation: TypeAnnotation(type: AnyType()),
+      codeBlock: CodeBlock()
+    )
+    do {
+      let result = try defaultVisitor.traverse(node as Declaration)
+      XCTAssertTrue(result)
+    } catch {
+      XCTFail("Failed in visiting VariableDeclaration")
+    }
+  }
+
+  func testVisitVariableDeclarationWithGetterSetterBlock() {
+    let node = VariableDeclaration(
+      variableName: "test",
+      typeAnnotation: TypeAnnotation(type: AnyType()),
+      getterSetterBlock: GetterSetterBlock(
+        getter: GetterSetterBlock.GetterClause(codeBlock: CodeBlock()),
+        setter: GetterSetterBlock.SetterClause(codeBlock: CodeBlock())
+      )
+    )
+    do {
+      let result = try defaultVisitor.traverse(node as Declaration)
+      XCTAssertTrue(result)
+    } catch {
+      XCTFail("Failed in visiting VariableDeclaration")
+    }
+  }
+
+  func testVisitVariableDeclarationWithWillSetDidSetBlock() {
+    let node = VariableDeclaration(
+      variableName: "test",
+      initializer: WildcardExpression(),
+      willSetDidSetBlock: WillSetDidSetBlock(
+        willSetClause: WillSetDidSetBlock.WillSetClause(codeBlock: CodeBlock()),
+        didSetClause: WillSetDidSetBlock.DidSetClause(codeBlock: CodeBlock())
+      )
+    )
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
@@ -239,7 +427,15 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitDoStatement() {
-    let node = DoStatement(codeBlock: CodeBlock())
+    let node = DoStatement(
+      codeBlock: CodeBlock(),
+      catchClauses: [
+        DoStatement.CatchClause(
+          whereExpression: WildcardExpression(),
+          codeBlock: CodeBlock()
+        )
+      ]
+    )
     do {
       let result = try defaultVisitor.traverse(node as Statement)
       XCTAssertTrue(result)
@@ -262,6 +458,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
     let node = ForInStatement(
       matchingPattern: WildcardPattern(),
       collection: WildcardExpression(),
+      whereClause: WildcardExpression(),
       codeBlock: CodeBlock()
     )
     do {
@@ -273,7 +470,15 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitGuardStatement() {
-    let node = GuardStatement(conditionList: [], codeBlock: CodeBlock())
+    let node = GuardStatement(
+      conditionList: [
+        .expression(WildcardExpression()),
+        .case(WildcardPattern(), WildcardExpression()),
+        .let(WildcardPattern(), WildcardExpression()),
+        .var(WildcardPattern(), WildcardExpression()),
+      ],
+      codeBlock: CodeBlock()
+    )
     do {
       let result = try defaultVisitor.traverse(node as Statement)
       XCTAssertTrue(result)
@@ -283,7 +488,15 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitIfStatement() {
-    let node = IfStatement(conditionList: [], codeBlock: CodeBlock())
+    let node = IfStatement(
+      conditionList: [],
+      codeBlock: CodeBlock(),
+      elseClause: .elseif(IfStatement(
+        conditionList: [],
+        codeBlock: CodeBlock(),
+        elseClause: .else(CodeBlock())
+      ))
+    )
     do {
       let result = try defaultVisitor.traverse(node as Statement)
       XCTAssertTrue(result)
@@ -316,7 +529,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitReturnStatement() {
-    let node = ReturnStatement()
+    let node = ReturnStatement(expression: WildcardExpression())
     do {
       let result = try defaultVisitor.traverse(node as Statement)
       XCTAssertTrue(result)
@@ -326,7 +539,13 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitSwitchStatement() {
-    let node = SwitchStatement(expression: WildcardExpression())
+    let node = SwitchStatement(
+      expression: WildcardExpression(),
+      cases: [
+        .case([SwitchStatement.Case.Item(pattern: WildcardPattern(), whereExpression: WildcardExpression())], []),
+        .default([]),
+      ]
+    )
     do {
       let result = try defaultVisitor.traverse(node as Statement)
       XCTAssertTrue(result)
@@ -385,7 +604,14 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitClosureExpression() {
-    let node = ClosureExpression()
+    let node = ClosureExpression(
+      signature: ClosureExpression.Signature(captureList: [
+        ClosureExpression.Signature.CaptureItem(expression: WildcardExpression()),
+      ]),
+      statements: [
+        WildcardExpression(),
+      ]
+    )
     do {
       let result = try defaultVisitor.traverse(node as Expression)
       XCTAssertTrue(result)
@@ -395,10 +621,17 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitExplicitMemberExpression() {
-    let node = ExplicitMemberExpression(kind: .tuple(WildcardExpression(), 0))
+    let nodes = [
+      ExplicitMemberExpression(kind: .tuple(WildcardExpression(), 0)),
+      ExplicitMemberExpression(kind: .namedType(WildcardExpression(), "test")),
+      ExplicitMemberExpression(kind: .generic(WildcardExpression(), "test", GenericArgumentClause(argumentList: []))),
+      ExplicitMemberExpression(kind: .argument(WildcardExpression(), "test", [])),
+    ]
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
-      XCTAssertTrue(result)
+      for node in nodes {
+        let result = try defaultVisitor.traverse(node as Expression)
+        XCTAssertTrue(result)
+      }
     } catch {
       XCTFail("Failed in visiting ExplicitMemberExpression")
     }
@@ -417,7 +650,13 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitFunctionCallExpression() {
     let node = FunctionCallExpression(
       postfixExpression: WildcardExpression(),
-      argumentClause: []
+      argumentClause: [
+        .expression(WildcardExpression()),
+        .namedExpression("test", WildcardExpression()),
+        .memoryReference(WildcardExpression()),
+        .namedMemoryReference("test", WildcardExpression()),
+      ],
+      trailingClosure: ClosureExpression()
     )
     do {
       let result = try defaultVisitor.traverse(node as Expression)
@@ -478,10 +717,19 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitLiteralExpression() {
-    let node = LiteralExpression(kind: .nil)
+    let nodes = [
+      LiteralExpression(kind: .nil),
+      LiteralExpression(kind: .interpolatedString([WildcardExpression()], "test")),
+      LiteralExpression(kind: .array([WildcardExpression()])),
+      LiteralExpression(kind: .dictionary([
+        DictionaryEntry(key: WildcardExpression(), value: WildcardExpression())
+      ])),
+    ]
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
-      XCTAssertTrue(result)
+      for node in nodes {
+        let result = try defaultVisitor.traverse(node as Expression)
+        XCTAssertTrue(result)
+      }
     } catch {
       XCTFail("Failed in visiting LiteralExpression")
     }
@@ -544,17 +792,23 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitSelectorExpression() {
-    let node = SelectorExpression(kind: .selector(WildcardExpression()))
+    let nodes = [
+      SelectorExpression(kind: .selector(WildcardExpression())),
+      SelectorExpression(kind: .getter(WildcardExpression())),
+      SelectorExpression(kind: .setter(WildcardExpression())),
+    ]
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
-      XCTAssertTrue(result)
+      for node in nodes {
+        let result = try defaultVisitor.traverse(node as Expression)
+        XCTAssertTrue(result)
+      }
     } catch {
       XCTFail("Failed in visiting SelectorExpression")
     }
   }
 
   func testVisitSelfExpression() {
-    let node = SelfExpression(kind: .self)
+    let node = SelfExpression(kind: .subscript([WildcardExpression()]))
     do {
       let result = try defaultVisitor.traverse(node as Expression)
       XCTAssertTrue(result)
@@ -577,7 +831,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitSuperclassExpression() {
-    let node = SuperclassExpression(kind: .method("test"))
+    let node = SuperclassExpression(kind: .subscript([WildcardExpression()]))
     do {
       let result = try defaultVisitor.traverse(node as Expression)
       XCTAssertTrue(result)
@@ -601,17 +855,26 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitTryOperatorExpression() {
-    let node = TryOperatorExpression(kind: .try(WildcardExpression()))
+    let nodes = [
+      TryOperatorExpression(kind: .try(WildcardExpression())),
+      TryOperatorExpression(kind: .forced(WildcardExpression())),
+      TryOperatorExpression(kind: .optional(WildcardExpression())),
+    ]
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
-      XCTAssertTrue(result)
+      for node in nodes {
+        let result = try defaultVisitor.traverse(node as Expression)
+        XCTAssertTrue(result)
+      }
     } catch {
       XCTFail("Failed in visiting TryOperatorExpression")
     }
   }
 
   func testVisitTupleExpression() {
-    let node = TupleExpression()
+    let node = TupleExpression(elementList: [
+      TupleExpression.Element(expression: WildcardExpression()),
+      TupleExpression.Element(identifier: "test", expression: WildcardExpression()),
+    ])
     do {
       let result = try defaultVisitor.traverse(node as Expression)
       XCTAssertTrue(result)
@@ -621,11 +884,21 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitTypeCastingOperatorExpression() {
-    let node = TypeCastingOperatorExpression(
-      kind: .check(WildcardExpression(), AnyType()))
+    let nodes = [
+      TypeCastingOperatorExpression(
+        kind: .check(WildcardExpression(), AnyType())),
+      TypeCastingOperatorExpression(
+        kind: .cast(WildcardExpression(), AnyType())),
+      TypeCastingOperatorExpression(
+        kind: .conditionalCast(WildcardExpression(), AnyType())),
+      TypeCastingOperatorExpression(
+        kind: .forcedCast(WildcardExpression(), AnyType())),
+    ]
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
-      XCTAssertTrue(result)
+      for node in nodes {
+        let result = try defaultVisitor.traverse(node as Expression)
+        XCTAssertTrue(result)
+      }
     } catch {
       XCTFail("Failed in visiting TypeCastingOperatorExpression")
     }
@@ -656,9 +929,13 @@ class DefaultTraverseImplementationTests : XCTestCase {
     ("testVisitPrecedenceGroupDeclaration", testVisitPrecedenceGroupDeclaration),
     ("testVisitProtocolDeclaration", testVisitProtocolDeclaration),
     ("testVisitStructDeclaration", testVisitStructDeclaration),
-    ("testVisitSubscriptDeclaration", testVisitSubscriptDeclaration),
+    ("testVisitSubscriptDeclarationWithCodeBlock", testVisitSubscriptDeclarationWithCodeBlock),
+    ("testVisitSubscriptDeclarationWithGetterSetterBlock", testVisitSubscriptDeclarationWithGetterSetterBlock),
     ("testVisitTypealiasDeclaration", testVisitTypealiasDeclaration),
-    ("testVisitVariableDeclaration", testVisitVariableDeclaration),
+    ("testVisitVariableDeclarationWithInitializerList", testVisitVariableDeclarationWithInitializerList),
+    ("testVisitVariableDeclarationWithCodeBlock", testVisitVariableDeclarationWithCodeBlock),
+    ("testVisitVariableDeclarationWithGetterSetterBlock", testVisitVariableDeclarationWithGetterSetterBlock),
+    ("testVisitVariableDeclarationWithWillSetDidSetBlock", testVisitVariableDeclarationWithWillSetDidSetBlock),
     ("testVisitBreakStatement", testVisitBreakStatement),
     ("testVisitCompilerControlStatement", testVisitCompilerControlStatement),
     ("testVisitContinueStatement", testVisitContinueStatement),
