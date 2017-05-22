@@ -1,3 +1,9 @@
+### 🚨New Issue Checklist🚨
+
+- [ ] Updated swift-ast to the latest version
+- [ ] I have read the [Code of Conduct](http://contributor-covenant.org/version/1/4/)
+- [ ] I am aware that the `swift-ast -github-issue /path/to/file.swift` might help me generate this file
+
 ### Issue Summary
 [Insert a brief but thorough description of the issue]
 
