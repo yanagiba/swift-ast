@@ -156,8 +156,11 @@ private func genForParserError(
   content += "\n"
   content += "### Actual Behavior\n"
   content += "What currently happens as a result of the reproduction steps?\n"
+  content += "\n"
+  content += "```\n"
   content += diagnostics.map({ "\($0.location) \($0.level): \($0.kind)" }).joined(separator: "\n")
-  content += "\n\n"
+  content += "\n```\n"
+  content += "\n"
   content += "### Even Better\n"
   content += "Is your project open sourced? If yes, can you point us to your repository?\n"
   content += "If not, is it possible to make a small project that fails the Travis CI?\n"
