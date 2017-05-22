@@ -98,6 +98,7 @@ private func genForFilePathIssues(
   content += "`\(absolutePath)`\n"
   content += "\n"
   content += "Then `swift-ast` couldn't read from that path.\n"
+  content += "\n"
   content += "### Environment\n"
   content += "- OS Info: \(getOSInfo())\n"
   content += "- Yanagiba/swift-ast version: \(Version.current.library)\n"

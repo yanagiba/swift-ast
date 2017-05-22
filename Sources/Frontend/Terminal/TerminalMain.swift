@@ -40,6 +40,10 @@ public func terminalMain(
 
     guard let sourceFile = try? SourceReader.read(at: filePath) else {
       print("Can't read file, please double check the file path is correct.")
+      print()
+      print("If you think this is a bug, please run ")
+      print("swift-ast -github-issue \(filePath)".colored(with: .yellow))
+      print("and file a GitHub issue.")
       return -1
     }
     let diagnosticConsumer = TerminalDiagnosticConsumer()
