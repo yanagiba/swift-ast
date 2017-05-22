@@ -15,5 +15,5 @@
 */
 
 public enum SourceError : Error {
-  case cannotReadFile
+case cannotReadFile(String)
 }

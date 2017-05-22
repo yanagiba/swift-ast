@@ -302,13 +302,10 @@ extension Parser {
           return try parenthesizedType.toTupleType()
         }
         return type
-      } catch let e as ParenthesizedType.TupleConversionError {
-        switch e {
-        case .isVariadic:
-          throw _raiseFatal(.tupleTypeVariadicElement)
-        case .multipleLabels:
-          throw _raiseFatal(.tupleTypeMultipleLabels)
-        }
+      } catch ParenthesizedType.TupleConversionError.isVariadic {
+        throw _raiseFatal(.tupleTypeVariadicElement)
+      } catch ParenthesizedType.TupleConversionError.multipleLabels {
+        throw _raiseFatal(.tupleTypeMultipleLabels)
       }
     }
 
