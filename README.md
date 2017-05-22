@@ -102,6 +102,10 @@ providing the following option:
 - `-dump-ast`: in a tree structure
 - `-diagnostics-only`: no output other than the diagnostics information
 
+In addition, `-github-issue` can be provided as the first argument option,
+and the program will try to generate a GitHub issue template with pre-filled
+content for you.
+
 ### Use AST in Your Code
 
 #### Loop Through AST Nodes

@@ -21,7 +21,10 @@ var filePaths = CommandLine.arguments
 filePaths.remove(at: 0)
 
 let exitCode: Int32
-if filePaths.first == "-dump-ast" {
+if filePaths.first == "-github-issue" {
+  filePaths.remove(at: 0)
+  exitCode = terminalMain(filePaths: filePaths, isForGitHubIssue: true)
+} else if filePaths.first == "-dump-ast" {
   filePaths.remove(at: 0)
   exitCode = terminalMain(filePaths: filePaths, ttyType: .astDump)
 } else if filePaths.first == "-print-ast" {

@@ -20,7 +20,7 @@ public struct SourceReader {
   static public func read(at path: String) throws -> SourceFile {
     let absolutePath = path.absolutePath
     guard let content = try? absolutePath.readFile() else {
-      throw SourceError.cannotReadFile
+      throw SourceError.cannotReadFile(absolutePath)
     }
     return SourceFile(path: absolutePath, content: content)
   }
