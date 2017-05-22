@@ -40,16 +40,14 @@ public func terminalMain(
 
     guard let sourceFile = try? SourceReader.read(at: filePath) else {
       print("Can't read file, please double check the file path is correct.")
-      print()
-      print("If you think this is a bug, please run ")
-      print("swift-ast -github-issue \(filePath)".colored(with: .yellow))
-      print("and file a GitHub issue.")
+      printGitHubIssueInstructions(for: filePath)
       return -1
     }
     let diagnosticConsumer = TerminalDiagnosticConsumer()
     let parser = Parser(source: sourceFile)
     guard let topLevelDecl = try? parser.parse() else {
       DiagnosticPool.shared.report(withConsumer: diagnosticConsumer)
+      printGitHubIssueInstructions(for: filePath)
       return -2
     }
     DiagnosticPool.shared.report(withConsumer: diagnosticConsumer)
@@ -66,6 +64,13 @@ public func terminalMain(
   }
 
   return 0
+}
+
+private func printGitHubIssueInstructions(for filePath: String) {
+  print()
+  print("If you think this is a bug, please run ")
+  print("swift-ast -github-issue \(filePath)".colored(with: .yellow))
+  print("and file a GitHub issue.")
 }
 
 private func printHeader(for filePath: String) {

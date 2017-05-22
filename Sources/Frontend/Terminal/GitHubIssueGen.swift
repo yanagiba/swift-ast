@@ -31,8 +31,15 @@ func runGitHubIssueGen(for filePaths: [String]) -> Int32 {
   let outputPath = "swift-ast_github_issue_\(getCurrentDateString()).md"
 
   let filePath = filePaths[0]
+  var sourceFile: SourceFile? = nil
   do {
-    let sourceFile = try SourceReader.read(at: filePath)
+    let source = try SourceReader.read(at: filePath)
+    sourceFile = source
+
+    DiagnosticPool.shared.clear()
+    let parser = Parser(source: source)
+    _ = try parser.parse()
+
     print("🙈")
     print("Don't see any problems here.")
   } catch SourceError.cannotReadFile(let absolutePath) {
@@ -40,10 +47,24 @@ func runGitHubIssueGen(for filePaths: [String]) -> Int32 {
       filePath: filePath, absolutePath: absolutePath)
     flush(content, to: outputPath)
   } catch {
-
+    let diagnosticExtractor = DiagnosticExtractor()
+    DiagnosticPool.shared.report(withConsumer: diagnosticExtractor)
+    let diagnostics = diagnosticExtractor.diagnostics
+    let content = genForParserError(
+      sourceFile: sourceFile, diagnostics: diagnostics
+    )
+    flush(content, to: outputPath)
   }
 
   return 0
+}
+
+private class DiagnosticExtractor : DiagnosticConsumer {
+  var diagnostics: [Diagnostic] = []
+
+  func consume(diagnostics: [Diagnostic]) {
+    self.diagnostics = diagnostics
+  }
 }
 
 private func getCurrentDateString() -> String {
@@ -103,5 +124,43 @@ private func genForFilePathIssues(
   content += "- OS Info: \(getOSInfo())\n"
   content += "- Yanagiba/swift-ast version: \(Version.current.library)\n"
   content += "\n"
+  return content
+}
+
+private func genForParserError(
+  sourceFile: SourceFile?, diagnostics: [Diagnostic]
+) -> String {
+  var content = ""
+  content += "### Issue Summary\n"
+  content += "[A brief but thorough description of the issue]\n"
+  content += "\n"
+  content += "### Environment\n"
+  content += "- OS Info: \(getOSInfo())\n"
+  content += "- Yanagiba/swift-ast version: \(Version.current.library)\n"
+  content += "\n"
+  content += "### Reproduction Steps\n"
+  content += "[Detailed steps to reproduce the issue.]\n"
+  content += "\n"
+  content += "<details>\n<summary>Sample code</summary>\n"
+  content += "\n"
+  content += "```\n"
+  content += sourceFile?.content ?? "[Insert the source content here]"
+  content += "```\n"
+  content += "\n"
+  content += "Command to run `swift-ast` with the code above:\n"
+  content += (sourceFile?.path).map({ "`swift-ast \($0)`" }) ?? "[Insert the command]"
+  content += "\n</details>\n"
+  content += "\n"
+  content += "### Expected Result\n"
+  content += "What do you expect to happen as a result of the reproduction steps?\n"
+  content += "\n"
+  content += "### Actual Behavior\n"
+  content += "What currently happens as a result of the reproduction steps?\n"
+  content += diagnostics.map({ "\($0.location) \($0.level): \($0.kind)" }).joined(separator: "\n")
+  content += "\n\n"
+  content += "### Even Better\n"
+  content += "Is your project open sourced? If yes, can you point us to your repository?\n"
+  content += "If not, is it possible to make a small project that fails the Travis CI?\n"
+  content += "If not, can you create a gist with your sample code for us?\n"
   return content
 }
