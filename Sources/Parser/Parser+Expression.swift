@@ -788,15 +788,15 @@ extension Parser {
     }
     switch magicWord {
     case "file":
-      let magicExpr = LiteralExpression(kind: .staticString("TODO", "#file")) // TODO: assign correct value
+      let magicExpr = LiteralExpression(kind: .staticString(startLocation.path, "#file"))
       magicExpr.setSourceRange(startLocation, endLocation)
       return magicExpr
     case "line":
-      let magicExpr = LiteralExpression(kind: .integer(-1, "#line")) // TODO: assign correct value
+      let magicExpr = LiteralExpression(kind: .integer(startLocation.line, "#line"))
       magicExpr.setSourceRange(startLocation, endLocation)
       return magicExpr
     case "column":
-      let magicExpr = LiteralExpression(kind: .integer(-1, "#column")) // TODO: assign correct value
+      let magicExpr = LiteralExpression(kind: .integer(startLocation.column, "#column"))
       magicExpr.setSourceRange(startLocation, endLocation)
       return magicExpr
     case "function":

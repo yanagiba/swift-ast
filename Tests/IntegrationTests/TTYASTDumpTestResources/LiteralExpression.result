@@ -77,11 +77,11 @@ top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1
   assign_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:36:1-36:10>
     wildcard_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:36:1-36:2>
     literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:36:5-36:10>
-      kind: `int`, literal: `-1`, raw_text: `#line`
+      kind: `int`, literal: `36`, raw_text: `#line`
   assign_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:37:1-37:12>
     wildcard_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:37:1-37:2>
     literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:37:5-37:12>
-      kind: `int`, literal: `-1`, raw_text: `#column`
+      kind: `int`, literal: `5`, raw_text: `#column`
   assign_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:38:1-38:14>
     wildcard_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:38:1-38:2>
     literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:38:5-38:14>

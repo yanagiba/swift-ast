@@ -520,9 +520,9 @@ class ParserLiteralExpressionTests: XCTestCase {
 
   func testMagicLiterals() {
     let testStrings: [(testString: String, expectedExpr: LiteralExpression.Kind)] = [
-      ("#file", .staticString("TODO", "#file")),
-      ("#line", .integer(-1, "#line")),
-      ("#column", .integer(-1, "#column")),
+      ("#file", .staticString("ParserTests/ParserTests.swift", "#file")),
+      ("#line", .integer(1, "#line")),
+      ("#column", .integer(1, "#column")),
       ("#function", .staticString("TODO", "#function")),
     ]
     for t in testStrings {
