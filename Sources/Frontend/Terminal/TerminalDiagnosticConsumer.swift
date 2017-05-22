@@ -20,6 +20,8 @@ import Source
 
 struct TerminalDiagnosticConsumer : DiagnosticConsumer {
   func consume(diagnostics: [Diagnostic]) {
+    var cachedContent: [String: String] = [:]
+
     for d in diagnostics {
       let levelStr: String
       switch d.level {
@@ -30,8 +32,14 @@ struct TerminalDiagnosticConsumer : DiagnosticConsumer {
       }
       print("\(d.location) \(levelStr): \(d.kind.diagnosticMessage)")
 
-      if let sourceFile = try? SourceReader.read(at: d.location.path) { // TODO: we don't want to read the entire file everytime when we want to emit a diagnostic info
-        let lines = sourceFile.content.components(separatedBy: .newlines)
+      let filePath = d.location.path
+      var fileContent = cachedContent[filePath]
+      if fileContent == nil {
+        fileContent = (try? SourceReader.read(at: filePath))?.content
+      }
+      if let fileContent = fileContent {
+        cachedContent[filePath] = fileContent
+        let lines = fileContent.components(separatedBy: .newlines)
         var lineNum = d.location.line - 1
         if lineNum < 0 {
           lineNum = 0
