@@ -30,7 +30,7 @@ extension Condition : ASTTextRepresentable {
     case .availability(let availabilityCondition):
       return availabilityCondition.textDescription
     case let .case(pattern, expr):
-      return "case \(pattern) = \(expr)" // TODO: should we consider `Initializer` a separate struct?
+      return "case \(pattern) = \(expr)"
     case let .let(pattern, expr):
       return "let \(pattern) = \(expr)"
     case let .var(pattern, expr):

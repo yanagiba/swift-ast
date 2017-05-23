@@ -262,7 +262,6 @@ public class Lexer {
 
   public func advanceChar() {
     _consume()
-    // _loadedTokens = [] // TODO: do we need this?
   }
 
   public func advance(by tokenCount: Int = 1, skipLineFeed: Bool = true) {

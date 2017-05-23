@@ -84,12 +84,6 @@ extension Parser {
 
   func testAmp() -> Bool {
     switch _lexer.look().kind {
-    // case .prefixAmp: // TODO: verify those two can't be the case
-    //   _lexer.advance()
-    //   return true
-    // case .prefixOperator("&"):
-    //   _lexer.advance()
-    //   return true
     case .binaryOperator("&"):
       _lexer.advance()
       return true
@@ -152,5 +146,20 @@ extension Parser {
 extension SourceLocation {
   var nextColumn: SourceLocation {
     return SourceLocation(path: path, line: line, column: column + 1)
+  }
+}
+
+extension String {
+  var containOnlyPositiveDecimals: Bool {
+    for c in characters {
+      switch c {
+      case "0"..."9":
+        continue
+      default:
+        return false
+      }
+    }
+
+    return true
   }
 }

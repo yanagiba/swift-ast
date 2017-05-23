@@ -270,7 +270,7 @@ extension Token.Kind: Equatable {
       return lhs == rhs
     case let (.implicitParameterName(lhs), .implicitParameterName(rhs)):
       return lhs == rhs
-    case let (.integerLiteral(lhi, lhr, _), .integerLiteral(rhi, rhr, _)):
+    case let (.integerLiteral(lhi, lhr), .integerLiteral(rhi, rhr)):
       return lhi == rhi && lhr == rhr
     case let (.floatingPointLiteral(lhd, lhr), .floatingPointLiteral(rhd, rhr)):
       return lhd == rhd && lhr == rhr

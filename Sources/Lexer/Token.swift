@@ -39,7 +39,7 @@ public struct Token {
     // value references
     case identifier(String), implicitParameterName(Int) // TODO: identifier may need to contains raw representation as well, just for restoring the original string, maybe for refactoring
     // literals
-    case integerLiteral(Int, rawRepresentation: String, onlyContainPositiveDecimals: Bool) // TODO: consider get rid of onlyContainPositiveDecimals
+    case integerLiteral(Int, rawRepresentation: String)
     case floatingPointLiteral(Double, rawRepresentation: String)
     case staticStringLiteral(String, rawRepresentation: String)
     case interpolatedStringLiteralHead(String, rawRepresentation: String) // this stops at the opening \(, and we will let parser figure out when to close this string literal

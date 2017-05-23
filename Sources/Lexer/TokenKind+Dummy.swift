@@ -17,7 +17,7 @@
 extension Token.Kind {
   public static let dummyIdentifier: Token.Kind = .identifier("")
   public static let dummyIntegerLiteral: Token.Kind =
-    .integerLiteral(0, rawRepresentation: "", onlyContainPositiveDecimals: true)
+    .integerLiteral(0, rawRepresentation: "")
   public static let dummyFloatingPointLiteral: Token.Kind =
     .floatingPointLiteral(0, rawRepresentation: "")
   public static let dummyBooleanLiteral: Token.Kind = .booleanLiteral(true)

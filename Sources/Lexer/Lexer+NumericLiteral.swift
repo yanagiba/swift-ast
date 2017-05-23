@@ -126,8 +126,8 @@ extension Lexer /* numeric literal */ {
       else {
         return .integerLiteral(
           integerPart,
-          rawRepresentation: rawRepresentation,
-        onlyContainPositiveDecimals: !negativeNumber)
+          rawRepresentation: rawRepresentation
+        )
       }
 
       rawRepresentation += char.string
@@ -200,8 +200,7 @@ extension Lexer /* numeric literal */ {
     if fractionalPart == nil && exponentPart == nil {
       return .integerLiteral(
         negativeNumber ? -integerPart : integerPart,
-        rawRepresentation: rawRepresentation,
-        onlyContainPositiveDecimals: radix == 10 && !negativeNumber
+        rawRepresentation: rawRepresentation
       )
     }
 
