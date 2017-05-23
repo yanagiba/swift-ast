@@ -885,7 +885,7 @@ extension Parser {
             .dummyBooleanLiteral,
           ]
           switch _lexer.read(literalTokens) {
-          case let .integerLiteral(i, _, _):
+          case let .integerLiteral(i, _):
             caseComponents.append((s, nil, .integer(i)))
           case let .floatingPointLiteral(f, _):
             caseComponents.append((s, nil, .floatingPoint(f)))

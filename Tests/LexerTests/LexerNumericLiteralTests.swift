@@ -33,13 +33,12 @@ class LexerNumericLiteralTests: XCTestCase {
     ]
     for binary in binaries {
       lexAndTest(binary.testString) { t in
-        guard case let .integerLiteral(i, rawRepresentation: r, onlyContainPositiveDecimals: d) = t else {
+        guard case let .integerLiteral(i, rawRepresentation: r) = t else {
           XCTFail("Cannot lex an integer literal.")
           return
         }
         XCTAssertEqual(i, binary.expectedInt)
         XCTAssertEqual(r, binary.testString)
-        XCTAssertFalse(d)
       }
     }
   }
@@ -57,13 +56,12 @@ class LexerNumericLiteralTests: XCTestCase {
     ]
     for octal in octals {
       lexAndTest(octal.testString) { t in
-        guard case let .integerLiteral(i, rawRepresentation: r, onlyContainPositiveDecimals: d) = t else {
+        guard case let .integerLiteral(i, rawRepresentation: r) = t else {
           XCTFail("Cannot lex an integer literal.")
           return
         }
         XCTAssertEqual(i, octal.expectedInt)
         XCTAssertEqual(r, octal.testString)
-        XCTAssertFalse(d)
       }
     }
   }
@@ -83,13 +81,12 @@ class LexerNumericLiteralTests: XCTestCase {
     ]
     for decimal in decimals {
       lexAndTest(decimal.testString) { t in
-        guard case let .integerLiteral(i, rawRepresentation: r, onlyContainPositiveDecimals: d) = t else {
+        guard case let .integerLiteral(i, rawRepresentation: r) = t else {
           XCTFail("Cannot lex an integer literal.")
           return
         }
         XCTAssertEqual(i, decimal.expectedInt)
         XCTAssertEqual(r, decimal.testString)
-        XCTAssertEqual(d, decimal.expectedInt >= 0) // TODO: this definitly needs to be changed
       }
     }
   }
@@ -107,13 +104,12 @@ class LexerNumericLiteralTests: XCTestCase {
     ]
     for hex in hexadecimals {
       lexAndTest(hex.testString) { t in
-        guard case let .integerLiteral(i, rawRepresentation: r, onlyContainPositiveDecimals: d) = t else {
+        guard case let .integerLiteral(i, rawRepresentation: r) = t else {
           XCTFail("Cannot lex an integer literal.")
           return
         }
         XCTAssertEqual(i, hex.expectedInt)
         XCTAssertEqual(r, hex.testString)
-        XCTAssertFalse(d)
       }
     }
   }

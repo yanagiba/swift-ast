@@ -533,7 +533,7 @@ extension Parser {
         postfixExpression: expr, argumentNames: argumentNames)
       initExpr.setSourceRange(expr.sourceRange.start, endLocation)
       return initExpr
-    case .integerLiteral(let index, _, true):
+    case let .integerLiteral(index, raw) where raw.containOnlyPositiveDecimals:
       let memberExpr = ExplicitMemberExpression(kind: .tuple(expr, index))
       memberExpr.setSourceRange(startLocation, endLocation)
       return memberExpr
@@ -595,7 +595,7 @@ extension Parser {
       let boolExpr = LiteralExpression(kind: .boolean(b))
       boolExpr.setSourceRange(lookedRange)
       return boolExpr
-    case let .integerLiteral(i, r, _):
+    case let .integerLiteral(i, r):
       let intExpr = LiteralExpression(kind: .integer(i, r))
       intExpr.setSourceRange(lookedRange)
       return intExpr
@@ -1108,6 +1108,16 @@ extension Parser {
       return params
     }
 
+    func parseParameterName() -> String? {
+      guard let id = _lexer.look().kind.namedIdentifierOrWildcard,
+        id != "in",
+        id != "throws"
+      else {
+        return nil
+      }
+      return id
+    }
+
     var endLocation = getEndLocation()
     if _lexer.match(.rightBrace) {
       // no signature nor statements, returns a closure expression directly
@@ -1139,9 +1149,7 @@ extension Parser {
       }
     }
 
-    if let headId = _lexer.look().kind.namedIdentifierOrWildcard,
-      headId != "in",
-      headId != "throws",
+    if let headId = parseParameterName(),
       (
         _lexer.look(ahead: 1).kind == .comma ||
         _lexer.look(ahead: 1).kind == .throws ||
@@ -1152,10 +1160,7 @@ extension Parser {
       _lexer.advance()
       var ids = [headId]
       while _lexer.match(.comma) {
-        guard let id = _lexer.look().kind.namedIdentifierOrWildcard,
-          id != "in",
-          id != "throws" // TODO: need some cleanup
-        else {
+        guard let id = parseParameterName() else {
           throw _raiseFatal(.expectedClosureParameterName)
         }
         _lexer.advance()

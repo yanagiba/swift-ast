@@ -217,8 +217,9 @@ extension Parser {
           _lexer.match(.comma),
           _lexer.read(.dummyIdentifier) == .identifier("line"),
           _lexer.match(.colon),
-          case let .integerLiteral(line, _, true) =
+          case let .integerLiteral(line, raw) =
             _lexer.read(.dummyIntegerLiteral),
+          raw.containOnlyPositiveDecimals,
           _lexer.match(.rightParen) // TODO: very crazy conditions
         {
           fileName = name
@@ -501,15 +502,16 @@ extension Parser {
           .dummyIntegerLiteral,
           .dummyFloatingPointLiteral,
         ]) {
-        case .integerLiteral(let major, _, true):
+        case let .integerLiteral(major, raw) where raw.containOnlyPositiveDecimals:
           arguments.append(.major(platformName, Int(major)))
         case .floatingPointLiteral(_, let raw):
           guard let (major, minor) = splitDoubleRawToTwoIntegers(raw) else {
             throw _raiseFatal(.expectedMinorVersionAvailability)
           }
           if _lexer.match(.dot),
-            case .integerLiteral(let patch, _, true) =
-              _lexer.read(.dummyIntegerLiteral)
+            case let .integerLiteral(patch, raw) =
+              _lexer.read(.dummyIntegerLiteral),
+            raw.containOnlyPositiveDecimals
           {
             arguments.append(.patch(platformName, major, minor, Int(patch)))
           } else {

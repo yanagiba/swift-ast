@@ -227,14 +227,14 @@ class LexerTests: XCTestCase {
     XCTAssertFalse(Token.Kind.implicitParameterName(5).isEqual(to: .implicitParameterName(6)))
 
     XCTAssertTrue(
-      Token.Kind.integerLiteral(1, rawRepresentation: "2", onlyContainPositiveDecimals: true).isEqual(to:
-        .integerLiteral(1, rawRepresentation: "2", onlyContainPositiveDecimals: false)))
+      Token.Kind.integerLiteral(1, rawRepresentation: "2").isEqual(to:
+        .integerLiteral(1, rawRepresentation: "2")))
     XCTAssertFalse(
-      Token.Kind.integerLiteral(1, rawRepresentation: "2", onlyContainPositiveDecimals: true).isEqual(to:
-        .integerLiteral(2, rawRepresentation: "2", onlyContainPositiveDecimals: false)))
+      Token.Kind.integerLiteral(1, rawRepresentation: "2").isEqual(to:
+        .integerLiteral(2, rawRepresentation: "2")))
     XCTAssertFalse(
-      Token.Kind.integerLiteral(1, rawRepresentation: "1", onlyContainPositiveDecimals: true).isEqual(to:
-        .integerLiteral(1, rawRepresentation: "2", onlyContainPositiveDecimals: false)))
+      Token.Kind.integerLiteral(1, rawRepresentation: "1").isEqual(to:
+        .integerLiteral(1, rawRepresentation: "2")))
 
     XCTAssertTrue(
       Token.Kind.floatingPointLiteral(1, rawRepresentation: "2").isEqual(to:

@@ -242,7 +242,7 @@ class LexerStringLiteralTests: XCTestCase {
       XCTAssertEqual(r, "\"foo\\(")
     }
     lexAndTest(content, index: 2, expectedColumn: 10) { //t in
-      XCTAssertEqual($0, .integerLiteral(123, rawRepresentation: "123", onlyContainPositiveDecimals: true))
+      XCTAssertEqual($0, .integerLiteral(123, rawRepresentation: "123"))
     }
     lexAndTest(content, index: 3, expectedColumn: 13) {
       XCTAssertEqual($0, .rightParen)

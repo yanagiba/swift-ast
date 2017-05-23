@@ -16,7 +16,7 @@
 
 import Source
 
-public struct PatternInitializer { // TODO: this might become a wrong place to put it
+public struct PatternInitializer {
   public let pattern: Pattern
   public let initializerExpression: Expression?
 
