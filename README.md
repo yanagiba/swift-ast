@@ -29,12 +29,11 @@ link to ryuichi@ryuichisaito.com.)
 
 ## A Work In Progress
 
-The Swift Abstract Syntax Tree is still in early design and development.
-Many features are incomplete or partially implemented.
-Some with technical limitations.
+The Swift Abstract Syntax Tree is still in active development.
+Though many features are implemented, some with limitations.
 
-However, the framework of the project is set up already, so pull requests for
-new features, issues and comments for existing implementations are welcomed.
+Pull requests for new features,
+issues and comments for existing implementations are welcomed.
 
 Please also be advised that the Swift language is under rapid development,
 its syntax is not stable. So the details are subject to change in order to
@@ -44,7 +43,7 @@ catch up as Swift evolves.
 
 - [Swift 3.1](https://swift.org/download/)
 
-## Installing
+## Installation
 
 ### Standalone Tool
 
@@ -57,8 +56,30 @@ git clone https://github.com/yanagiba/swift-ast
 Go to the repository folder, run the following command:
 
 ```bash
-swift build
+swift build -c release
 ```
+
+This will generate a `swift-ast` executable inside `.build/release` folder.
+
+#### Adding to `swift` Path (Optional)
+
+It is possible to copy the `swift-ast` to the `bin` folder of
+your local Swift installation.
+
+For example, if `which swift` outputs
+
+```
+/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+```
+
+Then you can copy `swift-ast` to it by
+
+```
+cp .build/release/swift-ast /Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-ast
+```
+
+Once you have done this, you can invoke `swift-ast` by
+calling `swift ast` in your terminal directly.
 
 ### Embed Into Your Project
 
