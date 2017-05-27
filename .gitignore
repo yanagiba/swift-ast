@@ -1,5 +1,6 @@
 .DS_Store
 .build
+.swift_lint
 Packages/
 swift-ast.xcodeproj/
 build/
