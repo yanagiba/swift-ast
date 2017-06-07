@@ -62,7 +62,7 @@ extension ClosureExpression : TTYASTDumpRepresentable {
       body += "statements:".indent
       body += "\n"
       body += stmts.enumerated()
-        .map { "\($0): \($1.ttyDump)" }
+        .map { "\($0.offset): \($0.element.ttyDump)" }
         .joined(separator: "\n")
         .indent
     }
@@ -239,8 +239,9 @@ extension LiteralExpression : TTYASTDumpRepresentable {
       } else {
         body += "\n"
         body += entries.enumerated()
-          .map { (index, entry) -> String in
-            "\(index): " + entry.key.ttyDump + "\n\(index): " + entry.value.ttyDump
+          .map { e -> String in
+            "\(e.offset): " + e.element.key.ttyDump +
+              "\n\(e.offset): " + e.element.value.ttyDump
           }
           .joined(separator: "\n")
           .indent
@@ -400,12 +401,12 @@ extension TupleExpression : TTYASTDumpRepresentable {
     if elementList.isEmpty {
       body = String.indent + "elements: <empty>"
     } else {
-      body = elementList.enumerated().map { index, element in
-        var idText = "\(index): "
-        if let id = element.identifier {
+      body = elementList.enumerated().map {
+        var idText = "\($0.offset): "
+        if let id = $0.element.identifier {
           idText += "id: `\(id)` "
         }
-        return "\(idText)\(element.expression.ttyDump)"
+        return "\(idText)\($0.element.expression.ttyDump)"
       }.joined(separator: "\n").indent
     }
     return "\(head)\n\(body)"

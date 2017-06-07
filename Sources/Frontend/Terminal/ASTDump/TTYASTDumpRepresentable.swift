@@ -41,7 +41,7 @@ extension TTYASTDumpRepresentable {
 
   func dump(_ exprs: ExpressionList) -> String {
     return exprs.enumerated()
-      .map { "\($0): \($1.ttyDump)" }
+      .map { "\($0.offset): \($0.element.ttyDump)" }
       .joined(separator: "\n")
   }
 
@@ -61,7 +61,7 @@ extension TTYASTDumpRepresentable {
 
   func dump(_ funcSignParams: [FunctionSignature.Parameter]) -> String {
     return "parameters:\n" + funcSignParams.enumerated()
-      .map { "\($0): \($1.textDescription)" }
+      .map { "\($0.offset): \($0.element.textDescription)" }
       .joined(separator: "\n")
   }
 
@@ -75,7 +75,7 @@ extension TTYASTDumpRepresentable {
 
   func dump(_ conditions: ConditionList) -> String {
     return "conditions:\n" + conditions.enumerated()
-      .map { "\($0): \(dump($1))" }
+      .map { "\($0.offset): \(dump($0.element))" }
       .joined(separator: "\n")
   }
 
@@ -102,7 +102,7 @@ extension TTYASTDumpRepresentable {
       return dump(inits[0])
     default:
       return "pattern_initializers:\n" + inits.enumerated()
-        .map { "\($0): \(dump($1))" }
+        .map { "\($0.offset): \(dump($0.element))" }
         .joined(separator: "\n")
     }
   }
