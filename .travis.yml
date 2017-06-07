@@ -13,3 +13,6 @@ script:
 - ./lint.sh
 after_success:
 - eval "$(curl -sL https://swift.vapor.sh/codecov)"
+matrix:
+  allow_failures:
+    - os: osx
