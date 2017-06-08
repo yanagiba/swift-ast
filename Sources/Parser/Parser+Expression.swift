@@ -795,13 +795,13 @@ extension Parser {
     while _lexer.match(.dot) {
       endLocation = getEndLocation()
       guard case let .identifier(component) = _lexer.read(.dummyIdentifier) else {
-        throw _raiseFatal(.dummy)
+        throw _raiseFatal(.expectedKeyPathComponentIdentifier)
       }
       components.append(component)
     }
 
     if components.isEmpty {
-      throw _raiseFatal(.dummy)
+      throw _raiseFatal(.expectedKeyPathComponent)
     }
 
     let keyPathExpr = KeyPathExpression(type: type, components: components)
@@ -837,12 +837,12 @@ extension Parser {
       return try parseSelectorExpression(startLocation: startLocation)
     case "keyPath":
       guard _lexer.match(.leftParen) else {
-        throw _raiseFatal(.expectedOpenParenKeyPathExpr)
+        throw _raiseFatal(.expectedOpenParenKeyPathStringExpr)
       }
       let expr = try parseExpression() // TODO: can wrap this in a do-catch, and throw a better diagnostic message
       endLocation = getEndLocation()
       guard _lexer.match(.rightParen) else {
-        throw _raiseFatal(.expectedCloseParenKeyPathExpr)
+        throw _raiseFatal(.expectedCloseParenKeyPathStringExpr)
       }
       let keyPathStringExpression = KeyPathStringExpression(expression: expr)
       keyPathStringExpression.setSourceRange(startLocation, endLocation)

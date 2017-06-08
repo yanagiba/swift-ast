@@ -122,8 +122,10 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedDotOrSubscriptAfterSuper
   case expectedIdentifierAfterSelfDotExpr
   case expectedObjectLiteralIdentifier
-  case expectedOpenParenKeyPathExpr
-  case expectedCloseParenKeyPathExpr
+  case expectedKeyPathComponent
+  case expectedKeyPathComponentIdentifier
+  case expectedOpenParenKeyPathStringExpr
+  case expectedCloseParenKeyPathStringExpr
   case expectedOpenParenSelectorExpr
   case expectedColonAfterPropertyKeywordSelectorExpr(String)
   case expectedCloseParenSelectorExpr
@@ -320,9 +322,13 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected identifier or 'init' after self '.' expression"
     case .expectedObjectLiteralIdentifier:
       return "expected a valid identifier after '#' in object literal expression"
-    case .expectedOpenParenKeyPathExpr:
+    case .expectedKeyPathComponent:
+      return "expected keypath component"
+    case .expectedKeyPathComponentIdentifier:
+      return "expected keypath component identifier following '.'"
+    case .expectedOpenParenKeyPathStringExpr:
       return "expected '(' following '#keyPath'"
-    case .expectedCloseParenKeyPathExpr:
+    case .expectedCloseParenKeyPathStringExpr:
       return "expected ')' to complete '#keyPath' expression"
     case .expectedOpenParenSelectorExpr:
       return "expected '(' following '#selector'"
