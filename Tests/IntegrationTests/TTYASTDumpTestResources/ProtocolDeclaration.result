@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17:1-68:2>
+top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17:1-71:2>
   proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17:1-17:16>
     name: Foo
     <empty_body_block>
@@ -142,10 +142,16 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
       access_level: fileprivate
       parent_types: Bar
       assignment_type: bar
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:57:1-61:2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:57:1-59:2>
+    name: Foo
+    parent_types: T
+    0: kind: `associated_type`
+      name: Foo
+      generic_where: `where SomeType: T`
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:60:1-64:2>
     name: Foo
     0: kind: `compiler_control`
-      compiler_ctrl_stmt <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:58:1-58:8>
+      compiler_ctrl_stmt <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:61:1-61:8>
         kind: `if`, condition: ` bar`
     1: kind: `property`
       name: Foo
@@ -153,9 +159,9 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
       getter_setter_keyword_block:
         getter
     2: kind: `compiler_control`
-      compiler_ctrl_stmt <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:60:1-60:7>
+      compiler_ctrl_stmt <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:63:1-63:7>
         kind: `endif`
-  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:62:1-68:2>
+  proto_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:65:1-71:2>
     name: Foo
     0: kind: `property`
       name: Foo

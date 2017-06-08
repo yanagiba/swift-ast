@@ -56,6 +56,9 @@ protocol Foo {
 protocol Foo {
   @a fileprivate associatedtype foo: Bar = bar
 }
+protocol Foo: T {
+  associatedtype SomeType where SomeType: T
+}
 protocol Foo {
   #if bar
   var bar: Bar {

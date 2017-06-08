@@ -522,6 +522,10 @@ extension ProtocolDeclaration : TTYASTDumpRepresentable {
               memberDump += "\n"
               memberDump += "assignment_type: \(assignmentType.textDescription)".indent
             }
+            if let genericWhere = member.genericWhere {
+              memberDump += "\n"
+              memberDump += "generic_where: `\(genericWhere.textDescription)`".indent
+            }
           case .compilerControl(let stmt):
             memberDump += "kind: `compiler_control`\n"
             memberDump += stmt.ttyDump.indent
