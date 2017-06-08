@@ -247,8 +247,8 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
   func testAssociatedTypeMember() {
     parseDeclarationAndTest(
-      "protocol Foo { @a fileprivate associatedtype foo: Bar = bar }",
-      "protocol Foo {\n@a fileprivate associatedtype foo: Bar = bar\n}",
+      "protocol Foo { @a fileprivate associatedtype foo: Bar = bar where Foo: Bar }",
+      "protocol Foo {\n@a fileprivate associatedtype foo: Bar = bar where Foo: Bar\n}",
       testClosure: { decl in
       guard let protocolDecl = decl as? ProtocolDeclaration else {
         XCTFail("Failed in getting a protocol declaration.")
@@ -269,6 +269,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
       XCTAssertEqual(member.name, "foo")
       XCTAssertEqual(member.typeInheritance?.textDescription, ": Bar")
       XCTAssertEqual(member.assignmentType?.textDescription, "bar")
+      XCTAssertEqual(member.genericWhere?.textDescription, "where Foo: Bar")
     })
   }
 

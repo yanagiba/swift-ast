@@ -281,12 +281,15 @@ extension Parser {
         assignmentType = try parseType()
       }
 
+      let genericWhere = try parseGenericWhereClause()
+
       let member = ProtocolDeclaration.AssociativityTypeMember(
         attributes: attrs,
         accessLevelModifier: accessLevelModifier,
         name: name,
         typeInheritance: typeInheritanceClause,
-        assignmentType: assignmentType)
+        assignmentType: assignmentType,
+        genericWhere: genericWhere)
 
       return .associatedType(member)
     }
