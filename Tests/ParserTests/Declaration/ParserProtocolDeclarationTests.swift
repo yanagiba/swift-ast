@@ -215,8 +215,8 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
   func testSubscriptMember() {
     parseDeclarationAndTest(
-      "protocol Foo { @a fileprivate subscript(i: Int, j: Int) -> @b Self { set get }}",
-      "protocol Foo {\n@a fileprivate subscript(i: Int, j: Int) -> @b Self {\nget\nset\n}\n}",
+      "protocol Foo { @a fileprivate subscript<T, S>(i: Int, j: Int) -> @b Self where T: S { set get }}",
+      "protocol Foo {\n@a fileprivate subscript<T, S>(i: Int, j: Int) -> @b Self where T: S {\nget\nset\n}\n}",
       testClosure: { decl in
       guard let protocolDecl = decl as? ProtocolDeclaration else {
         XCTFail("Failed in getting a protocol declaration.")
@@ -234,11 +234,13 @@ class ParserProtocolDeclarationTests: XCTestCase {
       }
       XCTAssertEqual(member.attributes.textDescription, "@a")
       XCTAssertEqual(member.modifiers.textDescription, "fileprivate")
+      XCTAssertEqual(member.genericParameter?.textDescription, "<T, S>")
       XCTAssertEqual(member.parameterList.count, 2)
       XCTAssertEqual(member.parameterList[0].textDescription, "i: Int")
       XCTAssertEqual(member.parameterList[1].textDescription, "j: Int")
       XCTAssertEqual(member.resultAttributes.textDescription, "@b")
       XCTAssertTrue(member.resultType is SelfType)
+      XCTAssertEqual(member.genericWhere?.textDescription, "where T: S")
       XCTAssertEqual(member.getterSetterKeywordBlock.textDescription, "{\nget\nset\n}")
     })
   }

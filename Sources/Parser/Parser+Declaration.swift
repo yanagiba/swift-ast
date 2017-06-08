@@ -252,9 +252,11 @@ extension Parser {
       let member = ProtocolDeclaration.SubscriptMember(
         attributes: attrs,
         modifiers: modifiers,
+        genericParameter: subscriptDecl.genericParameterClause,
         parameterList: subscriptDecl.parameterList,
         resultAttributes: subscriptDecl.resultAttributes,
         resultType: subscriptDecl.resultType,
+        genericWhere: subscriptDecl.genericWhereClause,
         getterSetterKeywordBlock: getterSetterKeywordBlock)
 
       return .subscript(member)
@@ -492,12 +494,14 @@ extension Parser {
     modifiers: DeclarationModifiers,
     startLocation: SourceLocation
   ) throws -> SubscriptDeclaration {
+    let genericParameterClause = try parseGenericParameterClause()
     let (params, _) = try parseParameterClause()
     guard _lexer.match(.arrow) else {
       throw _raiseFatal(.expectedArrowSubscript)
     }
     let resultAttributes = try parseAttributes()
     let type = try parseType()
+    let genericWhereClause = try parseGenericWhereClause()
 
     let subscriptDecl: SubscriptDeclaration
     if isGetterSetterBlockHead() {
@@ -506,9 +510,11 @@ extension Parser {
         subscriptDecl = SubscriptDeclaration(
           attributes: attrs,
           modifiers: modifiers,
+          genericParameterClause: genericParameterClause,
           parameterList: params,
           resultAttributes: resultAttributes,
           resultType: type,
+          genericWhereClause: genericWhereClause,
           getterSetterBlock: getterSetterBlock)
       } else {
         let getter = GetterSetterKeywordBlock.GetterKeywordClause(
@@ -523,9 +529,11 @@ extension Parser {
         subscriptDecl = SubscriptDeclaration(
           attributes: attrs,
           modifiers: modifiers,
+          genericParameterClause: genericParameterClause,
           parameterList: params,
           resultAttributes: resultAttributes,
           resultType: type,
+          genericWhereClause: genericWhereClause,
           getterSetterKeywordBlock: getterSetterKeywordBlock)
       }
       subscriptDecl.setSourceRange(startLocation, endLocation)
@@ -534,9 +542,11 @@ extension Parser {
       subscriptDecl = SubscriptDeclaration(
         attributes: attrs,
         modifiers: modifiers,
+        genericParameterClause: genericParameterClause,
         parameterList: params,
         resultAttributes: resultAttributes,
         resultType: type,
+        genericWhereClause: genericWhereClause,
         codeBlock: codeBlock)
       subscriptDecl.setSourceRange(startLocation, codeBlock.sourceRange.end)
     }
