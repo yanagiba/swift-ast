@@ -42,6 +42,16 @@ protocol Foo {
     get
     set
   }
+  subscript<T>() -> Self {
+    get
+  }
+  subscript<T, S>() -> Self where T == S {
+    get
+  }
+  subscript<T, S>() -> Self where T: S {
+    get
+    set
+  }
 }
 protocol Foo {
   @a fileprivate associatedtype foo: Bar = bar

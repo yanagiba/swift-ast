@@ -494,6 +494,14 @@ extension ProtocolDeclaration : TTYASTDumpRepresentable {
               memberDump += "\n"
               memberDump += "result_attributes: `\(member.resultAttributes.textDescription)`".indent
             }
+            if let genericParam = member.genericParameter {
+              memberDump += "\n"
+              memberDump += "generic_param: `\(genericParam.textDescription)`".indent
+            }
+            if let genericWhere = member.genericWhere {
+              memberDump += "\n"
+              memberDump += "generic_where: `\(genericWhere.textDescription)`".indent
+            }
             memberDump += "\n" + dump(member.getterSetterKeywordBlock).indent
           case .associatedType(let member):
             memberDump += "kind: `associated_type`\n"
@@ -588,6 +596,14 @@ extension SubscriptDeclaration : TTYASTDumpRepresentable {
     if !resultAttributes.isEmpty {
       neck += "\n"
       neck += "result_attributes: `\(resultAttributes.textDescription)`".indent
+    }
+    if let genericParam = genericParameterClause {
+      neck += "\n"
+      neck += "generic_param: `\(genericParam.textDescription)`".indent
+    }
+    if let genericWhere = genericWhereClause {
+      neck += "\n"
+      neck += "generic_where: `\(genericWhere.textDescription)`".indent
     }
     let bodyTTYDump: String
     switch body {

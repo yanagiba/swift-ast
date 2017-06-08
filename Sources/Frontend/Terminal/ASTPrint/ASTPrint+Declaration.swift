@@ -245,13 +245,16 @@ extension ProtocolDeclaration.SubscriptMember {
   var ttyPrint: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
+    let genericParamClauseText = genericParameter?.textDescription ?? ""
     let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
-    let headText = "\(attrsText)\(modifiersText)subscript\(parameterText)"
+    let headText = "\(attrsText)\(modifiersText)subscript\(genericParamClauseText)\(parameterText)"
 
     let resultAttrsText = resultAttributes.isEmpty ? "" : "\(resultAttributes.textDescription) "
     let resultText = "-> \(resultAttrsText)\(resultType.textDescription)"
 
-    return "\(headText) \(resultText) \(getterSetterKeywordBlock.ttyPrint)"
+    let genericWhereClauseText = genericWhere.map({ " \($0.textDescription)" }) ?? ""
+
+    return "\(headText) \(resultText)\(genericWhereClauseText) \(getterSetterKeywordBlock.ttyPrint)"
   }
 }
 
@@ -325,13 +328,16 @@ extension SubscriptDeclaration : TTYASTPrintRepresentable {
   var ttyPrint: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
+    let genericParamClauseText = genericParameterClause?.textDescription ?? ""
     let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
-    let headText = "\(attrsText)\(modifiersText)subscript\(parameterText)"
+    let headText = "\(attrsText)\(modifiersText)subscript\(genericParamClauseText)\(parameterText)"
 
     let resultAttrsText = resultAttributes.isEmpty ? "" : "\(resultAttributes.textDescription) "
     let resultText = "-> \(resultAttrsText)\(resultType.textDescription)"
 
-    return "\(headText) \(resultText) \(body.ttyPrint)"
+    let genericWhereClauseText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
+
+    return "\(headText) \(resultText)\(genericWhereClauseText) \(body.ttyPrint)"
   }
 }
 
