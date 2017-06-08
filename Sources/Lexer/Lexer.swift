@@ -389,6 +389,7 @@ fileprivate let roleTokenKindMapping: [Role: Token.Kind] = [
   .equal: .assignmentOperator,
   .at: .at,
   .hash: .hash,
+  .backslash: .backslash,
   .colon: .colon,
   .comma: .comma,
   .period: .dot,

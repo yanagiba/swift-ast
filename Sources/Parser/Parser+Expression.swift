@@ -581,7 +581,7 @@ extension Parser {
       .dummyStaticStringLiteral,
       .dummyInterpolatedStringLiteralHead,
       .dummyBooleanLiteral,
-      .nil, .leftSquare, .hash,
+      .nil, .leftSquare, .hash, .backslash,
       .self, .super, .leftBrace,
       .leftParen, .dot, .underscore,
     ])
@@ -614,6 +614,8 @@ extension Parser {
       return try parseCollectionLiteral(startLocation: lookedRange.start)
     case .hash:
       return try parseHashExpression(startLocation: lookedRange.start)
+    case .backslash:
+      return try parseKeyPathExpression(startLocation: lookedRange.start)
     ////// self expression
     case .self:
       return try parseSelfExpression(startRange: lookedRange)
@@ -779,6 +781,34 @@ extension Parser {
     return selfExpr
   }
 
+  private func parseKeyPathExpression(
+    startLocation: SourceLocation
+  ) throws -> KeyPathExpression {
+    var endLocation = getEndLocation()
+
+    var type: Type? = nil
+    if case let .identifier(typeName) = _lexer.read(.dummyIdentifier) {
+      type = TypeIdentifier(names: [TypeIdentifier.TypeName(name: typeName)])
+    }
+
+    var components: [String] = []
+    while _lexer.match(.dot) {
+      endLocation = getEndLocation()
+      guard case let .identifier(component) = _lexer.read(.dummyIdentifier) else {
+        throw _raiseFatal(.dummy)
+      }
+      components.append(component)
+    }
+
+    if components.isEmpty {
+      throw _raiseFatal(.dummy)
+    }
+
+    let keyPathExpr = KeyPathExpression(type: type, components: components)
+    keyPathExpr.setSourceRange(startLocation, endLocation)
+    return keyPathExpr
+  }
+
   private func parseHashExpression(
     startLocation: SourceLocation
   ) throws -> PrimaryExpression {
@@ -814,9 +844,9 @@ extension Parser {
       guard _lexer.match(.rightParen) else {
         throw _raiseFatal(.expectedCloseParenKeyPathExpr)
       }
-      let keyPathExpression = KeyPathStringExpression(expression: expr)
-      keyPathExpression.setSourceRange(startLocation, endLocation)
-      return keyPathExpression
+      let keyPathStringExpression = KeyPathStringExpression(expression: expr)
+      keyPathStringExpression.setSourceRange(startLocation, endLocation)
+      return keyPathStringExpression
     default:
       throw _raiseFatal(.expectedObjectLiteralIdentifier)
     }

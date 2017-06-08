@@ -48,6 +48,7 @@ public func allTests() -> [XCTestCaseEntry] {
     testCase(ParserParenthesizedExpressionTests.allTests),
     testCase(ParserTupleExpressionTests.allTests),
     testCase(ParserWildcardExpressionTests.allTests),
+    testCase(ParserKeyPathExpressionTests.allTests),
     testCase(ParserSelectorExpressionTests.allTests),
     testCase(ParserKeyPathStringExpressionTests.allTests),
     testCase(ParserPostfixOperatorExpressionTests.allTests),

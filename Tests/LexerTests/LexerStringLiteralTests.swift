@@ -218,7 +218,7 @@ class LexerStringLiteralTests: XCTestCase {
       XCTAssertEqual($0, .rightParen)
     }
     lexAndTest(content, index: 3, expectedColumn: 13) {
-      XCTAssertEqual($0, .invalid(.badChar))
+      XCTAssertEqual($0, .backslash)
     }
   }
 
@@ -257,7 +257,7 @@ class LexerStringLiteralTests: XCTestCase {
       XCTAssertEqual($0, .leftParen)
     }
     lexAndTest(content, index: 7, expectedColumn: 17) {
-      XCTAssertEqual($0, .invalid(.badChar))
+      XCTAssertEqual($0, .backslash)
     }
   }
 
@@ -297,7 +297,7 @@ class LexerStringLiteralTests: XCTestCase {
       XCTAssertEqual($0, .identifier("foo"))
     }
     lexAndTest(content, index: 4, expectedColumn: 20) {
-      XCTAssertEqual($0, .invalid(.badChar))
+      XCTAssertEqual($0, .backslash)
     }
   }
 

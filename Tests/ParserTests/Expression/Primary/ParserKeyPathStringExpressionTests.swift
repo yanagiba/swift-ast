@@ -21,21 +21,21 @@ import XCTest
 class ParserKeyPathStringExpressionTests: XCTestCase {
   func testKeyPathStringExpression() {
     parseExpressionAndTest("#keyPath(foo)", "#keyPath(foo)", testClosure: { expr in
-      guard let keyPathExpr = expr as? KeyPathStringExpression else {
+      guard let keyPathStrExpr = expr as? KeyPathStringExpression else {
         XCTFail("Failed in getting a key path string expression")
         return
       }
-      XCTAssertTrue(keyPathExpr.expression is IdentifierExpression)
+      XCTAssertTrue(keyPathStrExpr.expression is IdentifierExpression)
     })
   }
 
   func testContainsSelfExpression() {
     parseExpressionAndTest("#keyPath   (   self.bar    )", "#keyPath(self.bar)", testClosure: { expr in
-      guard let keyPathExpr = expr as? KeyPathStringExpression else {
+      guard let keyPathStrExpr = expr as? KeyPathStringExpression else {
         XCTFail("Failed in getting a key path string expression")
         return
       }
-      XCTAssertTrue(keyPathExpr.expression is SelfExpression)
+      XCTAssertTrue(keyPathStrExpr.expression is SelfExpression)
     })
   }
 
