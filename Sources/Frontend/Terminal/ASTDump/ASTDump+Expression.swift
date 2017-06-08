@@ -201,6 +201,20 @@ extension InitializerExpression : TTYASTDumpRepresentable {
   }
 }
 
+extension KeyPathExpression : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("key_path_expr", sourceRange)
+    var body = ""
+    if let type = type {
+      body += "\n" + "type: `\(type.textDescription)`".indent
+    }
+    for (offset, element) in components.enumerated() {
+      body += "\n" + "\(offset): component: `\(element)`".indent
+    }
+    return "\(head)\(body)"
+  }
+}
+
 extension KeyPathStringExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     return dump("key_path_string_expr", sourceRange) + "\n" + expression.ttyDump.indent

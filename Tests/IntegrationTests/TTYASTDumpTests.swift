@@ -34,6 +34,7 @@ class TTYASTDumpTests : XCTestCase {
       "ImplicitMemberExpression",
       "WildcardExpression",
       "SelectorExpression",
+      "KeyPathExpression",
       "KeyPathStringExpression",
 
       // postfix expressions
