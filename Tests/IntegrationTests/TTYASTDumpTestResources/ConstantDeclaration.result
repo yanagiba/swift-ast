@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:17:1-26:35>
+top_level_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:17:1-27:18>
   const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:17:1-17:8>
     pattern: foo
   const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:18:1-18:13>
@@ -94,3 +94,11 @@ top_level_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:17
                   kind: `int`, literal: `0`, raw_text: `0`
           identifier: `joined`
         arguments: <empty>
+  const_decl <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:27:1-27:18>
+    pattern: range
+      binary_op_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:27:13-27:18>
+        operator: `..<`
+        literal_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:27:13-27:14>
+          kind: `int`, literal: `1`, raw_text: `1`
+        literal_expr <range: TTYASTDumpTestResources/ConstantDeclarationTests.swift:27:17-27:18>
+          kind: `int`, literal: `9`, raw_text: `9`

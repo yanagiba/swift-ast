@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:17:1-22:16>
+top_level_decl <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:17:1-28:10>
   subscript_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:17:1-17:7>
     identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:17:1-17:4>
       kind: `identifier`, identifier: `foo`
@@ -64,3 +64,55 @@ top_level_decl <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:17
         identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:22:10-22:13>
           kind: `identifier`, identifier: `bar`
         arguments: <empty>
+  subscript_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:23:1-23:11>
+    identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:23:1-23:4>
+      kind: `identifier`, identifier: `foo`
+    index:
+    0: binary_op_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:23:5-23:10>
+      operator: `...`
+      literal_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:23:5-23:6>
+        kind: `int`, literal: `0`, raw_text: `0`
+      literal_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:23:9-23:10>
+        kind: `int`, literal: `1`, raw_text: `1`
+  subscript_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:24:1-24:11>
+    identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:24:1-24:4>
+      kind: `identifier`, identifier: `foo`
+    index:
+    0: binary_op_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:24:5-24:10>
+      operator: `..<`
+      literal_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:24:5-24:6>
+        kind: `int`, literal: `0`, raw_text: `0`
+      literal_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:24:9-24:10>
+        kind: `int`, literal: `1`, raw_text: `1`
+  subscript_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:25:1-25:10>
+    identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:25:1-25:4>
+      kind: `identifier`, identifier: `foo`
+    index:
+    0: postfix_op_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:25:5-25:9>
+      operator: `...`
+      literal_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:25:5-25:6>
+        kind: `int`, literal: `0`, raw_text: `0`
+  subscript_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:26:1-26:10>
+    identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:26:1-26:4>
+      kind: `identifier`, identifier: `foo`
+    index:
+    0: prefix_op_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:26:5-26:9>
+      operator: `...`
+      literal_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:26:8-26:9>
+        kind: `int`, literal: `1`, raw_text: `1`
+  subscript_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:27:1-27:10>
+    identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:27:1-27:4>
+      kind: `identifier`, identifier: `foo`
+    index:
+    0: postfix_op_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:27:5-27:9>
+      operator: `..<`
+      literal_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:27:5-27:6>
+        kind: `int`, literal: `0`, raw_text: `0`
+  subscript_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:28:1-28:10>
+    identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:28:1-28:4>
+      kind: `identifier`, identifier: `foo`
+    index:
+    0: prefix_op_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:28:5-28:9>
+      operator: `..<`
+      literal_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:28:8-28:9>
+        kind: `int`, literal: `1`, raw_text: `1`

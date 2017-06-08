@@ -5,3 +5,5 @@ for case i in aCollection {}
 for (k, v) in [1: true, 0: false] where v {}
 for (index, it) in enumerate([]) {}
 for e in 0 ..< 9 {}
+for e in 0..< {}
+for e in ...9 {}
