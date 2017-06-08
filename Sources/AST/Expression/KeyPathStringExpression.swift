@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public class KeyPathExpression : ASTNode, PrimaryExpression {
+public class KeyPathStringExpression : ASTNode, PrimaryExpression {
   public let expression: Expression
 
   public init(expression: Expression) {

@@ -111,7 +111,7 @@ extension FunctionCallExpression : TTYASTPrintRepresentable {
   }
 }
 
-extension KeyPathExpression : TTYASTPrintRepresentable {
+extension KeyPathStringExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     return "#keyPath(\(expression.ttyPrint))"
   }

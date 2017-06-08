@@ -49,7 +49,7 @@ public func allTests() -> [XCTestCaseEntry] {
     testCase(ParserTupleExpressionTests.allTests),
     testCase(ParserWildcardExpressionTests.allTests),
     testCase(ParserSelectorExpressionTests.allTests),
-    testCase(ParserKeyPathExpressionTests.allTests),
+    testCase(ParserKeyPathStringExpressionTests.allTests),
     testCase(ParserPostfixOperatorExpressionTests.allTests),
     testCase(ParserFunctionCallExpressionTests.allTests),
     testCase(ParserInitializerExpressionTests.allTests),

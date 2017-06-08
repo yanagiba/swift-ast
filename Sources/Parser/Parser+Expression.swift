@@ -586,7 +586,7 @@ extension Parser {
       .leftParen, .dot, .underscore,
     ])
     switch matched {
-    ////// literal expression, selector expression, and key path expression
+    ////// literal expression, selector expression, and key path string expression
     case .nil:
       let nilExpr = LiteralExpression(kind: .nil)
       nilExpr.setSourceRange(lookedRange)
@@ -814,7 +814,7 @@ extension Parser {
       guard _lexer.match(.rightParen) else {
         throw _raiseFatal(.expectedCloseParenKeyPathExpr)
       }
-      let keyPathExpression = KeyPathExpression(expression: expr)
+      let keyPathExpression = KeyPathStringExpression(expression: expr)
       keyPathExpression.setSourceRange(startLocation, endLocation)
       return keyPathExpression
     default:

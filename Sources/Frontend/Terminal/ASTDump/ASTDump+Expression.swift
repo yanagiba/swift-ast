@@ -201,9 +201,9 @@ extension InitializerExpression : TTYASTDumpRepresentable {
   }
 }
 
-extension KeyPathExpression : TTYASTDumpRepresentable {
+extension KeyPathStringExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("keypath_expr", sourceRange) + "\n" + expression.ttyDump.indent
+    return dump("key_path_string_expr", sourceRange) + "\n" + expression.ttyDump.indent
   }
 }
 

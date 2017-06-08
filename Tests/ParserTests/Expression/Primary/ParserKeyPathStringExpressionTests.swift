@@ -18,11 +18,11 @@ import XCTest
 
 @testable import AST
 
-class ParserKeyPathExpressionTests: XCTestCase {
-  func testKeyPathExpression() {
+class ParserKeyPathStringExpressionTests: XCTestCase {
+  func testKeyPathStringExpression() {
     parseExpressionAndTest("#keyPath(foo)", "#keyPath(foo)", testClosure: { expr in
-      guard let keyPathExpr = expr as? KeyPathExpression else {
-        XCTFail("Failed in getting a key path expression")
+      guard let keyPathExpr = expr as? KeyPathStringExpression else {
+        XCTFail("Failed in getting a key path string expression")
         return
       }
       XCTAssertTrue(keyPathExpr.expression is IdentifierExpression)
@@ -31,8 +31,8 @@ class ParserKeyPathExpressionTests: XCTestCase {
 
   func testContainsSelfExpression() {
     parseExpressionAndTest("#keyPath   (   self.bar    )", "#keyPath(self.bar)", testClosure: { expr in
-      guard let keyPathExpr = expr as? KeyPathExpression else {
-        XCTFail("Failed in getting a key path expression")
+      guard let keyPathExpr = expr as? KeyPathStringExpression else {
+        XCTFail("Failed in getting a key path string expression")
         return
       }
       XCTAssertTrue(keyPathExpr.expression is SelfExpression)
@@ -46,7 +46,7 @@ class ParserKeyPathExpressionTests: XCTestCase {
   }
 
   static var allTests = [
-    ("testKeyPathExpression", testKeyPathExpression),
+    ("testKeyPathStringExpression", testKeyPathStringExpression),
     ("testContainsSelfExpression", testContainsSelfExpression),
     ("testSourceRange", testSourceRange),
   ]
