@@ -459,6 +459,33 @@ class LexerStringLiteralTests: XCTestCase {
     XCTAssertEqual(multiLine, "There are the same.")
   }
 
+  func testInterpolatedTextInMultilineStringLiterals() {
+    lexAndTest("\"\"\"\n\\(\"3\")\n\"\"\"") { t in
+      guard case let .interpolatedStringLiteralHead(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "")
+      XCTAssertEqual(r, "\"\"\"\n\\(")
+    }
+    lexAndTest("\"\"\"\n  \\(\"3\")\n  \"\"\"") { t in
+      guard case let .interpolatedStringLiteralHead(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "  ")
+      XCTAssertEqual(r, "\"\"\"\n  \\(")
+    }
+    lexAndTest("\"\"\"\n  foo\n  \\(\"3\")\n  \"\"\"") { t in
+      guard case let .interpolatedStringLiteralHead(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "  foo\n  ")
+      XCTAssertEqual(r, "\"\"\"\n  foo\n  \\(")
+    }
+  }
+
   static var allTests = [
     ("testEmptyStringLiteral", testEmptyStringLiteral),
     ("testSingleCharacter", testSingleCharacter),
@@ -481,5 +508,6 @@ class LexerStringLiteralTests: XCTestCase {
     ("testMultilineIndentationErrors", testMultilineIndentationErrors),
     ("testMultilineDoubleQuoteFuns", testMultilineDoubleQuoteFuns),
     ("testSinglelineMultilineComparisons", testSinglelineMultilineComparisons),
+    ("testInterpolatedTextInMultilineStringLiterals", testInterpolatedTextInMultilineStringLiterals),
   ]
 }
