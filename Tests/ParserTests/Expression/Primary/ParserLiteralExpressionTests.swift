@@ -102,6 +102,14 @@ class ParserLiteralExpressionTests: XCTestCase {
       ("\"a\"", "a"),
       ("\"The quick brown fox jumps over the lazy dog\"", "The quick brown fox jumps over the lazy dog"),
       ("\"\\0\\\\\\t\\n\\r\\\"\\\'\"", "\0\\\t\n\r\"\'"),
+      ("\"\"\"\n\"\"\"", ""),
+      ("\"\"\"\n\n\"\"\"", ""),
+      ("\"\"\"\n  \n\"\"\"", "  "),
+      ("\"\"\"\n  \n  \"\"\"", ""),
+      ("\"\"\"\na\n\"\"\"", "a"),
+      ("\"\"\"\n\nThe quick brown fox\njumps over\nthe lazy dog\n\n\"\"\"",
+        "\nThe quick brown fox\njumps over\nthe lazy dog\n"),
+      ("\"\"\"\n\\0\\\\\\t\\\"\\\'\n\"\"\"", "\0\\\t\"\'"),
     ]
     for t in testStrings {
       parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
