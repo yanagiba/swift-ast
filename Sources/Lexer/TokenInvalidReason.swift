@@ -26,6 +26,9 @@ public enum TokenInvalidReason : DiagnosticKind {
   case closingBacktickExpected
   case digitCharExpected
   case unicodeLiteralExpected
+  case newLineExpectedAtTheBeinningOfMultilineStringLiteral
+  case insufficientIndentationOfLineInMultilineStringLiteral
+  case newLineExpectedAtTheClosingOfMultilineStringLiteral
 
   public var diagnosticMessage: String {
     switch self {
@@ -47,6 +50,12 @@ public enum TokenInvalidReason : DiagnosticKind {
       return "Missing digit character"
     case .unicodeLiteralExpected:
       return "Illegal unicode literal"
+    case .newLineExpectedAtTheBeinningOfMultilineStringLiteral:
+      return "multi-line string literal content must begin on a new line"
+    case .insufficientIndentationOfLineInMultilineStringLiteral:
+      return "insufficient indentation of line in multi-line string literal"
+    case .newLineExpectedAtTheClosingOfMultilineStringLiteral:
+      return "multi-line string literal closing delimiter must begin on a new line"
     }
   }
 }

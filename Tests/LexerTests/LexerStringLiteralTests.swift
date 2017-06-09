@@ -312,6 +312,153 @@ class LexerStringLiteralTests: XCTestCase {
     }
   }
 
+  func testEmptyMultilineStaticStringLiterals() {
+    lexAndTest("\"\"\"\n\"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "")
+      XCTAssertEqual(r, "\"\"\"\n\"\"\"")
+    }
+    lexAndTest("\"\"\"\n  \"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "")
+      XCTAssertEqual(r, "\"\"\"\n  \"\"\"")
+    }
+  }
+
+  func testSingleLineMultilineStringLiterals() {
+    lexAndTest("\"\"\"\nfoo\n\"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "foo")
+      XCTAssertEqual(r, "\"\"\"\nfoo\n\"\"\"")
+    }
+    lexAndTest("\"\"\"\n  foo\n  \"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "foo")
+      XCTAssertEqual(r, "\"\"\"\n  foo\n  \"\"\"")
+    }
+    lexAndTest("\"\"\"\n\tfoo\n\t\"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "foo")
+      XCTAssertEqual(r, "\"\"\"\n\tfoo\n\t\"\"\"")
+    }
+    lexAndTest("\"\"\"\n \t foo\n \t \"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "foo")
+      XCTAssertEqual(r, "\"\"\"\n \t foo\n \t \"\"\"")
+    }
+  }
+
+  func testMultiLineMultilineStringLiterals() {
+    let multiLineTestString = """
+    \"\"\"
+    The White Rabbit put on his spectacles.  \"Where shall I begin,
+    please your Majesty?\" he asked.
+
+    \"Begin at the beginning,\" the King said gravely, \"and go on
+    till you come to the end; then stop.\"
+    \"\"\"
+    """
+    let multiLineExpectedString = """
+    The White Rabbit put on his spectacles.  "Where shall I begin,
+    please your Majesty?" he asked.
+
+    "Begin at the beginning," the King said gravely, "and go on
+    till you come to the end; then stop."
+    """
+    lexAndTest(multiLineTestString) { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, multiLineExpectedString)
+      XCTAssertEqual(r, multiLineTestString)
+    }
+  }
+
+  func testMultilineIdentations() {
+    let multiLineTestString = """
+    \"\"\"
+      one space
+       two spaces
+        three spaces
+     \"\"\"
+    """
+    let multiLineExpectedString = """
+     one space
+      two spaces
+       three spaces
+    """
+    lexAndTest(multiLineTestString) { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, multiLineExpectedString)
+      XCTAssertEqual(r, multiLineTestString)
+    }
+  }
+
+  func testMultilineIndentationErrors() {
+    lexAndTest("\"\"\"\nfoo\n  \"\"\"") { t in
+      XCTAssertEqual(t, .invalid(.insufficientIndentationOfLineInMultilineStringLiteral))
+    }
+  }
+
+  func testMultilineDoubleQuoteFuns() {
+    let multiLineTestString = """
+    \"\"\"
+    Escaping the first quote \\\"\"\"
+    Escaping the first two quotes \\\"\\\"\"
+    Escaping all three quotes \\\"\\\"\\\"
+    \"\"\"
+    """
+    let multiLineExpectedString = """
+    Escaping the first quote \"""
+    Escaping the first two quotes \"\""
+    Escaping all three quotes \"\"\"
+    """
+    lexAndTest(multiLineTestString) { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, multiLineExpectedString)
+      XCTAssertEqual(r, multiLineTestString)
+    }
+  }
+
+  func testSinglelineMultilineComparisons() {
+    guard case .staticStringLiteral(let singleLine, _) = lex("\"There are the same.\"").kind else {
+      XCTFail("Failed in lexing single line string literal")
+      return
+    }
+    guard case .staticStringLiteral(let multiLine, _) = lex("\"\"\"\nThere are the same.\n\"\"\"").kind else {
+      XCTFail("Failed in lexing multi line string literal")
+      return
+    }
+    XCTAssertEqual(singleLine, multiLine)
+    XCTAssertEqual(singleLine, "There are the same.")
+    XCTAssertEqual(multiLine, "There are the same.")
+  }
+
   static var allTests = [
     ("testEmptyStringLiteral", testEmptyStringLiteral),
     ("testSingleCharacter", testSingleCharacter),
@@ -327,5 +474,12 @@ class LexerStringLiteralTests: XCTestCase {
     ("testOneDoubleQuote", testOneDoubleQuote),
     ("testFunWithDoubleQuotes", testFunWithDoubleQuotes),
     ("testUnicode", testUnicode),
+    ("testEmptyMultilineStaticStringLiterals", testEmptyMultilineStaticStringLiterals),
+    ("testSingleLineMultilineStringLiterals", testSingleLineMultilineStringLiterals),
+    ("testMultiLineMultilineStringLiterals", testMultiLineMultilineStringLiterals),
+    ("testMultilineIdentations", testMultilineIdentations),
+    ("testMultilineIndentationErrors", testMultilineIndentationErrors),
+    ("testMultilineDoubleQuoteFuns", testMultilineDoubleQuoteFuns),
+    ("testSinglelineMultilineComparisons", testSinglelineMultilineComparisons),
   ]
 }
