@@ -58,6 +58,6 @@ extension String {
       return self
     }
 
-    return substring(from: index(startIndex, offsetBy: pwd.characters.count+1))
+    return substring(from: index(startIndex, offsetBy: pwd.count+1))
   }
 }

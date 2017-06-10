@@ -489,7 +489,7 @@ extension Parser {
           _lexer.advanceChar()
         case ".":
           if let index = Int(digitStr) {
-            return (index, digitStr.characters.count)
+            return (index, digitStr.count)
           } else {
             _lexer.restore(fromCheckpoint: digitCp)
             return nil

@@ -99,7 +99,7 @@ extension Parser {
     if case .postfixOperator(let puncs) = _lexer.look().kind {
       var allQnE = true
       var ops = [String]()
-      for p in puncs.characters {
+      for p in puncs {
         if p == "!" {
           ops.append("!")
         } else if p == "?" {

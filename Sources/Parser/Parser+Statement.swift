@@ -187,7 +187,7 @@ extension Parser {
     case .if:
       let condition = _lexer.readUntilEOL()
       kind = .if(condition)
-      for _ in 0..<condition.characters.count {
+      for _ in 0..<condition.count {
         endLocation = endLocation.nextColumn
       }
     case .identifier(let id):
@@ -195,7 +195,7 @@ extension Parser {
       case "elseif":
         let condition = _lexer.readUntilEOL()
         kind = .elseif(condition)
-        for _ in 0..<condition.characters.count {
+        for _ in 0..<condition.count {
           endLocation = endLocation.nextColumn
         }
       case "endif":
