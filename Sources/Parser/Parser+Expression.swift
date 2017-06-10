@@ -1017,9 +1017,60 @@ extension Parser {
   private func parseInterpolatedStringLiteral(
     head: String, raw: String, startLocation: SourceLocation
   ) throws -> LiteralExpression {
+    func caliberateExpressions(_ exprs: [Expression]) throws -> [Expression] {
+      let exprCount = exprs.count
+      var indentationPrefix = ""
+      var caliberatedExprs: [Expression] = []
+
+      for (offset, expr) in exprs.reversed().enumerated() {
+        if let literalExpr = expr as? LiteralExpression,
+          case let .staticString(blockStr, blockRawText) = literalExpr.kind,
+          blockRawText.isEmpty
+        {
+          var blockLines = blockStr.components(separatedBy: .newlines)
+          if offset == 0 { // let's first of all figure out the indentation prefix
+            indentationPrefix = blockLines.removeLast()
+            guard indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty else {
+              throw _raiseFatal(.dummy)
+            }
+          }
+
+          let identationLength = indentationPrefix.count
+          var caliberatedLines: [String] = []
+          for (origLineOffset, origLine) in blockLines.enumerated() {
+            if origLineOffset == 0 && offset != exprCount-1 {
+              caliberatedLines.append(origLine)
+            } else if origLine.isEmpty {
+              caliberatedLines.append(origLine)
+            } else {
+              guard origLine.hasPrefix(indentationPrefix) else {
+                throw _raiseFatal(.dummy)
+                // return .invalid(.insufficientIndentationOfLineInMultilineStringLiteral)
+              }
+              let startIndex = origLine.index(origLine.startIndex, offsetBy: identationLength)
+              let caliberatedLine = String(origLine[startIndex...])
+              caliberatedLines.append(caliberatedLine)
+            }
+          }
+          let caliberatedLiteral = caliberatedLines.joined(separator: "\n")
+          if !caliberatedLiteral.isEmpty {
+            let caliberatedLiteralExpr =
+              LiteralExpression(kind: .staticString(caliberatedLiteral, blockRawText))
+            caliberatedExprs.append(caliberatedLiteralExpr)
+          }
+        } else {
+          caliberatedExprs.append(expr)
+        }
+      }
+
+      return caliberatedExprs.reversed()
+    }
+
     var exprs: [Expression] = []
     var rawText = raw
-    let isMultiline = raw.hasPrefix("\"\"\"")
+    let multilineDelimiter = "\"\"\""
+    let isMultiline = raw.hasPrefix(multilineDelimiter)
+    let isInterpolatedHead = startLocation != .DUMMY
 
     if !head.isEmpty {
       exprs.append(LiteralExpression(kind: .staticString(head, ""))) // static strings inside the interpolated string literals do not need to preserve raw representation, because they are what they are
@@ -1053,8 +1104,8 @@ extension Parser {
       }
       exprs.append(contentsOf: es)
 
-      let startIndexOffset = ir.hasPrefix("\"\"\"") ? 3 : 1
-      let endIndexOffset = ir.hasSuffix("\"\"\"") ? -3 : -1
+      let startIndexOffset = ir.hasPrefix(multilineDelimiter) ? 3 : 1
+      let endIndexOffset = ir.hasSuffix(multilineDelimiter) ? -3 : -1
       let startIndex = ir.index(ir.startIndex, offsetBy: startIndexOffset)
       let endIndex = ir.index(ir.endIndex, offsetBy: endIndexOffset)
       rawText += ir.substring(with: startIndex..<endIndex)
@@ -1063,57 +1114,11 @@ extension Parser {
       throw _raiseFatal(.expectedStringInterpolation)
     }
 
-    if isMultiline && startLocation != .DUMMY {
-      let exprCount = exprs.count
-      var indentationPrefix = ""
-      var caliberatedExprs: [Expression] = []
-
-      for (offset, expr) in exprs.reversed().enumerated() {
-        if let literalExpr = expr as? LiteralExpression,
-          case let .staticString(blockStr, blockRawText) = literalExpr.kind,
-          blockRawText.isEmpty
-        {
-          var blockLines = blockStr.components(separatedBy: .newlines)
-          if offset == 0 { // let's first of all figure out the indentation prefix
-            indentationPrefix = blockLines.removeLast()
-            guard indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty else {
-              throw _raiseFatal(.dummy)
-            }
-          }
-
-          // TODO: this code has a lot similarity to the lexer code
-          let identationLength = indentationPrefix.count
-          var caliberatedLines: [String] = []
-          for (origLineOffset, origLine) in blockLines.enumerated() {
-            if origLineOffset == 0 && offset != exprCount-1 {
-              caliberatedLines.append(origLine)
-            } else if origLine.isEmpty {
-              caliberatedLines.append(origLine)
-            } else {
-              guard origLine.hasPrefix(indentationPrefix) else {
-                throw _raiseFatal(.dummy)
-                // return .invalid(.insufficientIndentationOfLineInMultilineStringLiteral)
-              }
-              let startIndex = origLine.index(origLine.startIndex, offsetBy: identationLength)
-              let caliberatedLine = String(origLine[startIndex...])
-              caliberatedLines.append(caliberatedLine)
-            }
-          }
-          let caliberatedLiteral = caliberatedLines.joined(separator: "\n")
-          if !caliberatedLiteral.isEmpty {
-            let caliberatedLiteralExpr =
-              LiteralExpression(kind: .staticString(caliberatedLiteral, blockRawText))
-            caliberatedExprs.append(caliberatedLiteralExpr)
-          }
-        } else {
-          caliberatedExprs.append(expr)
-        }
-      }
-
-      exprs = caliberatedExprs.reversed()
+    if isMultiline && isInterpolatedHead {
+      exprs = try caliberateExpressions(exprs)
     }
 
-    rawText += isMultiline ? "\"\"\"" : "\""
+    rawText += isMultiline ? multilineDelimiter : "\""
 
     let strExpr = LiteralExpression(kind: .interpolatedString(exprs, rawText))
     strExpr.setSourceRange(startLocation, endLocation)
