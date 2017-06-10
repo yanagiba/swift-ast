@@ -243,7 +243,11 @@ class ParserClassDeclarationTests: XCTestCase {
   func testDeclarationMember() {
     parseDeclarationAndTest(
       "class Foo { let a = 1 }",
-      "class Foo {\nlet a = 1\n}",
+      """
+      class Foo {
+      let a = 1
+      }
+      """,
       testClosure: { decl in
       guard let classDecl = decl as? ClassDeclaration else {
         XCTFail("Failed in getting a class declaration.")
@@ -269,7 +273,12 @@ class ParserClassDeclarationTests: XCTestCase {
   func testMultipleDeclarationMembers() {
     parseDeclarationAndTest(
       "class Foo { let a = 1 var b = 2  }",
-      "class Foo {\nlet a = 1\nvar b = 2\n}",
+      """
+      class Foo {
+      let a = 1
+      var b = 2
+      }
+      """,
       testClosure: { decl in
       guard let classDecl = decl as? ClassDeclaration else {
         XCTFail("Failed in getting a class declaration.")
@@ -291,7 +300,13 @@ class ParserClassDeclarationTests: XCTestCase {
   func testNestedClassDecl() {
     parseDeclarationAndTest(
       "class Foo { class Bar { let b = 2 } }",
-      "class Foo {\nclass Bar {\nlet b = 2\n}\n}",
+      """
+      class Foo {
+      class Bar {
+      let b = 2
+      }
+      }
+      """,
       testClosure: { decl in
       guard let classDecl = decl as? ClassDeclaration else {
         XCTFail("Failed in getting a class declaration.")
@@ -316,8 +331,27 @@ class ParserClassDeclarationTests: XCTestCase {
 
   func testCompilerControlMember() {
     parseDeclarationAndTest(
-      "class Foo { #if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
-      "class Foo {\n#if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
+      """
+      class Foo { #if a
+      let a = 1
+      #elseif b
+      let b = 2
+      #else
+      let e = 3
+      #endif
+      }
+      """,
+      """
+      class Foo {
+      #if a
+      let a = 1
+      #elseif b
+      let b = 2
+      #else
+      let e = 3
+      #endif
+      }
+      """,
       testClosure: { decl in
       guard let classDecl = decl as? ClassDeclaration else {
         XCTFail("Failed in getting a class declaration.")
@@ -351,14 +385,38 @@ class ParserClassDeclarationTests: XCTestCase {
     )
     parseDeclarationAndTest(
       "class Foo { let a = 1 var b = 2  }",
-      "class Foo {\nlet a = 1\nvar b = 2\n}",
+      """
+      class Foo {
+      let a = 1
+      var b = 2
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 35))
       }
     )
     parseDeclarationAndTest(
-      "class Foo { #if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
-      "class Foo {\n#if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
+      """
+      class Foo { #if a
+      let a = 1
+      #elseif b
+      let b = 2
+      #else
+      let e = 3
+      #endif
+      }
+      """,
+      """
+      class Foo {
+      #if a
+      let a = 1
+      #elseif b
+      let b = 2
+      #else
+      let e = 3
+      #endif
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
       }

@@ -36,7 +36,13 @@ class ParserDoStatementTests: XCTestCase {
 
   func testCatchAll() {
     parseStatementAndTest("do { try foo() } catch { print(\"bar\") }",
-      "do {\ntry foo()\n} catch {\nprint(\"bar\")\n}",
+      """
+      do {
+      try foo()
+      } catch {
+      print(\"bar\")
+      }
+      """,
       testClosure: { stmt in
       guard let doStmt = stmt as? DoStatement else {
         XCTFail("Failed in parsing a do statement.")
@@ -59,7 +65,13 @@ class ParserDoStatementTests: XCTestCase {
 
   func testCatchPattern() {
     parseStatementAndTest("do { try foo() } catch e { print(e.localizedDescription) }",
-      "do {\ntry foo()\n} catch e {\nprint(e.localizedDescription)\n}",
+      """
+      do {
+      try foo()
+      } catch e {
+      print(e.localizedDescription)
+      }
+      """,
       testClosure: { stmt in
       guard let doStmt = stmt as? DoStatement else {
         XCTFail("Failed in parsing a do statement.")
@@ -81,7 +93,11 @@ class ParserDoStatementTests: XCTestCase {
 
   func testCatchWhere() {
     parseStatementAndTest("do { try foo() } catch where error is NSError {}",
-      "do {\ntry foo()\n} catch where error is NSError {}",
+      """
+      do {
+      try foo()
+      } catch where error is NSError {}
+      """,
       testClosure: { stmt in
       guard let doStmt = stmt as? DoStatement else {
         XCTFail("Failed in parsing a do statement.")
@@ -103,7 +119,11 @@ class ParserDoStatementTests: XCTestCase {
 
   func testCatchPatternAndWhere() {
     parseStatementAndTest("do { try foo() } catch e where e is NSError {}",
-      "do {\ntry foo()\n} catch e where e is NSError {}",
+      """
+      do {
+      try foo()
+      } catch e where e is NSError {}
+      """,
       testClosure: { stmt in
       guard let doStmt = stmt as? DoStatement else {
         XCTFail("Failed in parsing a do statement.")
@@ -129,23 +149,26 @@ class ParserDoStatementTests: XCTestCase {
   }
 
   func testMultipleCatches() {
-    parseStatementAndTest(
-    "do {\n" +
-    "    try expression\n" +
-    "    statements\n" +
-    "} catch pattern1 {\n" +
-    "    statements\n" +
-    "} catch pattern2 where condition {\n" +
-    "    statements\n" +
-    "}\n",
-    "do {\n" +
-    "try expression\n" +
-    "statements\n" +
-    "} catch pattern1 {\n" +
-    "statements\n" +
-    "} catch pattern2 where condition {\n" +
-    "statements\n" +
-    "}")
+    parseStatementAndTest("""
+    do {
+      try expression
+      statements
+    } catch pattern1 {
+      statements
+    } catch pattern2 where condition {
+      statements
+    }
+    """,
+    """
+    do {
+    try expression
+    statements
+    } catch pattern1 {
+    statements
+    } catch pattern2 where condition {
+    statements
+    }
+    """)
   }
 
   func testSourceRange() {
@@ -154,7 +177,13 @@ class ParserDoStatementTests: XCTestCase {
     })
     parseStatementAndTest(
       "do { try foo() } catch { print(\"bar\") }",
-      "do {\ntry foo()\n} catch {\nprint(\"bar\")\n}",
+      """
+      do {
+      try foo()
+      } catch {
+      print(\"bar\")
+      }
+      """,
       testClosure: { stmt in
         XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 40))
       }

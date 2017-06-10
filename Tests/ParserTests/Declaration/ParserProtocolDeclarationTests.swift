@@ -111,7 +111,13 @@ class ParserProtocolDeclarationTests: XCTestCase {
   func testPropertyMember() {
     parseDeclarationAndTest(
       "protocol Foo { var bar: Bar { get } }",
-      "protocol Foo {\nvar bar: Bar {\nget\n}\n}",
+      """
+      protocol Foo {
+      var bar: Bar {
+      get
+      }
+      }
+      """,
       testClosure: { decl in
       guard let protocolDecl = decl as? ProtocolDeclaration else {
         XCTFail("Failed in getting a protocol declaration.")
@@ -138,19 +144,37 @@ class ParserProtocolDeclarationTests: XCTestCase {
   func testPropertyMemberWithAttributes() {
     parseDeclarationAndTest(
       "protocol Foo { @a @b @c var bar: Bar { get } }",
-      "protocol Foo {\n@a @b @c var bar: Bar {\nget\n}\n}")
+      """
+      protocol Foo {
+      @a @b @c var bar: Bar {
+      get
+      }
+      }
+      """)
   }
 
   func testPropertyMemberWithModifier() {
     parseDeclarationAndTest(
       "protocol Foo { public var bar: Bar { get } }",
-      "protocol Foo {\npublic var bar: Bar {\nget\n}\n}")
+      """
+      protocol Foo {
+      public var bar: Bar {
+      get
+      }
+      }
+      """)
   }
 
   func testPropertyMemberWithAttributesAndModifier() {
     parseDeclarationAndTest(
       "protocol Foo { @a @b @c public var bar: Bar { get } }",
-      "protocol Foo {\n@a @b @c public var bar: Bar {\nget\n}\n}")
+      """
+      protocol Foo {
+      @a @b @c public var bar: Bar {
+      get
+      }
+      }
+      """)
   }
 
   func testMethodMember() {
@@ -216,7 +240,14 @@ class ParserProtocolDeclarationTests: XCTestCase {
   func testSubscriptMember() {
     parseDeclarationAndTest(
       "protocol Foo { @a fileprivate subscript<T, S>(i: Int, j: Int) -> @b Self where T: S { set get }}",
-      "protocol Foo {\n@a fileprivate subscript<T, S>(i: Int, j: Int) -> @b Self where T: S {\nget\nset\n}\n}",
+      """
+      protocol Foo {
+      @a fileprivate subscript<T, S>(i: Int, j: Int) -> @b Self where T: S {
+      get
+      set
+      }
+      }
+      """,
       testClosure: { decl in
       guard let protocolDecl = decl as? ProtocolDeclaration else {
         XCTFail("Failed in getting a protocol declaration.")
@@ -275,8 +306,22 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
   func testCompilerControlMember() {
     parseDeclarationAndTest(
-      "protocol Foo {\n#if bar\nvar bar: Bar { get }\n#endif\n }",
-      "protocol Foo {\n#if bar\nvar bar: Bar {\nget\n}\n#endif\n}",
+      """
+      protocol Foo {
+      #if bar
+      var bar: Bar { get }
+      #endif
+      }
+      """,
+      """
+      protocol Foo {
+      #if bar
+      var bar: Bar {
+      get
+      }
+      #endif
+      }
+      """,
       testClosure: { decl in
       guard let protocolDecl = decl as? ProtocolDeclaration else {
         XCTFail("Failed in getting a protocol declaration.")
@@ -306,7 +351,20 @@ class ParserProtocolDeclarationTests: XCTestCase {
   func testMembers() {
     parseDeclarationAndTest(
       "protocol Foo { var a:A{get} @a func b(c: C) -> B init!(d: D) subscript(i: Int) -> E {set get} public associatedtype f: F = g }",
-      "protocol Foo {\nvar a: A {\nget\n}\n@a func b(c: C) -> B\ninit!(d: D)\nsubscript(i: Int) -> E {\nget\nset\n}\npublic associatedtype f: F = g\n}",
+      """
+      protocol Foo {
+      var a: A {
+      get
+      }
+      @a func b(c: C) -> B
+      init!(d: D)
+      subscript(i: Int) -> E {
+      get
+      set
+      }
+      public associatedtype f: F = g
+      }
+      """,
       testClosure: { decl in
       guard let protocolDecl = decl as? ProtocolDeclaration else {
         XCTFail("Failed in getting a protocol declaration.")
@@ -329,7 +387,20 @@ class ParserProtocolDeclarationTests: XCTestCase {
   func testSourceRange() {
     parseDeclarationAndTest(
       "protocol Foo { var a:A{get} @a func b(c: C) -> B init!(d: D) subscript(i: Int) -> E {set get} public associatedtype f: F = g }",
-      "protocol Foo {\nvar a: A {\nget\n}\n@a func b(c: C) -> B\ninit!(d: D)\nsubscript(i: Int) -> E {\nget\nset\n}\npublic associatedtype f: F = g\n}",
+      """
+      protocol Foo {
+      var a: A {
+      get
+      }
+      @a func b(c: C) -> B
+      init!(d: D)
+      subscript(i: Int) -> E {
+      get
+      set
+      }
+      public associatedtype f: F = g
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 127))
       }

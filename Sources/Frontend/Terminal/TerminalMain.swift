@@ -67,10 +67,13 @@ public func terminalMain(
 }
 
 private func printGitHubIssueInstructions(for filePath: String) {
-  print()
-  print("If you think this is a bug, please run ")
-  print("swift-ast -github-issue \(filePath)".colored(with: .yellow))
-  print("and file a GitHub issue.")
+  let command = "swift-ast -github-issue \(filePath)".colored(with: .yellow)
+  print("""
+
+  If you think this is a bug, please run
+  \(command)
+  and file a GitHub issue.
+  """)
 }
 
 private func printHeader(for filePath: String) {

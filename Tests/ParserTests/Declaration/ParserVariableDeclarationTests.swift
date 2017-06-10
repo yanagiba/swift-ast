@@ -152,7 +152,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testGetter() {
     parseDeclarationAndTest(
       "var foo: Foo { get { return _foo } }",
-      "var foo: Foo {\nget {\nreturn _foo\n}\n}",
+      """
+      var foo: Foo {
+      get {
+      return _foo
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -181,7 +187,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testGetterWithAttributes() {
     parseDeclarationAndTest(
       "var foo: Foo { @a @b @c get { return _foo } }",
-      "var foo: Foo {\n@a @b @c get {\nreturn _foo\n}\n}",
+      """
+      var foo: Foo {
+      @a @b @c get {
+      return _foo
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -209,7 +221,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testGetterWithModifier() {
     parseDeclarationAndTest(
       "var foo: Foo { nonmutating get { return _foo } }",
-      "var foo: Foo {\nnonmutating get {\nreturn _foo\n}\n}",
+      """
+      var foo: Foo {
+      nonmutating get {
+      return _foo
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -236,7 +254,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testGetterWithAttributesAndModifier() {
     parseDeclarationAndTest(
       "var foo: Foo { @a @b @c mutating get { return _foo } }",
-      "var foo: Foo {\n@a @b @c mutating get {\nreturn _foo\n}\n}",
+      """
+      var foo: Foo {
+      @a @b @c mutating get {
+      return _foo
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -261,13 +285,28 @@ class ParserVariableDeclarationTests: XCTestCase {
     })
     parseDeclarationAndTest(
       "var foo: Foo { @a @b @c nonmutating get { return _foo } }",
-      "var foo: Foo {\n@a @b @c nonmutating get {\nreturn _foo\n}\n}")
+      """
+      var foo: Foo {
+      @a @b @c nonmutating get {
+      return _foo
+      }
+      }
+      """)
   }
 
   func testGetterThenSetter() {
     parseDeclarationAndTest(
       "var foo: Foo { get { return _foo } set { _foo = newValue } }",
-      "var foo: Foo {\nget {\nreturn _foo\n}\nset {\n_foo = newValue\n}\n}",
+      """
+      var foo: Foo {
+      get {
+      return _foo
+      }
+      set {
+      _foo = newValue
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -300,7 +339,16 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testGetterThenSetterWithAttributes() {
     parseDeclarationAndTest(
       "var foo: Foo { get { return _foo } @a @b @c set { _foo = newValue } }",
-      "var foo: Foo {\nget {\nreturn _foo\n}\n@a @b @c set {\n_foo = newValue\n}\n}",
+      """
+      var foo: Foo {
+      get {
+      return _foo
+      }
+      @a @b @c set {
+      _foo = newValue
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -334,7 +382,16 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testGetterThenSetterWithModifier() {
     parseDeclarationAndTest(
       "var foo: Foo { get { return _foo } nonmutating set { _foo = newValue } }",
-      "var foo: Foo {\nget {\nreturn _foo\n}\nnonmutating set {\n_foo = newValue\n}\n}",
+      """
+      var foo: Foo {
+      get {
+      return _foo
+      }
+      nonmutating set {
+      _foo = newValue
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -367,7 +424,16 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testGetterThenSetterWithAttributesAndModifier() {
     parseDeclarationAndTest(
       "var foo: Foo { get { return _foo } @a @b @c mutating set { _foo = newValue } }",
-      "var foo: Foo {\nget {\nreturn _foo\n}\n@a @b @c mutating set {\n_foo = newValue\n}\n}",
+      """
+      var foo: Foo {
+      get {
+      return _foo
+      }
+      @a @b @c mutating set {
+      _foo = newValue
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -401,25 +467,61 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testGetterWithAttributesThenSetterWithAttributes() {
     parseDeclarationAndTest(
       "var foo: Foo { @x @y @z get { return _foo } @a @b @c set { _foo = newValue } }",
-      "var foo: Foo {\n@x @y @z get {\nreturn _foo\n}\n@a @b @c set {\n_foo = newValue\n}\n}")
+      """
+      var foo: Foo {
+      @x @y @z get {
+      return _foo
+      }
+      @a @b @c set {
+      _foo = newValue
+      }
+      }
+      """)
   }
 
   func testGetterWithModifierThenSetterWithModifier() {
     parseDeclarationAndTest(
       "var foo: Foo { mutating get { return _foo } nonmutating set { _foo = newValue } }",
-      "var foo: Foo {\nmutating get {\nreturn _foo\n}\nnonmutating set {\n_foo = newValue\n}\n}")
+      """
+      var foo: Foo {
+      mutating get {
+      return _foo
+      }
+      nonmutating set {
+      _foo = newValue
+      }
+      }
+      """)
   }
 
   func testGetterWithAttributesAndModifierThenSetterWithAttributesAndModifier() {
     parseDeclarationAndTest(
       "var foo: Foo { @x @y @z mutating get { return _foo } @a @b @c nonmutating set { _foo = newValue } }",
-      "var foo: Foo {\n@x @y @z mutating get {\nreturn _foo\n}\n@a @b @c nonmutating set {\n_foo = newValue\n}\n}")
+      """
+      var foo: Foo {
+      @x @y @z mutating get {
+      return _foo
+      }
+      @a @b @c nonmutating set {
+      _foo = newValue
+      }
+      }
+      """)
   }
 
   func testGetterThenSetterWithName() {
     parseDeclarationAndTest(
       "var foo: Foo { get { return _foo } set(aValue) { _foo = aValue } }",
-      "var foo: Foo {\nget {\nreturn _foo\n}\nset(aValue) {\n_foo = aValue\n}\n}",
+      """
+      var foo: Foo {
+      get {
+      return _foo
+      }
+      set(aValue) {
+      _foo = aValue
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -452,13 +554,31 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testSetterThenGetter() {
     parseDeclarationAndTest(
       "var foo: Foo { set { _foo = newValue } get { return _foo } }",
-      "var foo: Foo {\nget {\nreturn _foo\n}\nset {\n_foo = newValue\n}\n}")
+      """
+      var foo: Foo {
+      get {
+      return _foo
+      }
+      set {
+      _foo = newValue
+      }
+      }
+      """)
   }
 
   func testSetterWithAttributesModifierAndNameThenGetterWithAttributesAndModifier() {
     parseDeclarationAndTest(
       "var foo: Foo { @a mutating set(newValue) { _foo = newValue } @x nonmutating get { return _foo } }",
-      "var foo: Foo {\n@x nonmutating get {\nreturn _foo\n}\n@a mutating set(newValue) {\n_foo = newValue\n}\n}")
+      """
+      var foo: Foo {
+      @x nonmutating get {
+      return _foo
+      }
+      @a mutating set(newValue) {
+      _foo = newValue
+      }
+      }
+      """)
   }
 
   func testGetterKeyword() {
@@ -605,7 +725,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testWillSet() {
     parseDeclarationAndTest(
       "var foo = _foo { willSet { print(newValue) } }",
-      "var foo = _foo {\nwillSet {\nprint(newValue)\n}\n}",
+      """
+      var foo = _foo {
+      willSet {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -641,7 +767,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testWillSetWithAttributes() {
     parseDeclarationAndTest(
       "var foo = _foo { @a @b @c willSet { print(newValue) } }",
-      "var foo = _foo {\n@a @b @c willSet {\nprint(newValue)\n}\n}",
+      """
+      var foo = _foo {
+      @a @b @c willSet {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -678,7 +810,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testWillSetWithName() {
     parseDeclarationAndTest(
       "var foo = _foo { willSet(newValue) { print(newValue) } }",
-      "var foo = _foo {\nwillSet(newValue) {\nprint(newValue)\n}\n}",
+      """
+      var foo = _foo {
+      willSet(newValue) {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -714,7 +852,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testWillSetWithAttributesAndName() {
     parseDeclarationAndTest(
       "var foo = _foo { @a @b @c willSet(newValue) { print(newValue) } }",
-      "var foo = _foo {\n@a @b @c willSet(newValue) {\nprint(newValue)\n}\n}",
+      """
+      var foo = _foo {
+      @a @b @c willSet(newValue) {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -751,7 +895,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testDidSet() {
     parseDeclarationAndTest(
       "var foo = _foo { didSet { print(newValue) } }",
-      "var foo = _foo {\ndidSet {\nprint(newValue)\n}\n}",
+      """
+      var foo = _foo {
+      didSet {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -787,7 +937,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testDidSetWithAttributes() {
     parseDeclarationAndTest(
       "var foo = _foo { @x @y @z didSet { print(newValue) } }",
-      "var foo = _foo {\n@x @y @z didSet {\nprint(newValue)\n}\n}",
+      """
+      var foo = _foo {
+      @x @y @z didSet {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -824,7 +980,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testDidSetWithName() {
     parseDeclarationAndTest(
       "var foo = _foo { didSet(newValue) { print(newValue) } }",
-      "var foo = _foo {\ndidSet(newValue) {\nprint(newValue)\n}\n}",
+      """
+      var foo = _foo {
+      didSet(newValue) {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -860,7 +1022,13 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testDidSetWithAttributesAndName() {
     parseDeclarationAndTest(
       "var foo = _foo { @x @y @z didSet(newValue) { print(newValue) } }",
-      "var foo = _foo {\n@x @y @z didSet(newValue) {\nprint(newValue)\n}\n}",
+      """
+      var foo = _foo {
+      @x @y @z didSet(newValue) {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -897,7 +1065,16 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testWillSetThenDidSet() {
     parseDeclarationAndTest(
       "var foo = _foo { willSet { print(newValue) } didSet { print(newValue) } }",
-      "var foo = _foo {\nwillSet {\nprint(newValue)\n}\ndidSet {\nprint(newValue)\n}\n}",
+      """
+      var foo = _foo {
+      willSet {
+      print(newValue)
+      }
+      didSet {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -937,7 +1114,16 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testWillSetWithAttributesAndNameThenDidSetWithAttributesAndName() {
     parseDeclarationAndTest(
       "var foo = _foo { @a willSet(newValue) { print(newValue) } @x didSet(aValue) { print(aValue) } }",
-      "var foo = _foo {\n@a willSet(newValue) {\nprint(newValue)\n}\n@x didSet(aValue) {\nprint(aValue)\n}\n}",
+      """
+      var foo = _foo {
+      @a willSet(newValue) {
+      print(newValue)
+      }
+      @x didSet(aValue) {
+      print(aValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -979,7 +1165,16 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testDidSetThenWillSet() {
     parseDeclarationAndTest(
       "var foo = _foo { didSet { print(newValue) } willSet { print(newValue) } }",
-      "var foo = _foo {\nwillSet {\nprint(newValue)\n}\ndidSet {\nprint(newValue)\n}\n}",
+      """
+      var foo = _foo {
+      willSet {
+      print(newValue)
+      }
+      didSet {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -1019,7 +1214,16 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testDidSetWithAttributesAndNameThenWillSetWithAttributesAndName() {
     parseDeclarationAndTest(
       "var foo = _foo { @x didSet(aValue) { print(aValue) } @a willSet(newValue) { print(newValue) } }",
-      "var foo = _foo {\n@a willSet(newValue) {\nprint(newValue)\n}\n@x didSet(aValue) {\nprint(aValue)\n}\n}",
+      """
+      var foo = _foo {
+      @a willSet(newValue) {
+      print(newValue)
+      }
+      @x didSet(aValue) {
+      print(aValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -1061,7 +1265,16 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testTypeAnnotationWillSetDidSet() {
     parseDeclarationAndTest(
       "var foo: Foo { didSet { print(newValue) } willSet { print(newValue) } }",
-      "var foo: Foo {\nwillSet {\nprint(newValue)\n}\ndidSet {\nprint(newValue)\n}\n}",
+      """
+      var foo: Foo {
+      willSet {
+      print(newValue)
+      }
+      didSet {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -1100,7 +1313,16 @@ class ParserVariableDeclarationTests: XCTestCase {
   func testTypeAnnotationInitializerWillSetDidSet() {
     parseDeclarationAndTest(
       "var foo: Foo = _foo { didSet { print(newValue) } willSet { print(newValue) } }",
-      "var foo: Foo = _foo {\nwillSet {\nprint(newValue)\n}\ndidSet {\nprint(newValue)\n}\n}",
+      """
+      var foo: Foo = _foo {
+      willSet {
+      print(newValue)
+      }
+      didSet {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
       guard let varDecl = decl as? VariableDeclaration else {
         XCTFail("Failed in getting a variable declaration.")
@@ -1230,10 +1452,22 @@ class ParserVariableDeclarationTests: XCTestCase {
     })
     parseDeclarationAndTest(
       "var foo = bar { $0 = 0 }, a = b { _ in true }, x = y { t -> Int in t^2 }",
-      "var foo = bar { $0 = 0 }, a = b { _ in\ntrue\n}, x = y { t -> Int in\nt ^ 2\n}")
+      """
+      var foo = bar { $0 = 0 }, a = b { _ in
+      true
+      }, x = y { t -> Int in
+      t ^ 2
+      }
+      """)
     parseDeclarationAndTest(
       "var foo = _foo { $0 = 0 } { willSet(newValue) { print(newValue) } }",
-      "var foo = _foo { $0 = 0 } {\nwillSet(newValue) {\nprint(newValue)\n}\n}")
+      """
+      var foo = _foo { $0 = 0 } {
+      willSet(newValue) {
+      print(newValue)
+      }
+      }
+      """)
     parseDeclarationAndTest(
       "var foo = bar { $0 == 0 }.joined()",
       "var foo = bar { $0 == 0 }.joined()")
@@ -1258,26 +1492,63 @@ class ParserVariableDeclarationTests: XCTestCase {
     parseDeclarationAndTest("var foo: Foo { get set }", "var foo: Foo {\nget\nset\n}", testClosure: { decl in
       XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 25))
     })
-    parseDeclarationAndTest("var foo: Foo { get { return _foo } }", "var foo: Foo {\nget {\nreturn _foo\n}\n}", testClosure: { decl in
-      XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 37))
-    })
+    parseDeclarationAndTest(
+      "var foo: Foo { get { return _foo } }",
+      """
+      var foo: Foo {
+      get {
+      return _foo
+      }
+      }
+      """,
+      testClosure: { decl in
+        XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 37))
+      }
+    )
     parseDeclarationAndTest(
       "var foo: Foo { didSet { print(newValue) } willSet { print(newValue) } }",
-      "var foo: Foo {\nwillSet {\nprint(newValue)\n}\ndidSet {\nprint(newValue)\n}\n}",
+      """
+      var foo: Foo {
+      willSet {
+      print(newValue)
+      }
+      didSet {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 72))
       }
     )
     parseDeclarationAndTest(
       "var foo = _foo { didSet { print(newValue) } willSet { print(newValue) } }",
-      "var foo = _foo {\nwillSet {\nprint(newValue)\n}\ndidSet {\nprint(newValue)\n}\n}",
+      """
+      var foo = _foo {
+      willSet {
+      print(newValue)
+      }
+      didSet {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 74))
       }
     )
     parseDeclarationAndTest(
       "var foo: Foo = _foo { didSet { print(newValue) } willSet { print(newValue) } }",
-      "var foo: Foo = _foo {\nwillSet {\nprint(newValue)\n}\ndidSet {\nprint(newValue)\n}\n}",
+      """
+      var foo: Foo = _foo {
+      willSet {
+      print(newValue)
+      }
+      didSet {
+      print(newValue)
+      }
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 79))
       }

@@ -570,7 +570,13 @@ class ParserEnumDeclarationTests: XCTestCase {
   func testMultipleUnionStyleMembers() {
     parseDeclarationAndTest(
       "enum Foo { case a(A) case b case c(A, B, C) }",
-      "enum Foo {\ncase a(A)\ncase b\ncase c(A, B, C)\n}",
+      """
+      enum Foo {
+      case a(A)
+      case b
+      case c(A, B, C)
+      }
+      """,
       testClosure: { decl in
       guard let enumDecl = decl as? EnumDeclaration else {
         XCTFail("Failed in getting an enum declaration.")
@@ -606,7 +612,17 @@ class ParserEnumDeclarationTests: XCTestCase {
   func testMultipleUnionStyleMembersAndDeclarations() {
     parseDeclarationAndTest(
       "enum Foo { let a = 1 case a(A) let b = 2 case b let c = 3 case c(A, B, C) let d = 4 }",
-      "enum Foo {\nlet a = 1\ncase a(A)\nlet b = 2\ncase b\nlet c = 3\ncase c(A, B, C)\nlet d = 4\n}",
+      """
+      enum Foo {
+      let a = 1
+      case a(A)
+      let b = 2
+      case b
+      let c = 3
+      case c(A, B, C)
+      let d = 4
+      }
+      """,
       testClosure: { decl in
       guard let enumDecl = decl as? EnumDeclaration else {
         XCTFail("Failed in getting an enum declaration.")
@@ -662,7 +678,13 @@ class ParserEnumDeclarationTests: XCTestCase {
   func testMultipleRawValueStyleMembers() {
     parseDeclarationAndTest(
       "enum Foo: Int { case a case b = 1 case c = 999 }",
-      "enum Foo: Int {\ncase a\ncase b = 1\ncase c = 999\n}",
+      """
+      enum Foo: Int {
+      case a
+      case b = 1
+      case c = 999
+      }
+      """,
       testClosure: { decl in
       guard let enumDecl = decl as? EnumDeclaration else {
         XCTFail("Failed in getting an enum declaration.")
@@ -698,7 +720,17 @@ class ParserEnumDeclarationTests: XCTestCase {
   func testMultipleRawValueStyleMembersAndDeclarations() {
     parseDeclarationAndTest(
       "enum Foo: Int { let a = 1 case a let b = 2 case b = 1 let c = 3 case c = 999 let d = 4 }",
-      "enum Foo: Int {\nlet a = 1\ncase a\nlet b = 2\ncase b = 1\nlet c = 3\ncase c = 999\nlet d = 4\n}",
+      """
+      enum Foo: Int {
+      let a = 1
+      case a
+      let b = 2
+      case b = 1
+      let c = 3
+      case c = 999
+      let d = 4
+      }
+      """,
       testClosure: { decl in
       guard let enumDecl = decl as? EnumDeclaration else {
         XCTFail("Failed in getting an enum declaration.")
@@ -782,8 +814,27 @@ class ParserEnumDeclarationTests: XCTestCase {
 
   func testCompilerControlMember() {
     parseDeclarationAndTest(
-      "enum Foo { #if a\ncase a(A)\n#elseif b \ncase b\n#else\ncase c(A, B, C)\n#endif\n}",
-      "enum Foo {\n#if a\ncase a(A)\n#elseif b \ncase b\n#else\ncase c(A, B, C)\n#endif\n}",
+      """
+      enum Foo { #if a
+      case a(A)
+      #elseif b
+      case b
+      #else
+      case c(A, B, C)
+      #endif
+      }
+      """,
+      """
+      enum Foo {
+      #if a
+      case a(A)
+      #elseif b
+      case b
+      #else
+      case c(A, B, C)
+      #endif
+      }
+      """,
       testClosure: { decl in
       guard let enumDecl = decl as? EnumDeclaration else {
         XCTFail("Failed in getting an enum declaration.")
@@ -839,14 +890,43 @@ class ParserEnumDeclarationTests: XCTestCase {
     )
     parseDeclarationAndTest(
       "enum Foo: Int { let a = 1 case a let b = 2 case b = 1 let c = 3 case c = 999 let d = 4 }",
-      "enum Foo: Int {\nlet a = 1\ncase a\nlet b = 2\ncase b = 1\nlet c = 3\ncase c = 999\nlet d = 4\n}",
+      """
+      enum Foo: Int {
+      let a = 1
+      case a
+      let b = 2
+      case b = 1
+      let c = 3
+      case c = 999
+      let d = 4
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 89))
       }
     )
     parseDeclarationAndTest(
-      "enum Foo { #if a\ncase a(A)\n#elseif b \ncase b\n#else\ncase c(A, B, C)\n#endif\n}",
-      "enum Foo {\n#if a\ncase a(A)\n#elseif b \ncase b\n#else\ncase c(A, B, C)\n#endif\n}",
+      """
+      enum Foo { #if a
+      case a(A)
+      #elseif b
+      case b
+      #else
+      case c(A, B, C)
+      #endif
+      }
+      """,
+      """
+      enum Foo {
+      #if a
+      case a(A)
+      #elseif b
+      case b
+      #else
+      case c(A, B, C)
+      #endif
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
       }

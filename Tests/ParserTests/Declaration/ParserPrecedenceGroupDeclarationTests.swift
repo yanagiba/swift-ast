@@ -223,7 +223,19 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
   func testCombination() {
     parseDeclarationAndTest(
       "precedencegroup foo { higherThan: bar higherThan: a, b, c lowerThan: bar lowerThan: a, b, c assignment: true assignment: false associativity: left associativity: right associativity: none }",
-      "precedencegroup foo {\nhigherThan: bar\nhigherThan: a, b, c\nlowerThan: bar\nlowerThan: a, b, c\nassignment: true\nassignment: false\nassociativity: left\nassociativity: right\nassociativity: none\n}",
+      """
+      precedencegroup foo {
+      higherThan: bar
+      higherThan: a, b, c
+      lowerThan: bar
+      lowerThan: a, b, c
+      assignment: true
+      assignment: false
+      associativity: left
+      associativity: right
+      associativity: none
+      }
+      """,
       testClosure: { decl in
       guard let precedenceGroupDecl = decl as? PrecedenceGroupDeclaration else {
         XCTFail("Failed in getting a precedence-group declaration.")
@@ -245,7 +257,19 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
     )
     parseDeclarationAndTest(
       "precedencegroup foo { higherThan: bar higherThan: a, b, c lowerThan: bar lowerThan: a, b, c assignment: true assignment: false associativity: left associativity: right associativity: none }",
-      "precedencegroup foo {\nhigherThan: bar\nhigherThan: a, b, c\nlowerThan: bar\nlowerThan: a, b, c\nassignment: true\nassignment: false\nassociativity: left\nassociativity: right\nassociativity: none\n}",
+      """
+      precedencegroup foo {
+      higherThan: bar
+      higherThan: a, b, c
+      lowerThan: bar
+      lowerThan: a, b, c
+      assignment: true
+      assignment: false
+      associativity: left
+      associativity: right
+      associativity: none
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 190))
       }

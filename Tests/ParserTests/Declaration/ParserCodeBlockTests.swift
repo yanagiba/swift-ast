@@ -21,10 +21,22 @@ import XCTest
 
 class ParserCodeBlockTests: XCTestCase {
   func testSimpleCase() {
-    let declParser = getParser("{a = 1\nb = 2\na>b ? a+1:b\nfoo()}")
+    let declParser = getParser("""
+    {a = 1
+    b = 2
+    a>b ? a+1:b
+    foo()}
+    """)
     do {
       let codeBlock = try declParser.parseCodeBlock()
-      XCTAssertEqual(codeBlock.textDescription, "{\na = 1\nb = 2\na > b ? a + 1 : b\nfoo()\n}")
+      XCTAssertEqual(codeBlock.textDescription, """
+      {
+      a = 1
+      b = 2
+      a > b ? a + 1 : b
+      foo()
+      }
+      """)
       let stmts = codeBlock.statements
       XCTAssertEqual(stmts.count, 4)
       XCTAssertTrue(stmts[0] is AssignmentOperatorExpression)
@@ -37,10 +49,18 @@ class ParserCodeBlockTests: XCTestCase {
   }
 
   func testSourceRange() {
-    let declParser = getParser("{import A\nimport B}")
+    let declParser = getParser("""
+    {import A
+    import B}
+    """)
     do {
       let codeBlock = try declParser.parseCodeBlock()
-      XCTAssertEqual(codeBlock.textDescription, "{\nimport A\nimport B\n}")
+      XCTAssertEqual(codeBlock.textDescription, """
+      {
+      import A
+      import B
+      }
+      """)
       XCTAssertEqual(codeBlock.sourceRange, getRange(1, 1, 2, 10))
     } catch {
       XCTFail("Failed in parsing a code block declaration.")
@@ -48,10 +68,18 @@ class ParserCodeBlockTests: XCTestCase {
   }
 
   func testLexicalParent() {
-    let declParser = getParser("{import A\nimport B}")
+    let declParser = getParser("""
+    {import A
+    import B}
+    """)
     do {
       let codeBlock = try declParser.parseCodeBlock()
-      XCTAssertEqual(codeBlock.textDescription, "{\nimport A\nimport B\n}")
+      XCTAssertEqual(codeBlock.textDescription, """
+      {
+      import A
+      import B
+      }
+      """)
       XCTAssertNil(codeBlock.lexicalParent)
       for stmt in codeBlock.statements {
         XCTAssertTrue(stmt.lexicalParent === codeBlock)

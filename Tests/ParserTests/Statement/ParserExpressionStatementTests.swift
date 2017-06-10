@@ -32,7 +32,12 @@ class ParserExpressionStatementTests: XCTestCase {
     do {
       let stmts = try stmtParser.parseStatements()
       XCTAssertEqual(stmts.count, 4)
-      XCTAssertEqual(stmts.textDescription, "a = 1\nb = 2\na > b ? a + 1 : b\nfoo()")
+      XCTAssertEqual(stmts.textDescription, """
+      a = 1
+      b = 2
+      a > b ? a + 1 : b
+      foo()
+      """)
       XCTAssertTrue(stmts[0] is AssignmentOperatorExpression)
       XCTAssertTrue(stmts[1] is AssignmentOperatorExpression)
       XCTAssertTrue(stmts[2] is TernaryConditionalOperatorExpression)

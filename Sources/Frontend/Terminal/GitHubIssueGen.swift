@@ -22,9 +22,11 @@ import Diagnostic
 
 func runGitHubIssueGen(for filePaths: [String]) -> Int32 {
   guard filePaths.count == 1 else {
-    print("⛔️")
-    print("You provide \(filePaths.count) files for GitHub issue generation.")
-    print("Please run GitHub issue model once for each file respectively.")
+    print("""
+    ⛔️
+    You provide \(filePaths.count) files for GitHub issue generation.
+    Please run GitHub issue model once for each file respectively.
+    """)
     return 0
   }
 
@@ -40,8 +42,10 @@ func runGitHubIssueGen(for filePaths: [String]) -> Int32 {
     let parser = Parser(source: source)
     _ = try parser.parse()
 
-    print("🙈")
-    print("Don't see any problems here.")
+    print("""
+    🙈
+    Don't see any problems here.
+    """)
   } catch SourceError.cannotReadFile(let absolutePath) {
     let content = genForFilePathIssues(
       filePath: filePath, absolutePath: absolutePath)
@@ -78,19 +82,23 @@ private func flush(_ content: String, to path: String) {
   do {
     try content.write(toFile: path, atomically: false, encoding: .utf8)
 
-    print("🎉")
-    print("Please copy the content from")
-    print(path.colored(with: .yellow))
-    print("and submit a GitHub issue")
-    print("Please \("censor".colored(with: .red)) its content by following Code of Conduct")
-    print("(http://contributor-covenant.org/version/1/4/)")
+    print("""
+    🎉
+    Please copy the content from
+    \(path.colored(with: .yellow))
+    and submit a GitHub issue
+    Please \("censor".colored(with: .red)) its content by following Code of Conduct
+    (http://contributor-covenant.org/version/1/4/)
+    """)
   }
   catch {
-    print("🤦")
-    print("Couldn't save to the file, so I am going to dump the content to the console:")
-    print("------".colored(with: .yellow))
-    print(content)
-    print("------".colored(with: .yellow))
+    print("""
+    🤦
+    Couldn't save to the file, so I am going to dump the content to the console:
+    \("------".colored(with: .yellow))
+    \(content)
+    \("------".colored(with: .yellow))
+    """)
   }
 }
 
@@ -108,62 +116,70 @@ private func getOSInfo() -> String {
 private func genForFilePathIssues(
   filePath: String, absolutePath: String
 ) -> String {
-  var content = ""
-  content += "### Issue Summary\n"
-  content += "[Insert a brief but thorough description of the issue]\n"
-  content += "\n"
-  content += "I tried to invoke `swift-ast` with the command:\n"
-  content += "`swift-ast \(filePath)`\n"
-  content += "\n"
-  content += "And it interprets the path and converts it to:\n"
-  content += "`\(absolutePath)`\n"
-  content += "\n"
-  content += "Then `swift-ast` couldn't read from that path.\n"
-  content += "\n"
-  content += "### Environment\n"
-  content += "- OS Info: \(getOSInfo())\n"
-  content += "- Yanagiba/swift-ast version: \(Version.current.library)\n"
-  content += "\n"
-  return content
+  return """
+  ### Issue Summary
+  [Insert a brief but thorough description of the issue]
+
+  I tried to invoke `swift-ast` with the command:
+  `swift-ast \(filePath)`
+
+  And it interprets the path and converts it to:
+  `\(absolutePath)`
+
+  Then `swift-ast` couldn't read from that path.
+
+  ### Environment
+  - OS Info: \(getOSInfo())
+  - Yanagiba/swift-ast version: \(Version.current.library)
+
+  """
 }
 
 private func genForParserError(
   sourceFile: SourceFile?, diagnostics: [Diagnostic]
 ) -> String {
-  var content = ""
-  content += "### Issue Summary\n"
-  content += "[A brief but thorough description of the issue]\n"
-  content += "\n"
-  content += "### Environment\n"
-  content += "- OS Info: \(getOSInfo())\n"
-  content += "- Yanagiba/swift-ast version: \(Version.current.library)\n"
-  content += "\n"
-  content += "### Reproduction Steps\n"
-  content += "[Detailed steps to reproduce the issue.]\n"
-  content += "\n"
-  content += "<details>\n<summary>Sample code</summary>\n"
-  content += "\n"
-  content += "```\n"
-  content += sourceFile?.content ?? "[Insert the source content here]"
-  content += "```\n"
-  content += "\n"
-  content += "Command to run `swift-ast` with the code above:\n"
-  content += (sourceFile?.path).map({ "`swift-ast \($0)`" }) ?? "[Insert the command]"
-  content += "\n</details>\n"
-  content += "\n"
-  content += "### Expected Result\n"
-  content += "What do you expect to happen as a result of the reproduction steps?\n"
-  content += "\n"
-  content += "### Actual Behavior\n"
-  content += "What currently happens as a result of the reproduction steps?\n"
-  content += "\n"
-  content += "```\n"
-  content += diagnostics.map({ "\($0.location) \($0.level): \($0.kind)" }).joined(separator: "\n")
-  content += "\n```\n"
-  content += "\n"
-  content += "### Even Better\n"
-  content += "Is your project open sourced? If yes, can you point us to your repository?\n"
-  content += "If not, is it possible to make a small project that fails the Travis CI?\n"
-  content += "If not, can you create a gist with your sample code for us?\n"
-  return content
+  let sourceContent = sourceFile?.content ?? "[Insert the source content here]"
+  let command = (sourceFile?.path).map({ "`swift-ast \($0)`" }) ?? "[Insert the command]"
+  let diagnosticMessages = diagnostics
+    .map({ "\($0.location) \($0.level): \($0.kind)" })
+    .joined(separator: "\n")
+
+  return """
+  ### Issue Summary
+  [A brief but thorough description of the issue]
+
+  ### Environment
+  - OS Info: \(getOSInfo())
+  - Yanagiba/swift-ast version: \(Version.current.library)
+
+  ### Reproduction Steps
+  [Detailed steps to reproduce the issue.]
+
+  <details>
+  <summary>Sample code</summary>
+
+  ```
+  \(sourceContent)
+  ```
+
+  Command to run `swift-ast` with the code above:
+  \(command)
+
+  </details>
+
+  ### Expected Result
+  What do you expect to happen as a result of the reproduction steps?
+
+  ### Actual Behavior
+  What currently happens as a result of the reproduction steps?
+
+  ```
+  \(diagnosticMessages)
+  ```
+
+  ### Even Better
+  Is your project open sourced? If yes, can you point us to your repository?
+  If not, is it possible to make a small project that fails the Travis CI?
+  If not, can you create a gist with your sample code for us?
+  """
 }

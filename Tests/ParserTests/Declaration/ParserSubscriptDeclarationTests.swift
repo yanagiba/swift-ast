@@ -265,7 +265,16 @@ class ParserSubscriptDeclarationTests: XCTestCase {
   func testGetterSetterBlock() {
     parseDeclarationAndTest(
       "subscript() -> Self { get { return _foo } set { _foo = newValue } }",
-      "subscript() -> Self {\nget {\nreturn _foo\n}\nset {\n_foo = newValue\n}\n}",
+      """
+      subscript() -> Self {
+      get {
+      return _foo
+      }
+      set {
+      _foo = newValue
+      }
+      }
+      """,
       testClosure: { decl in
       guard let subscriptDecl = decl as? SubscriptDeclaration else {
         XCTFail("Failed in getting a subscript declaration.")
@@ -300,7 +309,12 @@ class ParserSubscriptDeclarationTests: XCTestCase {
   func testGetterSetterKeywordBlock() {
     parseDeclarationAndTest(
       "subscript() -> Self { @a @b @c mutating get @x @y @z nonmutating set }",
-      "subscript() -> Self {\n@a @b @c mutating get\n@x @y @z nonmutating set\n}",
+      """
+      subscript() -> Self {
+      @a @b @c mutating get
+      @x @y @z nonmutating set
+      }
+      """,
       testClosure: { decl in
       guard let subscriptDecl = decl as? SubscriptDeclaration else {
         XCTFail("Failed in getting a subscript declaration.")
@@ -343,7 +357,12 @@ class ParserSubscriptDeclarationTests: XCTestCase {
     )
     parseDeclarationAndTest(
       "@x @y @z subscript() -> Self { @a @b @c mutating get @x @y @z nonmutating set }",
-      "@x @y @z subscript() -> Self {\n@a @b @c mutating get\n@x @y @z nonmutating set\n}",
+      """
+      @x @y @z subscript() -> Self {
+      @a @b @c mutating get
+      @x @y @z nonmutating set
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 80))
       }
