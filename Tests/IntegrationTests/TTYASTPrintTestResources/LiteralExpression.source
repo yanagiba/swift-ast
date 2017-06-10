@@ -26,6 +26,45 @@ false
 "The quick brown fox jumps over the lazy dog"
 "\("helloworld")a\("foo")\("bar")z"
 "1 2 \(1 + 2)"
+"""
+The White Rabbit put on his spectacles.  "Where shall I begin,
+please your Majesty?" he asked.
+
+"Begin at the beginning," the King said gravely, "and go on
+till you come to the end; then stop."
+"""
+"""
+  The White Rabbit put on his spectacles.  "Where shall I begin,
+  please your Majesty?" he asked.
+
+  "Begin at the beginning," the King said gravely, "and go on
+  till you come to the end; then stop."
+  """
+"""
+Escaping the first quote \"""
+Escaping all three quotes \"\"\"
+"""
+"""
+
+This string starts with a line feed.
+It also ends with a line feed.
+
+"""
+"""
+  \("""
+helloworld
+""")a\("foo")\("bar")z
+  """
+"""
+  \("""
+    hello
+    world
+    """)
+  a
+  \("foo")
+  \("bar")
+  z
+  """
 
 _ = []
 _ = [1, 2, 3]
