@@ -369,19 +369,23 @@ class LexerStringLiteralTests: XCTestCase {
   func testMultiLineMultilineStringLiterals() {
     let multiLineTestString = """
     \"\"\"
-    The White Rabbit put on his spectacles.  \"Where shall I begin,
-    please your Majesty?\" he asked.
 
-    \"Begin at the beginning,\" the King said gravely, \"and go on
-    till you come to the end; then stop.\"
-    \"\"\"
+     The White Rabbit put on his spectacles.  \"Where shall I begin,
+     please your Majesty?\" he asked.
+
+     \"Begin at the beginning,\" the King said gravely, \"and go on
+     till you come to the end; then stop.\"
+
+     \"\"\"
     """
     let multiLineExpectedString = """
+
     The White Rabbit put on his spectacles.  "Where shall I begin,
     please your Majesty?" he asked.
 
     "Begin at the beginning," the King said gravely, "and go on
     till you come to the end; then stop."
+
     """
     lexAndTest(multiLineTestString) { t in
       guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {

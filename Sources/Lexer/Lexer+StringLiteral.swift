@@ -69,6 +69,10 @@ extension Lexer /* string literal */ {
       let indentationLength = indentationPrefix.count
       var caliberatedLines: [String] = []
       for origLine in lines {
+        if origLine.isEmpty {
+          caliberatedLines.append(origLine)
+          continue
+        }
         guard origLine.hasPrefix(indentationPrefix) else {
           return .invalid(.insufficientIndentationOfLineInMultilineStringLiteral)
         }

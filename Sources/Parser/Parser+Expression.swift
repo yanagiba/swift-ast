@@ -1087,6 +1087,8 @@ extension Parser {
           for (origLineOffset, origLine) in blockLines.enumerated() {
             if origLineOffset == 0 && offset != exprCount-1 {
               caliberatedLines.append(origLine)
+            } else if origLine.isEmpty {
+              caliberatedLines.append(origLine)
             } else {
               guard origLine.hasPrefix(indentationPrefix) else {
                 throw _raiseFatal(.dummy)

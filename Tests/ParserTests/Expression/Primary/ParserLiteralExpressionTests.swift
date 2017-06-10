@@ -365,6 +365,22 @@ class ParserLiteralExpressionTests: XCTestCase {
           LiteralExpression(kind: .staticString("\nz", "")),
         ]
       ),
+      (
+        "\"\"\"\n  \n  \\(\"bar\")\n  \n  \"\"\"",
+        [
+          LiteralExpression(kind: .staticString("\n", "")),
+          LiteralExpression(kind: .staticString("bar", "\"bar\"")),
+          LiteralExpression(kind: .staticString("\n", "")),
+        ]
+      ),
+      (
+        "\"\"\"\n\n  \\(\"bar\")\n\n  \"\"\"",
+        [
+          LiteralExpression(kind: .staticString("\n", "")),
+          LiteralExpression(kind: .staticString("bar", "\"bar\"")),
+          LiteralExpression(kind: .staticString("\n", "")),
+        ]
+      ),
     ]
 
     func testInterpolatedStringExpressions(exprs: [Expression], expected: [Expression]) {
