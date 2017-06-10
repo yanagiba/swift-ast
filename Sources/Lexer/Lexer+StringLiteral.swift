@@ -15,7 +15,10 @@
 */
 
 extension Lexer /* string literal */ {
-  public func lexStringLiteral(isMultiline: Bool = false) -> Token.Kind {
+  public func lexStringLiteral(
+    isMultiline: Bool = false,
+    postponeCaliberation: Bool = false
+  ) -> Token.Kind {
     var literal = ""
     var rawRepresentation = isMultiline ? "\"\"\"" : "\""
 
@@ -56,20 +59,20 @@ extension Lexer /* string literal */ {
 
     func caliberateMultlineStringLiteral() -> Token.Kind {
       var lines = literal.components(separatedBy: .newlines)
-      let identationPrefix = lines.removeLast()
-      guard identationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty else {
+      let indentationPrefix = lines.removeLast()
+      guard indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty else {
         return .invalid(.newLineExpectedAtTheClosingOfMultilineStringLiteral)
       }
       if lines.isEmpty {
         return .staticStringLiteral("", rawRepresentation: rawRepresentation)
       }
-      let identationLength = identationPrefix.count
+      let indentationLength = indentationPrefix.count
       var caliberatedLines: [String] = []
       for origLine in lines {
-        guard origLine.hasPrefix(identationPrefix) else {
+        guard origLine.hasPrefix(indentationPrefix) else {
           return .invalid(.insufficientIndentationOfLineInMultilineStringLiteral)
         }
-        let startIndex = origLine.index(origLine.startIndex, offsetBy: identationLength)
+        let startIndex = origLine.index(origLine.startIndex, offsetBy: indentationLength)
         let caliberatedLine = origLine[startIndex...]
         caliberatedLines.append(String(caliberatedLine))
       }
@@ -78,7 +81,7 @@ extension Lexer /* string literal */ {
         rawRepresentation: rawRepresentation)
     }
 
-    if isMultiline {
+    if isMultiline && !postponeCaliberation {
       guard char.role == .lineFeed else {
         return .invalid(.newLineExpectedAtTheBeinningOfMultilineStringLiteral)
       }
@@ -109,6 +112,11 @@ extension Lexer /* string literal */ {
               consumeChar() // consumes the second double quote
               appendRaw() // add third double quote to rawRepresentation
               consumeChar() // consume the third double quote
+
+              if postponeCaliberation {
+                return .staticStringLiteral(
+                  literal, rawRepresentation: rawRepresentation)
+              }
 
               let caliberatedMultilineStringLiteral =
                 caliberateMultlineStringLiteral()
