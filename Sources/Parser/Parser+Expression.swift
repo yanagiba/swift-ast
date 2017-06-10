@@ -1031,7 +1031,7 @@ extension Parser {
           if offset == 0 { // let's first of all figure out the indentation prefix
             indentationPrefix = blockLines.removeLast()
             guard indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty else {
-              throw _raiseFatal(.dummy)
+              throw _raiseFatal(.newLineExpectedAtTheClosingOfMultilineStringLiteral)
             }
           }
 
@@ -1044,8 +1044,7 @@ extension Parser {
               caliberatedLines.append(origLine)
             } else {
               guard origLine.hasPrefix(indentationPrefix) else {
-                throw _raiseFatal(.dummy)
-                // return .invalid(.insufficientIndentationOfLineInMultilineStringLiteral)
+                throw _raiseFatal(.insufficientIndentationOfLineInMultilineStringLiteral)
               }
               let startIndex = origLine.index(origLine.startIndex, offsetBy: identationLength)
               let caliberatedLine = String(origLine[startIndex...])

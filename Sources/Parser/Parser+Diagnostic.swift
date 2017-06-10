@@ -134,6 +134,8 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedCloseSquareArrayLiteral
   case extraTokenStringInterpolation
   case expectedStringInterpolation
+  case newLineExpectedAtTheClosingOfMultilineStringLiteral
+  case insufficientIndentationOfLineInMultilineStringLiteral
   case expectedUnownedSafeOrUnsafe
   case expectedClosureParameterName
   case expectedIdentifierAfterDot
@@ -346,6 +348,10 @@ public enum ParserErrorKind : DiagnosticKind {
       return "extra tokens after interpolated string expression"
     case .expectedStringInterpolation:
       return "expected an interpolated string expression"
+    case .newLineExpectedAtTheClosingOfMultilineStringLiteral:
+      return "multi-line string literal closing delimiter must begin on a new line"
+    case .insufficientIndentationOfLineInMultilineStringLiteral:
+      return "insufficient indentation of line in multi-line string literal"
     case .expectedUnownedSafeOrUnsafe:
       return "expected 'safe' or 'unsafe' for 'unowned' specifier"
     case .expectedClosureParameterName:

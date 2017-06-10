@@ -175,6 +175,22 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("_ = \"\\($0})\"", .fatal, .extraTokenStringInterpolation)
     // parseProblematic("_ = \"\\(\"a\\(!)\")\"", .fatal, .expectedStringInterpolation) // TODO
     parseProblematic("_ = \"\\($0)", .fatal, .expectedStringInterpolation)
+    // parseProblematic("""
+    // _ = \"\"\"
+    // foo
+    // bar\"\"\"
+    // """, .fatal, .newLineExpectedAtTheClosingOfMultilineStringLiteral)
+    parseProblematic("""
+    _ = \"\"\"
+    \\(1)
+    bar\"\"\"
+    """, .fatal, .newLineExpectedAtTheClosingOfMultilineStringLiteral)
+    parseProblematic("""
+    _ = \"\"\"
+      \\(1)
+    bar
+      \"\"\"
+    """, .fatal, .insufficientIndentationOfLineInMultilineStringLiteral)
     parseProblematic("foo { _, in }", .fatal, .expectedClosureParameterName)
     parseProblematic("foo { _ in print()", .fatal, .rightBraceExpected("closure expression"))
     parseProblematic("_ = ._", .fatal, .expectedIdentifierAfterDot)
