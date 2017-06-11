@@ -37,6 +37,17 @@ let package = Package(
         "Parser",
       ]
     ),
+    .library(
+      name: "SwiftAST+Frontend",
+      targets: [
+        "Source",
+        "Diagnostic",
+        "AST",
+        "Lexer",
+        "Parser",
+        "Frontend",
+      ]
+    ),
   ],
   targets: [
     .target(
