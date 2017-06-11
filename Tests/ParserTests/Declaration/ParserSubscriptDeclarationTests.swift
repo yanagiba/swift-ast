@@ -29,9 +29,11 @@ class ParserSubscriptDeclarationTests: XCTestCase {
 
       XCTAssertTrue(subscriptDecl.attributes.isEmpty)
       XCTAssertTrue(subscriptDecl.modifiers.isEmpty)
+      XCTAssertNil(subscriptDecl.genericParameterClause)
       XCTAssertTrue(subscriptDecl.parameterList.isEmpty)
       XCTAssertTrue(subscriptDecl.resultAttributes.isEmpty)
       XCTAssertTrue(subscriptDecl.resultType is SelfType)
+      XCTAssertNil(subscriptDecl.genericWhereClause)
       guard case let .codeBlock(codeBlock) = subscriptDecl.body else {
         XCTFail("Failed in getting a code block for subscript declaration.")
         return
@@ -186,6 +188,56 @@ class ParserSubscriptDeclarationTests: XCTestCase {
     })
   }
 
+  func testGenericParameterClause() {
+    parseDeclarationAndTest(
+      "subscript<A, B, C>() -> Self {}",
+      "subscript<A, B, C>() -> Self {}",
+      testClosure: { decl in
+      guard let subscriptDecl = decl as? SubscriptDeclaration else {
+        XCTFail("Failed in getting a subscript declaration.")
+        return
+      }
+
+      XCTAssertTrue(subscriptDecl.attributes.isEmpty)
+      XCTAssertTrue(subscriptDecl.modifiers.isEmpty)
+      XCTAssertEqual(subscriptDecl.genericParameterClause?.textDescription, "<A, B, C>")
+      XCTAssertTrue(subscriptDecl.parameterList.isEmpty)
+      XCTAssertTrue(subscriptDecl.resultAttributes.isEmpty)
+      XCTAssertTrue(subscriptDecl.resultType is SelfType)
+      XCTAssertNil(subscriptDecl.genericWhereClause)
+      guard case let .codeBlock(codeBlock) = subscriptDecl.body else {
+        XCTFail("Failed in getting a code block for subscript declaration.")
+        return
+      }
+      XCTAssertTrue(codeBlock.statements.isEmpty)
+    })
+  }
+
+  func testGenericWhereClause() {
+    parseDeclarationAndTest(
+      "subscript<T, S>() -> Self where T == S {}",
+      "subscript<T, S>() -> Self where T == S {}",
+      testClosure: { decl in
+      guard let subscriptDecl = decl as? SubscriptDeclaration else {
+        XCTFail("Failed in getting a subscript declaration.")
+        return
+      }
+
+      XCTAssertTrue(subscriptDecl.attributes.isEmpty)
+      XCTAssertTrue(subscriptDecl.modifiers.isEmpty)
+      XCTAssertEqual(subscriptDecl.genericParameterClause?.textDescription, "<T, S>")
+      XCTAssertTrue(subscriptDecl.parameterList.isEmpty)
+      XCTAssertTrue(subscriptDecl.resultAttributes.isEmpty)
+      XCTAssertTrue(subscriptDecl.resultType is SelfType)
+      XCTAssertEqual(subscriptDecl.genericWhereClause?.textDescription, "where T == S")
+      guard case let .codeBlock(codeBlock) = subscriptDecl.body else {
+        XCTFail("Failed in getting a code block for subscript declaration.")
+        return
+      }
+      XCTAssertTrue(codeBlock.statements.isEmpty)
+    })
+  }
+
   func testCodeBlock() {
     parseDeclarationAndTest(
       "subscript() -> Self { return _weakSelf }",
@@ -213,7 +265,16 @@ class ParserSubscriptDeclarationTests: XCTestCase {
   func testGetterSetterBlock() {
     parseDeclarationAndTest(
       "subscript() -> Self { get { return _foo } set { _foo = newValue } }",
-      "subscript() -> Self {\nget {\nreturn _foo\n}\nset {\n_foo = newValue\n}\n}",
+      """
+      subscript() -> Self {
+      get {
+      return _foo
+      }
+      set {
+      _foo = newValue
+      }
+      }
+      """,
       testClosure: { decl in
       guard let subscriptDecl = decl as? SubscriptDeclaration else {
         XCTFail("Failed in getting a subscript declaration.")
@@ -248,7 +309,12 @@ class ParserSubscriptDeclarationTests: XCTestCase {
   func testGetterSetterKeywordBlock() {
     parseDeclarationAndTest(
       "subscript() -> Self { @a @b @c mutating get @x @y @z nonmutating set }",
-      "subscript() -> Self {\n@a @b @c mutating get\n@x @y @z nonmutating set\n}",
+      """
+      subscript() -> Self {
+      @a @b @c mutating get
+      @x @y @z nonmutating set
+      }
+      """,
       testClosure: { decl in
       guard let subscriptDecl = decl as? SubscriptDeclaration else {
         XCTFail("Failed in getting a subscript declaration.")
@@ -291,7 +357,12 @@ class ParserSubscriptDeclarationTests: XCTestCase {
     )
     parseDeclarationAndTest(
       "@x @y @z subscript() -> Self { @a @b @c mutating get @x @y @z nonmutating set }",
-      "@x @y @z subscript() -> Self {\n@a @b @c mutating get\n@x @y @z nonmutating set\n}",
+      """
+      @x @y @z subscript() -> Self {
+      @a @b @c mutating get
+      @x @y @z nonmutating set
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 80))
       }
@@ -308,6 +379,9 @@ class ParserSubscriptDeclarationTests: XCTestCase {
     ("testSingleParameter", testSingleParameter),
     ("testMultipleParameters", testMultipleParameters),
     ("testResultAttributes", testResultAttributes),
+    // generic parameter and where clauses
+    ("testGenericParameterClause", testGenericParameterClause),
+    ("testGenericWhereClause", testGenericWhereClause),
     // code block
     ("testCodeBlock", testCodeBlock),
     // getter-setter block

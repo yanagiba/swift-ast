@@ -53,7 +53,13 @@ class ParserSwitchStatementTests: XCTestCase {
 
   func testSimpleCase() {
     parseStatementAndTest("switch foo { case 1: print(1); foo = 2; }",
-      "switch foo {\ncase 1:\nprint(1)\nfoo = 2\n}",
+      """
+      switch foo {
+      case 1:
+      print(1)
+      foo = 2
+      }
+      """,
       testClosure: { stmt in
       guard let switchStmt = stmt as? SwitchStatement else {
         XCTFail("Failed in parsing a switch statement.")
@@ -80,7 +86,13 @@ class ParserSwitchStatementTests: XCTestCase {
 
   func testCaseWithWhereCondition() {
     parseStatementAndTest("switch foo { case let (x, y) where x == y: print(x); print(y); }",
-      "switch foo {\ncase let (x, y) where x == y:\nprint(x)\nprint(y)\n}",
+      """
+      switch foo {
+      case let (x, y) where x == y:
+      print(x)
+      print(y)
+      }
+      """,
       testClosure: { stmt in
       guard let switchStmt = stmt as? SwitchStatement else {
         XCTFail("Failed in parsing a switch statement.")
@@ -108,7 +120,12 @@ class ParserSwitchStatementTests: XCTestCase {
 
   func testCaseItems() {
     parseStatementAndTest("switch foo { case 1, 2, 3, x where x < 0: foo = 0; }",
-      "switch foo {\ncase 1, 2, 3, x where x < 0:\nfoo = 0\n}",
+      """
+      switch foo {
+      case 1, 2, 3, x where x < 0:
+      foo = 0
+      }
+      """,
       testClosure: { stmt in
       guard let switchStmt = stmt as? SwitchStatement else {
         XCTFail("Failed in parsing a switch statement.")
@@ -147,27 +164,31 @@ class ParserSwitchStatementTests: XCTestCase {
 
   func testCasesAndDefault() {
     parseStatementAndTest(
-    "switch controlExpression {\n" +
-    "case pattern1:\n" +
-    "    statements\n" +
-    "case pattern2 where condition:\n" +
-    "    statements\n" +
-    "case pattern3 where condition,\n" +
-    "     pattern4 where condition:\n" +
-    "    statements\n" +
-    "default:\n" +
-    "    statements\n" +
-    "}",
-    "switch controlExpression {\n" +
-    "case pattern1:\n" +
-    "statements\n" +
-    "case pattern2 where condition:\n" +
-    "statements\n" +
-    "case pattern3 where condition, pattern4 where condition:\n" +
-    "statements\n" +
-    "default:\n" +
-    "statements\n" +
-    "}")
+    """
+    switch controlExpression {
+    case pattern1:
+        statements
+    case pattern2 where condition:
+        statements
+    case pattern3 where condition,
+         pattern4 where condition:
+        statements
+    default:
+        statements
+    }
+    """,
+    """
+    switch controlExpression {
+    case pattern1:
+    statements
+    case pattern2 where condition:
+    statements
+    case pattern3 where condition, pattern4 where condition:
+    statements
+    default:
+    statements
+    }
+    """)
   }
 
   func testSourceRange() {

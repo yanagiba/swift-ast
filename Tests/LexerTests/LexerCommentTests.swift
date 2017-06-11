@@ -46,7 +46,10 @@ class LexerCommentTests: XCTestCase {
   }
 
   func testMultipleSingleLineComments() {
-    let content = "//foo\n//bar"
+    let content = """
+    //foo
+    //bar
+    """
     let expectedComments: Set = [comment("foo"), comment("bar", line: 2)]
     XCTAssertEqual(lexComments(content), expectedComments)
 
@@ -70,8 +73,18 @@ class LexerCommentTests: XCTestCase {
   }
 
   func testMultiLineMultipleLineComment() { // TODO: this might deserve a better name
-    let content = "/* start comment\ncomment content #1\n// comment content #2\nend comment*/"
-    let expectedComments: Set = [comment(" start comment\ncomment content #1\n// comment content #2\nend comment")]
+    let content = """
+    /* start comment
+    comment content #1
+    // comment content #2
+    end comment*/
+    """
+    let expectedComments: Set = [comment("""
+     start comment
+    comment content #1
+    // comment content #2
+    end comment
+    """)]
     XCTAssertEqual(lexComments(content), expectedComments)
 
     lexAndTest(content, expectedLine: 4, expectedColumn: 14) {
@@ -90,8 +103,15 @@ class LexerCommentTests: XCTestCase {
   }
 
   func testMultipleLineCommentsOneNextToTheOther() {
-    let content = "/*comment1*//*comment2*/\n/*comment3*/"
-    let expectedComments: Set = [comment("comment1"), comment("comment2", column: 13), comment("comment3", line: 2)]
+    let content = """
+    /*comment1*//*comment2*/
+    /*comment3*/
+    """
+    let expectedComments: Set = [
+      comment("comment1"),
+      comment("comment2", column: 13),
+      comment("comment3", line: 2),
+    ]
     XCTAssertEqual(lexComments(content), expectedComments)
 
     lexAndTest(content, expectedLine: 2, expectedColumn: 13) {

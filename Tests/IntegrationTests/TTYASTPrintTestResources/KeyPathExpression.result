@@ -1,1 +1,3 @@
-_ = #keyPath(foo)
+_ = \.foo
+_ = \.foo.bar
+_ = \A.foo.bar

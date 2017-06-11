@@ -66,7 +66,7 @@ public protocol ASTVisitor {
   func visit(_: ImplicitMemberExpression) throws -> Bool
   func visit(_: InOutExpression) throws -> Bool
   func visit(_: InitializerExpression) throws -> Bool
-  func visit(_: KeyPathExpression) throws -> Bool
+  func visit(_: KeyPathStringExpression) throws -> Bool
   func visit(_: LiteralExpression) throws -> Bool
   func visit(_: OptionalChainingExpression) throws -> Bool
   func visit(_: ParenthesizedExpression) throws -> Bool
@@ -259,7 +259,7 @@ extension ASTVisitor {
     return true
   }
 
-  public func visit(_: KeyPathExpression) throws -> Bool {
+  public func visit(_: KeyPathStringExpression) throws -> Bool {
     return true
   }
 

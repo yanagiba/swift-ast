@@ -48,8 +48,9 @@ public func allTests() -> [XCTestCaseEntry] {
     testCase(ParserParenthesizedExpressionTests.allTests),
     testCase(ParserTupleExpressionTests.allTests),
     testCase(ParserWildcardExpressionTests.allTests),
-    testCase(ParserSelectorExpressionTests.allTests),
     testCase(ParserKeyPathExpressionTests.allTests),
+    testCase(ParserSelectorExpressionTests.allTests),
+    testCase(ParserKeyPathStringExpressionTests.allTests),
     testCase(ParserPostfixOperatorExpressionTests.allTests),
     testCase(ParserFunctionCallExpressionTests.allTests),
     testCase(ParserInitializerExpressionTests.allTests),
@@ -119,6 +120,7 @@ public func allTests() -> [XCTestCaseEntry] {
     ///////// Others
     testCase(KeywordUsedAsIdentifierTests.allTests),
     testCase(GenericOpeningChevronTests.allTests),
+    testCase(RangeOperatorTests.allTests),
     testCase(ParserErrorKindTests.allTests),
   ]
 }

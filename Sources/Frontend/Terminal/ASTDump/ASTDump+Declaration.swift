@@ -168,9 +168,9 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
             let nameDump = "name: `\(unionCaseCase.name)`"
             caseBody = unionCaseCase.tuple.map({ "\(nameDump)\ntuple: `\($0.textDescription)`" }) ?? nameDump
           default:
-            caseBody = unionCase.cases.enumerated().map { (index, e) -> String in
-              let nameDump = "\(index): name: `\(e.name)`"
-              return e.tuple.map({ "\(nameDump), tuple: `\($0.textDescription)`" }) ?? nameDump
+            caseBody = unionCase.cases.enumerated().map { e -> String in
+              let nameDump = "\(e.offset): name: `\(e.element.name)`"
+              return e.element.tuple.map({ "\(nameDump), tuple: `\($0.textDescription)`" }) ?? nameDump
             }.joined(separator: "\n")
           }
           return "\(caseHead)\(caseNeck)\n\(caseBody.indent)"
@@ -190,9 +190,9 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
             let nameDump = "name: `\(rawValueCaseCase.name)`"
             caseBody = rawValueCaseCase.assignment.map({ "\(nameDump)\nraw_value: `\($0)`" }) ?? nameDump
           default:
-            caseBody = rawValueCase.cases.enumerated().map { (index, e) -> String in
-              let nameDump = "\(index): name: `\(e.name)`"
-              return e.assignment.map({ "\(nameDump), raw_value: `\($0)`" }) ?? nameDump
+            caseBody = rawValueCase.cases.enumerated().map { e -> String in
+              let nameDump = "\(e.offset): name: `\(e.element.name)`"
+              return e.element.assignment.map({ "\(nameDump), raw_value: `\($0)`" }) ?? nameDump
             }.joined(separator: "\n")
           }
           return "\(caseHead)\(caseNeck)\n\(caseBody.indent)"
@@ -285,7 +285,7 @@ extension ImportDeclaration : TTYASTDumpRepresentable {
       neck += "\n"
       neck += "kind: `\(kind)`".indent
     }
-    let body = "path:\n" + path.enumerated().map { "\($0): `\($1)`" }.joined(separator: "\n")
+    let body = "path:\n" + path.enumerated().map { "\($0.0): `\($0.1)`" }.joined(separator: "\n")
     return "\(head)\(neck)\n\(body.indent)"
   }
 }
@@ -375,7 +375,7 @@ extension PrecedenceGroupDeclaration : TTYASTDumpRepresentable {
       body = dumpAttr(attributes[0])
     default:
       body = "attributes:\n" + attributes.enumerated()
-        .map { "\($0): \(dumpAttr($1))" }
+        .map { "\($0.offset): \(dumpAttr($0.element))" }
         .joined(separator: "\n")
     }
     return "\(head)\n\(neck)\n\(body.indent)"
@@ -403,9 +403,9 @@ extension ProtocolDeclaration : TTYASTDumpRepresentable {
       body = "<empty_body_block>"
     } else {
       body = members.enumerated()
-        .map { index, m -> String in
-          var memberDump = "\(index): "
-          switch m {
+        .map { e -> String in
+          var memberDump = "\(e.offset): "
+          switch e.element {
           case .property(let member):
             memberDump += "kind: `property`\n"
             memberDump += "name: \(name)".indent
@@ -494,6 +494,14 @@ extension ProtocolDeclaration : TTYASTDumpRepresentable {
               memberDump += "\n"
               memberDump += "result_attributes: `\(member.resultAttributes.textDescription)`".indent
             }
+            if let genericParam = member.genericParameter {
+              memberDump += "\n"
+              memberDump += "generic_param: `\(genericParam.textDescription)`".indent
+            }
+            if let genericWhere = member.genericWhere {
+              memberDump += "\n"
+              memberDump += "generic_where: `\(genericWhere.textDescription)`".indent
+            }
             memberDump += "\n" + dump(member.getterSetterKeywordBlock).indent
           case .associatedType(let member):
             memberDump += "kind: `associated_type`\n"
@@ -513,6 +521,10 @@ extension ProtocolDeclaration : TTYASTDumpRepresentable {
             if let assignmentType = member.assignmentType {
               memberDump += "\n"
               memberDump += "assignment_type: \(assignmentType.textDescription)".indent
+            }
+            if let genericWhere = member.genericWhere {
+              memberDump += "\n"
+              memberDump += "generic_where: `\(genericWhere.textDescription)`".indent
             }
           case .compilerControl(let stmt):
             memberDump += "kind: `compiler_control`\n"
@@ -588,6 +600,14 @@ extension SubscriptDeclaration : TTYASTDumpRepresentable {
     if !resultAttributes.isEmpty {
       neck += "\n"
       neck += "result_attributes: `\(resultAttributes.textDescription)`".indent
+    }
+    if let genericParam = genericParameterClause {
+      neck += "\n"
+      neck += "generic_param: `\(genericParam.textDescription)`".indent
+    }
+    if let genericWhere = genericWhereClause {
+      neck += "\n"
+      neck += "generic_where: `\(genericWhere.textDescription)`".indent
     }
     let bodyTTYDump: String
     switch body {

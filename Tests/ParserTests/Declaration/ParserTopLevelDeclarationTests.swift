@@ -21,10 +21,20 @@ import XCTest
 
 class ParserTopLevelDeclarationTests: XCTestCase {
   func testSimpleCase() {
-    let declParser = getParser("a = 1\nb = 2\na>b ? a+1:b\nfoo()")
+    let declParser = getParser("""
+    a = 1
+    b = 2
+    a>b ? a+1:b
+    foo()
+    """)
     do {
       let topLevel = try declParser.parseTopLevelDeclaration()
-      XCTAssertEqual(topLevel.textDescription, "a = 1\nb = 2\na > b ? a + 1 : b\nfoo()")
+      XCTAssertEqual(topLevel.textDescription, """
+      a = 1
+      b = 2
+      a > b ? a + 1 : b
+      foo()
+      """)
       let stmts = topLevel.statements
       XCTAssertEqual(stmts.count, 4)
       XCTAssertTrue(stmts[0] is AssignmentOperatorExpression)

@@ -62,6 +62,15 @@ class LexerTests: XCTestCase {
     }
   }
 
+  func testBackslash() {
+    lexAndTest("\\") {
+      XCTAssertEqual($0, .backslash)
+    }
+    lexAndTest("\\.") {
+      XCTAssertEqual($0, .backslash)
+    }
+  }
+
   func testColon() {
     lexAndTest(":") {
       XCTAssertEqual($0, .colon)
@@ -179,7 +188,6 @@ class LexerTests: XCTestCase {
 
   func testSegmentShowUpAtInvalidLocation() {
     [
-      "\\", // backslash
       "\u{1}", // unsegmented
       "\u{1DC7}", // identifier body
       "\u{E01EE}" // operator body
@@ -195,6 +203,8 @@ class LexerTests: XCTestCase {
     XCTAssertTrue(Token.Kind.eof.isEqual(to: .eof))
     XCTAssertTrue(Token.Kind.hash.isEqual(toKindOf: .hash))
     XCTAssertTrue(Token.Kind.hash.isEqual(to: .hash))
+    XCTAssertTrue(Token.Kind.backslash.isEqual(toKindOf: .backslash))
+    XCTAssertTrue(Token.Kind.backslash.isEqual(to: .backslash))
 
     XCTAssertTrue(Token.Kind.invalid(.unicodeLiteralExpected).isEqual(toKindOf: .invalid(.unicodeLiteralExpected)))
     XCTAssertTrue(Token.Kind.invalid(.digitCharExpected).isEqual(toKindOf: .invalid(.closingBacktickExpected)))
@@ -278,6 +288,7 @@ class LexerTests: XCTestCase {
     ("testAssignmentOperator", testAssignmentOperator),
     ("testAt", testAt),
     ("testHash", testHash),
+    ("testBackslash", testBackslash),
     ("testColon", testColon),
     ("testComma", testComma),
     ("testDot", testDot),

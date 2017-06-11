@@ -1,6 +1,16 @@
-top_level_decl <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-17:18>
-  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-17:18>
+top_level_decl <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-19:15>
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-17:10>
     wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-17:2>
-    keypath_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:5-17:18>
-      identifier_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:14-17:17>
-        kind: `identifier`, identifier: `foo`
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:5-17:10>
+      0: component: `foo`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:18:1-18:14>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:18:1-18:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:18:5-18:14>
+      0: component: `foo`
+      1: component: `bar`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:19:1-19:15>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:19:1-19:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:19:5-19:15>
+      type: `A`
+      0: component: `foo`
+      1: component: `bar`

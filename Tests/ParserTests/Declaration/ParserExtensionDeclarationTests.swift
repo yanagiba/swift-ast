@@ -179,7 +179,12 @@ class ParserExtensionDeclarationTests: XCTestCase {
   func testMultipleDeclarationMembers() {
     parseDeclarationAndTest(
       "extension Foo { let a = 1 var b = 2  }",
-      "extension Foo {\nlet a = 1\nvar b = 2\n}",
+      """
+      extension Foo {
+      let a = 1
+      var b = 2
+      }
+      """,
       testClosure: { decl in
       guard let extDecl = decl as? ExtensionDeclaration else {
         XCTFail("Failed in getting an extension declaration.")
@@ -199,8 +204,27 @@ class ParserExtensionDeclarationTests: XCTestCase {
 
   func testCompilerControlMember() {
     parseDeclarationAndTest(
-      "extension Foo { #if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
-      "extension Foo {\n#if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
+      """
+      extension Foo { #if a
+      let a = 1
+      #elseif b
+      let b = 2
+      #else
+      let e = 3
+      #endif
+      }
+      """,
+      """
+      extension Foo {
+      #if a
+      let a = 1
+      #elseif b
+      let b = 2
+      #else
+      let e = 3
+      #endif
+      }
+      """,
       testClosure: { decl in
       guard let extDecl = decl as? ExtensionDeclaration else {
         XCTFail("Failed in getting an extension declaration.")
@@ -232,15 +256,39 @@ class ParserExtensionDeclarationTests: XCTestCase {
       }
     )
     parseDeclarationAndTest(
-      "extension Foo { #if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
-      "extension Foo {\n#if a\nlet a = 1\n#elseif b\nlet b = 2\n#else\nlet e = 3\n#endif\n}",
+      """
+      extension Foo { #if a
+      let a = 1
+      #elseif b
+      let b = 2
+      #else
+      let e = 3
+      #endif
+      }
+      """,
+      """
+      extension Foo {
+      #if a
+      let a = 1
+      #elseif b
+      let b = 2
+      #else
+      let e = 3
+      #endif
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 8, 2))
       }
     )
     parseDeclarationAndTest(
       "extension Foo { let a = 1 var b = 2  }",
-      "extension Foo {\nlet a = 1\nvar b = 2\n}",
+      """
+      extension Foo {
+      let a = 1
+      var b = 2
+      }
+      """,
       testClosure: { decl in
         XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 39))
       }

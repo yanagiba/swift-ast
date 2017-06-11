@@ -24,7 +24,7 @@ public struct Token {
     case eof, lineFeed
     // punctuations
     case arrow, colon, comma, dot, semicolon, underscore
-    case at, hash
+    case at, hash, backslash
     case leftParen, rightParen
     case leftBrace, rightBrace
     case leftSquare, rightSquare

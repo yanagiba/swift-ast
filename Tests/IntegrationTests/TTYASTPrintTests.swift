@@ -35,6 +35,7 @@ class TTYASTPrintTests : XCTestCase {
       "WildcardExpression",
       "SelectorExpression",
       "KeyPathExpression",
+      "KeyPathStringExpression",
 
       // postfix expressions
       "PostfixOperatorExpression",

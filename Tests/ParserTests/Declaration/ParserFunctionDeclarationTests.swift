@@ -368,6 +368,36 @@ class ParserFunctionDeclarationTests: XCTestCase {
     })
   }
 
+  func testProtocolCompositionParameter() {
+    parseDeclarationAndTest("func beginConcert(in loc: Location & Named)",
+      "func beginConcert(in loc: protocol<Location, Named>)",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+
+      XCTAssertTrue(funcDecl.attributes.isEmpty)
+      XCTAssertTrue(funcDecl.modifiers.isEmpty)
+      XCTAssertEqual(funcDecl.name, "beginConcert")
+      XCTAssertNil(funcDecl.genericParameterClause)
+
+      XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
+      let param = funcDecl.signature.parameterList[0]
+      XCTAssertEqual(param.externalName, "in")
+      XCTAssertEqual(param.localName, "loc")
+      XCTAssertEqual(param.typeAnnotation.textDescription, ": protocol<Location, Named>")
+      XCTAssertNil(param.defaultArgumentClause)
+      XCTAssertFalse(param.isVarargs)
+      XCTAssertEqual(funcDecl.signature.throwsKind, .nothrowing)
+      XCTAssertNil(funcDecl.signature.result)
+      XCTAssertEqual(funcDecl.signature.textDescription, "(in loc: protocol<Location, Named>)")
+
+      XCTAssertNil(funcDecl.genericWhereClause)
+      XCTAssertNil(funcDecl.body)
+    })
+  }
+
   func testMultipleParameters() {
     parseDeclarationAndTest(
       "func foo(a: A, _ b: B, c: inout C, d: @a D, e: E...)",
@@ -751,6 +781,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
     ("testOmittingArgumentLabels", testOmittingArgumentLabels),
     ("testParameterWithDefaultArgument", testParameterWithDefaultArgument),
     ("testVariadicParameter", testVariadicParameter),
+    ("testProtocolCompositionParameter", testProtocolCompositionParameter),
     ("testMultipleParameters", testMultipleParameters),
     ("testFunctionThatThrows", testFunctionThatThrows),
     ("testFunctionThatRethrows", testFunctionThatRethrows),

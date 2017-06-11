@@ -1,5 +1,7 @@
+// swift-tools-version:4.0
+
 /*
-   Copyright 2015-2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2015-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,30 +21,30 @@ import PackageDescription
 let package = Package(
   name: "swift-ast",
   targets: [
-    Target(
+    .target(
       name: "Source"
     ),
-    Target(
+    .target(
       name: "Diagnostic",
       dependencies: [
         "Source",
       ]
     ),
-    Target(
+    .target(
       name: "AST",
       dependencies: [
         "Source",
         "Diagnostic",
       ]
     ),
-    Target(
+    .target(
       name: "Lexer",
       dependencies: [
         "Source",
         "Diagnostic",
       ]
     ),
-    Target(
+    .target(
       name: "Parser",
       dependencies: [
         "Source",
@@ -51,7 +53,7 @@ let package = Package(
         "Lexer",
       ]
     ),
-    Target(
+    .target(
       name: "Frontend",
       dependencies: [
         "AST",
@@ -59,7 +61,7 @@ let package = Package(
         "Parser",
       ]
     ),
-    Target(
+    .target(
       name: "swift-ast",
       dependencies: [
         "Frontend",
@@ -68,50 +70,51 @@ let package = Package(
 
     // MARK: Tests
 
-    Target(
+    .testTarget(
       name: "CanaryTests"
     ),
-    Target(
+    .testTarget(
       name: "SourceTests",
       dependencies: [
         "Source",
       ]
     ),
-    Target(
+    .testTarget(
       name: "DiagnosticTests",
       dependencies: [
         "Diagnostic",
       ]
     ),
-    Target(
+    .testTarget(
       name: "ASTTests",
       dependencies: [
         "AST",
       ]
     ),
-    Target(
+    .testTarget(
       name: "ASTVisitorTests",
       dependencies: [
         "AST",
       ]
     ),
-    Target(
+    .testTarget(
       name: "LexerTests",
       dependencies: [
         "Lexer",
       ]
     ),
-    Target(
+    .testTarget(
       name: "ParserTests",
       dependencies: [
         "Parser",
       ]
     ),
-    Target(
+    .testTarget(
       name: "IntegrationTests",
       dependencies: [
         "Frontend",
       ]
     ),
-  ]
+  ],
+  swiftLanguageVersions: [4]
 )

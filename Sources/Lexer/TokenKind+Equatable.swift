@@ -37,6 +37,8 @@ extension Token.Kind: Equatable {
       return true
     case (.hash, .hash):
       return true
+    case (.backslash, .backslash):
+      return true
     case (.colon, .colon):
       return true
     case (.comma, .comma):

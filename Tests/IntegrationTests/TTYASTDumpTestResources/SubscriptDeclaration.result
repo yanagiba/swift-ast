@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:17:1-47:2>
+top_level_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:17:1-50:40>
   subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:17:1-17:23>
     type: Self
     <empty_code_block>
@@ -70,3 +70,17 @@ top_level_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:1
     getter_setter_keyword_block:
       getter, attributes: `@a @b @c`, modifier: `mutating`
       setter, attributes: `@x @y @z`, modifier: `nonmutating`
+  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:48:1-48:26>
+    type: Self
+    generic_param: `<T>`
+    <empty_code_block>
+  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:49:1-49:42>
+    type: Self
+    generic_param: `<T, S>`
+    generic_where: `where T == S`
+    <empty_code_block>
+  subscript_decl <range: TTYASTDumpTestResources/SubscriptDeclarationTests.swift:50:1-50:40>
+    type: Self
+    generic_param: `<T, S>`
+    generic_where: `where T: S`
+    <empty_code_block>

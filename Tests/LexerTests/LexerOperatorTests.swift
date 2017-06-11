@@ -129,7 +129,7 @@ class LexerOperatorTests: XCTestCase {
   func testDotOperators() {
     let ps = ["", "."] + punctuators
     ps.forEach { p in
-      let count = p.characters.count
+      let count = p.count
       let pp = "..\(p)"
 
       let asPrefix = "\(pp)foo"

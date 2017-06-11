@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,15 +15,19 @@
 */
 
 public class KeyPathExpression : ASTNode, PrimaryExpression {
-  public let expression: Expression
+  public let type: Type?
+  public let components: [Identifier]
 
-  public init(expression: Expression) {
-    self.expression = expression
+  public init(type: Type? = nil, components: [Identifier]) {
+    self.type = type
+    self.components = components
   }
 
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    return "#keyPath(\(expression.textDescription))"
+    let typeDescription = type?.textDescription ?? ""
+    let componentsDescription = components.joined(separator: ".")
+    return "\\\(typeDescription).\(componentsDescription)"
   }
 }

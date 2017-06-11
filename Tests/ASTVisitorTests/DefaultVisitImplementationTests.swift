@@ -469,13 +469,13 @@ class DefaultVisitImplementationTests : XCTestCase {
     }
   }
 
-  func testVisitKeyPathExpression() {
-    let node = KeyPathExpression(expression: WildcardExpression())
+  func testVisitKeyPathStringExpression() {
+    let node = KeyPathStringExpression(expression: WildcardExpression())
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
     } catch {
-      XCTFail("Failed in visiting KeyPathExpression")
+      XCTFail("Failed in visiting KeyPathStringExpression")
     }
   }
 
@@ -686,7 +686,7 @@ class DefaultVisitImplementationTests : XCTestCase {
     ("testVisitImplicitMemberExpression", testVisitImplicitMemberExpression),
     ("testVisitInOutExpression", testVisitInOutExpression),
     ("testVisitInitializerExpression", testVisitInitializerExpression),
-    ("testVisitKeyPathExpression", testVisitKeyPathExpression),
+    ("testVisitKeyPathStringExpression", testVisitKeyPathStringExpression),
     ("testVisitLiteralExpression", testVisitLiteralExpression),
     ("testVisitOptionalChainingExpression", testVisitOptionalChainingExpression),
     ("testVisitParenthesizedExpression", testVisitParenthesizedExpression),

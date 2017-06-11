@@ -51,7 +51,12 @@ class ParserClosureExpressionTests: XCTestCase {
 
   func testMultipleStatements() {
     parseExpressionAndTest("{ vc.foo = foo;self.present(vc, animated: true) }",
-      "{\nvc.foo = foo\nself.present(vc, animated: true)\n}",
+      """
+      {
+      vc.foo = foo
+      self.present(vc, animated: true)
+      }
+      """,
       testClosure: { expr in
       guard let closureExpr = expr as? ClosureExpression else {
         XCTFail("Failed in getting a closure expression.")
@@ -295,7 +300,13 @@ class ParserClosureExpressionTests: XCTestCase {
   func testParameterListAndStatements() {
     parseExpressionAndTest(
       "{ (a, b, c) in print(a);print(b);print(c) }",
-      "{ (a, b, c) in\nprint(a)\nprint(b)\nprint(c)\n}",
+      """
+      { (a, b, c) in
+      print(a)
+      print(b)
+      print(c)
+      }
+      """,
       testClosure: { expr in
       guard let closureExpr = expr as? ClosureExpression,
         let signature = closureExpr.signature,
@@ -372,7 +383,13 @@ class ParserClosureExpressionTests: XCTestCase {
   func testIdentifierListAndStatements() {
     parseExpressionAndTest(
       "{ a, b, c in print(a);print(b);print(c) }",
-      "{ a, b, c in\nprint(a)\nprint(b)\nprint(c)\n}",
+      """
+      { a, b, c in
+      print(a)
+      print(b)
+      print(c)
+      }
+      """,
       testClosure: { expr in
       guard let closureExpr = expr as? ClosureExpression,
         let signature = closureExpr.signature,

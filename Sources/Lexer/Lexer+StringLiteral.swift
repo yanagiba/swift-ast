@@ -15,9 +15,12 @@
 */
 
 extension Lexer /* string literal */ {
-  public func lexStringLiteral() -> Token.Kind {
+  public func lexStringLiteral(
+    isMultiline: Bool = false,
+    postponeCaliberation: Bool = false
+  ) -> Token.Kind {
     var literal = ""
-    var rawRepresentation = "\""
+    var rawRepresentation = isMultiline ? "\"\"\"" : "\""
 
     func appendRaw() {
       rawRepresentation += char.string
@@ -54,16 +57,86 @@ extension Lexer /* string literal */ {
       return nil
     }
 
+    func caliberateMultlineStringLiteral() -> Token.Kind {
+      var lines = literal.components(separatedBy: .newlines)
+      let indentationPrefix = lines.removeLast()
+      guard indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty else {
+        return .invalid(.newLineExpectedAtTheClosingOfMultilineStringLiteral)
+      }
+      if lines.isEmpty {
+        return .staticStringLiteral("", rawRepresentation: rawRepresentation)
+      }
+      let indentationLength = indentationPrefix.count
+      var caliberatedLines: [String] = []
+      for origLine in lines {
+        if origLine.isEmpty {
+          caliberatedLines.append(origLine)
+          continue
+        }
+        guard origLine.hasPrefix(indentationPrefix) else {
+          return .invalid(.insufficientIndentationOfLineInMultilineStringLiteral)
+        }
+        let startIndex = origLine.index(origLine.startIndex, offsetBy: indentationLength)
+        let caliberatedLine = origLine[startIndex...]
+        caliberatedLines.append(String(caliberatedLine))
+      }
+      let caliberatedLiteral = caliberatedLines.joined(separator: "\n")
+      return .staticStringLiteral(caliberatedLiteral,
+        rawRepresentation: rawRepresentation)
+    }
+
+    if isMultiline && !postponeCaliberation {
+      guard char.role == .lineFeed else {
+        return .invalid(.newLineExpectedAtTheBeinningOfMultilineStringLiteral)
+      }
+      appendRaw()
+      consumeChar()
+    }
+
     while char != .eof {
       appendRaw()
 
       switch char.role {
-      case .lineFeed, .carriageReturn: // multi-line string literal is not supported
-        return .invalid(.badChar)
-      case .doubleQuote: // end of a static string literal
-        consumeChar()
-        return .staticStringLiteral(
-          literal, rawRepresentation: rawRepresentation)
+      case .lineFeed:
+        guard isMultiline else {
+          return .invalid(.badChar)
+        }
+        literal.append("\n" as Character)
+      case .carriageReturn:
+        guard isMultiline else {
+          return .invalid(.badChar)
+        }
+        literal.append("\r" as Character)
+      case .doubleQuote:
+        if isMultiline {
+          if _scanner.peek() == "\"" { // see next one is a double quote
+            consumeChar() // consumes the first double quote
+            appendRaw() // add second double quote to rawRepresentation
+            if _scanner.peek() == "\"" { // see if next one is still a double quote
+              consumeChar() // consumes the second double quote
+              appendRaw() // add third double quote to rawRepresentation
+              consumeChar() // consume the third double quote
+
+              if postponeCaliberation {
+                return .staticStringLiteral(
+                  literal, rawRepresentation: rawRepresentation)
+              }
+
+              let caliberatedMultilineStringLiteral =
+                caliberateMultlineStringLiteral()
+              return caliberatedMultilineStringLiteral
+            } else {
+              literal.append("\"" as Character)
+              literal.append("\"" as Character)
+            }
+          } else {
+            literal.append("\"" as Character)
+          }
+        } else {
+          consumeChar()
+          return .staticStringLiteral(
+            literal, rawRepresentation: rawRepresentation)
+        }
       case .backslash: // escaping
         consumeChar()
 

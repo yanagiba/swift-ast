@@ -495,7 +495,7 @@ extension ASTVisitor {
       return try traverse(expr)
     case let expr as InitializerExpression:
       return try traverse(expr)
-    case let expr as KeyPathExpression:
+    case let expr as KeyPathStringExpression:
       return try traverse(expr)
     case let expr as LiteralExpression:
       return try traverse(expr)
@@ -630,7 +630,7 @@ extension ASTVisitor {
     return try traverse(expr.postfixExpression)
   }
 
-  public func traverse(_ expr: KeyPathExpression) throws -> Bool {
+  public func traverse(_ expr: KeyPathStringExpression) throws -> Bool {
     guard try visit(expr) else { return false }
     return try traverse(expr.expression)
   }

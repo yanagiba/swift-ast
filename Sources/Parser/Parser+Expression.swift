@@ -489,7 +489,7 @@ extension Parser {
           _lexer.advanceChar()
         case ".":
           if let index = Int(digitStr) {
-            return (index, digitStr.characters.count)
+            return (index, digitStr.count)
           } else {
             _lexer.restore(fromCheckpoint: digitCp)
             return nil
@@ -581,12 +581,12 @@ extension Parser {
       .dummyStaticStringLiteral,
       .dummyInterpolatedStringLiteralHead,
       .dummyBooleanLiteral,
-      .nil, .leftSquare, .hash,
+      .nil, .leftSquare, .hash, .backslash,
       .self, .super, .leftBrace,
       .leftParen, .dot, .underscore,
     ])
     switch matched {
-    ////// literal expression, selector expression, and key path expression
+    ////// literal expression, selector expression, and key path string expression
     case .nil:
       let nilExpr = LiteralExpression(kind: .nil)
       nilExpr.setSourceRange(lookedRange)
@@ -614,6 +614,8 @@ extension Parser {
       return try parseCollectionLiteral(startLocation: lookedRange.start)
     case .hash:
       return try parseHashExpression(startLocation: lookedRange.start)
+    case .backslash:
+      return try parseKeyPathExpression(startLocation: lookedRange.start)
     ////// self expression
     case .self:
       return try parseSelfExpression(startRange: lookedRange)
@@ -779,6 +781,34 @@ extension Parser {
     return selfExpr
   }
 
+  private func parseKeyPathExpression(
+    startLocation: SourceLocation
+  ) throws -> KeyPathExpression {
+    var endLocation = getEndLocation()
+
+    var type: Type? = nil
+    if case let .identifier(typeName) = _lexer.read(.dummyIdentifier) {
+      type = TypeIdentifier(names: [TypeIdentifier.TypeName(name: typeName)])
+    }
+
+    var components: [String] = []
+    while _lexer.match(.dot) {
+      endLocation = getEndLocation()
+      guard case let .identifier(component) = _lexer.read(.dummyIdentifier) else {
+        throw _raiseFatal(.expectedKeyPathComponentIdentifier)
+      }
+      components.append(component)
+    }
+
+    if components.isEmpty {
+      throw _raiseFatal(.expectedKeyPathComponent)
+    }
+
+    let keyPathExpr = KeyPathExpression(type: type, components: components)
+    keyPathExpr.setSourceRange(startLocation, endLocation)
+    return keyPathExpr
+  }
+
   private func parseHashExpression(
     startLocation: SourceLocation
   ) throws -> PrimaryExpression {
@@ -807,16 +837,16 @@ extension Parser {
       return try parseSelectorExpression(startLocation: startLocation)
     case "keyPath":
       guard _lexer.match(.leftParen) else {
-        throw _raiseFatal(.expectedOpenParenKeyPathExpr)
+        throw _raiseFatal(.expectedOpenParenKeyPathStringExpr)
       }
       let expr = try parseExpression() // TODO: can wrap this in a do-catch, and throw a better diagnostic message
       endLocation = getEndLocation()
       guard _lexer.match(.rightParen) else {
-        throw _raiseFatal(.expectedCloseParenKeyPathExpr)
+        throw _raiseFatal(.expectedCloseParenKeyPathStringExpr)
       }
-      let keyPathExpression = KeyPathExpression(expression: expr)
-      keyPathExpression.setSourceRange(startLocation, endLocation)
-      return keyPathExpression
+      let keyPathStringExpression = KeyPathStringExpression(expression: expr)
+      keyPathStringExpression.setSourceRange(startLocation, endLocation)
+      return keyPathStringExpression
     default:
       throw _raiseFatal(.expectedObjectLiteralIdentifier)
     }
@@ -987,8 +1017,59 @@ extension Parser {
   private func parseInterpolatedStringLiteral(
     head: String, raw: String, startLocation: SourceLocation
   ) throws -> LiteralExpression {
+    func caliberateExpressions(_ exprs: [Expression]) throws -> [Expression] {
+      let exprCount = exprs.count
+      var indentationPrefix = ""
+      var caliberatedExprs: [Expression] = []
+
+      for (offset, expr) in exprs.reversed().enumerated() {
+        if let literalExpr = expr as? LiteralExpression,
+          case let .staticString(blockStr, blockRawText) = literalExpr.kind,
+          blockRawText.isEmpty
+        {
+          var blockLines = blockStr.components(separatedBy: .newlines)
+          if offset == 0 { // let's first of all figure out the indentation prefix
+            indentationPrefix = blockLines.removeLast()
+            guard indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty else {
+              throw _raiseFatal(.newLineExpectedAtTheClosingOfMultilineStringLiteral)
+            }
+          }
+
+          let identationLength = indentationPrefix.count
+          var caliberatedLines: [String] = []
+          for (origLineOffset, origLine) in blockLines.enumerated() {
+            if origLineOffset == 0 && offset != exprCount-1 {
+              caliberatedLines.append(origLine)
+            } else if origLine.isEmpty {
+              caliberatedLines.append(origLine)
+            } else {
+              guard origLine.hasPrefix(indentationPrefix) else {
+                throw _raiseFatal(.insufficientIndentationOfLineInMultilineStringLiteral)
+              }
+              let startIndex = origLine.index(origLine.startIndex, offsetBy: identationLength)
+              let caliberatedLine = String(origLine[startIndex...])
+              caliberatedLines.append(caliberatedLine)
+            }
+          }
+          let caliberatedLiteral = caliberatedLines.joined(separator: "\n")
+          if !caliberatedLiteral.isEmpty {
+            let caliberatedLiteralExpr =
+              LiteralExpression(kind: .staticString(caliberatedLiteral, blockRawText))
+            caliberatedExprs.append(caliberatedLiteralExpr)
+          }
+        } else {
+          caliberatedExprs.append(expr)
+        }
+      }
+
+      return caliberatedExprs.reversed()
+    }
+
     var exprs: [Expression] = []
     var rawText = raw
+    let multilineDelimiter = "\"\"\""
+    let isMultiline = raw.hasPrefix(multilineDelimiter)
+    let isInterpolatedHead = startLocation != .DUMMY
 
     if !head.isEmpty {
       exprs.append(LiteralExpression(kind: .staticString(head, ""))) // static strings inside the interpolated string literals do not need to preserve raw representation, because they are what they are
@@ -1005,7 +1086,9 @@ extension Parser {
     }
 
     var endLocation: SourceLocation
-    switch _lexer.lexStringLiteral() {
+    let tailString = _lexer.lexStringLiteral(
+      isMultiline: isMultiline, postponeCaliberation: true)
+    switch tailString {
     case let .staticStringLiteral(str, _):
       if !str.isEmpty {
         exprs.append(LiteralExpression(kind: .staticString(str, ""))) // static strings inside the interpolated string literals do not need to preserve raw representation, because they are what they are
@@ -1019,14 +1102,22 @@ extension Parser {
         throw _raiseFatal(.expectedStringInterpolation)
       }
       exprs.append(contentsOf: es)
-      rawText += ir.substring(
-        with: ir.index(after: ir.startIndex)..<ir.index(before: ir.endIndex))
+
+      let startIndexOffset = ir.hasPrefix(multilineDelimiter) ? 3 : 1
+      let endIndexOffset = ir.hasSuffix(multilineDelimiter) ? -3 : -1
+      let startIndex = ir.index(ir.startIndex, offsetBy: startIndexOffset)
+      let endIndex = ir.index(ir.endIndex, offsetBy: endIndexOffset)
+      rawText += ir.substring(with: startIndex..<endIndex)
       endLocation = nested.sourceRange.end
     default:
       throw _raiseFatal(.expectedStringInterpolation)
     }
 
-    rawText += "\""
+    if isMultiline && isInterpolatedHead {
+      exprs = try caliberateExpressions(exprs)
+    }
+
+    rawText += isMultiline ? multilineDelimiter : "\""
 
     let strExpr = LiteralExpression(kind: .interpolatedString(exprs, rawText))
     strExpr.setSourceRange(startLocation, endLocation)

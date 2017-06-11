@@ -29,3 +29,6 @@ subscript() -> Self {
   @a @b @c mutating get
   @x @y @z nonmutating set
 }
+subscript<T>() -> Self {}
+subscript<T, S>() -> Self where T == S {}
+subscript<T, S>() -> Self where T: S {}

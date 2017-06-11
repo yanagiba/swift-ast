@@ -157,10 +157,13 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("super", .fatal, .expectedDotOrSubscriptAfterSuper)
     parseProblematic("self._", .fatal, .expectedIdentifierAfterSelfDotExpr)
     parseProblematic("self[a, b, c", .fatal, .expectedCloseSquareExprList)
+    parseProblematic("_ = \\foo", .fatal, .expectedKeyPathComponent)
+    parseProblematic("_ = \\foo.", .fatal, .expectedKeyPathComponentIdentifier)
+    parseProblematic("_ = \\foo.bar.", .fatal, .expectedKeyPathComponentIdentifier)
     parseProblematic("_ = #func", .fatal, .expectedObjectLiteralIdentifier)
     parseProblematic("_ = #abc", .fatal, .expectedObjectLiteralIdentifier)
-    parseProblematic("_ = #keyPath", .fatal, .expectedOpenParenKeyPathExpr)
-    parseProblematic("_ = #keyPath(a", .fatal, .expectedCloseParenKeyPathExpr)
+    parseProblematic("_ = #keyPath", .fatal, .expectedOpenParenKeyPathStringExpr)
+    parseProblematic("_ = #keyPath(a", .fatal, .expectedCloseParenKeyPathStringExpr)
     parseProblematic("_ = #selector", .fatal, .expectedOpenParenSelectorExpr)
     parseProblematic("_ = #selector(getter)", .fatal, .expectedColonAfterPropertyKeywordSelectorExpr("getter"))
     parseProblematic("_ = #selector(setter)", .fatal, .expectedColonAfterPropertyKeywordSelectorExpr("setter"))
@@ -172,6 +175,22 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("_ = \"\\($0})\"", .fatal, .extraTokenStringInterpolation)
     // parseProblematic("_ = \"\\(\"a\\(!)\")\"", .fatal, .expectedStringInterpolation) // TODO
     parseProblematic("_ = \"\\($0)", .fatal, .expectedStringInterpolation)
+    // parseProblematic("""
+    // _ = \"\"\"
+    // foo
+    // bar\"\"\"
+    // """, .fatal, .newLineExpectedAtTheClosingOfMultilineStringLiteral)
+    parseProblematic("""
+    _ = \"\"\"
+    \\(1)
+    bar\"\"\"
+    """, .fatal, .newLineExpectedAtTheClosingOfMultilineStringLiteral)
+    parseProblematic("""
+    _ = \"\"\"
+      \\(1)
+    bar
+      \"\"\"
+    """, .fatal, .insufficientIndentationOfLineInMultilineStringLiteral)
     parseProblematic("foo { _, in }", .fatal, .expectedClosureParameterName)
     parseProblematic("foo { _ in print()", .fatal, .rightBraceExpected("closure expression"))
     parseProblematic("_ = ._", .fatal, .expectedIdentifierAfterDot)

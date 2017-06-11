@@ -326,6 +326,10 @@ public class Lexer {
       return produce(lexNumericLiteral())
     case .doubleQuote:
       _consume(.doubleQuote)
+      if char.role == .doubleQuote && _scanner.peek() == "\"" {
+        _consume(andAdvanceScannerBy: 2)
+        return produce(lexStringLiteral(isMultiline: true))
+      }
       return produce(lexStringLiteral())
     case .identifierHead:
       return produce(lexIdentifierOrKeyword())
@@ -389,6 +393,7 @@ fileprivate let roleTokenKindMapping: [Role: Token.Kind] = [
   .equal: .assignmentOperator,
   .at: .at,
   .hash: .hash,
+  .backslash: .backslash,
   .colon: .colon,
   .comma: .comma,
   .period: .dot,

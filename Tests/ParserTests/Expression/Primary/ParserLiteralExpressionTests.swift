@@ -102,6 +102,14 @@ class ParserLiteralExpressionTests: XCTestCase {
       ("\"a\"", "a"),
       ("\"The quick brown fox jumps over the lazy dog\"", "The quick brown fox jumps over the lazy dog"),
       ("\"\\0\\\\\\t\\n\\r\\\"\\\'\"", "\0\\\t\n\r\"\'"),
+      ("\"\"\"\n\"\"\"", ""),
+      ("\"\"\"\n\n\"\"\"", ""),
+      ("\"\"\"\n  \n\"\"\"", "  "),
+      ("\"\"\"\n  \n  \"\"\"", ""),
+      ("\"\"\"\na\n\"\"\"", "a"),
+      ("\"\"\"\n\nThe quick brown fox\njumps over\nthe lazy dog\n\n\"\"\"",
+        "\nThe quick brown fox\njumps over\nthe lazy dog\n"),
+      ("\"\"\"\n\\0\\\\\\t\\\"\\\'\n\"\"\"", "\0\\\t\"\'"),
     ]
     for t in testStrings {
       parseExpressionAndTest(t.testString, t.testString, testClosure: { expr in
@@ -123,20 +131,23 @@ class ParserLiteralExpressionTests: XCTestCase {
         [
           LiteralExpression(kind: .staticString("1 2 ", "")),
           LiteralExpression(kind: .integer(3, "3")),
-        ]),
+        ]
+      ),
       ( // static string literal
         "\"1 2 \\(\"3\")\"",
         [
           LiteralExpression(kind: .staticString("1 2 ", "")),
           LiteralExpression(kind: .staticString("3", "\"3\"")),
-        ]),
+        ]
+      ),
       ( // nested interpolated string
         "\"\\(\"\\(3)\")\"",
         [
           LiteralExpression(kind: .interpolatedString([
             LiteralExpression(kind: .integer(3, "3"))
           ], "\"\\(3)\"")),
-        ]),
+        ]
+      ),
       ( // two-level nested interpolated string
         "\"\\(\"\\(\"\\(\"3\")\")\")\"",
         [
@@ -145,14 +156,16 @@ class ParserLiteralExpressionTests: XCTestCase {
               LiteralExpression(kind: .staticString("3", "\"3\""))
             ], "\"\\(\"3\")\"")),
           ], "\"\\(\"\\(\"3\")\")\"")),
-        ]),
+        ]
+      ),
       ( // heading and tailing static strings
         "\"1 2 \\(3) 4 5\"",
         [
           LiteralExpression(kind: .staticString("1 2 ", "")),
           LiteralExpression(kind: .integer(3, "3")),
           LiteralExpression(kind: .staticString(" 4 5", "")),
-        ]),
+        ]
+      ),
       ( // multiple interpolated strings in parallel
         "\"\\(\"helloworld\")a\\(\"foo\")\\(\"bar\")z\"",
         [
@@ -161,19 +174,22 @@ class ParserLiteralExpressionTests: XCTestCase {
           LiteralExpression(kind: .staticString("foo", "\"foo\"")),
           LiteralExpression(kind: .staticString("bar", "\"bar\"")),
           LiteralExpression(kind: .staticString("z", "")),
-        ]),
+        ]
+      ),
       (
         "\"1 2 \\(\"1 + 2\")\"",
         [
           LiteralExpression(kind: .staticString("1 2 ", "")),
           LiteralExpression(kind: .staticString("1 + 2", "\"1 + 2\"")),
-        ]),
+        ]
+      ),
       (
         "\"1 2 \\(x)\"",
         [
           LiteralExpression(kind: .staticString("1 2 ", "")),
           IdentifierExpression(kind: .identifier("x", nil)),
-        ]),
+        ]
+      ),
       (
         "\"1 2 \\(\"3\") \\(\"1 + 2\") \\(x) 456\"",
         [
@@ -184,7 +200,8 @@ class ParserLiteralExpressionTests: XCTestCase {
           LiteralExpression(kind: .staticString(" ", "")),
           IdentifierExpression(kind: .identifier("x", nil)),
           LiteralExpression(kind: .staticString(" 456", "")),
-        ]),
+        ]
+      ),
       ( // having fun
         "\"\\(\"foo\\(123)()(\\(\"abc\\(\"😂\")xyz)\")\\(789)bar\")\"",
         //    \"foo\\(123)()(\\(\"abc\\(\"😂\")xyz)\")\\(789)bar\"
@@ -219,14 +236,163 @@ class ParserLiteralExpressionTests: XCTestCase {
             LiteralExpression(kind: .integer(789, "789")),
             LiteralExpression(kind: .staticString("bar", "")),
           ], "\"foo\\(123)()(\\(\"abc\\(\"😂\")xyz)\")\\(789)bar\"")),
-        ]),
+        ]
+      ),
+      // multiline interpolated string literals
+      (
+        "\"\"\"\n1 2 \\(3)\n\"\"\"",
+        [
+          LiteralExpression(kind: .staticString("1 2 ", "")),
+          LiteralExpression(kind: .integer(3, "3")),
+        ]
+      ),
+      (
+        "\"\"\"\n  1 2 \\(3)\n\"\"\"",
+        [
+          LiteralExpression(kind: .staticString("  1 2 ", "")),
+          LiteralExpression(kind: .integer(3, "3")),
+        ]
+      ),
+      (
+        "\"\"\"\n  1 2 \\(3)\n  \"\"\"",
+        [
+          LiteralExpression(kind: .staticString("1 2 ", "")),
+          LiteralExpression(kind: .integer(3, "3")),
+        ]
+      ),
+      (
+        "\"\"\"\n\\(3)\n\"\"\"",
+        [
+          LiteralExpression(kind: .integer(3, "3")),
+        ]
+      ),
+      (
+        "\"\"\"\n\\(3) 4 5\n\"\"\"",
+        [
+          LiteralExpression(kind: .integer(3, "3")),
+          LiteralExpression(kind: .staticString(" 4 5", "")),
+        ]
+      ),
+      (
+        "\"\"\"\n\\(3)\n4 5\n\"\"\"",
+        [
+          LiteralExpression(kind: .integer(3, "3")),
+          LiteralExpression(kind: .staticString("\n4 5", "")),
+        ]
+      ),
+      (
+        "\"\"\"\n1\n2 \\(3) 4\n5\n\"\"\"",
+        [
+          LiteralExpression(kind: .staticString("1\n2 ", "")),
+          LiteralExpression(kind: .integer(3, "3")),
+          LiteralExpression(kind: .staticString(" 4\n5", "")),
+        ]
+      ),
+      (
+        "\"\"\"\n 1\n 2 \\(3) 4\n 5\n \"\"\"",
+        [
+          LiteralExpression(kind: .staticString("1\n2 ", "")),
+          LiteralExpression(kind: .integer(3, "3")),
+          LiteralExpression(kind: .staticString(" 4\n5", "")),
+        ]
+      ),
+      (
+        "\"\"\"\n1 2 \\(\"3\")\n\"\"\"",
+        [
+          LiteralExpression(kind: .staticString("1 2 ", "")),
+          LiteralExpression(kind: .staticString("3", "\"3\"")),
+        ]
+      ),
+      (
+        "\"\"\"\n1 2 \\(\"\"\"\n3\n\"\"\")\n\"\"\"",
+        [
+          LiteralExpression(kind: .staticString("1 2 ", "")),
+          LiteralExpression(kind: .staticString("3", "\"\"\"\n3\n\"\"\"")),
+        ]
+      ),
+      (
+        "\"\"\"\n\\(\"\"\"\n\\(3)\n\"\"\")\n\"\"\"",
+        [
+          LiteralExpression(kind: .interpolatedString([
+            LiteralExpression(kind: .integer(3, "3"))
+          ], "\"\"\"\n\\(3)\n\"\"\"")),
+        ]
+      ),
+      (
+        "\"\"\"\n\\(\"\\(\"\\(\"\"\"\n  3\n  \"\"\")\")\")\n\"\"\"",
+        [
+          LiteralExpression(kind: .interpolatedString([
+            LiteralExpression(kind: .interpolatedString([
+              LiteralExpression(kind: .staticString("3", "\"\"\"\n  3\n  \"\"\""))
+            ], "\"\\(\"\"\"\n  3\n  \"\"\")\"")),
+          ], "\"\\(\"\\(\"\"\"\n  3\n  \"\"\")\")\"")),
+        ]
+      ),
+      (
+        "\"\"\"\n\\(\"helloworld\")a\\(\"foo\")\\(\"bar\")z\n\"\"\"",
+        [
+          LiteralExpression(kind: .staticString("helloworld", "\"helloworld\"")),
+          LiteralExpression(kind: .staticString("a", "")),
+          LiteralExpression(kind: .staticString("foo", "\"foo\"")),
+          LiteralExpression(kind: .staticString("bar", "\"bar\"")),
+          LiteralExpression(kind: .staticString("z", "")),
+        ]
+      ),
+      (
+        "\"\"\"\n  \\(\"bar\")\n  \"\"\"",
+        [
+          LiteralExpression(kind: .staticString("bar", "\"bar\"")),
+        ]
+      ),
+      (
+        "\"\"\"\n  \\(\"\"\"\nhelloworld\n\"\"\")a\\(\"foo\")\\(\"bar\")z\n  \"\"\"",
+        [
+          LiteralExpression(kind: .staticString("helloworld", "\"\"\"\nhelloworld\n\"\"\"")),
+          LiteralExpression(kind: .staticString("a", "")),
+          LiteralExpression(kind: .staticString("foo", "\"foo\"")),
+          LiteralExpression(kind: .staticString("bar", "\"bar\"")),
+          LiteralExpression(kind: .staticString("z", "")),
+        ]
+      ),
+      (
+        "\"\"\"\n  \\(\"\"\"\n    hello\n    world\n    \"\"\")\n  a\n  \\(\"foo\")\n  \\(\"bar\")\n  z\n  \"\"\"",
+        [
+          LiteralExpression(kind: .staticString("hello\nworld", "\"\"\"\n    hello\n    world\n    \"\"\"")),
+          LiteralExpression(kind: .staticString("\na\n", "")),
+          LiteralExpression(kind: .staticString("foo", "\"foo\"")),
+          LiteralExpression(kind: .staticString("\n", "")),
+          LiteralExpression(kind: .staticString("bar", "\"bar\"")),
+          LiteralExpression(kind: .staticString("\nz", "")),
+        ]
+      ),
+      (
+        "\"\"\"\n  \n  \\(\"bar\")\n  \n  \"\"\"",
+        [
+          LiteralExpression(kind: .staticString("\n", "")),
+          LiteralExpression(kind: .staticString("bar", "\"bar\"")),
+          LiteralExpression(kind: .staticString("\n", "")),
+        ]
+      ),
+      (
+        "\"\"\"\n\n  \\(\"bar\")\n\n  \"\"\"",
+        [
+          LiteralExpression(kind: .staticString("\n", "")),
+          LiteralExpression(kind: .staticString("bar", "\"bar\"")),
+          LiteralExpression(kind: .staticString("\n", "")),
+        ]
+      ),
     ]
 
     func testInterpolatedStringExpressions(exprs: [Expression], expected: [Expression]) {
       // keep this with the minimal code to make the tests pass, and add more handlings when needed
       guard exprs.count == expected.count else {
-          XCTFail("Parsed interpolated string literal doesn't contain the matching expressions as expected.")
-          return
+        XCTFail("""
+        Parsed interpolated string literal
+        \(exprs)
+        doesn't contain the matching expressions as expected
+        \(expected).
+        """)
+        return
       }
 
       for (index, e) in zip(exprs.indices, exprs) {
