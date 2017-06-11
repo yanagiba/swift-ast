@@ -20,6 +20,24 @@ import PackageDescription
 
 let package = Package(
   name: "swift-ast",
+  products: [
+    .executable(
+      name: "swift-ast",
+      targets: [
+        "swift-ast",
+      ]
+    ),
+    .library(
+      name: "SwiftAST",
+      targets: [
+        "Source",
+        "Diagnostic",
+        "AST",
+        "Lexer",
+        "Parser",
+      ]
+    ),
+  ],
   targets: [
     .target(
       name: "Source"
