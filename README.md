@@ -6,7 +6,7 @@
 
 [![Travis CI Status](https://api.travis-ci.org/yanagiba/swift-ast.svg?branch=master)](https://travis-ci.org/yanagiba/swift-ast)
 [![codecov](https://codecov.io/gh/yanagiba/swift-ast/branch/master/graph/badge.svg)](https://codecov.io/gh/yanagiba/swift-ast)
-![Swift 3.1](https://img.shields.io/badge/swift-3.1-brightgreen.svg)
+![Swift 4.0-beta](https://img.shields.io/badge/swift-4.0‐beta-brightgreen.svg)
 ![Swift Package Manager](https://img.shields.io/badge/SPM-ready-orange.svg)
 ![Platforms](https://img.shields.io/badge/platform-%20Linux%20|%20macOS%20-red.svg)
 ![License](https://img.shields.io/github/license/yanagiba/swift-ast.svg)
@@ -26,7 +26,7 @@ Refactoring, code manipulation and optimization can leverage this AST as well.
 
 Other ideas could be llvm-codegen or jvm-codegen (thinking about JSwift) that
 consumes the AST and converts them into binary or bytecode, which will make it
-a fully working compiler. (If you are working on this, send me your github repo
+a self-hosting compiler. (If you are working on this, send me your github repo
 link to ryuichi@ryuichisaito.com.)
 
 * * *
@@ -45,7 +45,7 @@ catch up as Swift evolves.
 
 ## Requirements
 
-- [Swift 3.1](https://swift.org/download/)
+- [Swift 4.0-DEVELOPMENT-SNAPSHOT-2017-06-06-a](https://swift.org/download/)
 
 ## Installation
 
@@ -90,13 +90,19 @@ calling `swift ast` in your terminal directly.
 Add the swift-ast dependency to `Package.swift`:
 
 ```swift
+// swift-tools-version:4.0
+
 import PackageDescription
 
 let package = Package(
-  name: "MyProject",
+  name: "MyPackage",
   dependencies: [
-    .Package(url: "https://github.com/yanagiba/swift-ast.git", majorVersion: 0)
-  ]
+    .package(url: "https://github.com/yanagiba/swift-ast.git", from: "0.3.1")
+  ],
+  targets: [
+    .target(name: "MyTarget", dependencies: ["SwiftAST"]),
+  ],
+  swiftLanguageVersions: [4]
 )
 ```
 
