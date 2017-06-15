@@ -904,6 +904,8 @@ extension Parser {
             caseComponents.append((s, nil, .floatingPoint(f)))
           case let .staticStringLiteral(ss, _):
             caseComponents.append((s, nil, .string(ss)))
+          case let .booleanLiteral(b):
+            caseComponents.append((s, nil, .boolean(b)))
           default:
             throw _raiseFatal(.nonliteralEnumCaseRawValue)
           }
