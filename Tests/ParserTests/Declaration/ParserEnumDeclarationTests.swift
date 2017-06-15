@@ -783,6 +783,61 @@ class ParserEnumDeclarationTests: XCTestCase {
     })
   }
 
+  func testVariousTypesOfRawValueLiterals() {
+    parseDeclarationAndTest(
+      """
+      enum Foo: Int {
+        case a, b = 2
+        case c = 3, d, e = 5
+      }
+      """,
+      """
+      enum Foo: Int {
+      case a, b = 2
+      case c = 3, d, e = 5
+      }
+      """)
+    parseDeclarationAndTest(
+      """
+      enum Foo: Double {
+      case a, b = 2.34
+      case c = 3.0, d, e = 5.1
+      }
+      """,
+      """
+      enum Foo: Double {
+      case a, b = 2.34
+      case c = 3.0, d, e = 5.1
+      }
+      """)
+    parseDeclarationAndTest(
+      """
+      enum Foo: String {
+      case a, b = "b"
+      case c = "c", d, e = "E"
+      }
+      """,
+      """
+      enum Foo: String {
+      case a, b = "b"
+      case c = "c", d, e = "E"
+      }
+      """)
+    parseDeclarationAndTest(
+      """
+      enum Foo: Bool {
+      case a, b = true
+      case c = false, d, e = true
+      }
+      """,
+      """
+      enum Foo: Bool {
+      case a, b = true
+      case c = false, d, e = true
+      }
+      """)
+  }
+
   func testErrorCases() {
     // indirect has to be union-style
     parseDeclarationAndTest(
@@ -959,6 +1014,7 @@ class ParserEnumDeclarationTests: XCTestCase {
     ("testMultipleUnionStyleMembersAndDeclarations", testMultipleUnionStyleMembersAndDeclarations),
     ("testMultipleRawValueStyleMembers", testMultipleRawValueStyleMembers),
     ("testMultipleRawValueStyleMembersAndDeclarations", testMultipleRawValueStyleMembersAndDeclarations),
+    ("testVariousTypesOfRawValueLiterals", testVariousTypesOfRawValueLiterals),
     ("testErrorCases", testErrorCases),
     ("testCompilerControlMember", testCompilerControlMember),
     ("testSourceRange", testSourceRange),
