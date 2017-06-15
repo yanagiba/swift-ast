@@ -19,26 +19,74 @@ import XCTest
 @testable import AST
 
 class ParserOptionalPatternTests: XCTestCase {
-  func testOptional() {
+  func testIdentifierOptional() {
     parsePatternAndTest("foo?", "foo?", testClosure: { pttrn in
-      guard let optionalPattern = pttrn as? OptionalPattern else {
-        XCTFail("Failed in parsing an optional pattern.")
+      guard let optionalPattern = pttrn as? OptionalPattern,
+        case .identifier(let id) = optionalPattern.kind
+      else {
+        XCTFail("Failed in parsing an optional pattern with identifier.")
         return
       }
 
-      XCTAssertEqual(optionalPattern.identifier, "foo")
+      XCTAssertEqual(id.identifier, "foo")
+      XCTAssertNil(id.typeAnnotation)
     })
   }
 
   func testWildcardOptional() {
     parsePatternAndTest("_?", "_?", forPatternMatching: true, testClosure: { pttrn in
-      guard let optionalPattern = pttrn as? OptionalPattern else {
-        XCTFail("Failed in parsing an optional pattern.")
+      guard let optionalPattern = pttrn as? OptionalPattern,
+        case .wildcard = optionalPattern.kind
+      else {
+        XCTFail("Failed in parsing an optional pattern with wildcard.")
         return
       }
-
-      XCTAssertEqual(optionalPattern.identifier, "_")
     })
+  }
+
+  func testEnumCasePatternOptional() {
+    let enumCases = [
+      ".foo",
+      "A.b",
+      ".foo()",
+      ".foo(a, b)",
+      "Foo.bar(a, b)",
+    ]
+    for enumCaseString in enumCases {
+      let optEnumCase = "\(enumCaseString)?"
+      parsePatternAndTest(optEnumCase, optEnumCase, forPatternMatching: true, testClosure: { pttrn in
+        guard let optionalPattern = pttrn as? OptionalPattern,
+          case .enumCase(let enumCase) = optionalPattern.kind
+        else {
+          XCTFail("Failed in parsing an optional pattern with enum-case.")
+          return
+        }
+
+        XCTAssertEqual(enumCase.textDescription, enumCaseString)
+      })
+    }
+  }
+
+  func testTuplePatternOptional() {
+    let tuples = [
+      "()",
+      "(a)",
+      "(a, b)",
+      "(a?, b?)",
+    ]
+    for tupleString in tuples {
+      let optTuple = "\(tupleString)?"
+      parsePatternAndTest(optTuple, optTuple, forPatternMatching: true, testClosure: { pttrn in
+        guard let optionalPattern = pttrn as? OptionalPattern,
+          case .tuple(let tuple) = optionalPattern.kind
+        else {
+          XCTFail("Failed in parsing an optional pattern with enum-case.")
+          return
+        }
+
+        XCTAssertEqual(tuple.textDescription, tupleString)
+      })
+    }
   }
 
   func testSourceRange() {
@@ -48,11 +96,19 @@ class ParserOptionalPatternTests: XCTestCase {
     parsePatternAndTest("_?", "_?", forPatternMatching: true, testClosure: { pttrn in
       XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 3))
     })
+    parsePatternAndTest(".foo?", ".foo?", forPatternMatching: true, testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 6))
+    })
+    parsePatternAndTest("(x, y)?", "(x, y)?", forPatternMatching: true, testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 8))
+    })
   }
 
   static var allTests = [
-    ("testOptional", testOptional),
+    ("testIdentifierOptional", testIdentifierOptional),
     ("testWildcardOptional", testWildcardOptional),
+    ("testEnumCasePatternOptional", testEnumCasePatternOptional),
+    ("testTuplePatternOptional", testTuplePatternOptional),
     ("testSourceRange", testSourceRange),
   ]
 }

@@ -121,6 +121,7 @@ public func allTests() -> [XCTestCaseEntry] {
     testCase(KeywordUsedAsIdentifierTests.allTests),
     testCase(GenericOpeningChevronTests.allTests),
     testCase(RangeOperatorTests.allTests),
+    testCase(OptionalInPatternMatchingTests.allTests),
     testCase(ParserErrorKindTests.allTests),
   ]
 }
