@@ -111,8 +111,9 @@ extension Parser {
       valBindingPttrn.setSourceRange(lookedRange.start, pattern.sourceRange.end)
       return valBindingPttrn
     case .dot where !config.onlyIdWildCardOptional:
-      return try parseDotHeadedEnumCasePattern(
+      let enumCasePttrn = try parseDotHeadedEnumCasePattern(
         config: config, startLocation: lookedRange.start)
+      return wrapOptional(enumCasePattern: enumCasePttrn, config: config)
     case .is where !config.onlyIdWildCardOptional && config.forPatternMatching:
       let type = try parseType()
       let typeCastingPttrn = TypeCastingPattern(kind: .is(type))
@@ -192,8 +193,9 @@ extension Parser {
     _ id: Identifier, config: ParserPatternConfig, startRange: SourceRange
   ) throws -> Pattern {
     if config.shouldParseTypeIdentifier(tokenKind: _lexer.look().kind) {
-      return try parseIdentifierHeadedEnumCasePattern(
+      let enumCasePttrn = try parseIdentifierHeadedEnumCasePattern(
         id, config: config, startRange: startRange)
+      return wrapOptional(enumCasePattern: enumCasePttrn, config: config)
     }
     var endLocation = startRange.end
     if _lexer.match(.postfixQuestion) {
@@ -260,6 +262,20 @@ extension Parser {
       EnumCasePattern(typeIdentifier: updatedTypeIdentifier, name: newName)
     enumCasePttrn.setSourceRange(typeIdentifier.sourceRange)
     return enumCasePttrn
+  }
+
+  private func wrapOptional(
+    enumCasePattern: EnumCasePattern, config: ParserPatternConfig
+  ) -> Pattern {
+    guard config.forPatternMatching, _lexer.match(.postfixQuestion) else {
+      return enumCasePattern
+    }
+
+    let optPttrn = OptionalPattern(kind: .enumCase(enumCasePattern))
+    optPttrn.setSourceRange(
+      enumCasePattern.sourceRange.start,
+      enumCasePattern.sourceRange.end.nextColumn)
+    return optPttrn
   }
 
   private func parseTuplePattern(
