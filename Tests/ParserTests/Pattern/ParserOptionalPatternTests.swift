@@ -67,6 +67,28 @@ class ParserOptionalPatternTests: XCTestCase {
     }
   }
 
+  func testTuplePatternOptional() {
+    let tuples = [
+      "()",
+      "(a)",
+      "(a, b)",
+      "(a?, b?)",
+    ]
+    for tupleString in tuples {
+      let optTuple = "\(tupleString)?"
+      parsePatternAndTest(optTuple, optTuple, forPatternMatching: true, testClosure: { pttrn in
+        guard let optionalPattern = pttrn as? OptionalPattern,
+          case .tuple(let tuple) = optionalPattern.kind
+        else {
+          XCTFail("Failed in parsing an optional pattern with enum-case.")
+          return
+        }
+
+        XCTAssertEqual(tuple.textDescription, tupleString)
+      })
+    }
+  }
+
   func testSourceRange() {
     parsePatternAndTest("foo?", "foo?", testClosure: { pttrn in
       XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 5))
@@ -77,12 +99,16 @@ class ParserOptionalPatternTests: XCTestCase {
     parsePatternAndTest(".foo?", ".foo?", forPatternMatching: true, testClosure: { pttrn in
       XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 6))
     })
+    parsePatternAndTest("(x, y)?", "(x, y)?", forPatternMatching: true, testClosure: { pttrn in
+      XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 8))
+    })
   }
 
   static var allTests = [
     ("testIdentifierOptional", testIdentifierOptional),
     ("testWildcardOptional", testWildcardOptional),
     ("testEnumCasePatternOptional", testEnumCasePatternOptional),
+    ("testTuplePatternOptional", testTuplePatternOptional),
     ("testSourceRange", testSourceRange),
   ]
 }
