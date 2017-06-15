@@ -19,25 +19,28 @@ import XCTest
 @testable import AST
 
 class ParserOptionalPatternTests: XCTestCase {
-  func testOptional() {
+  func testIdentifierOptional() {
     parsePatternAndTest("foo?", "foo?", testClosure: { pttrn in
-      guard let optionalPattern = pttrn as? OptionalPattern else {
-        XCTFail("Failed in parsing an optional pattern.")
+      guard let optionalPattern = pttrn as? OptionalPattern,
+        case .identifier(let id) = optionalPattern.kind
+      else {
+        XCTFail("Failed in parsing an optional pattern with identifier.")
         return
       }
 
-      XCTAssertEqual(optionalPattern.identifier, "foo")
+      XCTAssertEqual(id.identifier, "foo")
+      XCTAssertNil(id.typeAnnotation)
     })
   }
 
   func testWildcardOptional() {
     parsePatternAndTest("_?", "_?", forPatternMatching: true, testClosure: { pttrn in
-      guard let optionalPattern = pttrn as? OptionalPattern else {
-        XCTFail("Failed in parsing an optional pattern.")
+      guard let optionalPattern = pttrn as? OptionalPattern,
+        case .wildcard = optionalPattern.kind
+      else {
+        XCTFail("Failed in parsing an optional pattern with wildcard.")
         return
       }
-
-      XCTAssertEqual(optionalPattern.identifier, "_")
     })
   }
 
@@ -51,7 +54,7 @@ class ParserOptionalPatternTests: XCTestCase {
   }
 
   static var allTests = [
-    ("testOptional", testOptional),
+    ("testIdentifierOptional", testIdentifierOptional),
     ("testWildcardOptional", testWildcardOptional),
     ("testSourceRange", testSourceRange),
   ]

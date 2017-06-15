@@ -174,7 +174,7 @@ extension Parser {
   ) throws -> Pattern {
     var endLocation = startRange.end
     if config.forPatternMatching, _lexer.match(.postfixQuestion) {
-      let optPttrn = OptionalPattern(identifier: "_")
+      let optPttrn = OptionalPattern(kind: .wildcard)
       optPttrn.setSourceRange(startRange.start, endLocation.nextColumn)
       return optPttrn
     }
@@ -197,7 +197,9 @@ extension Parser {
     }
     var endLocation = startRange.end
     if _lexer.match(.postfixQuestion) {
-      let optPttrn = OptionalPattern(identifier: id)
+      let idPttrnForOpt = IdentifierPattern(identifier: id)
+      idPttrnForOpt.setSourceRange(startRange)
+      let optPttrn = OptionalPattern(kind: .identifier(idPttrnForOpt))
       optPttrn.setSourceRange(startRange.start, endLocation.nextColumn)
       return optPttrn
     }

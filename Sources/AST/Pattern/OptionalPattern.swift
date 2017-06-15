@@ -15,19 +15,43 @@
 */
 
 public class OptionalPattern : PatternBase {
-  // Note: per definition, optional-pattern -> identifier-pattern?
-  // in this case, identifier-pattern won't have a type annotation,
-  // so it is equivalent to an identifier. So here, instead of wrapping
-  // an identifier-pattern, we simply wrap an identifier.
-  public let identifier: Identifier
+  // Note: per Apple's language reference, optional-pattern -> identifier-pattern?
+  // https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/Patterns.html#//apple_ref/swift/grammar/optional-pattern
+  // However, in real world, we found it could take more than identifier-pattern.
+  // To name a few others, it can also take
+  // - wildcard-pattern
+  // - enum-case-pattern
+  // - tuple-pattern
+  // And in all cases, these patterns won't be able to have type annotations.
+  // In order to accommodate these cases,
+  // we implement our optional-pattern differently.
 
-  public init(identifier: Identifier) {
-    self.identifier = identifier
+  public enum Kind {
+    case identifier(IdentifierPattern)
+    case wildcard
+    case enumCase(EnumCasePattern)
+    case tuple(TuplePattern)
+  }
+
+  public let kind: Kind
+
+  public init(kind: Kind) {
+    // TODO: we need to make sure they don't have type annotations.
+    self.kind = kind
   }
 
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    return "\(identifier)?"
+    switch kind {
+    case .identifier(let idPttrn):
+      return "\(idPttrn.textDescription)?"
+    case .wildcard:
+      return "_?"
+    case .enumCase(let enumCasePttrn):
+      return "\(enumCasePttrn.textDescription)?"
+    case .tuple(let tuplePttrn):
+      return "\(tuplePttrn.textDescription)?"
+    }
   }
 }
