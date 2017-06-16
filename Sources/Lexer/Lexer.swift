@@ -38,7 +38,7 @@ public class Lexer {
     return .lineFeed
   }
 
-  var comments = CommentSet()
+  public var comments = CommentSet()
 
   public init(source: SourceFile) {
     _source = source
