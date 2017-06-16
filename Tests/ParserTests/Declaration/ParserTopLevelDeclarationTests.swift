@@ -16,6 +16,7 @@
 
 import XCTest
 
+@testable import Source
 @testable import AST
 @testable import Parser
 
@@ -41,6 +42,36 @@ class ParserTopLevelDeclarationTests: XCTestCase {
       XCTAssertTrue(stmts[1] is AssignmentOperatorExpression)
       XCTAssertTrue(stmts[2] is TernaryConditionalOperatorExpression)
       XCTAssertTrue(stmts[3] is FunctionCallExpression)
+      XCTAssertTrue(topLevel.comments.isEmpty)
+    } catch {
+      XCTFail("Failed in parsing a top level declaration.")
+    }
+  }
+
+  func testComments() {
+    let declParser = getParser("""
+    /*
+     a multipleline comment
+     */
+    // and a single line comment
+    """)
+    do {
+      let topLevel = try declParser.parseTopLevelDeclaration()
+      XCTAssertEqual(topLevel.textDescription, "")
+      XCTAssertTrue(topLevel.statements.isEmpty)
+      let comments = Array(topLevel.comments)
+        .sorted(by: { $0.location.line < $1.location.line })
+      XCTAssertEqual(comments.count, 2)
+      XCTAssertEqual(
+        comments[0],
+        Comment(
+          content: "\n a multipleline comment\n ",
+          location: SourceLocation(path: "ParserTests/ParserTests.swift", line: 1, column: 1)))
+      XCTAssertEqual(
+        comments[1],
+        Comment(
+          content: " and a single line comment",
+          location: SourceLocation(path: "ParserTests/ParserTests.swift", line: 4, column: 1)))
     } catch {
       XCTFail("Failed in parsing a top level declaration.")
     }
@@ -73,6 +104,7 @@ class ParserTopLevelDeclarationTests: XCTestCase {
 
   static var allTests = [
     ("testSimpleCase", testSimpleCase),
+    ("testComments", testComments),
     ("testSourceRange", testSourceRange),
     ("testLexicalParent", testLexicalParent),
   ]

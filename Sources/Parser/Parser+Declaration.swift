@@ -22,7 +22,7 @@ import Diagnostic
 extension Parser {
   func parseTopLevelDeclaration() throws -> TopLevelDeclaration {
     let stmts = try parseStatements()
-    let topLevelDecl = TopLevelDeclaration(statements: stmts)
+    let topLevelDecl = TopLevelDeclaration(statements: stmts, comments: _lexer.comments)
     for stmt in stmts {
       if let node = stmt as? ASTNode {
         node.setLexicalParent(topLevelDecl)

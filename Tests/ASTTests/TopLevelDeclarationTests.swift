@@ -22,6 +22,8 @@ import XCTest
 class TopLevelDeclarationTests : XCTestCase {
   func testEmptyContent() {
     let topLevelDecl = TopLevelDeclaration()
+    XCTAssertTrue(topLevelDecl.statements.isEmpty)
+    XCTAssertTrue(topLevelDecl.comments.isEmpty)
     XCTAssertEqual(topLevelDecl.sourceRange, .EMPTY)
   }
 
