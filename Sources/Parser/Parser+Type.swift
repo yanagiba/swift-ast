@@ -169,8 +169,8 @@ extension Parser {
   private func parseParenthesizedTypeElement()
     throws -> ParenthesizedType.Element
   {
-    var externalName: String? = nil
-    var localName: String? = nil
+    var externalName: String?
+    var localName: String?
     let type: Type
     var attributes: [Attribute] = []
     var isInOutParameter = false
@@ -216,8 +216,8 @@ extension Parser {
   private func parseParenthesizedTypeElementBody(_ name: String)
     throws -> ParenthesizedType.Element
   {
-    var externalName: String? = nil
-    var internalName: String? = nil
+    var externalName: String?
+    var internalName: String?
     if let secondName = _lexer.look(ahead: 1).kind.namedIdentifier,
       _lexer.look(ahead: 2).kind == .colon
     {

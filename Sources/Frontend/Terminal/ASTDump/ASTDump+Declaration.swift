@@ -111,7 +111,9 @@ extension DeinitializerDeclaration : TTYASTDumpRepresentable {
 }
 
 extension EnumDeclaration : TTYASTDumpRepresentable {
-  var ttyDump: String {
+  var ttyDump: String { // swift-lint:suppress(nested_code_block_depth)
+    // TODO: some of these `ttyDump` implementations require serious refactorings
+
     let head = dump("enum_decl", sourceRange)
     var neck = "\n" + "name: \(name)".indent
     if !attributes.isEmpty {
@@ -141,7 +143,7 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
     let body: String
     if members.isEmpty {
       body = "<empty_body>".indent
-    } else {
+    } else { // swift-lint:suppress(nested_code_block_depth)
       body = members.map { member -> String in
         switch member {
         case .declaration(let decl):
@@ -201,8 +203,6 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
     }
 
     return "\(head)\(neck)\n\(body)"
-
-    // TODO: some of these `ttyDump` implementations require serious refactorings
   }
 }
 

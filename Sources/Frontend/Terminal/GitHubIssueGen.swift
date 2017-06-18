@@ -33,7 +33,7 @@ func runGitHubIssueGen(for filePaths: [String]) -> Int32 {
   let outputPath = "swift-ast_github_issue_\(getCurrentDateString()).md"
 
   let filePath = filePaths[0]
-  var sourceFile: SourceFile? = nil
+  var sourceFile: SourceFile?
   do {
     let source = try SourceReader.read(at: filePath)
     sourceFile = source

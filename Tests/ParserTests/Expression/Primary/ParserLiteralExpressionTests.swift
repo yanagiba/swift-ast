@@ -124,7 +124,7 @@ class ParserLiteralExpressionTests: XCTestCase {
     }
   }
 
-  func testInterpolatedStringLiteral() {
+  func testInterpolatedStringLiteral() { // swift-lint:suppress(nested_code_block_depth)
     let testStrings: [(testString: String, expectedExpressions: [Expression])] = [
       ( // integer literal
         "\"1 2 \\(3)\"",

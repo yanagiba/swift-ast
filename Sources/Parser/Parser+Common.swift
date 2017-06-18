@@ -42,7 +42,7 @@ extension Parser {
   func parseVerifiedOperator(
     againstModifier kind: DeclarationModifier?
   ) -> Operator? {
-    var verifiedOperator: Operator? = nil
+    var verifiedOperator: Operator?
     switch _lexer.look().kind {
     case .prefixOperator(let op):
       verifiedOperator =

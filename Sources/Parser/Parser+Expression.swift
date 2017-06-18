@@ -305,7 +305,7 @@ extension Parser {
 
   private func parseFunctionCallExpression(
     postfixExpression expr: PostfixExpression, config: ParserExpressionConfig
-  ) throws -> PostfixExpression {
+  ) throws -> PostfixExpression { // swift-lint:suppress(nested_code_block_depth)
     func parseArgumentExpr(op: Operator) -> Expression? {
       let exprLexerCp = _lexer.checkPoint()
       let exprDiagnosticCp = _diagnosticPool.checkPoint()
@@ -336,7 +336,8 @@ extension Parser {
       }
 
       repeat {
-        if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare {
+        if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare { // swift-lint:suppress(inverted_logic)
+          // TODO: but this is a bug due to lacking of minimal expression evaluation with operator precedence
           guard let id = _lexer.readNamedIdentifier() else {
             throw _raiseFatal(.expectedParameterNameFuncCall)
           }
@@ -786,7 +787,7 @@ extension Parser {
   ) throws -> KeyPathExpression {
     var endLocation = getEndLocation()
 
-    var type: Type? = nil
+    var type: Type?
     if case let .identifier(typeName) = _lexer.read(.dummyIdentifier) {
       type = TypeIdentifier(names: [TypeIdentifier.TypeName(name: typeName)])
     }
@@ -1016,8 +1017,8 @@ extension Parser {
 
   private func parseInterpolatedStringLiteral(
     head: String, raw: String, startLocation: SourceLocation
-  ) throws -> LiteralExpression {
-    func caliberateExpressions(_ exprs: [Expression]) throws -> [Expression] {
+  ) throws -> LiteralExpression { // swift-lint:suppress(nested_code_block_depth)
+    func caliberateExpressions(_ exprs: [Expression]) throws -> [Expression] { // swift-lint:suppress(nested_code_block_depth)
       let exprCount = exprs.count
       var indentationPrefix = ""
       var caliberatedExprs: [Expression] = []
@@ -1131,7 +1132,7 @@ extension Parser {
     {
       var captureList: [ClosureExpression.Signature.CaptureItem] = []
       repeat {
-        var specifier: ClosureExpression.Signature.CaptureItem.Specifier? = nil
+        var specifier: ClosureExpression.Signature.CaptureItem.Specifier?
         switch _lexer.read([.weak, .unowned]) {
         case .weak:
           specifier = .weak
@@ -1219,7 +1220,7 @@ extension Parser {
 
     let signatureOpeningCp = _lexer.checkPoint()
     let signatureOpeningDiagnosticCp = _diagnosticPool.checkPoint()
-    var signature: ClosureExpression.Signature? = nil
+    var signature: ClosureExpression.Signature?
     if _lexer.match(.leftSquare) {
       if let captureList = parseCaptureList() {
         signature = ClosureExpression.Signature(captureList: captureList)
@@ -1229,7 +1230,7 @@ extension Parser {
       }
     }
 
-    var parameterClause: ClosureExpression.Signature.ParameterClause? = nil
+    var parameterClause: ClosureExpression.Signature.ParameterClause?
     if _lexer.match(.leftParen) {
       if let params = parseParameterList() {
         parameterClause =

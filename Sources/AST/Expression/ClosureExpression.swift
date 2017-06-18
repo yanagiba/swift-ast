@@ -18,8 +18,8 @@ public class ClosureExpression : ASTNode, PrimaryExpression {
   public struct Signature {
     public struct CaptureItem {
       public enum Specifier : String {
-        case weak = "weak"
-        case unowned = "unowned"
+        case weak
+        case unowned
         case unownedSafe = "unowned(safe)"
         case unownedUnsafe = "unowned(unsafe)"
       }
