@@ -305,7 +305,7 @@ extension Parser {
 
   private func parseFunctionCallExpression(
     postfixExpression expr: PostfixExpression, config: ParserExpressionConfig
-  ) throws -> PostfixExpression {
+  ) throws -> PostfixExpression { // swift-lint:suppress(nested_code_block_depth)
     func parseArgumentExpr(op: Operator) -> Expression? {
       let exprLexerCp = _lexer.checkPoint()
       let exprDiagnosticCp = _diagnosticPool.checkPoint()
@@ -1016,8 +1016,8 @@ extension Parser {
 
   private func parseInterpolatedStringLiteral(
     head: String, raw: String, startLocation: SourceLocation
-  ) throws -> LiteralExpression {
-    func caliberateExpressions(_ exprs: [Expression]) throws -> [Expression] {
+  ) throws -> LiteralExpression { // swift-lint:suppress(nested_code_block_depth)
+    func caliberateExpressions(_ exprs: [Expression]) throws -> [Expression] { // swift-lint:suppress(nested_code_block_depth)
       let exprCount = exprs.count
       var indentationPrefix = ""
       var caliberatedExprs: [Expression] = []

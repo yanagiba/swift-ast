@@ -1,6 +1,9 @@
 lint:
   rule-configurations:
     - NESTED_CODE_BLOCK_DEPTH: 6
+    - CYCLOMATIC_COMPLEXITY: 15
+    - NPATH_COMPLEXITY: 300
+    - NCSS: 45
   severity-thresholds:
     - critical: 0
     - major: 0

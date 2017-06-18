@@ -51,28 +51,34 @@ class LexerOperatorTests: XCTestCase {
       (" ", 5, 7),
       ("   ", 7, 11),
     ]
-    punctuators.forEach { p in
-      spaces.forEach { s in
+
+    var combinations: [(String, (String, Int, Int))] = []
+    for p in punctuators {
+      for s in spaces {
         if s.0 == "" && (p == "?" || p == "!") {
-          return
+          continue
         }
-        let asBinary = "foo\(s.0)\(p)\(s.0)bar"
-        lexAndTest(asBinary) { t in
-          XCTAssertEqual(t, .identifier("foo"))
+        combinations.append((p, s))
+      }
+    }
+
+    for (p, s) in combinations {
+      let asBinary = "foo\(s.0)\(p)\(s.0)bar"
+      lexAndTest(asBinary) { t in
+        XCTAssertEqual(t, .identifier("foo"))
+      }
+      lexAndTest(asBinary, index: 1, expectedColumn: s.1) { t in
+        switch p {
+        case "=":
+          XCTAssertEqual(t, .assignmentOperator)
+        case "?":
+          XCTAssertEqual(t, .binaryQuestion)
+        default:
+          XCTAssertEqual(t, .binaryOperator(p))
         }
-        lexAndTest(asBinary, index: 1, expectedColumn: s.1) { t in
-          switch p {
-          case "=":
-            XCTAssertEqual(t, .assignmentOperator)
-          case "?":
-            XCTAssertEqual(t, .binaryQuestion)
-          default:
-            XCTAssertEqual(t, .binaryOperator(p))
-          }
-        }
-        lexAndTest(asBinary, index: 2, expectedColumn: s.2) { t in
-          XCTAssertEqual(t, .identifier("bar"))
-        }
+      }
+      lexAndTest(asBinary, index: 2, expectedColumn: s.2) { t in
+        XCTAssertEqual(t, .identifier("bar"))
       }
     }
   }
