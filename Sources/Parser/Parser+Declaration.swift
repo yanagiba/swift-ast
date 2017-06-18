@@ -265,7 +265,7 @@ extension Parser {
     func parseAssociatedType(
       withAttributes attrs: Attributes, modifiers: DeclarationModifiers
     ) throws -> ProtocolDeclaration.Member {
-      var accessLevelModifier: AccessLevelModifier? = nil
+      var accessLevelModifier: AccessLevelModifier?
       if modifiers.count == 1, case .accessLevel(let modifier) = modifiers[0] {
         accessLevelModifier = modifier
       }
@@ -276,7 +276,7 @@ extension Parser {
 
       let typeInheritanceClause = try parseTypeInheritanceClause()
 
-      var assignmentType: Type? = nil
+      var assignmentType: Type?
       if _lexer.match(.assignmentOperator) {
         assignmentType = try parseType()
       }
@@ -325,7 +325,7 @@ extension Parser {
       }
     }
 
-    var accessLevelModifier: AccessLevelModifier? = nil
+    var accessLevelModifier: AccessLevelModifier?
     if modifiers.count == 1, case .accessLevel(let modifier) = modifiers[0] {
       accessLevelModifier = modifier
     }
@@ -469,7 +469,7 @@ extension Parser {
       kind = .postfix(op)
     case .infix:
       let op = try parseOperator(modifier: .infix)
-      var id: Identifier? = nil
+      var id: Identifier?
       if _lexer.match(.colon) {
         endLocation = getEndLocation()
         guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
@@ -561,7 +561,7 @@ extension Parser {
     modifiers: DeclarationModifiers,
     startLocation: SourceLocation
   ) throws -> ExtensionDeclaration {
-    var accessLevelModifier: AccessLevelModifier? = nil
+    var accessLevelModifier: AccessLevelModifier?
     if modifiers.count == 1, case .accessLevel(let modifier) = modifiers[0] {
       accessLevelModifier = modifier
     }
@@ -666,7 +666,7 @@ extension Parser {
     modifiers: DeclarationModifiers,
     startLocation: SourceLocation
   ) throws -> ClassDeclaration {
-    var accessLevelModifier: AccessLevelModifier? = nil
+    var accessLevelModifier: AccessLevelModifier?
     var isFinal = false
     if modifiers.count == 1, case .accessLevel(let modifier) = modifiers[0] {
       accessLevelModifier = modifier
@@ -731,7 +731,7 @@ extension Parser {
     modifiers: DeclarationModifiers,
     startLocation: SourceLocation
   ) throws -> StructDeclaration {
-    var accessLevelModifier: AccessLevelModifier? = nil
+    var accessLevelModifier: AccessLevelModifier?
     if modifiers.count == 1, case .accessLevel(let modifier) = modifiers[0] {
       accessLevelModifier = modifier
     }
@@ -937,7 +937,7 @@ extension Parser {
       return .union(unionCaseMember)
     }
 
-    var accessLevelModifier: AccessLevelModifier? = nil
+    var accessLevelModifier: AccessLevelModifier?
     if modifiers.count == 1, case .accessLevel(let modifier) = modifiers[0] {
       accessLevelModifier = modifier
     }
@@ -981,8 +981,8 @@ extension Parser {
     ([FunctionSignature.Parameter], SourceRange)
   {
     func parseParameter() throws -> FunctionSignature.Parameter {
-      var externalName: Identifier? = nil
-      var internalName: Identifier? = nil
+      var externalName: Identifier?
+      var internalName: Identifier?
       if _lexer.match(.underscore) {
         if let name = _lexer.readNamedIdentifier() {
           externalName = "_"
@@ -1060,7 +1060,7 @@ extension Parser {
     startLocation: SourceLocation
   ) throws -> FunctionDeclaration {
     func parseName() throws -> Identifier {
-      var kind: DeclarationModifier? = nil
+      var kind: DeclarationModifier?
       for m in modifiers {
         switch m {
         case .prefix:
@@ -1104,7 +1104,7 @@ extension Parser {
     let genericParameterClause = try parseGenericParameterClause()
     let (signature, signEndLocation) = try parseSignature()
     let genericWhereClause = try parseGenericWhereClause()
-    var body: CodeBlock? = nil
+    var body: CodeBlock?
     if _lexer.look().kind == .leftBrace {
       body = try parseCodeBlock()
     }
@@ -1141,7 +1141,7 @@ extension Parser {
     modifiers: DeclarationModifiers,
     startLocation: SourceLocation
   ) throws -> TypealiasDeclaration {
-    var accessLevelModifier: AccessLevelModifier? = nil
+    var accessLevelModifier: AccessLevelModifier?
     if modifiers.count == 1, case .accessLevel(let modifier) = modifiers[0] {
       accessLevelModifier = modifier
     }
@@ -1269,7 +1269,7 @@ extension Parser {
     (WillSetDidSetBlock, SourceLocation)
   {
     func parseSet(_ accessorType: String) throws -> (Identifier?, CodeBlock) {
-      var setterName: String? = nil
+      var setterName: String?
       if _lexer.match(.leftParen) {
         guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
           throw _raiseFatal(.expectedAccesorName(accessorType))
@@ -1289,8 +1289,8 @@ extension Parser {
 
     let attrs = try parseAttributes()
 
-    var willSetClause: WillSetDidSetBlock.WillSetClause? = nil
-    var didSetClause: WillSetDidSetBlock.DidSetClause? = nil
+    var willSetClause: WillSetDidSetBlock.WillSetClause?
+    var didSetClause: WillSetDidSetBlock.DidSetClause?
 
     if _lexer.match(.willSet) {
       let (setterName, codeBlock) = try parseSet("willSet")
@@ -1358,7 +1358,7 @@ extension Parser {
     func parseSetter(
       attrs: Attributes, modifier: MutationModifier?
     ) throws -> GetterSetterBlock.SetterClause {
-      var setterName: String? = nil
+      var setterName: String?
       if _lexer.match(.leftParen) {
         guard case .identifier(let name) = _lexer.read(.dummyIdentifier) else {
           throw _raiseFatal(.expectedAccesorName("setter"))
@@ -1384,8 +1384,8 @@ extension Parser {
     let attrs = try parseAttributes()
     let modifier = parseMutationModifier()
 
-    var getterClause: GetterSetterBlock.GetterClause? = nil
-    var setterClause: GetterSetterBlock.SetterClause? = nil
+    var getterClause: GetterSetterBlock.GetterClause?
+    var setterClause: GetterSetterBlock.SetterClause?
 
     if _lexer.match(.get) {
       getterClause = try parseGetter(attrs: attrs, modifier: modifier)
@@ -1448,7 +1448,7 @@ extension Parser {
 
   private func parsePatternInitializer() throws -> PatternInitializer {
     let pttrn = try parsePattern()
-    var initExpr: Expression? = nil
+    var initExpr: Expression?
     if _lexer.match(.assignmentOperator) {
       initExpr = try parseExpression()
     }
@@ -1458,7 +1458,7 @@ extension Parser {
   private func parseImportDeclaration(
     withAttributes attrs: Attributes, startLocation: SourceLocation
   ) throws -> ImportDeclaration {
-    var kind: ImportDeclaration.Kind? = nil
+    var kind: ImportDeclaration.Kind?
     let importTypeTokens: [Token.Kind] = [
       .typealias,
       .struct,

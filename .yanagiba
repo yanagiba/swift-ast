@@ -1,0 +1,8 @@
+lint:
+  rule-configurations:
+    - NESTED_CODE_BLOCK_DEPTH: 6
+  severity-thresholds:
+    - critical: 0
+    - major: 0
+    - minor: 0
+    - cosmetic: 0

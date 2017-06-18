@@ -208,8 +208,8 @@ extension Parser {
           _lexer.readUntilEOL()
           kind = .sourceLocation(nil, nil)
         }
-        var fileName: String? = nil
-        var lineNumber: Int? = nil
+        var fileName: String?
+        var lineNumber: Int?
         if _lexer.read(.dummyIdentifier) == .identifier("file"),
           _lexer.match(.colon),
           case let .staticStringLiteral(name, _) =
@@ -274,8 +274,8 @@ extension Parser {
 
     var catchClauses: [DoStatement.CatchClause] = []
     while _lexer.match(.catch) {
-      var catchPattern: Pattern? = nil
-      var catchWhere: Expression? = nil
+      var catchPattern: Pattern?
+      var catchWhere: Expression?
       if _lexer.look().kind != .leftBrace {
         if _lexer.look().kind != .where {
           catchPattern = try parsePattern()
@@ -315,7 +315,7 @@ extension Parser {
         var itemList: [SwitchStatement.Case.Item] = []
         repeat {
           let pattern = try parsePattern(config: forPatternMatchingConfig)
-          var whereExpr: Expression? = nil
+          var whereExpr: Expression?
           if _lexer.match(.where) {
             whereExpr = try parseExpression(config: noTrailingConfig)
           }
@@ -539,7 +539,7 @@ extension Parser {
       throw _raiseFatal(.expectedForEachIn)
     }
     let collectionExpr = try parseExpression(config: noTrailingConfig)
-    var whereClause: Expression? = nil
+    var whereClause: Expression?
     if _lexer.match(.where) {
       whereClause = try parseExpression(config: noTrailingConfig)
     }

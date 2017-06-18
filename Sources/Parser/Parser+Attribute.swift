@@ -36,7 +36,7 @@ extension Parser {
       return Attribute(name: name)
     }
     let balancedTokens = parseBalancedTokens(expectedClosingCharacter: ")")
-    var argumentClause: Attribute.ArgumentClause? = nil
+    var argumentClause: Attribute.ArgumentClause?
     if _lexer.match([.arrow, .throws, .rethrows]) {
       // when the balanced tokens are followed by
       // an arrow `->`, a `throws`, or a `rethrows`,

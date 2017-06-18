@@ -17,7 +17,7 @@
 import Source
 
 public class ASTNode : LocatableNode {
-  public private(set) var lexicalParent: ASTNode? = nil
+  public private(set) var lexicalParent: ASTNode?
 
   public func setLexicalParent(_ node: ASTNode) {
     lexicalParent = node

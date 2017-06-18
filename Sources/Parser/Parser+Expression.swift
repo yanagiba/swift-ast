@@ -786,7 +786,7 @@ extension Parser {
   ) throws -> KeyPathExpression {
     var endLocation = getEndLocation()
 
-    var type: Type? = nil
+    var type: Type?
     if case let .identifier(typeName) = _lexer.read(.dummyIdentifier) {
       type = TypeIdentifier(names: [TypeIdentifier.TypeName(name: typeName)])
     }
@@ -1131,7 +1131,7 @@ extension Parser {
     {
       var captureList: [ClosureExpression.Signature.CaptureItem] = []
       repeat {
-        var specifier: ClosureExpression.Signature.CaptureItem.Specifier? = nil
+        var specifier: ClosureExpression.Signature.CaptureItem.Specifier?
         switch _lexer.read([.weak, .unowned]) {
         case .weak:
           specifier = .weak
@@ -1219,7 +1219,7 @@ extension Parser {
 
     let signatureOpeningCp = _lexer.checkPoint()
     let signatureOpeningDiagnosticCp = _diagnosticPool.checkPoint()
-    var signature: ClosureExpression.Signature? = nil
+    var signature: ClosureExpression.Signature?
     if _lexer.match(.leftSquare) {
       if let captureList = parseCaptureList() {
         signature = ClosureExpression.Signature(captureList: captureList)
@@ -1229,7 +1229,7 @@ extension Parser {
       }
     }
 
-    var parameterClause: ClosureExpression.Signature.ParameterClause? = nil
+    var parameterClause: ClosureExpression.Signature.ParameterClause?
     if _lexer.match(.leftParen) {
       if let params = parseParameterList() {
         parameterClause =
