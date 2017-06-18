@@ -336,7 +336,8 @@ extension Parser {
       }
 
       repeat {
-        if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare {
+        if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare { // swift-lint:suppress(inverted_logic)
+          // TODO: but this is a bug due to lacking of minimal expression evaluation with operator precedence
           guard let id = _lexer.readNamedIdentifier() else {
             throw _raiseFatal(.expectedParameterNameFuncCall)
           }
