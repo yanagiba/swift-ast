@@ -154,7 +154,9 @@ extension Parser {
 
   func parseContinueStatement(startRange: SourceRange) -> ContinueStatement {
     let endLocation = getEndLocation()
-    if case .identifier(let name) = _lexer.read(.dummyIdentifier) {
+    if !_lexer.lookLineFeed(),
+      case .identifier(let name) = _lexer.read(.dummyIdentifier)
+    {
       let continueStmt = ContinueStatement(labelName: name)
       continueStmt.setSourceRange(startRange.start, endLocation)
       return continueStmt
@@ -167,7 +169,9 @@ extension Parser {
 
   func parseBreakStatement(startRange: SourceRange) -> BreakStatement {
     let endLocation = getEndLocation()
-    if case .identifier(let name) = _lexer.read(.dummyIdentifier) {
+    if !_lexer.lookLineFeed(),
+      case .identifier(let name) = _lexer.read(.dummyIdentifier)
+    {
       let breakStmt = BreakStatement(labelName: name)
       breakStmt.setSourceRange(startRange.start, endLocation)
       return breakStmt
