@@ -40,6 +40,16 @@ class ParserContinueStatementTests: XCTestCase {
     })
   }
 
+  func testLabelNameNotImmediateFollow() {
+    parseStatementAndTest("continue\nfoo", "continue", testClosure: { stmt in
+      guard let continueStmt = stmt as? ContinueStatement else {
+        XCTFail("Failed in parsing a continue statement.")
+        return
+      }
+      XCTAssertNil(continueStmt.labelName)
+    })
+  }
+
   func testSourceRange() {
     parseStatementAndTest("continue", "continue", testClosure: { stmt in
       XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 9))
@@ -52,6 +62,7 @@ class ParserContinueStatementTests: XCTestCase {
   static var allTests = [
     ("testContinue", testContinue),
     ("testContinueWithLabelName", testContinueWithLabelName),
+    ("testLabelNameNotImmediateFollow", testLabelNameNotImmediateFollow),
     ("testSourceRange", testSourceRange),
   ]
 }

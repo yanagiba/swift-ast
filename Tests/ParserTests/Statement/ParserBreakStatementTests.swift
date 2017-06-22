@@ -40,6 +40,16 @@ class ParserBreakStatementTests: XCTestCase {
     })
   }
 
+  func testLabelNameNotImmediateFollow() {
+    parseStatementAndTest("break\nfoo", "break", testClosure: { stmt in
+      guard let breakStmt = stmt as? BreakStatement else {
+        XCTFail("Failed in parsing a break statement.")
+        return
+      }
+      XCTAssertNil(breakStmt.labelName)
+    })
+  }
+
   func testSourceRange() {
     parseStatementAndTest("break", "break", testClosure: { stmt in
       XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 6))
@@ -52,6 +62,7 @@ class ParserBreakStatementTests: XCTestCase {
   static var allTests = [
     ("testBreak", testBreak),
     ("testBreakWithLabelName", testBreakWithLabelName),
+    ("testLabelNameNotImmediateFollow", testLabelNameNotImmediateFollow),
     ("testSourceRange", testSourceRange),
   ]
 }

@@ -230,6 +230,10 @@ public class Lexer {
     return looked == .eof ? nil : looked.unicodeScalar
   }
 
+  public func lookLineFeed() -> Bool {
+    return look(skipLineFeed: false).kind == .lineFeed
+  }
+
   public func look(ahead: Int = 0, skipLineFeed: Bool = true) -> Token {
     var offset = ahead
     if offset >= _loadedTokens.count {
