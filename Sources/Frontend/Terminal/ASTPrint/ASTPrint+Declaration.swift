@@ -216,11 +216,11 @@ extension InitializerDeclaration : TTYASTPrintRepresentable {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
     let headText = "\(attrsText)\(modifiersText)init\(kind.textDescription)"
-    let genericParameterClauseText = genericParameterClause?.textDescription ?? ""
+    let genericParamText = genericParameterClause?.textDescription ?? ""
     let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
     let throwsKindText = throwsKind.textDescription.isEmpty ? "" : " \(throwsKind.textDescription)"
-    let genericWhereClauseText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
-    return "\(headText)\(genericParameterClauseText)\(parameterText)\(throwsKindText)\(genericWhereClauseText) \(body.ttyPrint)"
+    let genericWhereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
+    return "\(headText)\(genericParamText)\(parameterText)\(throwsKindText)\(genericWhereText) \(body.ttyPrint)"
   }
 }
 

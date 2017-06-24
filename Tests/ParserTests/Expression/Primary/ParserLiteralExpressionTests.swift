@@ -545,17 +545,21 @@ class ParserLiteralExpressionTests: XCTestCase {
   }
 
   func testArrayWithDictionaries() {
-    parseExpressionAndTest("[[\"foo\": true, \"bar\": false]]", "[[\"foo\": true, \"bar\": false]]", testClosure: { expr in
-      guard let arrayExpr = expr as? LiteralExpression,
-        case .array(let exprs) = arrayExpr.kind else {
-        XCTFail("Failed in getting an array literal")
-        return
+    parseExpressionAndTest(
+      "[[\"foo\": true, \"bar\": false]]",
+      "[[\"foo\": true, \"bar\": false]]",
+      testClosure: { expr in
+        guard let arrayExpr = expr as? LiteralExpression,
+          case .array(let exprs) = arrayExpr.kind else {
+          XCTFail("Failed in getting an array literal")
+          return
+        }
+        guard exprs.count == 1 else {
+          XCTFail("Array literal doesn't contain one element")
+          return
+        }
       }
-      guard exprs.count == 1 else {
-        XCTFail("Array literal doesn't contain one element")
-        return
-      }
-    })
+    )
   }
 
   func testArrayLiteralContainsAllLiterals() {
@@ -620,17 +624,21 @@ class ParserLiteralExpressionTests: XCTestCase {
   }
 
   func testDictinoaryEndingWithComma() {
-    parseExpressionAndTest("[\"foo\": true, \"bar\": false, ]", "[\"foo\": true, \"bar\": false]", testClosure: { expr in
-      guard let dictExpr = expr as? LiteralExpression,
-        case .dictionary(let exprs) = dictExpr.kind else {
-        XCTFail("Failed in getting a dictionary literal")
-        return
+    parseExpressionAndTest(
+      "[\"foo\": true, \"bar\": false, ]",
+      "[\"foo\": true, \"bar\": false]",
+      testClosure: { expr in
+        guard let dictExpr = expr as? LiteralExpression,
+          case .dictionary(let exprs) = dictExpr.kind else {
+          XCTFail("Failed in getting a dictionary literal")
+          return
+        }
+        guard exprs.count == 2 else {
+          XCTFail("Dictionary literal doesn't contain 2 entries")
+          return
+        }
       }
-      guard exprs.count == 2 else {
-        XCTFail("Dictionary literal doesn't contain 2 entries")
-        return
-      }
-    })
+    )
   }
 
   func testDictionaryWithDictionaries() {
@@ -669,19 +677,20 @@ class ParserLiteralExpressionTests: XCTestCase {
 
   func testDictionaryLiteralContainsAllLiterals() {
     parseExpressionAndTest(
-      "[nil: 1, 1.23: \"foo\", \"\\(1 + 2)\": true, [1, 2, 3]: [1: true, 2: false, 3: true, 4: false], #line: [1: true]]",
-      "[nil: 1, 1.23: \"foo\", \"\\(1 + 2)\": true, [1, 2, 3]: [1: true, 2: false, 3: true, 4: false], #line: [1: true]]",
+      "[nil: 1, 1.23: \"foo\", \"\\(1 + 2)\": true, [1, 2, 3]: [1: true, 2: false, 3: true, 4: false], #line: [1: true]]", // swift-lint:suppress(long_line)
+      "[nil: 1, 1.23: \"foo\", \"\\(1 + 2)\": true, [1, 2, 3]: [1: true, 2: false, 3: true, 4: false], #line: [1: true]]", // swift-lint:suppress(long_line)
       testClosure: { expr in
-      guard let dictExpr = expr as? LiteralExpression,
-        case .dictionary(let exprs) = dictExpr.kind else {
-        XCTFail("Failed in getting a dictionary literal")
-        return
+        guard let dictExpr = expr as? LiteralExpression,
+          case .dictionary(let exprs) = dictExpr.kind else {
+          XCTFail("Failed in getting a dictionary literal")
+          return
+        }
+        guard exprs.count == 5 else {
+          XCTFail("Dictionary literal doesn't contain 5 entries")
+          return
+        }
       }
-      guard exprs.count == 5 else {
-        XCTFail("Dictionary literal doesn't contain 5 entries")
-        return
-      }
-    })
+    )
   }
 
   func testMagicLiterals() {
@@ -752,7 +761,8 @@ class ParserLiteralExpressionTests: XCTestCase {
     ("testFloatingPointLiteral", testFloatingPointLiteral),
     ("testStaticStringLiteral", testStaticStringLiteral),
     ("testInterpolatedStringLiteral", testInterpolatedStringLiteral),
-    ("testInterpolatedStringExpressionsContainFunctionCallExpr", testInterpolatedStringExpressionsContainFunctionCallExpr),
+    ("testInterpolatedStringExpressionsContainFunctionCallExpr",
+      testInterpolatedStringExpressionsContainFunctionCallExpr),
     ("testEmptyInterpolatedTextItem", testEmptyInterpolatedTextItem),
     ("testEmptyArrayLiteral", testEmptyArrayLiteral),
     ("testSimpleArrayLiteral", testSimpleArrayLiteral),

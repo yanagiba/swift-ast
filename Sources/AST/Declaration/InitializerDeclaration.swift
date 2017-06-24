@@ -56,12 +56,12 @@ public class InitializerDeclaration : ASTNode, Declaration {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let modifiersText = modifiers.isEmpty ? "" : "\(modifiers.textDescription) "
     let headText = "\(attrsText)\(modifiersText)init\(kind.textDescription)"
-    let genericParameterClauseText = genericParameterClause?.textDescription ?? ""
+    let genericParameterText = genericParameterClause?.textDescription ?? ""
     let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
     let throwsKindText = throwsKind.textDescription.isEmpty ? "" : " \(throwsKind.textDescription)"
-    let genericWhereClauseText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
+    let genericWhereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
     let bodyText = body.textDescription
-    return "\(headText)\(genericParameterClauseText)\(parameterText)\(throwsKindText)\(genericWhereClauseText) \(bodyText)"
+    return "\(headText)\(genericParameterText)\(parameterText)\(throwsKindText)\(genericWhereText) \(bodyText)"
   }
 }
 

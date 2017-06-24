@@ -27,7 +27,8 @@ class ParserProtocolCompositionTypeTests: XCTestCase {
   }
 
   func testAmpAsPrefix() {
-    parseTypeAndTest("foo &bar", "foo") // TODO: this needs to throw error somehow, right now, just make sure it doesn't produce a protocol composition
+    parseTypeAndTest("foo &bar", "foo") // TODO: this needs to throw error somehow,
+                                        // right now, just make sure it doesn't produce a protocol composition
   }
 
   func testOldSyntax() {

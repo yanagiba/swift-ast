@@ -124,7 +124,8 @@ class LexerNumericLiteralTests: XCTestCase {
       ("10_0.000_3", 100.0003),
       ("300_200_100e13", 300200100e13),
       ("-123E-135", -123e-135),
-      // ("-1_000_000_000.000_001e+1_0_0", -1.000000000001e109), // the floating precision cannot be this accurate, 1000000000 + 1e-6 gets calculated into 1000000000.0
+      // ("-1_000_000_000.000_001e+1_0_0", -1.000000000001e109),
+      // the floating precision cannot be this accurate, 1000000000 + 1e-6 gets calculated into 1000000000.0
       ("15e0", 15),
     ]
     for decimal in decimals {

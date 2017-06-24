@@ -4,6 +4,7 @@ lint:
     - CYCLOMATIC_COMPLEXITY: 15
     - NPATH_COMPLEXITY: 300
     - NCSS: 45
+    - LONG_LINE: 120
   severity-thresholds:
     - critical: 0
     - major: 0

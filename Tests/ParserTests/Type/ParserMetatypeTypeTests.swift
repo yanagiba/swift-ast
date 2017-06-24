@@ -36,7 +36,8 @@ class ParserMetatypeTypeTests: XCTestCase {
 
   func testEmbedded() {
     parseTypeAndTest("foo.Type.Protocol.Type.Protocol", "Protocol<Type<Protocol<Type<foo>>>>")
-    parseTypeAndTest("protocol<foo, bar>.Type.Protocol.Type.Protocol", "Protocol<Type<Protocol<Type<protocol<foo, bar>>>>>")
+    parseTypeAndTest("protocol<foo, bar>.Type.Protocol.Type.Protocol", 
+      "Protocol<Type<Protocol<Type<protocol<foo, bar>>>>>")
   }
 
   func testSourceRange() {

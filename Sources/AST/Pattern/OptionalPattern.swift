@@ -16,7 +16,7 @@
 
 public class OptionalPattern : PatternBase {
   // Note: per Apple's language reference, optional-pattern -> identifier-pattern?
-  // https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/Patterns.html#//apple_ref/swift/grammar/optional-pattern
+  // https://goo.gl/ncRCyq
   // However, in real world, we found it could take more than identifier-pattern.
   // To name a few others, it can also take
   // - wildcard-pattern

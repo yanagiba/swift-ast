@@ -79,7 +79,8 @@ class ParserGenericParameterClauseTests: XCTestCase {
         XCTAssertEqual(types[1].textDescription, "S2: SequenceType")
         XCTAssertEqual(types[2].textDescription, "S3: protocol<T1, T2>")
         XCTAssertEqual(types[3].textDescription, "S4: protocol<T3, T4>")
-        XCTAssertEqual(genericParameterClause?.textDescription, "<S1, S2: SequenceType, S3: protocol<T1, T2>, S4: protocol<T3, T4>>")
+        XCTAssertEqual(genericParameterClause?.textDescription,
+          "<S1, S2: SequenceType, S3: protocol<T1, T2>, S4: protocol<T3, T4>>")
       } else {
         XCTFail("Failed in getting right size of parameter clause.")
       }

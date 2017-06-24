@@ -95,7 +95,8 @@ extension Parser {
     }
   }
 
-  func splitTrailingExlaimsAndQuestions() -> [String] { // TODO: this is a hacking solution, need some serious refactorings
+  func splitTrailingExlaimsAndQuestions() -> [String] {
+    // TODO: this is a hacking solution, need some serious refactorings
     if case .postfixOperator(let puncs) = _lexer.look().kind {
       var allQnE = true
       var ops = [String]()

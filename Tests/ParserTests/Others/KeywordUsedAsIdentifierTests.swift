@@ -148,7 +148,8 @@ class KeywordUsedAsIdentifierTests: XCTestCase {
 
   func testKeywordUsedInTuplePattern() {
     let result = parse("switch foo {case .as(_:Int,protocol:_,in:Any?): break}")
-    XCTAssertEqual(result.statements[0].textDescription, "switch foo {\ncase .as(_: Int, protocol: _, in: Any?):\nbreak\n}")
+    XCTAssertEqual(result.statements[0].textDescription,
+      "switch foo {\ncase .as(_: Int, protocol: _, in: Any?):\nbreak\n}")
   }
 
   func testKeywordUsedInFunctionCall() {

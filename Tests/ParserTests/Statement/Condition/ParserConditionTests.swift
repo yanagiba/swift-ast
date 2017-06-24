@@ -47,16 +47,20 @@ class ParserConditionTests: XCTestCase { // Note: we will test condition and con
   }
 
   func testParenthesized() {
-    parseStatementAndTest("while (cond1 && cond2 || cond3) {}", "while (cond1 && cond2 || cond3) {}", testClosure: { stmt in
-      let conditionList = self.getConditionList(from: stmt)
-      XCTAssertEqual(conditionList.count, 1)
-      guard case .expression(let expr) = conditionList[0] else {
-        XCTFail("Failed in getting an expression condition.")
-        return
+    parseStatementAndTest(
+      "while (cond1 && cond2 || cond3) {}",
+      "while (cond1 && cond2 || cond3) {}",
+      testClosure: { stmt in
+        let conditionList = self.getConditionList(from: stmt)
+        XCTAssertEqual(conditionList.count, 1)
+        guard case .expression(let expr) = conditionList[0] else {
+          XCTFail("Failed in getting an expression condition.")
+          return
+        }
+        XCTAssertTrue(expr is ParenthesizedExpression)
+        XCTAssertEqual(expr.textDescription, "(cond1 && cond2 || cond3)")
       }
-      XCTAssertTrue(expr is ParenthesizedExpression)
-      XCTAssertEqual(expr.textDescription, "(cond1 && cond2 || cond3)")
-    })
+    )
   }
 
   func testAvailableToAll() {
@@ -134,31 +138,35 @@ class ParserConditionTests: XCTestCase { // Note: we will test condition and con
   }
 
   func testAvailableToPatchVersion() {
-    parseStatementAndTest("while #available(iOS 10.2.1, *) {}", "while #available(iOS 10.2.1, *) {}", testClosure: { stmt in
-      let conditionList = self.getConditionList(from: stmt)
-      XCTAssertEqual(conditionList.count, 1)
-      guard case .availability(let avail) = conditionList[0] else {
-        XCTFail("Failed in getting an availability condition.")
-        return
+    parseStatementAndTest(
+      "while #available(iOS 10.2.1, *) {}",
+      "while #available(iOS 10.2.1, *) {}",
+      testClosure: { stmt in
+        let conditionList = self.getConditionList(from: stmt)
+        XCTAssertEqual(conditionList.count, 1)
+        guard case .availability(let avail) = conditionList[0] else {
+          XCTFail("Failed in getting an availability condition.")
+          return
+        }
+        let args = avail.arguments
+        XCTAssertEqual(args.count, 2)
+        guard case let .patch(platform, majorVersion, minorVersion, patchVersion) = args[0] else {
+          XCTFail("Failed in getting an availability argument `iOS 10.2.1`")
+          return
+        }
+        XCTAssertEqual(platform, "iOS")
+        XCTAssertEqual(majorVersion, 10)
+        XCTAssertEqual(minorVersion, 2)
+        XCTAssertEqual(patchVersion, 1)
+        XCTAssertEqual(args[0].textDescription, "iOS 10.2.1")
+        guard case .all = args[1] else {
+          XCTFail("Failed in getting an availability argument `*`")
+          return
+        }
+        XCTAssertEqual(args[1].textDescription, "*")
+        XCTAssertEqual(avail.textDescription, "#available(iOS 10.2.1, *)")
       }
-      let args = avail.arguments
-      XCTAssertEqual(args.count, 2)
-      guard case let .patch(platform, majorVersion, minorVersion, patchVersion) = args[0] else {
-        XCTFail("Failed in getting an availability argument `iOS 10.2.1`")
-        return
-      }
-      XCTAssertEqual(platform, "iOS")
-      XCTAssertEqual(majorVersion, 10)
-      XCTAssertEqual(minorVersion, 2)
-      XCTAssertEqual(patchVersion, 1)
-      XCTAssertEqual(args[0].textDescription, "iOS 10.2.1")
-      guard case .all = args[1] else {
-        XCTFail("Failed in getting an availability argument `*`")
-        return
-      }
-      XCTAssertEqual(args[1].textDescription, "*")
-      XCTAssertEqual(avail.textDescription, "#available(iOS 10.2.1, *)")
-    })
+    )
   }
 
   func testCaseCondition() {
