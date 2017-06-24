@@ -58,9 +58,15 @@ class ParserTryOperatorExpressionTests: XCTestCase {
   }
 
   func testTryScopes() {
-    parseExpressionAndTest("try someThrowingFunction() + anotherThrowingFunction()", "try someThrowingFunction() + anotherThrowingFunction()")
-    parseExpressionAndTest("try (someThrowingFunction() + anotherThrowingFunction())", "try (someThrowingFunction() + anotherThrowingFunction())")
-    parseExpressionAndTest("(try someThrowingFunction()) + anotherThrowingFunction()", "(try someThrowingFunction()) + anotherThrowingFunction()")
+    parseExpressionAndTest(
+      "try someThrowingFunction() + anotherThrowingFunction()", 
+      "try someThrowingFunction() + anotherThrowingFunction()")
+    parseExpressionAndTest(
+      "try (someThrowingFunction() + anotherThrowingFunction())", 
+      "try (someThrowingFunction() + anotherThrowingFunction())")
+    parseExpressionAndTest(
+      "(try someThrowingFunction()) + anotherThrowingFunction()", 
+      "(try someThrowingFunction()) + anotherThrowingFunction()")
   }
 
   func testSourceRange() {

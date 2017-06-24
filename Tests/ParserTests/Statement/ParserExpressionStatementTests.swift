@@ -21,10 +21,14 @@ import XCTest
 
 class ParserExpressionStatementTests: XCTestCase {
   func testAssignmentOpExprStmt() {
-    parseStatementAndTest("(a, _, (b, c)) = (\"test\", 9.45, (12, 3))", "(a, _, (b, c)) = (\"test\", 9.45, (12, 3))", testClosure: { stmt in
-      XCTAssertTrue(stmt is Expression)
-      XCTAssertTrue(stmt is AssignmentOperatorExpression)
-    })
+    parseStatementAndTest(
+      "(a, _, (b, c)) = (\"test\", 9.45, (12, 3))",
+      "(a, _, (b, c)) = (\"test\", 9.45, (12, 3))",
+      testClosure: { stmt in
+        XCTAssertTrue(stmt is Expression)
+        XCTAssertTrue(stmt is AssignmentOperatorExpression)
+      }
+    )
   }
 
   func testExpressions() {

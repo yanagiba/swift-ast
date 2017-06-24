@@ -32,6 +32,9 @@ public class TernaryConditionalOperatorExpression : ASTNode, BinaryExpression {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    return "\(conditionExpression.textDescription) ? \(trueExpression.textDescription) : \(falseExpression.textDescription)"
+    let condText = conditionExpression.textDescription
+    let trueText = trueExpression.textDescription
+    let falseText = falseExpression.textDescription
+    return "\(condText) ? \(trueText) : \(falseText)"
   }
 }

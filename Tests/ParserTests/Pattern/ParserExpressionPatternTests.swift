@@ -20,7 +20,8 @@ import XCTest
 
 class ParserExpressionPatternTests: XCTestCase {
   func testNotInMatchingPattern() {
-    let expct = expectation(description: "Expect an error because expression-pattern is not allowed when is parsed out of matching pattern context.") // TODO: revise this sentense
+    let expct = expectation(description:
+      "Expect an error because expression-pattern is not allowed when is parsed out of matching pattern context.")
     parsePatternAndTest("0", "", errorClosure: { _ in
       expct.fulfill()
     })

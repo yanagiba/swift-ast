@@ -94,7 +94,9 @@ class LexerCommentTests: XCTestCase {
 
   func testNestedMultipleLineComments() {
     let content = "/* start comment 1 /* start comment 2 /* comment */ end comment 2*/ end comment 1*/"
-    let expectedComments: Set = [comment(" start comment 1 /* start comment 2 /* comment */ end comment 2*/ end comment 1")]
+    let expectedComments: Set = [
+      comment(" start comment 1 /* start comment 2 /* comment */ end comment 2*/ end comment 1"),
+    ]
     XCTAssertEqual(lexComments(content), expectedComments)
 
     lexAndTest(content, expectedLine: 1, expectedColumn: 84) {

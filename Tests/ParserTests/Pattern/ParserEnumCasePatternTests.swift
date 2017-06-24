@@ -65,7 +65,8 @@ class ParserEnumCasePatternTests: XCTestCase {
     parsePatternAndTest("let .foo(_?, b?)", "let .foo(_?, b?)", forPatternMatching: true)
     parsePatternAndTest(".foo(let _?, let b?)", ".foo(let _?, let b?)", forPatternMatching: true)
     parsePatternAndTest(".foo(nil, _?)", ".foo(nil, _?)", forPatternMatching: true)
-    let expct = expectation(description: "Expect an error because var decl is not allowed in a tuple pattern that is already in a var decl.") // TODO: revise this sentense
+    let expct = expectation(description:
+      "Expect an error because var decl is not allowed in a tuple pattern that is already in a var decl.")
     parsePatternAndTest(".foo(let a)", "", fromForInOrVarDecl: true, errorClosure: { _ in
       expct.fulfill()
     })

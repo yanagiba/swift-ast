@@ -336,7 +336,7 @@ extension Parser {
       }
 
       repeat {
-        if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare { // swift-lint:suppress(inverted_logic)
+        if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare { // swift-lint:suppress(inverted_logic,long_line)
           // TODO: but this is a bug due to lacking of minimal expression evaluation with operator precedence
           guard let id = _lexer.readNamedIdentifier() else {
             throw _raiseFatal(.expectedParameterNameFuncCall)
@@ -1018,7 +1018,7 @@ extension Parser {
   private func parseInterpolatedStringLiteral(
     head: String, raw: String, startLocation: SourceLocation
   ) throws -> LiteralExpression { // swift-lint:suppress(nested_code_block_depth)
-    func caliberateExpressions(_ exprs: [Expression]) throws -> [Expression] { // swift-lint:suppress(nested_code_block_depth)
+    func caliberateExpressions(_ exprs: [Expression]) throws -> [Expression] { // swift-lint:suppress(nested_code_block_depth,long_line)
       let exprCount = exprs.count
       var indentationPrefix = ""
       var caliberatedExprs: [Expression] = []
@@ -1073,7 +1073,9 @@ extension Parser {
     let isInterpolatedHead = startLocation != .DUMMY
 
     if !head.isEmpty {
-      exprs.append(LiteralExpression(kind: .staticString(head, ""))) // static strings inside the interpolated string literals do not need to preserve raw representation, because they are what they are
+      // Note: static strings inside the interpolated string literals do not need to preserve raw representation,
+      // because they are what they are
+      exprs.append(LiteralExpression(kind: .staticString(head, "")))
     }
 
     let expr = try parseExpression()
@@ -1092,7 +1094,9 @@ extension Parser {
     switch tailString {
     case let .staticStringLiteral(str, _):
       if !str.isEmpty {
-        exprs.append(LiteralExpression(kind: .staticString(str, ""))) // static strings inside the interpolated string literals do not need to preserve raw representation, because they are what they are
+        // Note: static strings inside the interpolated string literals do not need to preserve raw representation,
+        // because they are what they are
+        exprs.append(LiteralExpression(kind: .staticString(str, "")))
         rawText += str
       }
       endLocation = _lexer._getCurrentLocation() // TODO: need to find a better to do it

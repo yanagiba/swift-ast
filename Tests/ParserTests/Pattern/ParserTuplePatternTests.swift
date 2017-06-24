@@ -104,7 +104,8 @@ class ParserTuplePatternTests: XCTestCase {
 
   func testFromForInOrVarDecl() {
     parsePatternAndTest("(let a, let b)", "(let a, let b)")
-    let expct = expectation(description: "Expect an error because var decl is not allowed in a tuple pattern that is already in a var decl.") // TODO: revise this sentense
+    let expct = expectation(description:
+      "Expect an error because var decl is not allowed in a tuple pattern that is already in a var decl.")
     parsePatternAndTest("(let a, let b)", "", fromForInOrVarDecl: true, errorClosure: { _ in
       expct.fulfill()
     })

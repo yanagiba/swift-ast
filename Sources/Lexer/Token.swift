@@ -37,12 +37,16 @@ public struct Token {
     case assignmentOperator
     case prefixOperator(String), binaryOperator(String), postfixOperator(String)
     // value references
-    case identifier(String), implicitParameterName(Int) // TODO: identifier may need to contains raw representation as well, just for restoring the original string, maybe for refactoring
+    case identifier(String) // TODO: identifier may need to contains raw representation as well,
+                            // just for restoring the original string, maybe for refactoring
+    case implicitParameterName(Int)
     // literals
     case integerLiteral(Int, rawRepresentation: String)
     case floatingPointLiteral(Double, rawRepresentation: String)
     case staticStringLiteral(String, rawRepresentation: String)
-    case interpolatedStringLiteralHead(String, rawRepresentation: String) // this stops at the opening \(, and we will let parser figure out when to close this string literal
+    case interpolatedStringLiteralHead(String, rawRepresentation: String) // NOTE: this stops at the opening \(,
+                                                                          // and we will let parser figure out when to
+                                                                          // close this string literal
     case booleanLiteral(Bool)
     // modifier
     case convenience, dynamic, final, lazy, mutating, nonmutating

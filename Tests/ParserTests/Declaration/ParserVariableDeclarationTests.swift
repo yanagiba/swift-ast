@@ -1092,7 +1092,9 @@ class ParserVariableDeclarationTests: XCTestCase {
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
 
-      guard let willSetClause = willSetDidSetBlock.willSetClause, let didSetClause = willSetDidSetBlock.didSetClause else {
+      guard let willSetClause = willSetDidSetBlock.willSetClause,
+        let didSetClause = willSetDidSetBlock.didSetClause
+      else {
         XCTFail("Failed in getting will-set & did-set clauses.")
         return
       }
@@ -1141,7 +1143,9 @@ class ParserVariableDeclarationTests: XCTestCase {
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
 
-      guard let willSetClause = willSetDidSetBlock.willSetClause, let didSetClause = willSetDidSetBlock.didSetClause else {
+      guard let willSetClause = willSetDidSetBlock.willSetClause,
+        let didSetClause = willSetDidSetBlock.didSetClause
+      else {
         XCTFail("Failed in getting will-set & did-set clauses.")
         return
       }
@@ -1192,7 +1196,9 @@ class ParserVariableDeclarationTests: XCTestCase {
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
 
-      guard let willSetClause = willSetDidSetBlock.willSetClause, let didSetClause = willSetDidSetBlock.didSetClause else {
+      guard let willSetClause = willSetDidSetBlock.willSetClause,
+        let didSetClause = willSetDidSetBlock.didSetClause
+      else {
         XCTFail("Failed in getting will-set & did-set clauses.")
         return
       }
@@ -1241,7 +1247,9 @@ class ParserVariableDeclarationTests: XCTestCase {
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
 
-      guard let willSetClause = willSetDidSetBlock.willSetClause, let didSetClause = willSetDidSetBlock.didSetClause else {
+      guard let willSetClause = willSetDidSetBlock.willSetClause,
+        let didSetClause = willSetDidSetBlock.didSetClause
+      else {
         XCTFail("Failed in getting will-set & did-set clauses.")
         return
       }
@@ -1291,7 +1299,9 @@ class ParserVariableDeclarationTests: XCTestCase {
       XCTAssertEqual(typeAnnotation?.textDescription, ": Foo")
       XCTAssertNil(initExpr)
 
-      guard let willSetClause = willSetDidSetBlock.willSetClause, let didSetClause = willSetDidSetBlock.didSetClause else {
+      guard let willSetClause = willSetDidSetBlock.willSetClause,
+        let didSetClause = willSetDidSetBlock.didSetClause
+      else {
         XCTFail("Failed in getting will-set & did-set clauses.")
         return
       }
@@ -1340,7 +1350,9 @@ class ParserVariableDeclarationTests: XCTestCase {
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
 
-      guard let willSetClause = willSetDidSetBlock.willSetClause, let didSetClause = willSetDidSetBlock.didSetClause else {
+      guard let willSetClause = willSetDidSetBlock.willSetClause,
+        let didSetClause = willSetDidSetBlock.didSetClause
+      else {
         XCTFail("Failed in getting will-set & did-set clauses.")
         return
       }
@@ -1574,10 +1586,12 @@ class ParserVariableDeclarationTests: XCTestCase {
     ("testGetterThenSetterWithAttributesAndModifier", testGetterThenSetterWithAttributesAndModifier),
     ("testGetterWithAttributesThenSetterWithAttributes", testGetterWithAttributesThenSetterWithAttributes),
     ("testGetterWithModifierThenSetterWithModifier", testGetterWithModifierThenSetterWithModifier),
-    ("testGetterWithAttributesAndModifierThenSetterWithAttributesAndModifier", testGetterWithAttributesAndModifierThenSetterWithAttributesAndModifier),
+    ("testGetterWithAttributesAndModifierThenSetterWithAttributesAndModifier",
+      testGetterWithAttributesAndModifierThenSetterWithAttributesAndModifier),
     ("testGetterThenSetterWithName", testGetterThenSetterWithName),
     ("testSetterThenGetter", testSetterThenGetter),
-    ("testSetterWithAttributesModifierAndNameThenGetterWithAttributesAndModifier", testSetterWithAttributesModifierAndNameThenGetterWithAttributesAndModifier),
+    ("testSetterWithAttributesModifierAndNameThenGetterWithAttributesAndModifier",
+      testSetterWithAttributesModifierAndNameThenGetterWithAttributesAndModifier),
     // getter-setter-keyword block
     ("testGetterKeyword", testGetterKeyword),
     ("testGetterKeywordWithAttributes", testGetterKeywordWithAttributes),
@@ -1586,12 +1600,17 @@ class ParserVariableDeclarationTests: XCTestCase {
     ("testGetterKeywordThenSetterKeyword", testGetterKeywordThenSetterKeyword),
     ("testGetterKeywordThenSetterKeywordWithAttributes", testGetterKeywordThenSetterKeywordWithAttributes),
     ("testGetterKeywordThenSetterKeywordWithModifier", testGetterKeywordThenSetterKeywordWithModifier),
-    ("testGetterKeywordThenSetterKeywordWithAttributesAndModifier", testGetterKeywordThenSetterKeywordWithAttributesAndModifier),
-    ("testGetterKeywordWithAttributesThenSetterKeywordWithAttributes", testGetterKeywordWithAttributesThenSetterKeywordWithAttributes),
-    ("testGetterKeywordWithModifierThenSetterKeywordWithModifier", testGetterKeywordWithModifierThenSetterKeywordWithModifier),
-    ("testGetterKeywordWithAttributesAndModifierThenSetterKeywordWithAttributesAndModifier", testGetterKeywordWithAttributesAndModifierThenSetterKeywordWithAttributesAndModifier),
+    ("testGetterKeywordThenSetterKeywordWithAttributesAndModifier",
+      testGetterKeywordThenSetterKeywordWithAttributesAndModifier),
+    ("testGetterKeywordWithAttributesThenSetterKeywordWithAttributes",
+      testGetterKeywordWithAttributesThenSetterKeywordWithAttributes),
+    ("testGetterKeywordWithModifierThenSetterKeywordWithModifier",
+      testGetterKeywordWithModifierThenSetterKeywordWithModifier),
+    ("testGetterKeywordWithAttributesAndModifierThenSetterKeywordWithAttributesAndModifier",
+      testGetterKeywordWithAttributesAndModifierThenSetterKeywordWithAttributesAndModifier),
     ("testSetterKeywordThenGetterKeyword", testSetterKeywordThenGetterKeyword),
-    ("testSetterKeywordWithAttributesAndModifierThenGetterKeywordWithAttributesAndModifier", testSetterKeywordWithAttributesAndModifierThenGetterKeywordWithAttributesAndModifier),
+    ("testSetterKeywordWithAttributesAndModifierThenGetterKeywordWithAttributesAndModifier",
+      testSetterKeywordWithAttributesAndModifierThenGetterKeywordWithAttributesAndModifier),
     // will-set-did-set block
     ("testWillSet", testWillSet),
     ("testWillSetWithAttributes", testWillSetWithAttributes),
@@ -1602,9 +1621,11 @@ class ParserVariableDeclarationTests: XCTestCase {
     ("testDidSetWithName", testDidSetWithName),
     ("testDidSetWithAttributesAndName", testDidSetWithAttributesAndName),
     ("testWillSetThenDidSet", testWillSetThenDidSet),
-    ("testWillSetWithAttributesAndNameThenDidSetWithAttributesAndName", testWillSetWithAttributesAndNameThenDidSetWithAttributesAndName),
+    ("testWillSetWithAttributesAndNameThenDidSetWithAttributesAndName",
+      testWillSetWithAttributesAndNameThenDidSetWithAttributesAndName),
     ("testDidSetThenWillSet", testDidSetThenWillSet),
-    ("testDidSetWithAttributesAndNameThenWillSetWithAttributesAndName", testDidSetWithAttributesAndNameThenWillSetWithAttributesAndName),
+    ("testDidSetWithAttributesAndNameThenWillSetWithAttributesAndName",
+      testDidSetWithAttributesAndNameThenWillSetWithAttributesAndName),
     ("testTypeAnnotationWillSetDidSet", testTypeAnnotationWillSetDidSet),
     ("testTypeAnnotationInitializerWillSetDidSet", testTypeAnnotationInitializerWillSetDidSet),
     // trailing closure

@@ -17,7 +17,8 @@
 public class SelfExpression : ASTNode, PrimaryExpression {
   public enum Kind {
     case `self`
-    case method(String) // even though this includes functions and properties, but Swift PL reference calls it `self-method-expression`
+    case method(String) // Note: even though this includes functions and properties,
+                        // but Swift PL reference calls it `self-method-expression`
     case `subscript`(ExpressionList)
     case initializer
   }
