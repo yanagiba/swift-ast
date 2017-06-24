@@ -15,9 +15,9 @@
 */
 
 public class CodeBlock : ASTNode {
-  public let statements: [Statement]
+  public let statements: Statements
 
-  public init(statements: [Statement] = []) {
+  public init(statements: Statements = []) {
     self.statements = statements
   }
 

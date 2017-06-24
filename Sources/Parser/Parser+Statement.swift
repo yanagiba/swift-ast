@@ -20,7 +20,7 @@ import Lexer
 
 extension Parser {
   func parseStatements() throws -> Statements {
-    var stmts = [Statement]()
+    var stmts = Statements()
     while true {
       switch _lexer.look().kind {
       case .eof, .rightBrace, .default, .case:

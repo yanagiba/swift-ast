@@ -17,10 +17,10 @@
 import Source
 
 public class TopLevelDeclaration : ASTNode {
-  public let statements: [Statement]
+  public let statements: Statements
   public let comments: CommentSet
 
-  public init(statements: [Statement] = [], comments: CommentSet = []) {
+  public init(statements: Statements = [], comments: CommentSet = []) {
     self.statements = statements
     self.comments = comments
   }
