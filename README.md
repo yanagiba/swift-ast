@@ -12,7 +12,7 @@
 ![License](https://img.shields.io/github/license/yanagiba/swift-ast.svg)
 
 
-The Swift Abstract Syntax Tree is an initiative to parse
+Swift Abstract Syntax Tree is an initiative to parse
 [Swift Programming Language](https://swift.org/about/) in Swift itself.
 The output of this utility is the corresponding
 [Abstract Syntax Tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) (AST)
@@ -27,7 +27,11 @@ Refactoring, code manipulation and optimization can leverage this AST as well.
 Other ideas could be llvm-codegen or jvm-codegen (thinking about JSwift) that
 consumes the AST and converts them into binary or bytecode, which will make it
 a self-hosting compiler. (If you are working on this, send me your github repo
-link to ryuichi@ryuichisaito.com.)
+link to ryuichi@yanagiba.org.)
+
+Swift Abstract Syntax Tree is part of [Yanagiba Project](http://yanagiba.org).
+Yanagiba umbrella project is a toolchain of compiler modules,
+libraries, and utilities, written in Swift and for Swift.
 
 * * *
 
@@ -217,7 +221,7 @@ make test
 Ryuichi Saito
 
 - http://github.com/ryuichis
-- ryuichi@ryuichisaito.com
+- ryuichi@yanagiba.org
 
 ## License
 
