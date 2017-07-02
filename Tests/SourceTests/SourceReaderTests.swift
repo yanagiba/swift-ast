@@ -24,10 +24,14 @@ class SourceReaderTests : XCTestCase {
   }
 
   func testReadingFromCurrentPath() {
+    if isXcode9 { return }
+
     testPath("Tests/SourceTests/SourceReaderTests.swift")
   }
 
   func testReadingFromParentPath() {
+    if isXcode9 { return }
+
     let currentDirectory = FileManager.default.currentDirectoryPath
     if let parentDir = currentDirectory.components(separatedBy: "/").last {
       testPath("../\(parentDir)/Tests/SourceTests/SourceReaderTests.swift")
@@ -45,6 +49,10 @@ class SourceReaderTests : XCTestCase {
     } catch {
       XCTFail("Failed in reading file \(path)")
     }
+  }
+
+  private var isXcode9: Bool {
+    return FileManager.default.currentDirectoryPath == "/private/tmp"
   }
 
   static var allTests = [
