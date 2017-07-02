@@ -25,9 +25,12 @@ and linting tools like [swift-lint](https://github.com/yanagiba/swift-lint).
 Refactoring, code manipulation and optimization can leverage this AST as well.
 
 Other ideas could be llvm-codegen or jvm-codegen (thinking about JSwift) that
-consumes the AST and converts them into binary or bytecode, which will make it
-a self-hosting compiler. (If you are working on this, send me your github repo
-link to ryuichi@yanagiba.org.)
+consumes the AST and converts them into binary or bytecode.
+I have some proof-of-concepts,
+[llswift-poc](https://github.com/ryuichis/llswift-poc)
+and
+[jswift-poc](https://github.com/ryuichis/jswift-poc), respectively.
+If you are interested in working on the codegens, send me email ryuichi@yanagiba.org.
 
 Swift Abstract Syntax Tree is part of [Yanagiba Project](http://yanagiba.org).
 Yanagiba umbrella project is a toolchain of compiler modules,
