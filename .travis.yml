@@ -12,4 +12,4 @@ script:
 - ./dogFooding.sh -diagnostics-only
 - ./lint.sh
 after_success:
-- eval "$(curl -sL https://swift.vapor.sh/codecov)"
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./runXcodeTest.sh; bash <(curl -s https://raw.githubusercontent.com/codecov/codecov-bash/master/codecov) -X xcodeplist; fi
