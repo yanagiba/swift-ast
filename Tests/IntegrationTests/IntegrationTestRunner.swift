@@ -24,10 +24,9 @@ func testIntegration(
   decolor: Bool = true,
   convertor convert: (SourceFile) -> String
 ) {
-  let pwd = FileManager.default.currentDirectoryPath
-  let integrationPath = "Tests/IntegrationTests"
+  let integrationPath = URL(fileURLWithPath: #file).deletingLastPathComponent().path
   let testTarget = "\(resourceName)/\(testName)"
-  let testPath = "\(pwd)/\(integrationPath)/\(testTarget)"
+  let testPath = "\(integrationPath)/\(testTarget)"
   let sourcePath = "\(testPath).source"
   let resultPath = "\(testPath).result"
   guard let sourceContent = try? String(contentsOfFile: sourcePath, encoding: .utf8),
