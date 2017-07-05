@@ -76,14 +76,7 @@ extension Parser {
       stmt = try parseDoStatement(startLocation: lookedRange.start)
     case let .identifier(name):
       if _lexer.look(ahead: 1).kind == .colon &&
-        (
-          _lexer.look(ahead: 2).kind == .for ||
-          _lexer.look(ahead: 2).kind == .while ||
-          _lexer.look(ahead: 2).kind == .repeat ||
-          _lexer.look(ahead: 2).kind == .if ||
-          _lexer.look(ahead: 2).kind == .switch ||
-          _lexer.look(ahead: 2).kind == .do
-        )
+        [Token.Kind.for, .while, .repeat, .if, .switch, .do].contains(_lexer.look(ahead: 2).kind)
       {
         _lexer.advance(by: 2)
         stmt = try parseLabeledStatement(
@@ -216,13 +209,11 @@ extension Parser {
         var lineNumber: Int?
         if _lexer.read(.dummyIdentifier) == .identifier("file"),
           _lexer.match(.colon),
-          case let .staticStringLiteral(name, _) =
-            _lexer.read(.dummyStaticStringLiteral),
+          case let .staticStringLiteral(name, _) = _lexer.read(.dummyStaticStringLiteral),
           _lexer.match(.comma),
           _lexer.read(.dummyIdentifier) == .identifier("line"),
           _lexer.match(.colon),
-          case let .integerLiteral(line, raw) =
-            _lexer.read(.dummyIntegerLiteral),
+          case let .integerLiteral(line, raw) = _lexer.read(.dummyIntegerLiteral),
           raw.containOnlyPositiveDecimals,
           _lexer.match(.rightParen) // TODO: very crazy conditions
         {

@@ -21,233 +21,120 @@ extension Token.Kind: Equatable {
 
   public func isEqual(toKindOf kind: Token.Kind) -> Bool {
     switch (self, kind) {
-    case (.invalid, .invalid):
-      return true
-    case (.eof, .eof):
-      return true
-    case (.lineFeed, .lineFeed):
-      return true
-    case (.arrow, .arrow):
-      return true
-    case (.assignmentOperator, .assignmentOperator):
-      return true
-    case (.Any, .Any):
-        return true
-    case (.at, .at):
-      return true
-    case (.hash, .hash):
-      return true
-    case (.backslash, .backslash):
-      return true
-    case (.colon, .colon):
-      return true
-    case (.comma, .comma):
-      return true
-    case (.dot, .dot):
-      return true
-    case (.semicolon, .semicolon):
-      return true
-    case (.underscore, .underscore):
-      return true
-    case (.binaryQuestion, .binaryQuestion):
-      return true
-    case (.postfixExclaim, .postfixExclaim):
-      return true
-    case (.rightChevron, .rightChevron):
-      return true
-    case (.postfixQuestion, .postfixQuestion):
-      return true
-    case (.prefixAmp, .prefixAmp):
-      return true
-    case (.leftChevron, .leftChevron):
-      return true
-    case (.prefixQuestion, .prefixQuestion):
-      return true
-    case (.leftParen, .leftParen):
-      return true
-    case (.rightParen, .rightParen):
-      return true
-    case (.leftBrace, .leftBrace):
-      return true
-    case (.rightBrace, .rightBrace):
-      return true
-    case (.leftSquare, .leftSquare):
-      return true
-    case (.rightSquare, .rightSquare):
-      return true
-    case (.prefixOperator, .prefixOperator):
-      return true
-    case (.binaryOperator, .binaryOperator):
-      return true
-    case (.postfixOperator, .postfixOperator):
-      return true
-    case (.identifier, .identifier):
-      return true
-    case (.implicitParameterName, .implicitParameterName):
-      return true
-    case (.integerLiteral, .integerLiteral):
-      return true
-    case (.floatingPointLiteral, .floatingPointLiteral):
-      return true
-    case (.staticStringLiteral, .staticStringLiteral):
-      return true
-    case (.interpolatedStringLiteralHead, .interpolatedStringLiteralHead):
-      return true
-    case (.booleanLiteral, .booleanLiteral):
-      return true
-    case (.convenience, .convenience):
-      return true
-    case (.dynamic, .dynamic):
-      return true
-    case (.final, .final):
-      return true
-    case (.lazy, .lazy):
-      return true
-    case (.mutating, .mutating):
-      return true
-    case (.nonmutating, .nonmutating):
-      return true
-    case (.optional, .optional):
-      return true
-    case (.override, .override):
-      return true
-    case (.required, .required):
-      return true
-    case (.static, .static):
-      return true
-    case (.unowned, .unowned):
-      return true
-    case (.weak, .weak):
-      return true
-    case (.fileprivate, .fileprivate):
-      return true
-    case (.internal, .internal):
-      return true
-    case (.private, .private):
-      return true
-    case (.public, .public):
-      return true
-    case (.open, .open):
-      return true
-    case (.as, .as):
-      return true
-    case (.associativity, .associativity):
-      return true
-    case (.break, .break):
-      return true
-    case (.catch, .catch):
-      return true
-    case (.case, .case):
-      return true
-    case (.class, .class):
-      return true
-    case (.continue, .continue):
-      return true
-    case (.default, .default):
-      return true
-    case (.defer, .defer):
-      return true
-    case (.deinit, .deinit):
-      return true
-    case (.didSet, .didSet):
-      return true
-    case (.do, .do):
-      return true
-    case (.enum, .enum):
-      return true
-    case (.extension, .extension):
-      return true
-    case (.fallthrough, .fallthrough):
-      return true
-    case (.else, .else):
-      return true
-    case (.for, .for):
-      return true
-    case (.func, .func):
-      return true
-    case (.get, .get):
-      return true
-    case (.guard, .guard):
-      return true
-    case (.if, .if):
-      return true
-    case (.import, .import):
-      return true
-    case (.in, .in):
-      return true
-    case (.indirect, .indirect):
-      return true
-    case (.infix, .infix):
-      return true
-    case (.init, .init):
-      return true
-    case (.inout, .inout):
-      return true
-    case (.is, .is):
-      return true
-    case (.let, .let):
-      return true
-    case (.left, .left):
-      return true
-    case (.nil, .nil):
-      return true
-    case (.none, .none):
-      return true
-    case (.operator, .operator):
-      return true
-    case (.postfix, .postfix):
-      return true
-    case (.prefix, .prefix):
-      return true
-    case (.protocol, .protocol):
-      return true
-    case (.Protocol, .Protocol):
-      return true
-    case (.precedence, .precedence):
-      return true
-    case (.repeat, .repeat):
-      return true
-    case (.rethrows, .rethrows):
-      return true
-    case (.return, .return):
-      return true
-    case (.right, .right):
-      return true
-    case (.safe, .safe):
-      return true
-    case (.set, .set):
-      return true
-    case (.Self, .Self):
-      return true
-    case (.self, .self):
-      return true
-    case (.struct, .struct):
-      return true
-    case (.subscript, .subscript):
-      return true
-    case (.super, .super):
-      return true
-    case (.switch, .switch):
-      return true
-    case (.throw, .throw):
-      return true
-    case (.throws, .throws):
-      return true
-    case (.try, .try):
-      return true
-    case (.typealias, .typealias):
-      return true
-    case (.unsafe, .unsafe):
-      return true
-    case (.var, .var):
-      return true
-    case (.where, .where):
-      return true
-    case (.while, .while):
-      return true
-    case (.willSet, .willSet):
-      return true
-    case (.Type, .Type):
+    case (.invalid, .invalid),
+      (.eof, .eof),
+      (.lineFeed, .lineFeed),
+      (.arrow, .arrow),
+      (.assignmentOperator, .assignmentOperator),
+      (.Any, .Any),
+      (.at, .at),
+      (.hash, .hash),
+      (.backslash, .backslash),
+      (.colon, .colon),
+      (.comma, .comma),
+      (.dot, .dot),
+      (.semicolon, .semicolon),
+      (.underscore, .underscore),
+      (.binaryQuestion, .binaryQuestion),
+      (.postfixExclaim, .postfixExclaim),
+      (.rightChevron, .rightChevron),
+      (.postfixQuestion, .postfixQuestion),
+      (.prefixAmp, .prefixAmp),
+      (.leftChevron, .leftChevron),
+      (.prefixQuestion, .prefixQuestion),
+      (.leftParen, .leftParen),
+      (.rightParen, .rightParen),
+      (.leftBrace, .leftBrace),
+      (.rightBrace, .rightBrace),
+      (.leftSquare, .leftSquare),
+      (.rightSquare, .rightSquare),
+      (.prefixOperator, .prefixOperator),
+      (.binaryOperator, .binaryOperator),
+      (.postfixOperator, .postfixOperator),
+      (.identifier, .identifier),
+      (.implicitParameterName, .implicitParameterName),
+      (.integerLiteral, .integerLiteral),
+      (.floatingPointLiteral, .floatingPointLiteral),
+      (.staticStringLiteral, .staticStringLiteral),
+      (.interpolatedStringLiteralHead, .interpolatedStringLiteralHead),
+      (.booleanLiteral, .booleanLiteral),
+      (.convenience, .convenience),
+      (.dynamic, .dynamic),
+      (.final, .final),
+      (.lazy, .lazy),
+      (.mutating, .mutating),
+      (.nonmutating, .nonmutating),
+      (.optional, .optional),
+      (.override, .override),
+      (.required, .required),
+      (.static, .static),
+      (.unowned, .unowned),
+      (.weak, .weak),
+      (.fileprivate, .fileprivate),
+      (.internal, .internal),
+      (.private, .private),
+      (.public, .public),
+      (.open, .open),
+      (.as, .as),
+      (.associativity, .associativity),
+      (.break, .break),
+      (.catch, .catch),
+      (.case, .case),
+      (.class, .class),
+      (.continue, .continue),
+      (.default, .default),
+      (.defer, .defer),
+      (.deinit, .deinit),
+      (.didSet, .didSet),
+      (.do, .do),
+      (.enum, .enum),
+      (.extension, .extension),
+      (.fallthrough, .fallthrough),
+      (.else, .else),
+      (.for, .for),
+      (.func, .func),
+      (.get, .get),
+      (.guard, .guard),
+      (.if, .if),
+      (.import, .import),
+      (.in, .in),
+      (.indirect, .indirect),
+      (.infix, .infix),
+      (.init, .init),
+      (.inout, .inout),
+      (.is, .is),
+      (.let, .let),
+      (.left, .left),
+      (.nil, .nil),
+      (.none, .none),
+      (.operator, .operator),
+      (.postfix, .postfix),
+      (.prefix, .prefix),
+      (.protocol, .protocol),
+      (.Protocol, .Protocol),
+      (.precedence, .precedence),
+      (.repeat, .repeat),
+      (.rethrows, .rethrows),
+      (.return, .return),
+      (.right, .right),
+      (.safe, .safe),
+      (.set, .set),
+      (.Self, .Self),
+      (.self, .self),
+      (.struct, .struct),
+      (.subscript, .subscript),
+      (.super, .super),
+      (.switch, .switch),
+      (.throw, .throw),
+      (.throws, .throws),
+      (.try, .try),
+      (.typealias, .typealias),
+      (.unsafe, .unsafe),
+      (.var, .var),
+      (.where, .where),
+      (.while, .while),
+      (.willSet, .willSet),
+      (.Type, .Type):
       return true
     default:
       return false
@@ -278,10 +165,7 @@ extension Token.Kind: Equatable {
       return lhd == rhd && lhr == rhr
     case let (.staticStringLiteral(lhs, lhr), .staticStringLiteral(rhs, rhr)):
       return lhs == rhs && lhr == rhr
-    case let (
-      .interpolatedStringLiteralHead(lhs, lhr),
-      .interpolatedStringLiteralHead(rhs, rhr)
-    ):
+    case let (.interpolatedStringLiteralHead(lhs, lhr), .interpolatedStringLiteralHead(rhs, rhr)):
       return lhs == rhs && lhr == rhr
     case let (.booleanLiteral(lhs), .booleanLiteral(rhs)):
       return lhs == rhs

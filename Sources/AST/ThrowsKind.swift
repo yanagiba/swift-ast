@@ -23,9 +23,12 @@ public enum ThrowsKind {
 extension ThrowsKind : ASTTextRepresentable {
   public var textDescription: String {
     switch self {
-    case .nothrowing: return ""
-    case .throwing: return "throws"
-    case .rethrowing: return "rethrows"
+    case .nothrowing:
+      return ""
+    case .throwing:
+      return "throws"
+    case .rethrowing:
+      return "rethrows"
     }
   }
 }

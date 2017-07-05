@@ -67,15 +67,15 @@ extension Parser {
       if look == expectedClosingCharacter {
         appendStringToken()
         break
-      } else if String(look) == "(" {
+      } else if look == "(" {
         appendStringToken()
         let parenTokens = parseBalancedTokens(expectedClosingCharacter: ")")
         tokens.append(.parenthesis(parenTokens))
-      } else if String(look) == "[" {
+      } else if look == "[" {
         appendStringToken()
         let parenTokens = parseBalancedTokens(expectedClosingCharacter: "]")
         tokens.append(.square(parenTokens))
-      } else if String(look) == "{" {
+      } else if look == "{" {
         appendStringToken()
         let parenTokens = parseBalancedTokens(expectedClosingCharacter: "}")
         tokens.append(.brace(parenTokens))

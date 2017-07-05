@@ -1246,12 +1246,7 @@ extension Parser {
     }
 
     if let headId = parseParameterName(),
-      (
-        _lexer.look(ahead: 1).kind == .comma ||
-        _lexer.look(ahead: 1).kind == .throws ||
-        _lexer.look(ahead: 1).kind == .arrow ||
-        _lexer.look(ahead: 1).kind == .in
-      )
+      [Token.Kind.comma, .throws, .arrow, .in].contains(_lexer.look(ahead: 1).kind)
     {
       _lexer.advance()
       var ids = [headId]

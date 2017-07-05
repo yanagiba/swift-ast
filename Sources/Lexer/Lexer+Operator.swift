@@ -21,7 +21,7 @@ extension Lexer /* operator */ {
     _consume(operatorRole)
     let operatorKind = opString.toOperator(following: prev, followed: char.role)
     switch (operatorRole, operatorKind) {
-    case (.lessThan,.prefixOperator):
+    case (.lessThan, .prefixOperator):
       return .leftChevron
     case (.greaterThan, .postfixOperator):
       return .rightChevron
