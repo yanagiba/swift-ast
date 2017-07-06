@@ -132,7 +132,7 @@ class LexerOperatorTests: XCTestCase {
     }
   }
 
-  func testDotOperators() {
+  func testDotOperators() { //  swift-lint:suppress(high_ncss)
     let ps = ["", "."] + punctuators
     ps.forEach { p in
       let count = p.count

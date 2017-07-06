@@ -483,6 +483,7 @@ extension ASTVisitor {
 
   public func traverse(_ expression: Expression) throws -> Bool {/*
     swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=27)
+    swift-lint:suppress(high_ncss)
     */
     switch expression {
     case let expr as AssignmentOperatorExpression:

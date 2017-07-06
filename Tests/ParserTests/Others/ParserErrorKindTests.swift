@@ -28,7 +28,7 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("defer { print(i)", .fatal, .rightBraceExpected("code block"))
   }
 
-  func testDeclarations() {
+  func testDeclarations() { // swift-lint:suppress(high_ncss)
     parseProblematic("class foo { return }", .fatal, .badDeclaration)
 
     // protocol declaration

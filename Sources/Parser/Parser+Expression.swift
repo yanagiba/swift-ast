@@ -89,7 +89,7 @@ extension Parser {
     }
   }
 
-  private func parseBinaryExpressions(
+  private func parseBinaryExpressions( // swift-lint:suppress(high_ncss)
     leftExpression: Expression, config: ParserExpressionConfig
   ) throws -> Expression {
     var resultExpr: Expression = leftExpression
@@ -206,7 +206,7 @@ extension Parser {
     }
   }
 
-  private func parsePostfixExpression( // swift-lint:suppress(high_cyclomatic_complexity)
+  private func parsePostfixExpression( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     config: ParserExpressionConfig
   ) throws -> PostfixExpression {
     var resultExpr: PostfixExpression = try parsePrimaryExpression()
@@ -303,7 +303,7 @@ extension Parser {
     return resultExpr
   }
 
-  private func parseFunctionCallExpression( // swift-lint:suppress(high_cyclomatic_complexity)
+  private func parseFunctionCallExpression( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     postfixExpression expr: PostfixExpression, config: ParserExpressionConfig
   ) throws -> PostfixExpression { // swift-lint:suppress(nested_code_block_depth)
     func parseArgumentExpr(op: Operator) -> Expression? {
@@ -477,7 +477,7 @@ extension Parser {
     return (argumentNames, SourceRange(start: startLocation, end: endLocation))
   }
 
-  private func parsePostfixMemberExpression( // swift-lint:suppress(high_cyclomatic_complexity)
+  private func parsePostfixMemberExpression( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     postfixExpression expr: PostfixExpression
   ) throws -> PostfixExpression {
     func getTupleIndex() -> (Int, Int)? {
@@ -574,7 +574,7 @@ extension Parser {
   }
 
   private func parsePrimaryExpression() throws -> PrimaryExpression { /*
-    swift-lint:suppress(high_cyclomatic_complexity)
+    swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     */
     let lookedRange = getLookedRange()
     let matched = _lexer.read([
@@ -855,7 +855,9 @@ extension Parser {
     }
   }
 
-  private func parseSelectorExpression( // swift-lint:suppress(high_cyclomatic_complexity,high_npath_complexity)
+  private func parseSelectorExpression( /*
+    swift-lint:suppress(high_cyclomatic_complexity,high_npath_complexity,high_ncss)
+    */
     startLocation: SourceLocation
   ) throws -> SelectorExpression {
     func parseArgumentNamesAndRightParen() -> ([String], SourceLocation)? {
@@ -1017,7 +1019,7 @@ extension Parser {
     return arrayExpr
   }
 
-  private func parseInterpolatedStringLiteral( // swift-lint:suppress(high_cyclomatic_complexity)
+  private func parseInterpolatedStringLiteral( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     head: String, raw: String, startLocation: SourceLocation
   ) throws -> LiteralExpression { // swift-lint:suppress(nested_code_block_depth)
     func caliberateExpressions(_ exprs: [Expression]) throws -> [Expression] { // swift-lint:suppress(nested_code_block_depth,long_line)
@@ -1131,7 +1133,9 @@ extension Parser {
     return strExpr
   }
 
-  private func parseClosureExpression( // swift-lint:suppress(high_cyclomatic_complexity,high_npath_complexity)
+  private func parseClosureExpression( /*
+    swift-lint:suppress(high_cyclomatic_complexity,high_npath_complexity,high_ncss)
+    */
     startLocation: SourceLocation
   ) throws -> ClosureExpression {
     func parseCaptureList() -> [ClosureExpression.Signature.CaptureItem]?

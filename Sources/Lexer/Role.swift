@@ -70,7 +70,7 @@ extension Role {
 }
 
 fileprivate extension UnicodeScalar {
-  fileprivate func getRole( // swift-lint:suppress(high_cyclomatic_complexity)
+  fileprivate func getRole( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     followedBy peek: UnicodeScalar? = nil
   ) -> Role {
     switch self {

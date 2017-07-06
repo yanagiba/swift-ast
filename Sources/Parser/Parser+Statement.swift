@@ -31,7 +31,7 @@ extension Parser {
     }
   }
 
-  func parseStatement() throws -> Statement { // swift-lint:suppress(high_cyclomatic_complexity)
+  func parseStatement() throws -> Statement { // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     let stmt: Statement
     let lookedRange = getLookedRange()
     switch _lexer.read([

@@ -18,6 +18,7 @@ extension Lexer /* numeric literal */ {
   public func lexNumericLiteral() -> Token.Kind { /*
     swift-lint:suppress(high_cyclomatic_complexity)
     swift-lint:suppress(high_npath_complexity)
+    swift-lint:suppress(high_ncss)
     */
     var negativeNumber = false
     var integerPart: Int = 0

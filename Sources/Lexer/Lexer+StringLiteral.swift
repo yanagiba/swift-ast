@@ -15,7 +15,9 @@
 */
 
 extension Lexer /* string literal */ {
-  public func lexStringLiteral( // swift-lint:suppress(high_cyclomatic_complexity)
+  public func lexStringLiteral( /*
+    swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
+    */
     isMultiline: Bool = false,
     postponeCaliberation: Bool = false
   ) -> Token.Kind {
