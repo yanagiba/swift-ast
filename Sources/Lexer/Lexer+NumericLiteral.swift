@@ -15,7 +15,7 @@
 */
 
 extension Lexer /* numeric literal */ {
-  public func lexNumericLiteral() -> Token.Kind {
+  public func lexNumericLiteral() -> Token.Kind { // swift-lint:suppress(high_cyclomatic_complexity)
     var negativeNumber = false
     var integerPart: Int = 0
     var fractionalPart: (decimal: Int, offset: Int)?

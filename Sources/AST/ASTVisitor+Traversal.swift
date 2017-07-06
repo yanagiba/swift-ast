@@ -30,7 +30,9 @@ extension ASTVisitor {
 
   // Declarations
 
-  public func traverse(_ declaration: Declaration) throws -> Bool {
+  public func traverse(_ declaration: Declaration) throws -> Bool { /*
+    swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=16)
+    */
     switch declaration {
     case let decl as ClassDeclaration:
       return try traverse(decl)
@@ -172,7 +174,9 @@ extension ASTVisitor {
     return try visit(decl)
   }
 
-  public func traverse(_ decl: ProtocolDeclaration) throws -> Bool {
+  public func traverse(_ decl: ProtocolDeclaration) throws -> Bool { /*
+    swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=17)
+    */
     guard try visit(decl) else { return false }
 
     for member in decl.members {
@@ -248,7 +252,9 @@ extension ASTVisitor {
     return try visit(decl)
   }
 
-  public func traverse(_ decl: VariableDeclaration) throws -> Bool {
+  public func traverse(_ decl: VariableDeclaration) throws -> Bool { /*
+    swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=17)
+    */
     guard try visit(decl) else { return false }
 
     switch decl.body {
@@ -282,7 +288,9 @@ extension ASTVisitor {
 
   // Statements
 
-  public func traverse(_ statement: Statement) throws -> Bool {
+  public func traverse(_ statement: Statement) throws -> Bool {/*
+    swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=18)
+    */
     switch statement {
     case let decl as Declaration:
       return try traverse(decl)
@@ -473,7 +481,9 @@ extension ASTVisitor {
 
   // Expressions
 
-  public func traverse(_ expression: Expression) throws -> Bool {
+  public func traverse(_ expression: Expression) throws -> Bool {/*
+    swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=27)
+    */
     switch expression {
     case let expr as AssignmentOperatorExpression:
       return try traverse(expr)

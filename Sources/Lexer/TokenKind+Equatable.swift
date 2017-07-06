@@ -141,7 +141,7 @@ extension Token.Kind: Equatable {
     }
   }
 
-  public func isEqual(to kind: Token.Kind) -> Bool {
+  public func isEqual(to kind: Token.Kind) -> Bool { // swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=17)
     guard isEqual(toKindOf: kind) else {
       return false
     }

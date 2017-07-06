@@ -31,7 +31,7 @@ extension Parser {
     }
   }
 
-  func parseStatement() throws -> Statement {
+  func parseStatement() throws -> Statement { // swift-lint:suppress(high_cyclomatic_complexity)
     let stmt: Statement
     let lookedRange = getLookedRange()
     switch _lexer.read([
@@ -175,7 +175,7 @@ extension Parser {
     }
   }
 
-  func parseCompilerControlStatement(
+  func parseCompilerControlStatement( // swift-lint:suppress(high_cyclomatic_complexity)
     startLocation: SourceLocation
   ) throws -> CompilerControlStatement {
     var kind: CompilerControlStatement.Kind

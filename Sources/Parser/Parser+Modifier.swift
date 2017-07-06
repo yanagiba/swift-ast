@@ -26,7 +26,7 @@ extension Parser {
     return modifiers
   }
 
-  func parseModifier() -> DeclarationModifier? {
+  func parseModifier() -> DeclarationModifier? { // swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=22)
     if let accessLevelModifier = parseAccessLevelModifier() {
       return .accessLevel(accessLevelModifier)
     } else if let mutationModifier = parseMutationModifier() {

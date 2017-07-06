@@ -293,7 +293,7 @@ extension Parser {
     return protoType
   }
 
-  private func parseContainerType(
+  private func parseContainerType( // swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=16)
     _ type: Type, attributes attrs: Attributes = []
   ) throws -> Type {
     func getAtomicType() throws -> Type {

@@ -62,7 +62,7 @@ public class Lexer {
       line: _scanner.line, column: _scanner.column)
   }
 
-  public func matchUnicodeScalar(
+  public func matchUnicodeScalar( // swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=19)
     _ startingCharacter: UnicodeScalar,
     splitOperator: Bool = true,
     immediateFollow: Bool = false
@@ -260,7 +260,7 @@ public class Lexer {
     }
   }
 
-  func lex(previousRoles: [Role] = []) -> Token {
+  func lex(previousRoles: [Role] = []) -> Token { // swift-lint:suppress(high_cyclomatic_complexity)
     var location = _getCurrentLocation()
     var loadedRoles = previousRoles
     let head = char.role
