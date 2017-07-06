@@ -62,25 +62,46 @@ public class Lexer {
       line: _scanner.line, column: _scanner.column)
   }
 
-  public func matchUnicodeScalar(
+  public func matchUnicodeScalar( /*
+    swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=19)
+    swift-lint:suppress(high_ncss)
+    */
     _ startingCharacter: UnicodeScalar,
     splitOperator: Bool = true,
-    immediateFollow: Bool = false) -> Bool
-  {
+    immediateFollow: Bool = false
+  ) -> Bool {
+    let looked = look()
+    let startStr = String(startingCharacter)
+
     func consumeTokenAndAdvance() -> Bool {
       advance()
       return true
     }
 
-    let looked = look()
+    func consumeOperatorToken(
+      _ p: String, newToken: (String) -> Token.Kind
+    ) -> Bool {
+      if p == startStr {
+        return consumeTokenAndAdvance()
+      } else if p.hasPrefix(startStr) && splitOperator {
+        let newOperator = p.substring(from: p.index(after: p.startIndex))
+        let newKind = newToken(newOperator)
+        let oldStart = looked.sourceRange.start
+        let newStart = SourceLocation(
+          path: oldStart.path, line: oldStart.line, column: oldStart.column + 1)
+        let newRange = SourceRange(start: newStart, end: looked.sourceRange.end)
+        _loadedTokens[0] = Token(kind: newKind, sourceRange: newRange, roles: [])
+        return true
+      } else {
+        return false
+      }
+    }
 
     if immediateFollow &&
       !looked.roles.filter({ $0 == .space || $0 == .lineFeed }).isEmpty
     {
       return false
     }
-
-    let startStr = String(startingCharacter)
 
     switch looked.kind {
     case .leftParen where startStr == "(":
@@ -102,47 +123,11 @@ public class Lexer {
     case .postfixQuestion where startingCharacter == "?":
       return consumeTokenAndAdvance()
     case .prefixOperator(let p):
-      if p == startStr {
-        return consumeTokenAndAdvance()
-      } else if p.hasPrefix(startStr) && splitOperator {
-        let newKind = Token.Kind.prefixOperator(
-          p.substring(from: p.index(after: p.startIndex)))
-        let oldStart = looked.sourceRange.start
-        let newStart = SourceLocation(
-          path: oldStart.path, line: oldStart.line, column: oldStart.column + 1)
-        let newRange = SourceRange(start: newStart, end: looked.sourceRange.end)
-        _loadedTokens[0] = Token(
-          kind: newKind, sourceRange: newRange, roles: [])
-        return true
-      }
+      return consumeOperatorToken(p) { .prefixOperator($0) }
     case .binaryOperator(let p):
-      if p == startStr {
-        return consumeTokenAndAdvance()
-      } else if p.hasPrefix(startStr) && splitOperator {
-        let newKind = Token.Kind.binaryOperator(
-          p.substring(from: p.index(after: p.startIndex)))
-        let oldStart = looked.sourceRange.start
-        let newStart = SourceLocation(
-          path: oldStart.path, line: oldStart.line, column: oldStart.column + 1)
-        let newRange = SourceRange(start: newStart, end: looked.sourceRange.end)
-        _loadedTokens[0] = Token(
-          kind: newKind, sourceRange: newRange, roles: [])
-        return true
-      }
+      return consumeOperatorToken(p) { .binaryOperator($0) }
     case .postfixOperator(let p):
-      if p == startStr {
-        return consumeTokenAndAdvance()
-      } else if p.hasPrefix(startStr) && splitOperator {
-        let newKind = Token.Kind.postfixOperator(
-          p.substring(from: p.index(after: p.startIndex)))
-        let oldStart = looked.sourceRange.start
-        let newStart = SourceLocation(
-          path: oldStart.path, line: oldStart.line, column: oldStart.column + 1)
-        let newRange = SourceRange(start: newStart, end: looked.sourceRange.end)
-        _loadedTokens[0] = Token(
-          kind: newKind, sourceRange: newRange, roles: [])
-        return true
-      }
+      return consumeOperatorToken(p) { .postfixOperator($0) }
     default:
       break
     }
@@ -150,36 +135,34 @@ public class Lexer {
     return false
   }
 
-  public func match(_ kinds: [Token.Kind], exactMatch: Bool = false
-  ) -> Bool {
-      return examine(kinds, exactMatch: exactMatch).0
+  public func match(_ kinds: [Token.Kind], exactMatch: Bool = false) -> Bool {
+    return examine(kinds, exactMatch: exactMatch).0
   }
 
-  public func match(_ kind: Token.Kind, exactMatch: Bool = false
-  ) -> Bool {
-      return match([kind], exactMatch: exactMatch)
+  public func match(_ kind: Token.Kind, exactMatch: Bool = false) -> Bool {
+    return match([kind], exactMatch: exactMatch)
   }
 
   public func read(
     _ kinds: [Token.Kind], exactMatch: Bool = false
   ) -> Token.Kind {
-      return examine(kinds, exactMatch: exactMatch).1
+    return examine(kinds, exactMatch: exactMatch).1
   }
 
   public func read(_ kind: Token.Kind, exactMatch: Bool = false) -> Token.Kind {
-      return read([kind], exactMatch: exactMatch)
+    return read([kind], exactMatch: exactMatch)
   }
 
   public func readNext(
     _ kinds: [Token.Kind], exactMatch: Bool = false
   ) -> Token.Kind {
-      return examine(kinds, next: true, exactMatch: exactMatch).1
+    return examine(kinds, next: true, exactMatch: exactMatch).1
   }
 
   public func readNext(
     _ kind: Token.Kind, exactMatch: Bool = false
   ) -> Token.Kind {
-      return readNext([kind], exactMatch: exactMatch)
+    return readNext([kind], exactMatch: exactMatch)
   }
 
   public func readNamedIdentifier() -> String? {
@@ -280,7 +263,7 @@ public class Lexer {
     }
   }
 
-  func lex(previousRoles: [Role] = []) -> Token {
+  func lex(previousRoles: [Role] = []) -> Token { // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     var location = _getCurrentLocation()
     var loadedRoles = previousRoles
     let head = char.role
@@ -323,9 +306,8 @@ public class Lexer {
     case .minus:
       if _prevRole.isHeadSeparator {
         return produce(lexNumericLiteral())
-      } else {
-        return produce(lexOperator(prev: _prevRole))
       }
+      return produce(lexOperator(prev: _prevRole))
     case .digit:
       return produce(lexNumericLiteral())
     case .doubleQuote:

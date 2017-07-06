@@ -51,7 +51,9 @@ extension Parser {
     return codeBlock
   }
 
-  func parseDeclaration() throws -> Declaration {
+  func parseDeclaration() throws -> Declaration { /*
+    swift-lint:suppress(high_cyclomatic_complexity)
+    */
     let startLocation = getStartLocation()
 
     let attrs = try parseAttributes()
@@ -156,7 +158,7 @@ extension Parser {
     }
   }
 
-  private func parseProtocolDeclaration(
+  private func parseProtocolDeclaration( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     withAttributes attrs: Attributes,
     modifiers: DeclarationModifiers,
     startLocation: SourceLocation
@@ -359,9 +361,9 @@ extension Parser {
     return protocolDecl
   }
 
-  private func parsePrecedenceGroupDeclaration(startLocation: SourceLocation)
-    throws -> PrecedenceGroupDeclaration
-  {
+  private func parsePrecedenceGroupDeclaration( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
+    startLocation: SourceLocation
+  ) throws -> PrecedenceGroupDeclaration {
     func parseAttribute() throws -> PrecedenceGroupDeclaration.Attribute {
       func consumeColon() throws {
         guard _lexer.match(.colon) else {
@@ -776,7 +778,7 @@ extension Parser {
     return structDecl
   }
 
-  private func parseEnumDeclaration(
+  private func parseEnumDeclaration( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     withAttributes attrs: Attributes,
     modifiers: DeclarationModifiers,
     isIndirect: Bool,
@@ -853,7 +855,7 @@ extension Parser {
       return verifiedMembers
     }
 
-    func parseMember() throws -> EnumDeclaration.Member {
+    func parseMember() throws -> EnumDeclaration.Member { // swift-lint:suppress(high_npath_complexity,high_ncss)
       let hashStartLocation = getStartLocation()
       if _lexer.match(.hash) {
         let compilerCtrlStmt =
@@ -977,9 +979,9 @@ extension Parser {
     return enumDecl
   }
 
-  private func parseParameterClause() throws ->
-    ([FunctionSignature.Parameter], SourceRange)
-  {
+  private func parseParameterClause() throws -> ([FunctionSignature.Parameter], SourceRange) { /*
+    swift-lint:suppress(high_ncss)
+    */
     func parseParameter() throws -> FunctionSignature.Parameter {
       var externalName: Identifier?
       var internalName: Identifier?
@@ -1054,7 +1056,7 @@ extension Parser {
     return (params, SourceRange(start: startLocation, end: endLocation))
   }
 
-  private func parseFunctionDeclaration(
+  private func parseFunctionDeclaration( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     withAttributes attrs: Attributes,
     modifiers: DeclarationModifiers,
     startLocation: SourceLocation
@@ -1163,7 +1165,7 @@ extension Parser {
     return typealiasDecl
   }
 
-  private func parseVariableDeclaration(
+  private func parseVariableDeclaration( // swift-lint:suppress(high_ncss)
     withAttributes attrs: Attributes,
     modifiers: DeclarationModifiers,
     startLocation: SourceLocation

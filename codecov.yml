@@ -3,5 +3,5 @@ comment:
 coverage:
   ignore:
   - Sources/Frontend
-  - Packages
+  - Sources/swift-ast
   - Tests

@@ -56,7 +56,7 @@ class ScannerTests: XCTestCase {
     XCTAssertNil(scanner.peek())
   }
 
-  func testRyuichiLovesSushiAtCafé() {
+  func testRyuichiLovesSushiAtCafé() { // swift-lint:suppress(high_ncss)
     let scanner = Scanner(content: "龍一 \u{1F496}\0 🍣\n@\r\ncaf\u{E9}")
 
     XCTAssertEqual(scanner.line, 1)
@@ -163,7 +163,7 @@ class ScannerTests: XCTestCase {
     XCTAssertNil(scanner.peek())
   }
 
-  func testCheckpoints() {
+  func testCheckpoints() { // swift-lint:suppress(high_ncss)
     let scanner = Scanner(content: "ab\nc\nd")
 
     XCTAssertFalse(scanner.restore(fromCheckpoint: ""))

@@ -1,7 +1,6 @@
 .DS_Store
 .build
 .swift_lint
-Packages/
 swift-ast.xcodeproj/
 build/
 swift-ast_github_issue_*.md

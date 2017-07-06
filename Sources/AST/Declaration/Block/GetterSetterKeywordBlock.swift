@@ -44,9 +44,7 @@ public struct GetterSetterKeywordBlock {
   public let getter: GetterKeywordClause
   public let setter: SetterKeywordClause?
 
-  public init(
-    getter: GetterKeywordClause, setter: SetterKeywordClause? = nil
-  ) {
+  public init(getter: GetterKeywordClause, setter: SetterKeywordClause? = nil) {
     self.getter = getter
     self.setter = setter
   }

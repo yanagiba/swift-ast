@@ -50,16 +50,12 @@ public struct WillSetDidSetBlock {
   public let willSetClause: WillSetClause?
   public let didSetClause: DidSetClause?
 
-  public init(
-    willSetClause: WillSetClause, didSetClause: DidSetClause? = nil
-  ) {
+  public init(willSetClause: WillSetClause, didSetClause: DidSetClause? = nil) {
     self.willSetClause = willSetClause
     self.didSetClause = didSetClause
   }
 
-  public init(
-    didSetClause: DidSetClause, willSetClause: WillSetClause? = nil
-  ) {
+  public init(didSetClause: DidSetClause, willSetClause: WillSetClause? = nil) {
     self.willSetClause = willSetClause
     self.didSetClause = didSetClause
   }

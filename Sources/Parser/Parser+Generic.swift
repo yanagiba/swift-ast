@@ -29,7 +29,7 @@ extension Parser {
       parameters.append(param)
     } while _lexer.match(.comma)
     if !_matchRightChevron() {
-        try _raiseError(.expectedRightChevron("generic parameter list"))
+      try _raiseError(.expectedRightChevron("generic parameter list"))
     }
     return GenericParameterClause(parameterList: parameters)
   }

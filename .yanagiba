@@ -10,7 +10,3 @@ lint:
     - major: 0
     - minor: 0
     - cosmetic: 0
-  disable-rules:
-    - high_cyclomatic_complexity
-    - high_npath_complexity
-    - high_ncss

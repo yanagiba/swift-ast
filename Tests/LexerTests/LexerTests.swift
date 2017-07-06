@@ -198,7 +198,7 @@ class LexerTests: XCTestCase {
     }
   }
 
-  func testEqutables() {
+  func testEqutables() { // swift-lint:suppress(high_ncss)
     XCTAssertTrue(Token.Kind.eof.isEqual(toKindOf: .eof))
     XCTAssertTrue(Token.Kind.eof.isEqual(to: .eof))
     XCTAssertTrue(Token.Kind.hash.isEqual(toKindOf: .hash))

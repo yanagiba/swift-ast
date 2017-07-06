@@ -124,7 +124,9 @@ class ParserLiteralExpressionTests: XCTestCase {
     }
   }
 
-  func testInterpolatedStringLiteral() { // swift-lint:suppress(nested_code_block_depth)
+  func testInterpolatedStringLiteral() { /*
+    swift-lint:suppress(high_cyclomatic_complexity,nested_code_block_depth)
+    */
     let testStrings: [(testString: String, expectedExpressions: [Expression])] = [
       ( // integer literal
         "\"1 2 \\(3)\"",
@@ -383,7 +385,9 @@ class ParserLiteralExpressionTests: XCTestCase {
       ),
     ]
 
-    func testInterpolatedStringExpressions(exprs: [Expression], expected: [Expression]) {
+    func testInterpolatedStringExpressions(exprs: [Expression], expected: [Expression]) { /*
+      swift-lint:suppress(high_cyclomatic_complexity)
+      */
       // keep this with the minimal code to make the tests pass, and add more handlings when needed
       guard exprs.count == expected.count else {
         XCTFail("""
@@ -590,7 +594,7 @@ class ParserLiteralExpressionTests: XCTestCase {
     })
   }
 
-  func testSimpleDictionaryLiteral() {
+  func testSimpleDictionaryLiteral() { // swift-lint:suppress(high_cyclomatic_complexity)
     parseExpressionAndTest("[\"foo\": true, \"bar\": false]", "[\"foo\": true, \"bar\": false]", testClosure: { expr in
       guard let dictExpr = expr as? LiteralExpression,
         case .dictionary(let exprs) = dictExpr.kind else {

@@ -123,7 +123,9 @@ extension EnumDeclaration.UnionStyleEnumCase : ASTTextRepresentable {
   public var textDescription: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let indirectText = isIndirect ? "indirect " : ""
-    let casesText = cases.map({ "\($0.name)\($0.tuple?.textDescription ?? "")" }).joined(separator: ", ")
+    let casesText = cases
+      .map({ "\($0.name)\($0.tuple?.textDescription ?? "")" })
+      .joined(separator: ", ")
     return "\(attrsText)\(indirectText)case \(casesText)"
   }
 }

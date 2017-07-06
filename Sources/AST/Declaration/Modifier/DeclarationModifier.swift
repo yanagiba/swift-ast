@@ -23,7 +23,7 @@ public enum DeclarationModifier {
 }
 
 extension DeclarationModifier : Equatable {
-  static public func ==(
+  static public func ==( // swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=19)
     lhs: DeclarationModifier, rhs: DeclarationModifier
   ) -> Bool {
     switch (lhs, rhs) {

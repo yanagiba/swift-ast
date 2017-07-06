@@ -41,7 +41,7 @@ public struct Attribute {
 
 extension Collection where Iterator.Element == Attribute.ArgumentClause.BalancedToken {
   public var textDescription: String {
-    return self.map({ $0.textDescription }).joined(separator: "")
+    return self.map({ $0.textDescription }).joined()
   }
 }
 

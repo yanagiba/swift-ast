@@ -99,7 +99,8 @@ extension Parser {
 
   private func parsePatternCore(config: ParserPatternConfig) throws -> Pattern {
     let lookedRange = getLookedRange()
-    switch _lexer.read(config.tokenKinds) {
+    let patternHead = _lexer.read(config.tokenKinds)
+    switch patternHead {
     case .var where !config.onlyIdWildCardOptional:
       let pattern = try parsePattern(config: config)
       let valBindingPttrn = ValueBindingPattern(kind: .var(pattern))
@@ -125,27 +126,11 @@ extension Parser {
     case .identifier(let id):
       return try parseIdentifierHeadedPattern(
         id, config: config, startRange: lookedRange)
-    case .Any:
-      return try parseIdentifierHeadedPattern(
-        "Any", config: config, startRange: lookedRange)
-    case .Self:
-      return try parseIdentifierHeadedPattern(
-        "Self", config: config, startRange: lookedRange)
-    case .get:
-      return try parseIdentifierHeadedPattern(
-        "get", config: config, startRange: lookedRange)
-    case .set:
-      return try parseIdentifierHeadedPattern(
-        "set", config: config, startRange: lookedRange)
-    case .left:
-      return try parseIdentifierHeadedPattern(
-        "left", config: config, startRange: lookedRange)
-    case .right:
-      return try parseIdentifierHeadedPattern(
-        "right", config: config, startRange: lookedRange)
-    case .open:
-      return try parseIdentifierHeadedPattern(
-        "open", config: config, startRange: lookedRange)
+    case .Any, .Self, .get, .set, .left, .right, .open:
+      guard let idHead = patternHead.namedIdentifier else {
+        throw _raiseFatal(.expectedPattern)
+      }
+      return try parseIdentifierHeadedPattern(idHead, config: config, startRange: lookedRange)
     case .leftParen:
       return try parseTuplePattern(config: config, startLocation: lookedRange.start)
     default:
@@ -243,8 +228,7 @@ extension Parser {
         typeIdentifier: updatedTypeIdentifier,
         name: newName,
         tuplePattern: tuplePattern)
-      enumCasePttrn.setSourceRange(
-        startRange.start, tuplePattern.sourceRange.end)
+      enumCasePttrn.setSourceRange(startRange.start, tuplePattern.sourceRange.end)
       return enumCasePttrn
     }
     let enumCasePttrn =
