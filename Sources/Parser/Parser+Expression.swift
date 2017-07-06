@@ -855,7 +855,7 @@ extension Parser {
     }
   }
 
-  private func parseSelectorExpression( // swift-lint:suppress(high_cyclomatic_complexity)
+  private func parseSelectorExpression( // swift-lint:suppress(high_cyclomatic_complexity,high_npath_complexity)
     startLocation: SourceLocation
   ) throws -> SelectorExpression {
     func parseArgumentNamesAndRightParen() -> ([String], SourceLocation)? {
@@ -1131,7 +1131,7 @@ extension Parser {
     return strExpr
   }
 
-  private func parseClosureExpression( // swift-lint:suppress(high_cyclomatic_complexity)
+  private func parseClosureExpression( // swift-lint:suppress(high_cyclomatic_complexity,high_npath_complexity)
     startLocation: SourceLocation
   ) throws -> ClosureExpression {
     func parseCaptureList() -> [ClosureExpression.Signature.CaptureItem]?

@@ -855,7 +855,7 @@ extension Parser {
       return verifiedMembers
     }
 
-    func parseMember() throws -> EnumDeclaration.Member {
+    func parseMember() throws -> EnumDeclaration.Member { // swift-lint:suppress(high_npath_complexity)
       let hashStartLocation = getStartLocation()
       if _lexer.match(.hash) {
         let compilerCtrlStmt =
