@@ -15,12 +15,24 @@
 */
 
 public struct SourceLocation {
-  public let path: String
+  public let identifier: String
   public let line: Int
   public let column: Int
 
+  @available(*, deprecated, message: "Use `identifier` instead.")
+  public var path: String {
+    return identifier
+  }
+
+  public init(identifier: String, line: Int, column: Int) {
+    self.identifier = identifier
+    self.line = line
+    self.column = column
+  }
+
+  @available(*, deprecated, message: "Use `init(identifier:line:column:)` instead.")
   public init(path: String, line: Int, column: Int) {
-    self.path = path
+    self.identifier = path
     self.line = line
     self.column = column
   }
