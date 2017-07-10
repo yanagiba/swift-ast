@@ -16,10 +16,12 @@
 
 // Merry Christmas 2015! -Ryuichi
 
+import Foundation
+
 public struct SourceFile {
   public enum Origin {
     case file(String)
-    case memory(String)
+    case memory(UUID)
   }
 
   public let origin: Origin
@@ -30,7 +32,7 @@ public struct SourceFile {
     case .file(let path):
       return path
     case .memory(let uuid):
-      return uuid
+      return uuid.uuidString
     }
   }
 
@@ -41,6 +43,11 @@ public struct SourceFile {
 
   public init(path: String, content: String) {
     self.origin = .file(path)
+    self.content = content
+  }
+
+  public init(uuid: UUID = UUID(), content: String) {
+    self.origin = .memory(uuid)
     self.content = content
   }
 }

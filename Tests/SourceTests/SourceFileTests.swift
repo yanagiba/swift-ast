@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+import Foundation
 import XCTest
 
 @testable import Source
@@ -26,7 +27,31 @@ class SourceFileTests : XCTestCase {
     XCTAssertEqual(sourceFile.content, "hello world")
   }
 
+  func testMemoryWithGivenUUID() {
+    let uuidString = "D7C59A97-D35A-4D80-AB3A-24AEACF24337"
+    guard let uuid = UUID(uuidString: uuidString) else {
+      XCTFail("Failed in generating a UUID string.")
+      return
+    }
+    let sourceFile = SourceFile(uuid: uuid, content: "hello world")
+    XCTAssertEqual(sourceFile.origin, .memory(uuid))
+    XCTAssertEqual(sourceFile.identifier, uuidString)
+    XCTAssertEqual(sourceFile.content, "hello world")
+  }
+
+  func testMemoryWithRandomUUID() {
+    let sourceFile = SourceFile(content: "hello world")
+    guard case .memory(let uuid) = sourceFile.origin else {
+      XCTFail("Failed in generating a UUID from memory origin.")
+      return
+    }
+    XCTAssertEqual(sourceFile.identifier, uuid.uuidString)
+    XCTAssertEqual(sourceFile.content, "hello world")
+  }
+
   static var allTests = [
     ("testFile", testFile),
+    ("testMemoryWithGivenUUID", testMemoryWithGivenUUID),
+    ("testMemoryWithRandomUUID", testMemoryWithRandomUUID),
   ]
 }
