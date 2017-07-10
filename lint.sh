@@ -2,11 +2,17 @@
 
 set -e
 
-rm -rf .swift_lint
-git clone https://github.com/yanagiba/swift-lint .swift_lint
-cd .swift_lint
-make
-cd ..
+SWIFT_LINT_ROOT="../swift-lint"
+
+if [ "$CI" == "true" ]; then
+  rm -rf .swift_lint
+  git clone https://github.com/yanagiba/swift-lint .swift_lint
+  cd .swift_lint
+  swiftenv install -s
+  make
+  cd ..
+  SWIFT_LINT_ROOT=".swift_lint"
+fi
 
 allFiles=""
 
@@ -22,4 +28,4 @@ done
 
 allFiles="$allFiles Package.swift"
 
-.swift_lint/.build/debug/swift-lint $@ $allFiles
+$SWIFT_LINT_ROOT/.build/debug/swift-lint $@ $allFiles
