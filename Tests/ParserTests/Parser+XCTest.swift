@@ -24,24 +24,6 @@ import XCTest
 
 let sourcePath = "ParserTests/ParserTests.swift"
 
-func getRange(
-  _ startLine: Int, _ startColumn: Int, _ endLine: Int, _ endColumn: Int
-) -> SourceRange {
-  return SourceRange(
-    start: SourceLocation(path: sourcePath, line: startLine, column: startColumn),
-    end: SourceLocation(path: sourcePath, line: endLine, column: endColumn))
-}
-
-func parse(_ lines: String...) -> TopLevelDeclaration {
-  let content = lines.joined(separator: "\n")
-  let source = SourceFile(path: sourcePath, content: content)
-  do {
-    return try Parser(source: source).parse()
-  } catch {
-    fatalError("Failed in parsing `\(content)` with error: \(error)")
-  }
-}
-
 func parseAttributesAndTest(_ content: String,
   _ expectedTextDescription: String,
   testClosure: ((Attributes) -> Void)? = nil,
@@ -217,6 +199,22 @@ func parseProblematic(
 }
 
 func getParser(_ content: String) -> Parser {
-  let source = SourceFile(path: "ParserTests/ParserTests.swift", content: content)
+  let source = SourceFile(path: sourcePath, content: content)
   return Parser(source: source)
+}
+
+func parse(_ content: String) -> TopLevelDeclaration {
+  do {
+    return try getParser(content).parse()
+  } catch {
+    fatalError("Failed in parsing `\(content)` with error: \(error)")
+  }
+}
+
+func getRange(
+  _ startLine: Int, _ startColumn: Int, _ endLine: Int, _ endColumn: Int
+) -> SourceRange {
+  return SourceRange(
+    start: SourceLocation(path: sourcePath, line: startLine, column: startColumn),
+    end: SourceLocation(path: sourcePath, line: endLine, column: endColumn))
 }
