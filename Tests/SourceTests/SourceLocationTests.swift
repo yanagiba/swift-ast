@@ -21,7 +21,7 @@ import XCTest
 class SourceLocationTests : XCTestCase {
   func testDummyLocation() {
     let loc = SourceLocation.DUMMY
-    XCTAssertEqual(loc.path, "dummy")
+    XCTAssertEqual(loc.identifier, "dummy")
     XCTAssertEqual(loc.line, 0)
     XCTAssertEqual(loc.column, 0)
     XCTAssertEqual(loc.description, "dummy:0:0")

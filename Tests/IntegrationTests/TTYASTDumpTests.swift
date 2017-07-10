@@ -98,7 +98,7 @@ class TTYASTDumpTests : XCTestCase {
       testIntegration(resourceName, testName) { source -> String in
         let parser = Parser(source: source)
         guard let topLevelDecl = try? parser.parse() else {
-          return "error: failed in parsing the source \(source.path)."
+          return "error: failed in parsing the source \(source.identifier)."
         }
         return topLevelDecl.ttyDump
       }

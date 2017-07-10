@@ -215,6 +215,6 @@ func getRange(
   _ startLine: Int, _ startColumn: Int, _ endLine: Int, _ endColumn: Int
 ) -> SourceRange {
   return SourceRange(
-    start: SourceLocation(path: sourcePath, line: startLine, column: startColumn),
-    end: SourceLocation(path: sourcePath, line: endLine, column: endColumn))
+    start: SourceLocation(identifier: sourcePath, line: startLine, column: startColumn),
+    end: SourceLocation(identifier: sourcePath, line: endLine, column: endColumn))
 }

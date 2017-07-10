@@ -134,7 +134,7 @@ class LexerNumericLiteralTests: XCTestCase {
           XCTFail("Cannot lex a double literal.")
           return
         }
-        XCTAssertEqualWithAccuracy(d, decimal.expectedDouble, accuracy: 0.000000001)
+        XCTAssertEqual(d, decimal.expectedDouble, accuracy: 0.000000001)
         XCTAssertEqual(r, decimal.testString)
       }
     }
@@ -154,7 +154,7 @@ class LexerNumericLiteralTests: XCTestCase {
           XCTFail("Cannot lex a double literal.")
           return
         }
-        XCTAssertEqualWithAccuracy(d, hex.expectedDouble, accuracy: 0.000000001)
+        XCTAssertEqual(d, hex.expectedDouble, accuracy: 0.000000001)
         XCTAssertEqual(r, hex.testString)
       }
     }

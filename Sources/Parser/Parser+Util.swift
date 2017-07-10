@@ -146,7 +146,7 @@ extension Parser {
 
 extension SourceLocation {
   var nextColumn: SourceLocation {
-    return SourceLocation(path: path, line: line, column: column + 1)
+    return SourceLocation(identifier: identifier, line: line, column: column + 1)
   }
 }
 

@@ -58,7 +58,7 @@ public class Lexer {
   }
 
   public func _getCurrentLocation() -> SourceLocation {
-    return SourceLocation(path: _source.path,
+    return SourceLocation(identifier: _source.identifier,
       line: _scanner.line, column: _scanner.column)
   }
 
@@ -88,7 +88,7 @@ public class Lexer {
         let newKind = newToken(newOperator)
         let oldStart = looked.sourceRange.start
         let newStart = SourceLocation(
-          path: oldStart.path, line: oldStart.line, column: oldStart.column + 1)
+          identifier: oldStart.identifier, line: oldStart.line, column: oldStart.column + 1)
         let newRange = SourceRange(start: newStart, end: looked.sourceRange.end)
         _loadedTokens[0] = Token(kind: newKind, sourceRange: newRange, roles: [])
         return true

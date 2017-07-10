@@ -27,7 +27,7 @@ class LocatableNodeTests : XCTestCase {
   }
 
   func testSettingRange() {
-    let startLoc = SourceLocation(path: "locatable-node-test-start-loc", line: 1, column: 2)
+    let startLoc = SourceLocation(identifier: "locatable-node-test-start-loc", line: 1, column: 2)
     let endLoc = SourceLocation.DUMMY
     let range = SourceRange(start: startLoc, end: endLoc)
     let node = LocatableNode()

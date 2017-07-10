@@ -31,7 +31,7 @@ fileprivate func lexComments(_ content: String) -> Set<Comment> {
 
 fileprivate func comment(_ content: String, line: Int = 1, column: Int = 1) -> Comment {
   let sourceLocation = SourceLocation(
-    path: "LexerTests/LexerCommentTests.swift", line: line, column: column)
+    identifier: "LexerTests/LexerCommentTests.swift", line: line, column: column)
   return Comment(content: content, location: sourceLocation)
 }
 

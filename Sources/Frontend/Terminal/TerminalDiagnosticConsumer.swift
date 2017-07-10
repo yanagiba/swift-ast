@@ -32,7 +32,7 @@ struct TerminalDiagnosticConsumer : DiagnosticConsumer {
       }
       print("\(d.location) \(levelStr): \(d.kind.diagnosticMessage)")
 
-      let filePath = d.location.path
+      let filePath = d.location.identifier
       var fileContent = cachedContent[filePath]
       if fileContent == nil {
         fileContent = (try? SourceReader.read(at: filePath))?.content

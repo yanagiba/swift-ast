@@ -66,12 +66,12 @@ class ParserTopLevelDeclarationTests: XCTestCase {
         comments[0],
         Comment(
           content: "\n a multipleline comment\n ",
-          location: SourceLocation(path: "ParserTests/ParserTests.swift", line: 1, column: 1)))
+          location: SourceLocation(identifier: "ParserTests/ParserTests.swift", line: 1, column: 1)))
       XCTAssertEqual(
         comments[1],
         Comment(
           content: " and a single line comment",
-          location: SourceLocation(path: "ParserTests/ParserTests.swift", line: 4, column: 1)))
+          location: SourceLocation(identifier: "ParserTests/ParserTests.swift", line: 4, column: 1)))
     } catch {
       XCTFail("Failed in parsing a top level declaration.")
     }
