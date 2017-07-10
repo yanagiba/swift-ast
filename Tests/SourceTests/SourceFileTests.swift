@@ -16,13 +16,17 @@
 
 import XCTest
 
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(SourceFileTests.allTests),
-    testCase(SourceLocationTests.allTests),
-    testCase(SourceRangeTests.allTests),
-    testCase(SourceReaderTests.allTests),
+@testable import Source
+
+class SourceFileTests : XCTestCase {
+  func testFile() {
+    let sourceFile = SourceFile(path: "/path/to/file", content: "hello world")
+    XCTAssertEqual(sourceFile.origin, .file("/path/to/file"))
+    XCTAssertEqual(sourceFile.identifier, "/path/to/file")
+    XCTAssertEqual(sourceFile.content, "hello world")
+  }
+
+  static var allTests = [
+    ("testFile", testFile),
   ]
 }
-#endif
