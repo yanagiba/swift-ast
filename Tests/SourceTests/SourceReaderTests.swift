@@ -41,7 +41,7 @@ class SourceReaderTests : XCTestCase {
   private func testPath(_ path: String) {
     do {
       let sourceFile = try SourceReader.read(at: path)
-      XCTAssertTrue(sourceFile.path.hasSuffix("Tests/SourceTests/SourceReaderTests.swift"))
+      XCTAssertTrue(sourceFile.identifier.hasSuffix("Tests/SourceTests/SourceReaderTests.swift"))
       XCTAssertTrue(sourceFile.content.contains("Ryuichi Saito"))
       XCTAssertTrue(sourceFile.content.contains("SourceReaderTests"))
       XCTAssertTrue(sourceFile.content.contains("XCTAssertTrue(sourceFile.content.contains"))

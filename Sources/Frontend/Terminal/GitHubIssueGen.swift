@@ -139,7 +139,7 @@ private func genForParserError(
   sourceFile: SourceFile?, diagnostics: [Diagnostic]
 ) -> String {
   let sourceContent = sourceFile?.content ?? "[Insert the source content here]"
-  let command = (sourceFile?.path).map({ "`swift-ast \($0)`" }) ?? "[Insert the command]"
+  let command = (sourceFile?.identifier).map({ "`swift-ast \($0)`" }) ?? "[Insert the command]"
   let diagnosticMessages = diagnostics
     .map({ "\($0.location) \($0.level): \($0.kind)" })
     .joined(separator: "\n")

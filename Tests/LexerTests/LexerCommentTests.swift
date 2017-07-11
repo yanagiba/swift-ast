@@ -20,7 +20,7 @@ import XCTest
 @testable import Source
 
 fileprivate func lexComments(_ content: String) -> Set<Comment> {
-  let source = SourceFile(path: "LexerTests/LexerTests.swift", content: content)
+  let source = SourceFile(path: "LexerTests/LexerCommentTests.swift", content: content)
   let lexer = Lexer(source: source)
   var index = 0
   while lexer.look(ahead: index).kind != .eof {
@@ -30,7 +30,8 @@ fileprivate func lexComments(_ content: String) -> Set<Comment> {
 }
 
 fileprivate func comment(_ content: String, line: Int = 1, column: Int = 1) -> Comment {
-  let sourceLocation = SourceLocation(path: "LexerTests/LexerTests.swift", line: line, column: column)
+  let sourceLocation = SourceLocation(
+    identifier: "LexerTests/LexerCommentTests.swift", line: line, column: column)
   return Comment(content: content, location: sourceLocation)
 }
 

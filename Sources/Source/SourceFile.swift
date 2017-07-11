@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2015-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,7 +16,62 @@
 
 // Merry Christmas 2015! -Ryuichi
 
+import Foundation
+
 public struct SourceFile {
-  public let path: String
+  public enum Origin {
+    case file(String)
+    case memory(UUID)
+  }
+
+  public let origin: Origin
   public let content: String
+
+  public var identifier: String {
+    switch origin {
+    case .file(let path):
+      return path
+    case .memory(let uuid):
+      return uuid.uuidString
+    }
+  }
+
+  @available(*, deprecated, message: "Use `identifier` instead.")
+  public var path: String {
+    return identifier
+  }
+
+  public init(path: String, content: String) {
+    self.origin = .file(path)
+    self.content = content
+  }
+
+  public init(uuid: UUID = UUID(), content: String) {
+    self.origin = .memory(uuid)
+    self.content = content
+  }
+}
+
+extension SourceFile.Origin : Equatable {
+  static public func ==(lhs: SourceFile.Origin, rhs: SourceFile.Origin) -> Bool {
+    switch (lhs, rhs) {
+    case let (.file(lhsPath), .file(rhsPath)):
+      return lhsPath == rhsPath
+    case let (.memory(lhsUuid), .memory(rhsUuid)):
+      return lhsUuid == rhsUuid
+    default:
+      return false
+    }
+  }
+}
+
+extension SourceFile.Origin : Hashable {
+  public var hashValue: Int {
+    switch self {
+    case .file(let path):
+      return path.hashValue
+    case .memory(let uuid):
+      return uuid.hashValue
+    }
+  }
 }

@@ -821,7 +821,7 @@ extension Parser {
     }
     switch magicWord {
     case "file":
-      let magicExpr = LiteralExpression(kind: .staticString(startLocation.path, "#file"))
+      let magicExpr = LiteralExpression(kind: .staticString(startLocation.identifier, "#file"))
       magicExpr.setSourceRange(startLocation, endLocation)
       return magicExpr
     case "line":

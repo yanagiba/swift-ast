@@ -48,6 +48,6 @@ extension SourceRange {
 
 extension SourceRange : CustomStringConvertible {
   public var description: String {
-    return "\(start.path):\(start.line):\(start.column)-\(end.line):\(end.column)"
+    return "\(start.identifier):\(start.line):\(start.column)-\(end.line):\(end.column)"
   }
 }
