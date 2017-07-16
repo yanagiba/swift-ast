@@ -23,7 +23,7 @@ public struct Attribute {
       case brace([BalancedToken])
     }
 
-    let balancedTokens: [BalancedToken]
+    public let balancedTokens: [BalancedToken]
 
     public init(balancedTokens: [BalancedToken] = []) {
       self.balancedTokens = balancedTokens
