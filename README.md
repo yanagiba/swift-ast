@@ -2,7 +2,7 @@
 
 [![swift-ast master](https://img.shields.io/badge/swift‐ast-master-C70025.svg)](https://github.com/yanagiba/swift-ast)
 [![swift-lint master](https://img.shields.io/badge/swift‐lint-master-C70025.svg)](https://github.com/yanagiba/swift-lint)
-[![swift-format pending](https://img.shields.io/badge/swift‐format-pending-C70025.svg)](https://github.com/yanagiba/swift-format)
+[![swift-transform pending](https://img.shields.io/badge/swift‐transform-pending-C70025.svg)](https://github.com/yanagiba/swift-transform)
 
 [![Travis CI Status](https://api.travis-ci.org/yanagiba/swift-ast.svg?branch=master)](https://travis-ci.org/yanagiba/swift-ast)
 [![codecov](https://codecov.io/gh/yanagiba/swift-ast/branch/master/graph/badge.svg)](https://codecov.io/gh/yanagiba/swift-ast)
@@ -19,7 +19,7 @@ The output of this utility is the corresponding
 of the source code.
 
 The AST produced in this tool is intended to be consumed in various scenarios.
-For example, formatting tools like [swift-format](https://github.com/yanagiba/swift-format)
+For example, source-to-source transformations like [swift-transform](https://github.com/yanagiba/swift-transform)
 and linting tools like [swift-lint](https://github.com/yanagiba/swift-lint).
 
 Refactoring, code manipulation and optimization can leverage this AST as well.
