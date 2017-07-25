@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 */
 
 import AST
+import Bocho
 
 extension TopLevelDeclaration : TTYASTPrintRepresentable {
   var ttyPrint: String {
@@ -27,7 +28,7 @@ extension CodeBlock : TTYASTPrintRepresentable {
     if statements.isEmpty {
       return "{}"
     }
-    return "{\n\(statements.ttyPrint.indent)\n}"
+    return "{\n\(statements.ttyPrint.indented)\n}"
   }
 }
 
@@ -51,14 +52,14 @@ extension GetterSetterBlock.SetterClause {
 extension GetterSetterBlock {
   var ttyPrint: String {
     let setterStr = setter.map({ "\n\($0.ttyPrint)" }) ?? ""
-    return "{\n" + "\(getter.ttyPrint)\(setterStr)".indent + "\n}"
+    return "{\n" + "\(getter.ttyPrint)\(setterStr)".indented + "\n}"
   }
 }
 
 extension GetterSetterKeywordBlock {
   var ttyPrint: String {
-    let setterStr = setter.map({ "\n\($0.textDescription.indent)" }) ?? ""
-    return "{\n\(getter.textDescription.indent)\(setterStr)\n}"
+    let setterStr = setter.map({ "\n\($0.textDescription.indented)" }) ?? ""
+    return "{\n\(getter.textDescription.indented)\(setterStr)\n}"
   }
 }
 
@@ -80,8 +81,8 @@ extension WillSetDidSetBlock.DidSetClause {
 
 extension WillSetDidSetBlock {
   var ttyPrint: String {
-    let willSetClauseStr = willSetClause.map({ "\n\($0.ttyPrint.indent)" }) ?? ""
-    let didSetClauseStr = didSetClause.map({ "\n\($0.ttyPrint.indent)" }) ?? ""
+    let willSetClauseStr = willSetClause.map({ "\n\($0.ttyPrint.indented)" }) ?? ""
+    let didSetClauseStr = didSetClause.map({ "\n\($0.ttyPrint.indented)" }) ?? ""
     return "{\(willSetClauseStr)\(didSetClauseStr)\n}"
   }
 }
@@ -124,7 +125,7 @@ extension ClassDeclaration : TTYASTPrintRepresentable {
     let whereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
     let neckText = "\(genericParameterClauseText)\(typeText)\(whereText)"
     let membersText = members.map({ $0.ttyPrint }).joined(separator: "\n")
-    let memberText = members.isEmpty ? "" : "\n\(membersText.indent)\n"
+    let memberText = members.isEmpty ? "" : "\n\(membersText.indented)\n"
     return "\(headText)\(neckText) {" + memberText + "}"
   }
 }
@@ -168,7 +169,7 @@ extension EnumDeclaration : TTYASTPrintRepresentable {
     let whereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
     let neckText = "\(genericParameterClauseText)\(typeText)\(whereText)"
     let membersText = members.map({ $0.ttyPrint }).joined(separator: "\n")
-    let memberText = members.isEmpty ? "" : "\n\(membersText.indent)\n"
+    let memberText = members.isEmpty ? "" : "\n\(membersText.indented)\n"
     return "\(headText)\(neckText) {\(memberText)}"
   }
 }
@@ -193,7 +194,7 @@ extension ExtensionDeclaration : TTYASTPrintRepresentable {
     let whereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
     let neckText = "\(typeInheritanceText)\(whereText)"
     let membersText = members.map({ $0.ttyPrint }).joined(separator: "\n")
-    let memberText = members.isEmpty ? "" : "\n\(membersText.indent)\n"
+    let memberText = members.isEmpty ? "" : "\n\(membersText.indented)\n"
     return "\(headText)\(neckText) {\(memberText)}"
   }
 }
@@ -227,7 +228,7 @@ extension InitializerDeclaration : TTYASTPrintRepresentable {
 extension PrecedenceGroupDeclaration : TTYASTPrintRepresentable {
   var ttyPrint: String {
     let attrsText = attributes.map({ $0.textDescription }).joined(separator: "\n")
-    let attrsBlockText = attributes.isEmpty ? "{}" : "{\n\(attrsText.indent)\n}"
+    let attrsBlockText = attributes.isEmpty ? "{}" : "{\n\(attrsText.indented)\n}"
     return "precedencegroup \(name) \(attrsBlockText)"
   }
 }
@@ -280,7 +281,7 @@ extension ProtocolDeclaration : TTYASTPrintRepresentable {
     let headText = "\(attrsText)\(modifierText)protocol \(name)"
     let typeText = typeInheritanceClause?.textDescription ?? ""
     let membersText = members.map({ $0.ttyPrint }).joined(separator: "\n")
-    let memberText = members.isEmpty ? "" : "\n\(membersText.indent)\n"
+    let memberText = members.isEmpty ? "" : "\n\(membersText.indented)\n"
     return "\(headText)\(typeText) {\(memberText)}"
   }
 }
@@ -306,7 +307,7 @@ extension StructDeclaration : TTYASTPrintRepresentable {
     let whereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
     let neckText = "\(genericParameterClauseText)\(typeText)\(whereText)"
     let membersText = members.map({ $0.ttyPrint }).joined(separator: "\n")
-    let memberText = members.isEmpty ? "" : "\n\(membersText.indent)\n"
+    let memberText = members.isEmpty ? "" : "\n\(membersText.indented)\n"
     return "\(headText)\(neckText) {\(memberText)}"
   }
 }

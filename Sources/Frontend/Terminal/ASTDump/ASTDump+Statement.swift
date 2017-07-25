@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 */
 
 import AST
+import Bocho
 
 extension Statement {
   var ttyDump: String {
@@ -34,7 +35,7 @@ extension Statement {
 extension BreakStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("break_stmt", sourceRange)
-    let body = labelName.map { ["label_name: `\($0)`".indent] } ?? []
+    let body = labelName.map { ["label_name: `\($0)`".indented] } ?? []
     return ([head] + body).joined(separator: "\n")
   }
 }
@@ -65,7 +66,7 @@ extension CompilerControlStatement : TTYASTDumpRepresentable {
 extension ContinueStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("continue_stmt", sourceRange)
-    let body = labelName.map { ["label_name: `\($0)`".indent] } ?? []
+    let body = labelName.map { ["label_name: `\($0)`".indented] } ?? []
     return ([head] + body).joined(separator: "\n")
   }
 }
@@ -73,7 +74,7 @@ extension ContinueStatement : TTYASTDumpRepresentable {
 extension DeferStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("defer_stmt", sourceRange)
-    let body = codeBlock.ttyDump.indent
+    let body = codeBlock.ttyDump.indented
     return "\(head)\n\(body)"
   }
 }
@@ -81,14 +82,14 @@ extension DeferStatement : TTYASTDumpRepresentable {
 extension DoStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("do_stmt", sourceRange)
-    let body = codeBlock.ttyDump.indent
-    var catches = "catches:".indent
+    let body = codeBlock.ttyDump.indented
+    var catches = "catches:".indented
     if catchClauses.isEmpty {
       catches += " <empty>"
     }
     for (index, catchClause) in catchClauses.enumerated() {
       catches += "\n"
-      catches += "\(index): ".indent
+      catches += "\(index): ".indented
       switch (catchClause.pattern, catchClause.whereExpression) {
       case (nil, nil):
         catches += "<catch_all>"
@@ -100,7 +101,7 @@ extension DoStatement : TTYASTDumpRepresentable {
         catches += "pattern: `\(pattern.textDescription)`, where: `\(expr.ttyDump)`"
       }
       catches += "\n"
-      catches += catchClause.codeBlock.ttyDump.indent.indent
+      catches += catchClause.codeBlock.ttyDump.indented.indented
     }
     return "\(head)\n\(body)\n\(catches)"
   }
@@ -119,14 +120,14 @@ extension ForInStatement : TTYASTDumpRepresentable {
     let head = dump("for_stmt", sourceRange)
     dumps.append(head)
     if item.isCaseMatching {
-      dumps.append("case_matching: `true`".indent)
+      dumps.append("case_matching: `true`".indented)
     }
-    dumps.append("pattern: `\(item.matchingPattern.textDescription)`".indent)
-    dumps.append("collection: \(collection.ttyDump)".indent)
+    dumps.append("pattern: `\(item.matchingPattern.textDescription)`".indented)
+    dumps.append("collection: \(collection.ttyDump)".indented)
     if let whereClause = item.whereClause {
-      dumps.append("where: \(whereClause.ttyDump)".indent)
+      dumps.append("where: \(whereClause.ttyDump)".indented)
     }
-    let body = codeBlock.ttyDump.indent
+    let body = codeBlock.ttyDump.indented
     dumps.append(body)
     return dumps.joined(separator: "\n")
   }
@@ -135,8 +136,8 @@ extension ForInStatement : TTYASTDumpRepresentable {
 extension GuardStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("guard_stmt", sourceRange)
-    let conditions = dump(conditionList).indent
-    let body = codeBlock.ttyDump.indent
+    let conditions = dump(conditionList).indented
+    let body = codeBlock.ttyDump.indented
     return "\(head)\n\(conditions)\n\(body)"
   }
 }
@@ -144,8 +145,8 @@ extension GuardStatement : TTYASTDumpRepresentable {
 extension IfStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("if_stmt", sourceRange)
-    let conditions = dump(conditionList).indent
-    let body = codeBlock.ttyDump.indent
+    let conditions = dump(conditionList).indented
+    let body = codeBlock.ttyDump.indented
     let neck = "\(head)\n\(conditions)\n\(body)"
 
     guard let elseClause = elseClause else {
@@ -154,10 +155,10 @@ extension IfStatement : TTYASTDumpRepresentable {
     switch elseClause {
     case .else(let codeBlock):
       return "\(neck)\n" +
-        "else:\n\(codeBlock.ttyDump)".indent
+        "else:\n\(codeBlock.ttyDump)".indented
     case .elseif(let ifStmt):
       return "\(neck)\n" +
-        "elseif:\n\(ifStmt.ttyDump)".indent
+        "elseif:\n\(ifStmt.ttyDump)".indented
     }
   }
 }
@@ -165,8 +166,8 @@ extension IfStatement : TTYASTDumpRepresentable {
 extension LabeledStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("labeled_stmt", sourceRange)
-    let neck = "label_name: `\(labelName)`".indent
-    let body = statement.ttyDump.indent
+    let neck = "label_name: `\(labelName)`".indented
+    let body = statement.ttyDump.indented
     return "\(head)\n\(neck)\n\(body)"
   }
 }
@@ -174,8 +175,8 @@ extension LabeledStatement : TTYASTDumpRepresentable {
 extension RepeatWhileStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("repeat_stmt", sourceRange)
-    let condition = "condition: \(conditionExpression.ttyDump)".indent
-    let body = codeBlock.ttyDump.indent
+    let condition = "condition: \(conditionExpression.ttyDump)".indented
+    let body = codeBlock.ttyDump.indented
     return "\(head)\n\(body)\n\(condition)"
   }
 }
@@ -186,7 +187,7 @@ extension ReturnStatement : TTYASTDumpRepresentable {
     guard let returnExpr = expression else {
       return head
     }
-    let body = returnExpr.ttyDump.indent
+    let body = returnExpr.ttyDump.indented
     return "\(head)\n\(body)"
   }
 }
@@ -194,37 +195,37 @@ extension ReturnStatement : TTYASTDumpRepresentable {
 extension SwitchStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("switch_stmt", sourceRange)
-    var body = expression.ttyDump.indent
+    var body = expression.ttyDump.indented
     body += "\n"
-    body += "cases:".indent
+    body += "cases:".indented
     if cases.isEmpty {
       body += " <empty>"
     }
     for (index, eachCase) in cases.enumerated() {
       body += "\n"
-      body += "\(index): ".indent
+      body += "\(index): ".indented
       switch eachCase {
       case let .case(items, stmts):
         body += "kind: `case`"
         body += "\n"
-        body += "items:".indent.indent
+        body += "items:".indented.indented
         if items.isEmpty {
           body += " <empty>" // TODO: can this really happen?
         }
         for (itemIndex, item) in items.enumerated() {
           body += "\n"
-          body += "\(itemIndex): pattern: `\(item.pattern)`".indent.indent
+          body += "\(itemIndex): pattern: `\(item.pattern)`".indented.indented
           if let whereExpr = item.whereExpression {
             body += "\n"
-            body += "where: \(whereExpr.ttyDump)".indent.indent.indent
+            body += "where: \(whereExpr.ttyDump)".indented.indented.indented
           }
         }
         body += "\n"
-        body += stmts.map({ $0.ttyDump }).joined(separator: "\n").indent.indent
+        body += stmts.map({ $0.ttyDump }).joined(separator: "\n").indented.indented
       case .default(let stmts):
         body += "kind: `default`"
         body += "\n"
-        body += stmts.map({ $0.ttyDump }).joined(separator: "\n").indent.indent
+        body += stmts.map({ $0.ttyDump }).joined(separator: "\n").indented.indented
       }
     }
     return "\(head)\n\(body)"
@@ -234,7 +235,7 @@ extension SwitchStatement : TTYASTDumpRepresentable {
 extension ThrowStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("throw_stmt", sourceRange)
-    let body = expression.ttyDump.indent
+    let body = expression.ttyDump.indented
     return "\(head)\n\(body)"
   }
 }
@@ -242,8 +243,8 @@ extension ThrowStatement : TTYASTDumpRepresentable {
 extension WhileStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("while_stmt", sourceRange)
-    let conditions = dump(conditionList).indent
-    let body = codeBlock.ttyDump.indent
+    let conditions = dump(conditionList).indented
+    let body = codeBlock.ttyDump.indented
     return "\(head)\n\(conditions)\n\(body)"
   }
 }
