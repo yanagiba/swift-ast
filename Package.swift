@@ -1,7 +1,7 @@
 // swift-tools-version:4.0
 
 /*
-   Copyright 2015-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -49,6 +49,12 @@ let package = Package(
       ]
     ),
   ],
+  dependencies: [
+    .package(
+      url: "https://github.com/yanagiba/bocho",
+      .revision("42332afe6ba6bc7b87300697f97b7b28d1a117e0")
+    ),
+  ],
   targets: [
     .target(
       name: "Source"
@@ -88,6 +94,7 @@ let package = Package(
         "AST",
         "Lexer",
         "Parser",
+        "Bocho",
       ]
     ),
     .target(

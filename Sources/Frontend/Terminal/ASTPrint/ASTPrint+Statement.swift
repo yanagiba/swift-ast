@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 */
 
 import AST
+import Bocho
 
 extension Statement {
   var ttyPrint: String {
@@ -155,9 +156,9 @@ extension SwitchStatement.Case {
     switch self {
     case let .case(itemList, stmts):
       let itemListText = itemList.map({ $0.ttyPrint }).joined(separator: ", ")
-      return "case \(itemListText):\n\(stmts.ttyPrint.indent)"
+      return "case \(itemListText):\n\(stmts.ttyPrint.indented)"
     case .default(let stmts):
-      return "default:\n\(stmts.ttyPrint.indent)"
+      return "default:\n\(stmts.ttyPrint.indented)"
     }
   }
 }

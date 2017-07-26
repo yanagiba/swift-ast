@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "bocho",
+        "repositoryURL": "https://github.com/yanagiba/bocho",
+        "state": {
+          "branch": null,
+          "revision": "42332afe6ba6bc7b87300697f97b7b28d1a117e0",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

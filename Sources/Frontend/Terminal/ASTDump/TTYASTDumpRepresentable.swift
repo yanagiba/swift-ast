@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import Source
 import AST
+import Bocho
 
 protocol TTYASTDumpRepresentable {
   var ttyDump: String { get }
@@ -86,11 +87,11 @@ extension TTYASTDumpRepresentable {
     case .availability(let availabilityCondition):
       return availabilityCondition.textDescription
     case let .case(pattern, expr):
-      return "case_binding: `\(pattern)`\n\(expr.ttyDump.indent)"
+      return "case_binding: `\(pattern)`\n\(expr.ttyDump.indented)"
     case let .let(pattern, expr):
-      return "constant_optional_binding: `\(pattern)`\n\(expr.ttyDump.indent)"
+      return "constant_optional_binding: `\(pattern)`\n\(expr.ttyDump.indented)"
     case let .var(pattern, expr):
-      return "variable_optional_binding: `\(pattern)`\n\(expr.ttyDump.indent)"
+      return "variable_optional_binding: `\(pattern)`\n\(expr.ttyDump.indented)"
     }
   }
 
@@ -112,7 +113,7 @@ extension TTYASTDumpRepresentable {
     guard let initExpr = patternInit.initializerExpression else {
       return patternDump
     }
-    return "\(patternDump)\n\(initExpr.ttyDump.indent)"
+    return "\(patternDump)\n\(initExpr.ttyDump.indented)"
   }
 
   func dump(_ block: GetterSetterKeywordBlock) -> String {
@@ -133,7 +134,7 @@ extension TTYASTDumpRepresentable {
         body += ", modifier: `\(setterModifier.textDescription)`"
       }
     }
-    return "\(head)\n\(body.indent)"
+    return "\(head)\n\(body.indented)"
   }
 
   func dump(_ block: GetterSetterBlock) -> String {
@@ -146,7 +147,7 @@ extension TTYASTDumpRepresentable {
       body += ", modifier: `\(getterModifier.textDescription)`"
     }
     body += "\n"
-    body += block.getter.codeBlock.ttyDump.indent
+    body += block.getter.codeBlock.ttyDump.indented
     if let setter = block.setter {
       body += "\nsetter"
       if let setterName = setter.name {
@@ -159,8 +160,8 @@ extension TTYASTDumpRepresentable {
         body += ", modifier: `\(setterModifier.textDescription)`"
       }
       body += "\n"
-      body += setter.codeBlock.ttyDump.indent
+      body += setter.codeBlock.ttyDump.indented
     }
-    return "\(head)\n\(body.indent)"
+    return "\(head)\n\(body.indented)"
   }
 }

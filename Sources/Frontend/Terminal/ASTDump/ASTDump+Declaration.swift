@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,11 +15,12 @@
 */
 
 import AST
+import Bocho
 
 extension TopLevelDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("top_level_decl", sourceRange)
-    let body = statements.map { $0.ttyDump.indent }
+    let body = statements.map { $0.ttyDump.indented }
     let tail = ""
     return ([head] + body + [tail]).joined(separator: "\n")
   }
@@ -37,34 +38,34 @@ extension CodeBlock : TTYASTDumpRepresentable {
 extension ClassDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("class_decl", sourceRange)
-    var neck = "\n" + "name: \(name)".indent
+    var neck = "\n" + "name: \(name)".indented
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if let accessLevel = accessLevelModifier {
       neck += "\n"
-      neck += "access_level: \(accessLevel)".indent
+      neck += "access_level: \(accessLevel)".indented
     }
     if isFinal {
       neck += "\n"
-      neck += "final: `true`".indent
+      neck += "final: `true`".indented
     }
     if let genericParam = genericParameterClause {
       neck += "\n"
-      neck += "generic_param: `\(genericParam.textDescription)`".indent
+      neck += "generic_param: `\(genericParam.textDescription)`".indented
     }
     if let typeInheritance = typeInheritanceClause {
       neck += "\n"
-      neck += "parent_types\(typeInheritance.textDescription)".indent
+      neck += "parent_types\(typeInheritance.textDescription)".indented
     }
     if let genericWhere = genericWhereClause {
       neck += "\n"
-      neck += "generic_where: `\(genericWhere.textDescription)`".indent
+      neck += "generic_where: `\(genericWhere.textDescription)`".indented
     }
     let body: String
     if members.isEmpty {
-      body = "<empty_body>".indent
+      body = "<empty_body>".indented
     } else {
       body = members.map { member -> String in
         switch member {
@@ -73,7 +74,7 @@ extension ClassDeclaration : TTYASTDumpRepresentable {
         case .compilerControl(let stmt):
           return stmt.ttyDump
         }
-      }.joined(separator: "\n").indent
+      }.joined(separator: "\n").indented
     }
 
     return "\(head)\(neck)\n\(body)"
@@ -86,13 +87,13 @@ extension ConstantDeclaration : TTYASTDumpRepresentable {
     var neck = ""
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if !modifiers.isEmpty {
       neck += "\n"
-      neck += "modifiers: \(modifiers.textDescription)".indent
+      neck += "modifiers: \(modifiers.textDescription)".indented
     }
-    let body = dump(initializerList).indent
+    let body = dump(initializerList).indented
     return "\(head)\(neck)\n\(body)"
   }
 }
@@ -103,9 +104,9 @@ extension DeinitializerDeclaration : TTYASTDumpRepresentable {
     var neck = ""
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
-    let bodyTTYDump = body.ttyDump.indent
+    let bodyTTYDump = body.ttyDump.indented
     return "\(head)\(neck)\n\(bodyTTYDump)"
   }
 }
@@ -115,34 +116,34 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
     // TODO: some of these `ttyDump` implementations require serious refactorings
 
     let head = dump("enum_decl", sourceRange)
-    var neck = "\n" + "name: \(name)".indent
+    var neck = "\n" + "name: \(name)".indented
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if let accessLevel = accessLevelModifier {
       neck += "\n"
-      neck += "access_level: \(accessLevel)".indent
+      neck += "access_level: \(accessLevel)".indented
     }
     if isIndirect {
       neck += "\n"
-      neck += "indirect: `true`".indent
+      neck += "indirect: `true`".indented
     }
     if let genericParam = genericParameterClause {
       neck += "\n"
-      neck += "generic_param: `\(genericParam.textDescription)`".indent
+      neck += "generic_param: `\(genericParam.textDescription)`".indented
     }
     if let typeInheritance = typeInheritanceClause {
       neck += "\n"
-      neck += "parent_types\(typeInheritance.textDescription)".indent
+      neck += "parent_types\(typeInheritance.textDescription)".indented
     }
     if let genericWhere = genericWhereClause {
       neck += "\n"
-      neck += "generic_where: `\(genericWhere.textDescription)`".indent
+      neck += "generic_where: `\(genericWhere.textDescription)`".indented
     }
     let body: String
     if members.isEmpty {
-      body = "<empty_body>".indent
+      body = "<empty_body>".indented
     } else { // swift-lint:suppress(nested_code_block_depth)
       body = members.map { member -> String in
         switch member {
@@ -155,11 +156,11 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
           var caseNeck = ""
           if !unionCase.attributes.isEmpty {
             caseNeck += "\n"
-            caseNeck += "attributes: `\(unionCase.attributes.textDescription)`".indent
+            caseNeck += "attributes: `\(unionCase.attributes.textDescription)`".indented
           }
           if unionCase.isIndirect {
             caseNeck += "\n"
-            caseNeck += "indirect: `true`".indent
+            caseNeck += "indirect: `true`".indented
           }
           let caseBody: String
           switch unionCase.cases.count {
@@ -175,13 +176,13 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
               return e.element.tuple.map({ "\(nameDump), tuple: `\($0.textDescription)`" }) ?? nameDump
             }.joined(separator: "\n")
           }
-          return "\(caseHead)\(caseNeck)\n\(caseBody.indent)"
+          return "\(caseHead)\(caseNeck)\n\(caseBody.indented)"
         case .rawValue(let rawValueCase):
           let caseHead = "raw_value_case"
           var caseNeck = ""
           if !rawValueCase.attributes.isEmpty {
             caseNeck += "\n"
-            caseNeck += "attributes: `\(rawValueCase.attributes.textDescription)`".indent
+            caseNeck += "attributes: `\(rawValueCase.attributes.textDescription)`".indented
           }
           let caseBody: String
           switch rawValueCase.cases.count {
@@ -197,9 +198,9 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
               return e.element.assignment.map({ "\(nameDump), raw_value: `\($0)`" }) ?? nameDump
             }.joined(separator: "\n")
           }
-          return "\(caseHead)\(caseNeck)\n\(caseBody.indent)"
+          return "\(caseHead)\(caseNeck)\n\(caseBody.indented)"
         }
-      }.joined(separator: "\n").indent
+      }.joined(separator: "\n").indented
     }
 
     return "\(head)\(neck)\n\(body)"
@@ -209,26 +210,26 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
 extension ExtensionDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("ext_decl", sourceRange)
-    var neck = "\n" + "type: \(type.textDescription)".indent
+    var neck = "\n" + "type: \(type.textDescription)".indented
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if let accessLevel = accessLevelModifier {
       neck += "\n"
-      neck += "access_level: \(accessLevel)".indent
+      neck += "access_level: \(accessLevel)".indented
     }
     if let typeInheritance = typeInheritanceClause {
       neck += "\n"
-      neck += "parent_types\(typeInheritance.textDescription)".indent
+      neck += "parent_types\(typeInheritance.textDescription)".indented
     }
     if let genericWhere = genericWhereClause {
       neck += "\n"
-      neck += "generic_where: `\(genericWhere.textDescription)`".indent
+      neck += "generic_where: `\(genericWhere.textDescription)`".indented
     }
     let body: String
     if members.isEmpty {
-      body = "<empty_body>".indent
+      body = "<empty_body>".indented
     } else {
       body = members.map { member -> String in
         switch member {
@@ -237,7 +238,7 @@ extension ExtensionDeclaration : TTYASTDumpRepresentable {
         case .compilerControl(let stmt):
           return stmt.ttyDump
         }
-      }.joined(separator: "\n").indent
+      }.joined(separator: "\n").indented
     }
 
     return "\(head)\(neck)\n\(body)"
@@ -247,29 +248,29 @@ extension ExtensionDeclaration : TTYASTDumpRepresentable {
 extension FunctionDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("func_decl", sourceRange)
-    var neck = "\n" + "name: \(name)".indent
+    var neck = "\n" + "name: \(name)".indented
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if !modifiers.isEmpty {
       neck += "\n"
-      neck += "modifiers: \(modifiers.textDescription)".indent
+      neck += "modifiers: \(modifiers.textDescription)".indented
     }
     if let genericParam = genericParameterClause {
       neck += "\n"
-      neck += "generic_param: `\(genericParam.textDescription)`".indent
+      neck += "generic_param: `\(genericParam.textDescription)`".indented
     }
     if let genericWhere = genericWhereClause {
       neck += "\n"
-      neck += "generic_where: `\(genericWhere.textDescription)`".indent
+      neck += "generic_where: `\(genericWhere.textDescription)`".indented
     }
     let signatureDump = dump(signature)
     if !signatureDump.isEmpty {
-      neck += "\n" + signatureDump.indent
+      neck += "\n" + signatureDump.indented
     }
     let bodyTTYDump = body?.ttyDump ?? "<func_def_only>"
-    return "\(head)\(neck)\n\(bodyTTYDump.indent)"
+    return "\(head)\(neck)\n\(bodyTTYDump.indented)"
   }
 }
 
@@ -279,14 +280,14 @@ extension ImportDeclaration : TTYASTDumpRepresentable {
     var neck = ""
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if let kind = kind {
       neck += "\n"
-      neck += "kind: `\(kind)`".indent
+      neck += "kind: `\(kind)`".indented
     }
     let body = "path:\n" + path.enumerated().map { "\($0.0): `\($0.1)`" }.joined(separator: "\n")
-    return "\(head)\(neck)\n\(body.indent)"
+    return "\(head)\(neck)\n\(body.indented)"
   }
 }
 
@@ -296,21 +297,21 @@ extension InitializerDeclaration : TTYASTDumpRepresentable {
     var neck = ""
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if !modifiers.isEmpty {
       neck += "\n"
-      neck += "modifiers: \(modifiers.textDescription)".indent
+      neck += "modifiers: \(modifiers.textDescription)".indented
     }
     if let genericParam = genericParameterClause {
       neck += "\n"
-      neck += "generic_param: `\(genericParam.textDescription)`".indent
+      neck += "generic_param: `\(genericParam.textDescription)`".indented
     }
     if let genericWhere = genericWhereClause {
       neck += "\n"
-      neck += "generic_where: `\(genericWhere.textDescription)`".indent
+      neck += "generic_where: `\(genericWhere.textDescription)`".indented
     }
-    neck += "\n" + "kind: ".indent
+    neck += "\n" + "kind: ".indented
     switch kind {
     case .nonfailable:
       neck += "`non_failable`"
@@ -320,9 +321,9 @@ extension InitializerDeclaration : TTYASTDumpRepresentable {
       neck += "`implicit_unwrapped_failable`"
     }
     if !parameterList.isEmpty {
-      neck += "\n" + dump(parameterList).indent
+      neck += "\n" + dump(parameterList).indented
     }
-    let bodyTTYDump = body.ttyDump.indent
+    let bodyTTYDump = body.ttyDump.indented
     return "\(head)\(neck)\n\(bodyTTYDump)"
   }
 }
@@ -341,7 +342,7 @@ extension OperatorDeclaration : TTYASTDumpRepresentable {
     case .infix(let op, let id?):
       body = "kind: `infix`, operator: `\(op)`, precedence_group_name: `\(id)`"
     }
-    return "\(head)\n\(body.indent)"
+    return "\(head)\n\(body.indented)"
   }
 }
 
@@ -366,7 +367,7 @@ extension PrecedenceGroupDeclaration : TTYASTDumpRepresentable {
     }
 
     let head = dump("precedence_group_decl", sourceRange)
-    let neck = "name: \(name)".indent
+    let neck = "name: \(name)".indented
     let body: String
     switch attributes.count {
     case 0:
@@ -378,25 +379,25 @@ extension PrecedenceGroupDeclaration : TTYASTDumpRepresentable {
         .map { "\($0.offset): \(dumpAttr($0.element))" }
         .joined(separator: "\n")
     }
-    return "\(head)\n\(neck)\n\(body.indent)"
+    return "\(head)\n\(neck)\n\(body.indented)"
   }
 }
 
 extension ProtocolDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("proto_decl", sourceRange)
-    var neck = "\n" + "name: \(name)".indent
+    var neck = "\n" + "name: \(name)".indented
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if let accessLevel = accessLevelModifier {
       neck += "\n"
-      neck += "access_level: \(accessLevel)".indent
+      neck += "access_level: \(accessLevel)".indented
     }
     if let typeInheritance = typeInheritanceClause {
       neck += "\n"
-      neck += "parent_types\(typeInheritance.textDescription)".indent
+      neck += "parent_types\(typeInheritance.textDescription)".indented
     }
     let body: String
     if members.isEmpty {
@@ -408,40 +409,40 @@ extension ProtocolDeclaration : TTYASTDumpRepresentable {
           switch e.element {
           case .property(let member):
             memberDump += "kind: `property`\n"
-            memberDump += "name: \(name)".indent
+            memberDump += "name: \(name)".indented
             if !member.attributes.isEmpty {
               memberDump += "\n"
-              memberDump += "attributes: `\(member.attributes.textDescription)`".indent
+              memberDump += "attributes: `\(member.attributes.textDescription)`".indented
             }
             if !member.modifiers.isEmpty {
               memberDump += "\n"
-              memberDump += "modifiers: \(member.modifiers.textDescription)".indent
+              memberDump += "modifiers: \(member.modifiers.textDescription)".indented
             }
             memberDump += "\n"
-            memberDump += "type\(member.typeAnnotation.textDescription)".indent
-            memberDump += "\n" + dump(member.getterSetterKeywordBlock).indent
+            memberDump += "type\(member.typeAnnotation.textDescription)".indented
+            memberDump += "\n" + dump(member.getterSetterKeywordBlock).indented
           case .method(let member):
             memberDump += "kind: `method`\n"
-            memberDump += "name: \(name)".indent
+            memberDump += "name: \(name)".indented
             if !member.attributes.isEmpty {
               memberDump += "\n"
-              memberDump += "attributes: `\(member.attributes.textDescription)`".indent
+              memberDump += "attributes: `\(member.attributes.textDescription)`".indented
             }
             if !member.modifiers.isEmpty {
               memberDump += "\n"
-              memberDump += "modifiers: \(member.modifiers.textDescription)".indent
+              memberDump += "modifiers: \(member.modifiers.textDescription)".indented
             }
             if let genericParam = member.genericParameter {
               memberDump += "\n"
-              memberDump += "generic_param: `\(genericParam.textDescription)`".indent
+              memberDump += "generic_param: `\(genericParam.textDescription)`".indented
             }
             if let genericWhere = member.genericWhere {
               memberDump += "\n"
-              memberDump += "generic_where: `\(genericWhere.textDescription)`".indent
+              memberDump += "generic_where: `\(genericWhere.textDescription)`".indented
             }
             let signatureDump = dump(member.signature)
             if !signatureDump.isEmpty {
-              memberDump += "\n" + signatureDump.indent
+              memberDump += "\n" + signatureDump.indented
             }
           case .initializer(let member):
             memberDump += "kind: "
@@ -455,116 +456,116 @@ extension ProtocolDeclaration : TTYASTDumpRepresentable {
             }
             if !member.attributes.isEmpty {
               memberDump += "\n"
-              memberDump += "attributes: `\(member.attributes.textDescription)`".indent
+              memberDump += "attributes: `\(member.attributes.textDescription)`".indented
             }
             if !member.modifiers.isEmpty {
               memberDump += "\n"
-              memberDump += "modifiers: \(member.modifiers.textDescription)".indent
+              memberDump += "modifiers: \(member.modifiers.textDescription)".indented
             }
             if let genericParam = member.genericParameter {
               memberDump += "\n"
-              memberDump += "generic_param: `\(genericParam.textDescription)`".indent
+              memberDump += "generic_param: `\(genericParam.textDescription)`".indented
             }
             if let genericWhere = member.genericWhere {
               memberDump += "\n"
-              memberDump += "generic_where: `\(genericWhere.textDescription)`".indent
+              memberDump += "generic_where: `\(genericWhere.textDescription)`".indented
             }
             if !member.parameterList.isEmpty {
-              memberDump += "\n" + dump(member.parameterList).indent
+              memberDump += "\n" + dump(member.parameterList).indented
             }
             if member.throwsKind != .nothrowing {
-              memberDump += "\n" + "throws_kind: `\(member.throwsKind.textDescription)`".indent
+              memberDump += "\n" + "throws_kind: `\(member.throwsKind.textDescription)`".indented
             }
           case .subscript(let member):
             memberDump += "kind: `subscript`"
             if !member.attributes.isEmpty {
               memberDump += "\n"
-              memberDump += "attributes: `\(member.attributes.textDescription)`".indent
+              memberDump += "attributes: `\(member.attributes.textDescription)`".indented
             }
             if !member.modifiers.isEmpty {
               memberDump += "\n"
-              memberDump += "modifiers: \(member.modifiers.textDescription)".indent
+              memberDump += "modifiers: \(member.modifiers.textDescription)".indented
             }
             if !member.parameterList.isEmpty {
-              memberDump += "\n" + dump(member.parameterList).indent
+              memberDump += "\n" + dump(member.parameterList).indented
             }
             memberDump += "\n"
-            memberDump += "type: \(member.resultType.textDescription)".indent
+            memberDump += "type: \(member.resultType.textDescription)".indented
             if !member.resultAttributes.isEmpty {
               memberDump += "\n"
-              memberDump += "result_attributes: `\(member.resultAttributes.textDescription)`".indent
+              memberDump += "result_attributes: `\(member.resultAttributes.textDescription)`".indented
             }
             if let genericParam = member.genericParameter {
               memberDump += "\n"
-              memberDump += "generic_param: `\(genericParam.textDescription)`".indent
+              memberDump += "generic_param: `\(genericParam.textDescription)`".indented
             }
             if let genericWhere = member.genericWhere {
               memberDump += "\n"
-              memberDump += "generic_where: `\(genericWhere.textDescription)`".indent
+              memberDump += "generic_where: `\(genericWhere.textDescription)`".indented
             }
-            memberDump += "\n" + dump(member.getterSetterKeywordBlock).indent
+            memberDump += "\n" + dump(member.getterSetterKeywordBlock).indented
           case .associatedType(let member):
             memberDump += "kind: `associated_type`\n"
-            memberDump += "name: \(name)".indent
+            memberDump += "name: \(name)".indented
             if !member.attributes.isEmpty {
               memberDump += "\n"
-              memberDump += "attributes: `\(member.attributes.textDescription)`".indent
+              memberDump += "attributes: `\(member.attributes.textDescription)`".indented
             }
             if let accessLevel = member.accessLevelModifier {
               memberDump += "\n"
-              memberDump += "access_level: \(accessLevel.textDescription)".indent
+              memberDump += "access_level: \(accessLevel.textDescription)".indented
             }
             if let typeInheritance = member.typeInheritance {
               memberDump += "\n"
-              memberDump += "parent_types\(typeInheritance.textDescription)".indent
+              memberDump += "parent_types\(typeInheritance.textDescription)".indented
             }
             if let assignmentType = member.assignmentType {
               memberDump += "\n"
-              memberDump += "assignment_type: \(assignmentType.textDescription)".indent
+              memberDump += "assignment_type: \(assignmentType.textDescription)".indented
             }
             if let genericWhere = member.genericWhere {
               memberDump += "\n"
-              memberDump += "generic_where: `\(genericWhere.textDescription)`".indent
+              memberDump += "generic_where: `\(genericWhere.textDescription)`".indented
             }
           case .compilerControl(let stmt):
             memberDump += "kind: `compiler_control`\n"
-            memberDump += stmt.ttyDump.indent
+            memberDump += stmt.ttyDump.indented
           }
           return memberDump
         }
         .joined(separator: "\n")
     }
-    return "\(head)\(neck)\n\(body.indent)"
+    return "\(head)\(neck)\n\(body.indented)"
   }
 }
 
 extension StructDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("struct_decl", sourceRange)
-    var neck = "\n" + "name: \(name)".indent
+    var neck = "\n" + "name: \(name)".indented
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if let accessLevel = accessLevelModifier {
       neck += "\n"
-      neck += "access_level: \(accessLevel)".indent
+      neck += "access_level: \(accessLevel)".indented
     }
     if let genericParam = genericParameterClause {
       neck += "\n"
-      neck += "generic_param: `\(genericParam.textDescription)`".indent
+      neck += "generic_param: `\(genericParam.textDescription)`".indented
     }
     if let typeInheritance = typeInheritanceClause {
       neck += "\n"
-      neck += "parent_types\(typeInheritance.textDescription)".indent
+      neck += "parent_types\(typeInheritance.textDescription)".indented
     }
     if let genericWhere = genericWhereClause {
       neck += "\n"
-      neck += "generic_where: `\(genericWhere.textDescription)`".indent
+      neck += "generic_where: `\(genericWhere.textDescription)`".indented
     }
     let body: String
     if members.isEmpty {
-      body = "<empty_body>".indent
+      body = "<empty_body>".indented
     } else {
       body = members.map { member -> String in
         switch member {
@@ -573,7 +574,7 @@ extension StructDeclaration : TTYASTDumpRepresentable {
         case .compilerControl(let stmt):
           return stmt.ttyDump
         }
-      }.joined(separator: "\n").indent
+      }.joined(separator: "\n").indented
     }
 
     return "\(head)\(neck)\n\(body)"
@@ -586,28 +587,28 @@ extension SubscriptDeclaration : TTYASTDumpRepresentable {
     var neck = ""
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if !modifiers.isEmpty {
       neck += "\n"
-      neck += "modifiers: \(modifiers.textDescription)".indent
+      neck += "modifiers: \(modifiers.textDescription)".indented
     }
     if !parameterList.isEmpty {
-      neck += "\n" + dump(parameterList).indent
+      neck += "\n" + dump(parameterList).indented
     }
     neck += "\n"
-    neck += "type: \(resultType.textDescription)".indent
+    neck += "type: \(resultType.textDescription)".indented
     if !resultAttributes.isEmpty {
       neck += "\n"
-      neck += "result_attributes: `\(resultAttributes.textDescription)`".indent
+      neck += "result_attributes: `\(resultAttributes.textDescription)`".indented
     }
     if let genericParam = genericParameterClause {
       neck += "\n"
-      neck += "generic_param: `\(genericParam.textDescription)`".indent
+      neck += "generic_param: `\(genericParam.textDescription)`".indented
     }
     if let genericWhere = genericWhereClause {
       neck += "\n"
-      neck += "generic_where: `\(genericWhere.textDescription)`".indent
+      neck += "generic_where: `\(genericWhere.textDescription)`".indented
     }
     let bodyTTYDump: String
     switch body {
@@ -618,28 +619,28 @@ extension SubscriptDeclaration : TTYASTDumpRepresentable {
     case .getterSetterKeywordBlock(let block):
       bodyTTYDump = dump(block)
     }
-    return "\(head)\(neck)\n\(bodyTTYDump.indent)"
+    return "\(head)\(neck)\n\(bodyTTYDump.indented)"
   }
 }
 
 extension TypealiasDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("typealias_decl", sourceRange)
-    var neck = "\n" + "name: \(name)".indent
+    var neck = "\n" + "name: \(name)".indented
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if let accessLevel = accessLevelModifier {
       neck += "\n"
-      neck += "access_level: \(accessLevel)".indent
+      neck += "access_level: \(accessLevel)".indented
     }
     if let genericParam = generic {
       neck += "\n"
-      neck += "generic_param: `\(genericParam.textDescription)`".indent
+      neck += "generic_param: `\(genericParam.textDescription)`".indented
     }
     neck += "\n"
-    neck += "type: \(assignment.textDescription)".indent
+    neck += "type: \(assignment.textDescription)".indented
     return "\(head)\(neck)"
   }
 }
@@ -650,11 +651,11 @@ extension VariableDeclaration : TTYASTDumpRepresentable {
     var neck = ""
     if !attributes.isEmpty {
       neck += "\n"
-      neck += "attributes: `\(attributes.textDescription)`".indent
+      neck += "attributes: `\(attributes.textDescription)`".indented
     }
     if !modifiers.isEmpty {
       neck += "\n"
-      neck += "modifiers: \(modifiers.textDescription)".indent
+      neck += "modifiers: \(modifiers.textDescription)".indented
     }
     let bodyTTYDump: String
     switch body {
@@ -677,7 +678,7 @@ extension VariableDeclaration : TTYASTDumpRepresentable {
 
       blockDump += "\nwill_set_did_set_block:"
       if let willSetClause = block.willSetClause {
-        blockDump += "\n" + "will_set".indent
+        blockDump += "\n" + "will_set".indented
         if let setterName = willSetClause.name {
           blockDump += ", name: `\(setterName)`"
         }
@@ -685,10 +686,10 @@ extension VariableDeclaration : TTYASTDumpRepresentable {
           blockDump += ", attributes: `\(willSetClause.attributes.textDescription)`"
         }
         blockDump += "\n"
-        blockDump += willSetClause.codeBlock.ttyDump.indent.indent
+        blockDump += willSetClause.codeBlock.ttyDump.indented.indented
       }
       if let didSetClause = block.didSetClause {
-        blockDump += "\n" + "did_set".indent
+        blockDump += "\n" + "did_set".indented
         if let setterName = didSetClause.name {
           blockDump += ", name: `\(setterName)`"
         }
@@ -696,10 +697,10 @@ extension VariableDeclaration : TTYASTDumpRepresentable {
           blockDump += ", attributes: `\(didSetClause.attributes.textDescription)`"
         }
         blockDump += "\n"
-        blockDump += didSetClause.codeBlock.ttyDump.indent.indent
+        blockDump += didSetClause.codeBlock.ttyDump.indented.indented
       }
       bodyTTYDump = blockDump
     }
-    return "\(head)\(neck)\n\(bodyTTYDump.indent)"
+    return "\(head)\(neck)\n\(bodyTTYDump.indented)"
   }
 }
