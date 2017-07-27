@@ -15,9 +15,10 @@
 */
 
 import Source
+import Bocho
 
 extension SourceRange {
   var ttyDescription: String {
-    return description.adjustedForPWD
+    return description.truncatedPath
   }
 }

@@ -52,12 +52,15 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/yanagiba/bocho",
-      .revision("42332afe6ba6bc7b87300697f97b7b28d1a117e0")
+      .revision("25b9439a94ad26c169cf4b5f05826e811b3ba009")
     ),
   ],
   targets: [
     .target(
-      name: "Source"
+      name: "Source",
+      dependencies: [
+        "Bocho",
+      ]
     ),
     .target(
       name: "Diagnostic",

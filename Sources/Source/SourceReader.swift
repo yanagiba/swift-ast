@@ -15,6 +15,7 @@
 */
 
 import Foundation
+import Bocho
 
 public struct SourceReader {
   static public func read(at path: String) throws -> SourceFile {
@@ -27,36 +28,6 @@ public struct SourceReader {
 }
 
 fileprivate extension String {
-  var absolutePath: String {
-    if self.hasPrefix("/") {
-      return self
-    }
-
-    let currentDirectory = FileManager.default.currentDirectoryPath
-    var pathHead = NSString(string: currentDirectory).pathComponents.filter { $0 != "." }
-    if pathHead.count > 1 && pathHead.last == "/" {
-      pathHead.removeLast()
-    }
-    var pathTail = NSString(string: self).pathComponents.filter { $0 != "." }
-    if pathTail.count > 1 && pathTail.last == "/" {
-      pathTail.removeLast()
-    }
-
-    while pathTail.first == ".." {
-      pathTail.removeFirst()
-      if !pathHead.isEmpty {
-        pathHead.removeLast()
-      }
-
-      if pathHead.isEmpty || pathTail.isEmpty {
-        break
-      }
-    }
-
-    let absolutePath = pathHead.joined(separator: "/") + "/" + pathTail.joined(separator: "/")
-    return absolutePath.substring(from: absolutePath.index(absolutePath.startIndex, offsetBy: 1))
-  }
-
   func readFile() throws -> String {
     return try String(contentsOfFile: self, encoding: .utf8)
   }
