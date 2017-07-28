@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -33,47 +33,70 @@ class ParserSuperclassExpressionTests: XCTestCase {
   func testSuperclassSubscriptExpression() {
     parseExpressionAndTest("super[0]", "super[0]", testClosure: { expr in
       guard let superExpr = expr as? SuperclassExpression,
-        case .subscript(let exprs) = superExpr.kind,
-        exprs.count == 1,
-        let literalExpr = exprs[0] as? LiteralExpression,
+        case .subscript(let args) = superExpr.kind,
+        args.count == 1,
+        let literalExpr = args[0].expression as? LiteralExpression,
         case .integer(let i, _) = literalExpr.kind,
-        i == 0 else {
+        i == 0
+      else {
         XCTFail("Failed in getting a superclass expression")
         return
       }
+      XCTAssertNil(args[0].identifier)
     })
   }
 
   func testSuperclassSubscriptExprWithExprList() {
     parseExpressionAndTest("super[0, 1, 5]", "super[0, 1, 5]", testClosure: { expr in
       guard let superExpr = expr as? SuperclassExpression,
-        case .subscript(let exprs) = superExpr.kind,
-        exprs.count == 3 else {
+        case .subscript(let args) = superExpr.kind,
+        args.count == 3
+      else {
         XCTFail("Failed in getting a superclass expression")
         return
       }
 
-      XCTAssertTrue(exprs[0] is LiteralExpression)
-      XCTAssertTrue(exprs[1] is LiteralExpression)
-      XCTAssertTrue(exprs[2] is LiteralExpression)
+      XCTAssertNil(args[0].identifier)
+      XCTAssertTrue(args[0].expression is LiteralExpression)
+      XCTAssertNil(args[1].identifier)
+      XCTAssertTrue(args[1].expression is LiteralExpression)
+      XCTAssertNil(args[2].identifier)
+      XCTAssertTrue(args[2].expression is LiteralExpression)
     })
   }
 
   func testSuperclassSubscriptExprWithVariables() {
     parseExpressionAndTest("super [ foo,   0, bar,1, 5 ] ", "super[foo, 0, bar, 1, 5]", testClosure: { expr in
       guard let superExpr = expr as? SuperclassExpression,
-        case .subscript(let exprs) = superExpr.kind,
-        exprs.count == 5 else {
+        case .subscript(let args) = superExpr.kind,
+        args.count == 5
+      else {
         XCTFail("Failed in getting a superclass expression")
         return
       }
 
-      XCTAssertTrue(exprs[0] is IdentifierExpression)
-      XCTAssertTrue(exprs[1] is LiteralExpression)
-      XCTAssertTrue(exprs[2] is IdentifierExpression)
-      XCTAssertTrue(exprs[3] is LiteralExpression)
-      XCTAssertTrue(exprs[4] is LiteralExpression)
+      XCTAssertNil(args[0].identifier)
+      XCTAssertTrue(args[0].expression is IdentifierExpression)
+      XCTAssertNil(args[1].identifier)
+      XCTAssertTrue(args[1].expression is LiteralExpression)
+      XCTAssertNil(args[2].identifier)
+      XCTAssertTrue(args[2].expression is IdentifierExpression)
+      XCTAssertNil(args[3].identifier)
+      XCTAssertTrue(args[3].expression is LiteralExpression)
+      XCTAssertNil(args[4].identifier)
+      XCTAssertTrue(args[4].expression is LiteralExpression)
     })
+  }
+
+  func testSuperclassSubscriptArgumentWithIdentifier() {
+    // https://github.com/yanagiba/swift-ast/issues/38
+    parseExpressionAndTest("super[bar: 0]", "super[bar: 0]", testClosure: { expr in
+      XCTAssertTrue(expr is SuperclassExpression)
+    })
+    parseExpressionAndTest("super[a: 0, b: 1, c: 2]", "super[a: 0, b: 1, c: 2]")
+    parseExpressionAndTest("super [bar: n+1]", "super[bar: n + 1]")
+    parseExpressionAndTest("super [bar: bar()]", "super[bar: bar()]")
+    parseExpressionAndTest("super [bar: try bar()]", "super[bar: try bar()]")
   }
 
   func testSuperclassInitializerExpression() {
@@ -104,6 +127,7 @@ class ParserSuperclassExpressionTests: XCTestCase {
     ("testSuperclassSubscriptExpression", testSuperclassSubscriptExpression),
     ("testSuperclassSubscriptExprWithExprList", testSuperclassSubscriptExprWithExprList),
     ("testSuperclassSubscriptExprWithVariables", testSuperclassSubscriptExprWithVariables),
+    ("testSuperclassSubscriptArgumentWithIdentifier", testSuperclassSubscriptArgumentWithIdentifier),
     ("testSuperclassInitializerExpression", testSuperclassInitializerExpression),
     ("testSourceRange", testSourceRange),
   ]

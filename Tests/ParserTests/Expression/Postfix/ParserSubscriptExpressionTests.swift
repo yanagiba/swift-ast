@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -37,6 +37,17 @@ class ParserSubscriptExpressionTests: XCTestCase {
     parseExpressionAndTest("foo [try bar()]", "foo[try bar()]")
   }
 
+  func testArgumentWithIdentifier() {
+    // https://github.com/yanagiba/swift-ast/issues/38
+    parseExpressionAndTest("foo[bar: 0]", "foo[bar: 0]", testClosure: { expr in
+      XCTAssertTrue(expr is SubscriptExpression)
+    })
+    parseExpressionAndTest("foo[a: 0, b: 1, c: 2]", "foo[a: 0, b: 1, c: 2]")
+    parseExpressionAndTest("foo [bar: n+1]", "foo[bar: n + 1]")
+    parseExpressionAndTest("foo [bar: bar()]", "foo[bar: bar()]")
+    parseExpressionAndTest("foo [bar: try bar()]", "foo[bar: try bar()]")
+  }
+
   func testSourceRange() {
     let testExprs: [(testString: String, expectedEndColumn: Int)] = [
       ("foo[0]", 7),
@@ -53,6 +64,7 @@ class ParserSubscriptExpressionTests: XCTestCase {
     ("testSingleExpr", testSingleExpr),
     ("testMultipleExprs", testMultipleExprs),
     ("testVariables", testVariables),
+    ("testArgumentWithIdentifier", testArgumentWithIdentifier),
     ("testSourceRange", testSourceRange),
   ]
 }

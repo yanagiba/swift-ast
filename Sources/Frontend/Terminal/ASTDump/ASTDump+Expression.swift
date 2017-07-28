@@ -340,10 +340,10 @@ extension SelfExpression : TTYASTDumpRepresentable {
       body += "kind: `self`"
     case .method(let name):
       body += "kind: `method`, method_name: `\(name)`"
-    case .subscript(let exprs):
+    case .subscript(let args):
       body += "kind: `subscript`"
       body += "\n"
-      body += dump(exprs).indented
+      body += dump(args).indented
     case .initializer:
       body += "kind: `initializer`"
     }
@@ -356,8 +356,8 @@ extension SubscriptExpression : TTYASTDumpRepresentable {
     let head = dump("subscript_expr", sourceRange)
     let exprDump = postfixExpression.ttyDump.indented
     let indexHead = "index:".indented
-    let exprsDump = dump(expressionList).indented
-    return "\(head)\n\(exprDump)\n\(indexHead)\n\(exprsDump)"
+    let argsDump = dump(arguments).indented
+    return "\(head)\n\(exprDump)\n\(indexHead)\n\(argsDump)"
   }
 }
 
@@ -368,10 +368,10 @@ extension SuperclassExpression : TTYASTDumpRepresentable {
     switch kind {
     case .method(let name):
       body += "kind: `method`, method_name: `\(name)`"
-    case .subscript(let exprs):
+    case .subscript(let args):
       body += "kind: `subscript`"
       body += "\n"
-      body += dump(exprs).indented
+      body += dump(args).indented
     case .initializer:
       body += "kind: `initializer`"
     }

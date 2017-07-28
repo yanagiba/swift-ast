@@ -267,13 +267,13 @@ extension Parser {
         resultExpr =
           try parsePostfixMemberExpression(postfixExpression: resultExpr)
       case .leftSquare:
-        let exprList = try parseExpressionList()
+        let subscriptArguments = try parseSubscriptArguments()
         let endLocation = getEndLocation()
         if !_lexer.match(.rightSquare) {
             throw _raiseFatal(.expectedCloseSquareExprList)
         }
         let subscriptExpr = SubscriptExpression(
-          postfixExpression: resultExpr, expressionList: exprList)
+        postfixExpression: resultExpr, arguments: subscriptArguments)
         subscriptExpr.setSourceRange(resultExpr.sourceRange.start, endLocation)
         resultExpr = subscriptExpr
       case .postfixExclaim:
@@ -337,7 +337,8 @@ extension Parser {
 
       repeat {
         if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare { // swift-lint:suppress(inverted_logic,long_line)
-          // TODO: but this is a bug due to lacking of minimal expression evaluation with operator precedence
+                                  // TODO: we need to suppress the warning because there is a bug on swift-lint
+                                  // due to lacking of minimal expression evaluation with operator precedence
           guard let id = _lexer.readNamedIdentifier() else {
             throw _raiseFatal(.expectedParameterNameFuncCall)
           }
@@ -724,6 +725,29 @@ extension Parser {
     return tupleExpr
   }
 
+  private func parseSubscriptArguments() throws -> [SubscriptArgument] {
+    var arguments: [SubscriptArgument] = []
+
+    repeat {
+      var identifier: Identifier?
+      if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare { // swift-lint:suppress(inverted_logic,long_line)
+                                // TODO: we need to suppress the warning because there is a bug on swift-lint
+                                // due to lacking of minimal expression evaluation with operator precedence
+        guard let id = _lexer.readNamedIdentifier() else {
+          throw _raiseFatal(.expectedParameterNameFuncCall)
+        }
+        _lexer.advance()
+        identifier = id
+      }
+
+      let argExpr = try parseExpression()
+      let argument = SubscriptArgument(identifier: identifier, expression: argExpr)
+      arguments.append(argument)
+    } while _lexer.match(.comma)
+
+    return arguments
+  }
+
   private func parseSuperclassExpression(
     startRange: SourceRange
   ) throws -> SuperclassExpression {
@@ -740,12 +764,12 @@ extension Parser {
         throw _raiseFatal(.expectedIdentifierAfterSuperDotExpr)
       }
     case .leftSquare:
-      let expressionList = try parseExpressionList()
+      let subscriptArguments = try parseSubscriptArguments()
       endLocation = getEndLocation()
       if !_lexer.match(.rightSquare) {
         throw _raiseFatal(.expectedCloseSquareExprList)
       }
-      kind = .subscript(expressionList)
+      kind = .subscript(subscriptArguments)
     default:
       throw _raiseFatal(.expectedDotOrSubscriptAfterSuper)
     }
@@ -770,12 +794,12 @@ extension Parser {
         throw _raiseFatal(.expectedIdentifierAfterSelfDotExpr)
       }
     case .leftSquare:
-      let expressionList = try parseExpressionList()
+      let subscriptArguments = try parseSubscriptArguments()
       endLocation = getEndLocation()
       if !_lexer.match(.rightSquare) {
           throw _raiseFatal(.expectedCloseSquareExprList)
       }
-      kind = .subscript(expressionList)
+      kind = .subscript(subscriptArguments)
     default:
       kind = .self
     }

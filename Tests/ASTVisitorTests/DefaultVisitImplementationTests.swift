@@ -568,7 +568,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   func testVisitSubscriptExpression() {
     let node = SubscriptExpression(
       postfixExpression: WildcardExpression(),
-      expressionList: []
+      arguments: []
     )
     do {
       let result = try defaultVisitor.visit(node)

@@ -850,7 +850,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitSelfExpression() {
     let nodes = [
-      SelfExpression(kind: .subscript([WildcardExpression()])),
+      SelfExpression(kind: .subscript([SubscriptArgument(expression: WildcardExpression())])),
       SelfExpression(kind: .initializer),
     ]
     do {
@@ -866,7 +866,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitSubscriptExpression() {
     let node = SubscriptExpression(
       postfixExpression: WildcardExpression(),
-      expressionList: []
+      arguments: []
     )
     do {
       let result = try defaultVisitor.traverse(node as Expression)
@@ -878,7 +878,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitSuperclassExpression() {
     let nodes = [
-      SuperclassExpression(kind: .subscript([WildcardExpression()])),
+      SuperclassExpression(kind: .subscript([SubscriptArgument(expression: WildcardExpression())])),
       SuperclassExpression(kind: .initializer),
     ]
     do {

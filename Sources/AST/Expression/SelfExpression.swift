@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ public class SelfExpression : ASTNode, PrimaryExpression {
     case `self`
     case method(String) // Note: even though this includes functions and properties,
                         // but Swift PL reference calls it `self-method-expression`
-    case `subscript`(ExpressionList)
+    case `subscript`([SubscriptArgument])
     case initializer
   }
 
@@ -37,8 +37,8 @@ public class SelfExpression : ASTNode, PrimaryExpression {
       return "self"
     case .method(let name):
       return "self.\(name)"
-    case .subscript(let exprs):
-      return "self[\(exprs.textDescription)]"
+    case .subscript(let arguments):
+      return "self[\(arguments.textDescription)]"
     case .initializer:
       return "self.init"
     }

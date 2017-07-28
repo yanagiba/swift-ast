@@ -17,6 +17,16 @@
 import AST
 import Bocho
 
+extension SubscriptArgument {
+  public var ttyPrint: String {
+    var identifierText = ""
+    if let id = identifier {
+      identifierText = "\(id): "
+    }
+    return "\(identifierText)\(expression.ttyPrint)"
+  }
+}
+
 extension AssignmentOperatorExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     return leftExpression.ttyPrint + " = " + rightExpression.ttyPrint
@@ -212,7 +222,7 @@ extension SelfExpression : TTYASTPrintRepresentable {
 
 extension SubscriptExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return "\(postfixExpression.ttyPrint)[\(expressionList.map { $0.ttyPrint }.joined(separator: ", "))]"
+    return "\(postfixExpression.ttyPrint)[\(arguments.map { $0.ttyPrint }.joined(separator: ", "))]"
   }
 }
 
