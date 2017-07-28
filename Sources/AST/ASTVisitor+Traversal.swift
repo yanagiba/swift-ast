@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -708,7 +708,8 @@ extension ASTVisitor {
   public func traverse(_ expr: SelfExpression) throws -> Bool {
     guard try visit(expr) else { return false }
 
-    if case .subscript(let exprs) = expr.kind {
+    if case .subscript(let arguments) = expr.kind {
+      let exprs = arguments.map({ $0.expression })
       return try traverse(exprs)
     }
 
@@ -719,13 +720,16 @@ extension ASTVisitor {
     guard try visit(expr) else { return false }
 
     guard try traverse(expr.postfixExpression) else { return false }
-    return try traverse(expr.expressionList)
+
+    let argumentExprs = expr.arguments.map({ $0.expression })
+    return try traverse(argumentExprs)
   }
 
   public func traverse(_ expr: SuperclassExpression) throws -> Bool {
     guard try visit(expr) else { return false }
 
-    if case .subscript(let exprs) = expr.kind {
+    if case .subscript(let arguments) = expr.kind {
+      let exprs = arguments.map({ $0.expression })
       return try traverse(exprs)
     }
 

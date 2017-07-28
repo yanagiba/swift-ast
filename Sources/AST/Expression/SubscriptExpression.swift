@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 public class SubscriptExpression : ASTNode, PostfixExpression {
   public let postfixExpression: PostfixExpression
-  public let expressionList: ExpressionList
+  public let arguments: [SubscriptArgument]
 
   public init(
-    postfixExpression: PostfixExpression, expressionList: ExpressionList
+    postfixExpression: PostfixExpression, arguments: [SubscriptArgument]
   ) {
     self.postfixExpression = postfixExpression
-    self.expressionList = expressionList
+    self.arguments = arguments
   }
 
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    return "\(postfixExpression.textDescription)[\(expressionList.textDescription)]"
+    return "\(postfixExpression.textDescription)[\(arguments.textDescription)]"
   }
 }

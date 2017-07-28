@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:17:1-28:10>
+top_level_decl <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:17:1-29:11>
   subscript_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:17:1-17:7>
     identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:17:1-17:4>
       kind: `identifier`, identifier: `foo`
@@ -116,3 +116,9 @@ top_level_decl <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:17
       operator: `..<`
       literal_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:28:8-28:9>
         kind: `int`, literal: `1`, raw_text: `1`
+  subscript_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:29:1-29:11>
+    identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:29:1-29:2>
+      kind: `identifier`, identifier: `a`
+    index:
+    0: identifier: `safe` identifier_expr <range: TTYASTDumpTestResources/SubscriptExpressionTests.swift:29:9-29:10>
+      kind: `identifier`, identifier: `i`

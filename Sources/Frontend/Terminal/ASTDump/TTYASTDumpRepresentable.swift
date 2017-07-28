@@ -23,6 +23,7 @@ protocol TTYASTDumpRepresentable {
 
   func dump(_ nodeType: String, _ sourceRange: SourceRange) -> String
   func dump(_ exprs: ExpressionList) -> String
+  func dump(_ args: [SubscriptArgument]) -> String
   func dump(_ funcSign: FunctionSignature) -> String
   func dump(_ funcSignParams: [FunctionSignature.Parameter]) -> String
   func dump(_ funcResult: FunctionResult) -> String
@@ -43,6 +44,19 @@ extension TTYASTDumpRepresentable {
   func dump(_ exprs: ExpressionList) -> String {
     return exprs.enumerated()
       .map { "\($0.offset): \($0.element.ttyDump)" }
+      .joined(separator: "\n")
+  }
+
+  func dump(_ args: [SubscriptArgument]) -> String {
+    return args.enumerated()
+      .map { e -> String in
+        let arg = e.element
+        var idDump = ""
+        if let id = arg.identifier {
+          idDump = "identifier: `\(id)` "
+        }
+        return "\(e.offset): \(idDump)\(arg.expression.ttyDump)"
+      }
       .joined(separator: "\n")
   }
 
