@@ -16,6 +16,19 @@
 
 import Source
 
+/*
+ SequenceExpression stores a list of binary operations in a flat structure.
+
+ There always be at least two binary operations in this structure.
+ When there is only one operation, we simply return it directly instead of
+ building it into this sequence.
+
+ The operations in SequenceExpression should be folded into a tree structure after
+ semantic analysis. Therefore, SequenceExpression should only exist in parsing
+ results and/or when the sematic analysis is disabled intentionally. In other
+ words, if a SequenceExpression survives even after an active semantic analysis,
+ there must be an error in the sema process, thus, error needs to be reported.
+ */
 public class SequenceExpression : ASTNode, Expression {
   public enum ElementKind {
     case expression(Expression)
