@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-18:21>
+top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-20:39>
   sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-17:9>
     0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-17:2>
         kind: `identifier`, identifier: `a`
@@ -20,3 +20,30 @@ top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:
     5: type: binary_op operator: `...`
     6: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:18:20-18:21>
         kind: `identifier`, identifier: `d`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:19:1-19:17>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:19:1-19:4>
+        kind: `identifier`, identifier: `foo`
+    1: type: assignment_op
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:19:7-19:10>
+        kind: `identifier`, identifier: `bar`
+    3: type: assignment_op
+    4: type: expression   literal_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:19:13-19:17>
+        kind: `bool`, literal: `true`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:20:1-20:39>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:20:1-20:4>
+        kind: `identifier`, identifier: `foo`
+    1: type: assignment_op
+    2: type: expression   try_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:20:9-20:18>
+        kind: `forced_try`
+        identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:20:15-20:18>
+          kind: `identifier`, identifier: `bar`
+    3: type: assignment_op
+    4: type: expression   literal_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:20:23-20:27>
+        kind: `bool`, literal: `true`
+    5: type: assignment_op
+    6: type: expression   try_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:20:32-20:39>
+        kind: `try`
+        function_call_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:20:36-20:39>
+          identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:20:36-20:37>
+            kind: `identifier`, identifier: `a`
+          arguments: <empty>

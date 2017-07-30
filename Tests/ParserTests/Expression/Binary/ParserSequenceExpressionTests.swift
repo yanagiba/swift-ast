@@ -19,7 +19,7 @@ import XCTest
 @testable import AST
 
 class ParserSequenceExpressionTests: XCTestCase {
-  func testBinaryOperators() {
+  func testBinaryOperators() { // swift-lint:suppress(high_cyclomatic_complexity)
     let testOps = [
       // regular operators
       "/",
@@ -100,7 +100,51 @@ class ParserSequenceExpressionTests: XCTestCase {
     }
   }
 
+  func testAssignmentOperators() { // swift-lint:suppress(high_cyclomatic_complexity)
+    parseExpressionAndTest("foo = bar = true", "foo = bar = true", testClosure: { expr in
+      guard let seqExpr = expr as? SequenceExpression else {
+        XCTFail("Failed in getting a sequence expression")
+        return
+      }
+      let elements = seqExpr.elements
+      guard case .expression(let ele0) = elements[0], ele0 is IdentifierExpression,
+        case .assignmentOperator = elements[1],
+        case .expression(let ele2) = elements[2], ele2 is IdentifierExpression,
+        case .assignmentOperator = elements[3],
+        case .expression(let ele4) = elements[4], ele4 is LiteralExpression
+      else {
+        XCTFail("Failed in getting a sequence element")
+        return
+      }
+      XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 17))
+    })
+
+    parseExpressionAndTest(
+      "a = try b()  = true   = try! c()",
+      "a = try b() = true = try! c()",
+      testClosure: { expr in
+      guard let seqExpr = expr as? SequenceExpression else {
+        XCTFail("Failed in getting a sequence expression")
+        return
+      }
+      let elements = seqExpr.elements
+      guard case .expression(let ele0) = elements[0], ele0 is IdentifierExpression,
+        case .assignmentOperator = elements[1],
+        case .expression(let ele2) = elements[2], ele2 is TryOperatorExpression,
+        case .assignmentOperator = elements[3],
+        case .expression(let ele4) = elements[4], ele4 is LiteralExpression,
+        case .assignmentOperator = elements[5],
+        case .expression(let ele6) = elements[6], ele6 is TryOperatorExpression
+      else {
+        XCTFail("Failed in getting a sequence element")
+        return
+      }
+      XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 33))
+    })
+  }
+
   static var allTests = [
     ("testBinaryOperators", testBinaryOperators),
+    ("testAssignmentOperators", testAssignmentOperators),
   ]
 }

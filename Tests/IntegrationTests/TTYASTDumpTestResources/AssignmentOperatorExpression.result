@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:1-22:17>
+top_level_decl <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:1-21:18>
   assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:1-17:41>
     tuple_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:1-17:15>
       0: identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:17:2-17:3>
@@ -45,11 +45,3 @@ top_level_decl <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests
       kind: `forced_try`
       identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:21:15-21:18>
         kind: `identifier`, identifier: `bar`
-  assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:1-22:17>
-    assign_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:1-22:10>
-      identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:1-22:4>
-        kind: `identifier`, identifier: `foo`
-      identifier_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:7-22:10>
-        kind: `identifier`, identifier: `bar`
-    literal_expr <range: TTYASTDumpTestResources/AssignmentOperatorExpressionTests.swift:22:13-22:17>
-      kind: `bool`, literal: `true`

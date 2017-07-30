@@ -19,4 +19,3 @@ foo = bar
 foo  =  try  bar
 foo  =  try?  bar
 foo  =  try!  bar
-foo = bar = true // TODO: this should emit syntax error

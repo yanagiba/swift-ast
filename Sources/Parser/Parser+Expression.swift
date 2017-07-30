@@ -124,6 +124,23 @@ extension Parser {
         let seqExpr = SequenceExpression(elements: elements)
         seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
         resultExpr = seqExpr
+      case let (lhs as AssignmentOperatorExpression, rhs as AssignmentOperatorExpression):
+        var elements = [SequenceExpression.Element]()
+        elements.append(.expression(lhs.leftExpression))
+        elements.append(.assignmentOperator)
+        elements.append(.expression(lhs.rightExpression))
+        elements.append(.assignmentOperator)
+        elements.append(.expression(rhs.rightExpression))
+        let seqExpr = SequenceExpression(elements: elements)
+        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
+        resultExpr = seqExpr
+      case let (lhs as SequenceExpression, rhs as AssignmentOperatorExpression):
+        var elements = lhs.elements
+        elements.append(.assignmentOperator)
+        elements.append(.expression(rhs.rightExpression))
+        let seqExpr = SequenceExpression(elements: elements)
+        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
+        resultExpr = seqExpr
       default:
         resultExpr = biExpr
       }
