@@ -56,6 +56,7 @@ class TTYASTPrintTests : XCTestCase {
       "AssignmentOperatorExpression",
       "TernaryConditionalOperatorExpression",
       "TypeCastingOperatorExpression",
+      "SequenceExpression",
 
       // try expression
       "TryOperatorExpression",

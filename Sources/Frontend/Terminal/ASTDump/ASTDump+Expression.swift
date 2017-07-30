@@ -351,6 +351,37 @@ extension SelfExpression : TTYASTDumpRepresentable {
   }
 }
 
+extension SequenceExpression : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("sequence_expr", sourceRange)
+
+    let body = elements.enumerated().map {
+      let elemDump: String
+      switch $0.element {
+      case .expression(let expr):
+        elemDump = "type: expression " + expr.ttyDump.indented
+      case .assignmentOperator:
+        elemDump = "type: assignment_op"
+      case .binaryOperator(let op):
+        elemDump = "type: binary_op operator: `\(op)`"
+      case .ternaryConditionalOperator(let expr):
+        elemDump = "type: ternary_conditional_op " + expr.ttyDump.indented
+      case .typeCheck(let type):
+        elemDump = "type: check " + type.textDescription
+      case .typeCast(let type):
+        elemDump = "type: cast " + type.textDescription
+      case .typeConditionalCast(let type):
+        elemDump = "type: conditional_cast " + type.textDescription
+      case .typeForcedCast(let type):
+        elemDump = "type: forced_cast " + type.textDescription
+      }
+      return "\($0.offset): \(elemDump)"
+    }.joined(separator: "\n").indented
+
+    return "\(head)\n\(body)"
+  }
+}
+
 extension SubscriptExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("subscript_expr", sourceRange)

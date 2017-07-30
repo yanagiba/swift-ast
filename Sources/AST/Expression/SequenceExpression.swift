@@ -29,8 +29,8 @@ import Source
  words, if a SequenceExpression survives even after an active semantic analysis,
  there must be an error in the sema process, thus, error needs to be reported.
  */
-public class SequenceExpression : ASTNode, Expression {
-  public enum ElementKind {
+public class SequenceExpression : ASTNode, BinaryExpression {
+  public enum Element {
     case expression(Expression)
     case assignmentOperator
     case binaryOperator(Operator)
@@ -41,9 +41,35 @@ public class SequenceExpression : ASTNode, Expression {
     case typeForcedCast(Type)
   }
 
-  public typealias Element = (ElementKind, SourceRange)
-
   public let elements: [Element]
+
+  override public var sourceRange: SourceRange {
+    var startLocation: SourceLocation?
+    if let firstElement = elements.first, case .expression(let firstExpr) = firstElement {
+      startLocation = firstExpr.sourceRange.start
+    }
+    var endLocation: SourceLocation?
+    if let lastElement = elements.last {
+      switch lastElement {
+      case .expression(let expr):
+        endLocation = expr.sourceRange.end
+      case .typeCheck(let type):
+        endLocation = type.sourceRange.end
+      case .typeCast(let type):
+        endLocation = type.sourceRange.end
+      case .typeConditionalCast(let type):
+        endLocation = type.sourceRange.end
+      case .typeForcedCast(let type):
+        endLocation = type.sourceRange.end
+      default:
+        endLocation = nil
+      }
+    }
+    guard let start = startLocation, let end = endLocation else {
+      return .INVALID
+    }
+    return SourceRange(start: start, end: end)
+  }
 
   public init(elements: [Element]) {
     self.elements = elements
@@ -52,11 +78,11 @@ public class SequenceExpression : ASTNode, Expression {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    return elements.map({ $0.0.textDescription }).joined(separator: " ")
+    return elements.map({ $0.textDescription }).joined(separator: " ")
   }
 }
 
-extension SequenceExpression.ElementKind : ASTTextRepresentable {
+extension SequenceExpression.Element : ASTTextRepresentable {
   public var textDescription: String {
     switch self {
     case .expression(let expr):
@@ -68,13 +94,13 @@ extension SequenceExpression.ElementKind : ASTTextRepresentable {
     case .ternaryConditionalOperator(let expr):
       return "? \(expr.textDescription) :"
     case .typeCheck(let type):
-      return "as \(type.textDescription)"
+      return "is \(type.textDescription)"
     case .typeCast(let type):
       return "as \(type.textDescription)"
     case .typeConditionalCast(let type):
-      return "as \(type.textDescription)"
+      return "as? \(type.textDescription)"
     case .typeForcedCast(let type):
-      return "as \(type.textDescription)"
+      return "as! \(type.textDescription)"
     }
   }
 }

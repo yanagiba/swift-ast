@@ -1,0 +1,22 @@
+top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-18:21>
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-17:9>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-17:2>
+        kind: `identifier`, identifier: `a`
+    1: type: binary_op operator: `/`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:3-17:4>
+        kind: `identifier`, identifier: `b`
+    3: type: binary_op operator: `<>`
+    4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:8-17:9>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:18:1-18:21>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:18:1-18:2>
+        kind: `identifier`, identifier: `a`
+    1: type: binary_op operator: `/`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:18:3-18:4>
+        kind: `identifier`, identifier: `b`
+    3: type: binary_op operator: `<>`
+    4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:18:8-18:9>
+        kind: `identifier`, identifier: `c`
+    5: type: binary_op operator: `...`
+    6: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:18:20-18:21>
+        kind: `identifier`, identifier: `d`

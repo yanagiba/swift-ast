@@ -41,7 +41,7 @@ class ParserConditionTests: XCTestCase { // Note: we will test condition and con
         XCTFail("Failed in getting an expression condition.")
         return
       }
-      XCTAssertTrue(expr is BinaryOperatorExpression)
+      XCTAssertTrue(expr is SequenceExpression)
       XCTAssertEqual(expr.textDescription, "cond1 && cond2 || cond3")
     })
   }
