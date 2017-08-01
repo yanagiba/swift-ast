@@ -86,6 +86,13 @@ class ParserExpressionPatternTests: XCTestCase {
     parsePatternAndTest("self.foo()", "self.foo()", forPatternMatching: true)
   }
 
+  func testRangeInCase() { // https://github.com/yanagiba/swift-ast/issues/41
+    parsePatternAndTest("0...5", "0 ... 5", forPatternMatching: true)
+    parsePatternAndTest("zero..<5", "zero ..< 5", forPatternMatching: true)
+    parsePatternAndTest("0 ... five", "0 ... five", forPatternMatching: true)
+    parsePatternAndTest("zero ..< five", "zero ..< five", forPatternMatching: true)
+  }
+
   func testSourceRange() {
     parsePatternAndTest("0", "0", forPatternMatching: true, testClosure: { pttrn in
       XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 2))
@@ -102,6 +109,7 @@ class ParserExpressionPatternTests: XCTestCase {
     ("testInVarDecl", testInVarDecl),
     ("testCastRawValue", testCastRawValue),
     ("testSelfExpr", testSelfExpr),
+    ("testRangeInCase", testRangeInCase),
     ("testSourceRange", testSourceRange),
   ]
 }

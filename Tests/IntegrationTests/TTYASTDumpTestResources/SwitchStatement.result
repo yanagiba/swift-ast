@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:1-33:2>
+top_level_decl <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:1-40:2>
   switch_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:1-17:14>
     identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:8-17:11>
       kind: `identifier`, identifier: `foo`
@@ -106,3 +106,25 @@ top_level_decl <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:1-3
     3: kind: `default`
       identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:32:3-32:13>
         kind: `identifier`, identifier: `statements`
+  switch_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:35:1-40:2>
+    identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:35:8-35:9>
+      kind: `identifier`, identifier: `a`
+    cases:
+    0: kind: `case`
+      items:
+      0: pattern: `zero ..< 5`
+      function_call_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:37:5-37:25>
+        identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:37:5-37:10>
+          kind: `identifier`, identifier: `print`
+        arguments:
+        0: kind: `expression`
+          literal_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:37:11-37:24>
+            kind: `string`, raw_text: `"less than 5"`
+    1: kind: `default`
+      function_call_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:39:5-39:25>
+        identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:39:5-39:10>
+          kind: `identifier`, identifier: `print`
+        arguments:
+        0: kind: `expression`
+          literal_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:39:11-39:24>
+            kind: `string`, raw_text: `"more than 5"`

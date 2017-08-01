@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -172,6 +172,13 @@ extension Parser {
       return wrapOptional(enumCasePattern: enumCasePttrn, config: config)
     }
     var endLocation = startRange.end
+    if config.forPatternMatching, case .binaryOperator(let biOp) = _lexer.read(.dummyBinaryOperator) {
+      let lhsExpr = IdentifierExpression(kind: .identifier(id, nil))
+      let rhsExpr = try parseExpression()
+      let biOpExpr = BinaryOperatorExpression(
+        binaryOperator: biOp, leftExpression: lhsExpr, rightExpression: rhsExpr)
+      return ExpressionPattern(expression: biOpExpr)
+    }
     if _lexer.match(.postfixQuestion) {
       let idPttrnForOpt = IdentifierPattern(identifier: id)
       idPttrnForOpt.setSourceRange(startRange)

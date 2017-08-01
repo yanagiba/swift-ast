@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -30,4 +30,11 @@ case pattern3 where condition,
   statements
 default:
   statements
+}
+
+switch a { // https://github.com/yanagiba/swift-ast/issues/41
+  case zero..<5:
+    print("less than 5")
+  default:
+    print("more than 5")
 }
