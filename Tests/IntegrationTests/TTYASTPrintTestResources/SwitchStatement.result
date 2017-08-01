@@ -27,3 +27,9 @@ case pattern3 where condition, pattern4 where condition:
 default:
   statements
 }
+switch a {
+case zero ..< 5:
+  print("less than 5")
+default:
+  print("more than 5")
+}
