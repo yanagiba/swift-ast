@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -79,5 +79,25 @@ extension Parser {
 
     _lexer.advance()
     return op
+  }
+
+  func parseShebang() -> Shebang? {
+    guard _lexer.look().kind == .hash else {
+      return nil
+    }
+    var remainingFirstLine: String?
+    switch _lexer.look(ahead: 1).kind {
+    case .postfixExclaim:
+      remainingFirstLine = _lexer.readUntilEOL().trimmingCharacters(in: .whitespaces)
+    case .binaryOperator("!/"):
+      remainingFirstLine = "/" + _lexer.readUntilEOL()
+    default:
+      return nil
+    }
+    guard let interpreterDirective = remainingFirstLine else {
+      return nil
+    }
+    _lexer.advance(by: 2)
+    return Shebang(interpreterDirective: interpreterDirective)
   }
 }

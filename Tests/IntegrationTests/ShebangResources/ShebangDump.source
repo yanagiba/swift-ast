@@ -1,3 +1,5 @@
+#!/usr/bin/env swift
+
 /*
    Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
@@ -14,14 +16,4 @@
    limitations under the License.
 */
 
-import XCTest
-
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(TTYASTDumpTests.allTests),
-    testCase(TTYASTPrintTests.allTests),
-    testCase(ShebangIntegrationTests.allTests),
-  ]
-}
-#endif
+print("foobar")

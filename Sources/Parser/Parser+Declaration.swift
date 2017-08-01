@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,8 +21,9 @@ import Diagnostic
 
 extension Parser {
   func parseTopLevelDeclaration() throws -> TopLevelDeclaration {
+    let shebang = parseShebang()
     let stmts = try parseStatements()
-    let topLevelDecl = TopLevelDeclaration(statements: stmts, comments: _lexer.comments)
+    let topLevelDecl = TopLevelDeclaration(statements: stmts, comments: _lexer.comments, shebang: shebang)
     for stmt in stmts {
       if let node = stmt as? ASTNode {
         node.setLexicalParent(topLevelDecl)

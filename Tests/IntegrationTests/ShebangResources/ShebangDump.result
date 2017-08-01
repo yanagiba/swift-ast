@@ -1,0 +1,9 @@
+shebang `/usr/bin/env swift`
+top_level_decl <range: ShebangResources/ShebangDumpTests.swift:19:1-19:16>
+  function_call_expr <range: ShebangResources/ShebangDumpTests.swift:19:1-19:16>
+    identifier_expr <range: ShebangResources/ShebangDumpTests.swift:19:1-19:6>
+      kind: `identifier`, identifier: `print`
+    arguments:
+    0: kind: `expression`
+      literal_expr <range: ShebangResources/ShebangDumpTests.swift:19:7-19:15>
+        kind: `string`, raw_text: `"foobar"`
