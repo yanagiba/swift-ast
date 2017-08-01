@@ -158,6 +158,50 @@ extension Parser {
         let seqExpr = SequenceExpression(elements: elements)
         seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
         resultExpr = seqExpr
+      case let (lhs as TypeCastingOperatorExpression, rhs as TypeCastingOperatorExpression):
+        var elements = [SequenceExpression.Element]()
+        switch lhs.kind {
+        case let .check(expr, type):
+          elements.append(.expression(expr))
+          elements.append(.typeCheck(type))
+        case let .cast(expr, type):
+          elements.append(.expression(expr))
+          elements.append(.typeCast(type))
+        case let .conditionalCast(expr, type):
+          elements.append(.expression(expr))
+          elements.append(.typeConditionalCast(type))
+        case let .forcedCast(expr, type):
+          elements.append(.expression(expr))
+          elements.append(.typeForcedCast(type))
+        }
+        switch rhs.kind {
+        case .check(_, let type):
+          elements.append(.typeCheck(type))
+        case .cast(_, let type):
+          elements.append(.typeCast(type))
+        case .conditionalCast(_, let type):
+          elements.append(.typeConditionalCast(type))
+        case .forcedCast(_, let type):
+          elements.append(.typeForcedCast(type))
+        }
+        let seqExpr = SequenceExpression(elements: elements)
+        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
+        resultExpr = seqExpr
+      case let (lhs as SequenceExpression, rhs as TypeCastingOperatorExpression):
+        var elements = lhs.elements
+        switch rhs.kind {
+        case .check(_, let type):
+          elements.append(.typeCheck(type))
+        case .cast(_, let type):
+          elements.append(.typeCast(type))
+        case .conditionalCast(_, let type):
+          elements.append(.typeConditionalCast(type))
+        case .forcedCast(_, let type):
+          elements.append(.typeForcedCast(type))
+        }
+        let seqExpr = SequenceExpression(elements: elements)
+        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
+        resultExpr = seqExpr
       default:
         resultExpr = biExpr
       }

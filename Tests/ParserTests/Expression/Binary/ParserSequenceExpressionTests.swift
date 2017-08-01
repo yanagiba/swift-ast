@@ -54,7 +54,7 @@ class ParserSequenceExpressionTests: XCTestCase {
 
         parseExpressionAndTest(testCode, expectedCode, testClosure: { expr in
           guard let seqExpr = expr as? SequenceExpression else {
-            XCTFail("Failed in getting a sequence expression")
+            XCTFail("Failed in getting a sequence expression for code `testCode`")
             return
           }
           let elements = seqExpr.elements
@@ -79,7 +79,7 @@ class ParserSequenceExpressionTests: XCTestCase {
 
         parseExpressionAndTest(testCode, expectedCode, testClosure: { expr in
           guard let seqExpr = expr as? SequenceExpression else {
-            XCTFail("Failed in getting a sequence expression")
+            XCTFail("Failed in getting a sequence expression for code `testCode`")
             return
           }
           let elements = seqExpr.elements
@@ -169,9 +169,47 @@ class ParserSequenceExpressionTests: XCTestCase {
     )
   }
 
+  func testTypeCastingOperators() {
+    let castings = ["is", "as", "as?", "as!"]
+    for c1 in castings {
+      for c2 in castings {
+        let testCode = "foobar \(c1) Foo \(c2) Bar"
+        parseExpressionAndTest(testCode, testCode, testClosure: { expr in
+          guard let sequenceExpr = expr as? SequenceExpression else {
+            XCTFail("Failed in getting a sequence expr for code `\(testCode)`.")
+            return
+          }
+
+          let elements = sequenceExpr.elements
+          guard case .expression(let ele0) = elements[0], ele0 is IdentifierExpression else {
+            XCTFail("Failed in getting a sequence element")
+            return
+          }
+
+          switch (c1, elements[1]) {
+          case ("is", .typeCheck), ("as", .typeCast), ("as?", .typeConditionalCast), ("as!", .typeForcedCast):
+            break
+          default:
+            XCTFail("Failed in getting a type casting")
+          }
+
+          switch (c2, elements[2]) {
+          case ("is", .typeCheck), ("as", .typeCast), ("as?", .typeConditionalCast), ("as!", .typeForcedCast):
+            break
+          default:
+            XCTFail("Failed in getting a type casting")
+          }
+
+          XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 1 + testCode.count))
+        })
+      }
+    }
+  }
+
   static var allTests = [
     ("testBinaryOperators", testBinaryOperators),
     ("testAssignmentOperators", testAssignmentOperators),
     ("testTernaryConditionalOperators", testTernaryConditionalOperators),
+    ("testTypeCastingOperators", testTypeCastingOperators),
   ]
 }

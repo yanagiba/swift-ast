@@ -19,3 +19,19 @@ a/b <> c       ... d
 foo = bar = true
 foo  =  try!  bar  =  true  =  try a()
 a ? b : c ? d ? e : f : g
+foobar is Foo is Bar
+foobar is Foo as Bar
+foobar is Foo as? Bar
+foobar is Foo as! Bar
+foobar as Foo is Bar
+foobar as Foo as Bar
+foobar as Foo as? Bar
+foobar as Foo as! Bar
+foobar as? Foo is Bar
+foobar as? Foo as Bar
+foobar as? Foo as? Bar
+foobar as? Foo as! Bar
+foobar as! Foo is Bar
+foobar as! Foo as Bar
+foobar as! Foo as? Bar
+foobar as! Foo as! Bar

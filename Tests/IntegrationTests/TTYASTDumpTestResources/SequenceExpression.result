@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-21:26>
+top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-37:23>
   sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-17:9>
     0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-17:2>
         kind: `identifier`, identifier: `a`
@@ -63,3 +63,83 @@ top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:
           kind: `identifier`, identifier: `f`
     4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:21:25-21:26>
         kind: `identifier`, identifier: `g`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:22:1-22:21>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:22:1-22:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: check Foo
+    2: type: check Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:23:1-23:21>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:23:1-23:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: check Foo
+    2: type: cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:24:1-24:22>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:24:1-24:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: check Foo
+    2: type: conditional_cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:25:1-25:22>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:25:1-25:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: check Foo
+    2: type: forced_cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:26:1-26:21>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:26:1-26:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: cast Foo
+    2: type: check Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:27:1-27:21>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:27:1-27:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: cast Foo
+    2: type: cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:28:1-28:22>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:28:1-28:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: cast Foo
+    2: type: conditional_cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:29:1-29:22>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:29:1-29:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: cast Foo
+    2: type: forced_cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:30:1-30:22>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:30:1-30:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: conditional_cast Foo
+    2: type: check Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:31:1-31:22>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:31:1-31:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: conditional_cast Foo
+    2: type: cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:32:1-32:23>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:32:1-32:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: conditional_cast Foo
+    2: type: conditional_cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:33:1-33:23>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:33:1-33:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: conditional_cast Foo
+    2: type: forced_cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:34:1-34:22>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:34:1-34:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: forced_cast Foo
+    2: type: check Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:35:1-35:22>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:35:1-35:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: forced_cast Foo
+    2: type: cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:36:1-36:23>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:36:1-36:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: forced_cast Foo
+    2: type: conditional_cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:37:1-37:23>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:37:1-37:7>
+        kind: `identifier`, identifier: `foobar`
+    1: type: forced_cast Foo
+    2: type: forced_cast Bar
