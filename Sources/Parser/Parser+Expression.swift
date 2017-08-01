@@ -89,7 +89,7 @@ extension Parser {
     }
   }
 
-  private func parseBinaryExpressions( // swift-lint:suppress(high_ncss)
+  private func parseBinaryExpressions( // swift-lint:suppress(high_ncss,high_cyclomatic_complexity)
     leftExpression: Expression, config: ParserExpressionConfig
   ) throws -> Expression {
     var resultExpr: Expression = leftExpression
@@ -105,7 +105,7 @@ extension Parser {
       return self._lexer.examine(potentialBinaryTokens)
     }
 
-    func append(_ biExpr: BinaryExpression) {
+    func append(_ biExpr: BinaryExpression) { // swift-lint:suppress(high_ncss)
       switch (resultExpr, biExpr) {
       case let (lhs as BinaryOperatorExpression, rhs as BinaryOperatorExpression):
         var elements = [SequenceExpression.Element]()
@@ -138,6 +138,23 @@ extension Parser {
         var elements = lhs.elements
         elements.append(.assignmentOperator)
         elements.append(.expression(rhs.rightExpression))
+        let seqExpr = SequenceExpression(elements: elements)
+        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
+        resultExpr = seqExpr
+      case let (lhs as TernaryConditionalOperatorExpression, rhs as TernaryConditionalOperatorExpression):
+        var elements = [SequenceExpression.Element]()
+        elements.append(.expression(lhs.conditionExpression))
+        elements.append(.ternaryConditionalOperator(lhs.trueExpression))
+        elements.append(.expression(lhs.falseExpression))
+        elements.append(.ternaryConditionalOperator(rhs.trueExpression))
+        elements.append(.expression(rhs.falseExpression))
+        let seqExpr = SequenceExpression(elements: elements)
+        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
+        resultExpr = seqExpr
+      case let (lhs as SequenceExpression, rhs as TernaryConditionalOperatorExpression):
+        var elements = lhs.elements
+        elements.append(.ternaryConditionalOperator(rhs.trueExpression))
+        elements.append(.expression(rhs.falseExpression))
         let seqExpr = SequenceExpression(elements: elements)
         seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
         resultExpr = seqExpr

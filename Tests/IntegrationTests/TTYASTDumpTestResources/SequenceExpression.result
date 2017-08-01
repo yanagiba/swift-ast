@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-20:39>
+top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-21:26>
   sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-17:9>
     0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-17:2>
         kind: `identifier`, identifier: `a`
@@ -47,3 +47,19 @@ top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:
           identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:20:36-20:37>
             kind: `identifier`, identifier: `a`
           arguments: <empty>
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:21:1-21:26>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:21:1-21:2>
+        kind: `identifier`, identifier: `a`
+    1: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:21:5-21:6>
+        kind: `identifier`, identifier: `b`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:21:9-21:10>
+        kind: `identifier`, identifier: `c`
+    3: type: ternary_conditional_op   ternary_cond_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:21:13-21:22>
+        identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:21:13-21:14>
+          kind: `identifier`, identifier: `d`
+        identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:21:17-21:18>
+          kind: `identifier`, identifier: `e`
+        identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:21:21-21:22>
+          kind: `identifier`, identifier: `f`
+    4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:21:25-21:26>
+        kind: `identifier`, identifier: `g`

@@ -143,8 +143,35 @@ class ParserSequenceExpressionTests: XCTestCase {
     })
   }
 
+  func testTernaryConditionalOperators() {
+     // (a ? b : c) ? (d ? e : f) : g
+    parseExpressionAndTest(
+      "a ? b : c ? d ? e : f : g",
+      "a ? b : c ? d ? e : f : g",
+      testClosure: { expr in
+        guard let sequenceExpr = expr as? SequenceExpression else {
+          XCTFail("Failed in getting a sequence expr for code `a ? b : c ? d ? e : f : g`.")
+          return
+        }
+
+        let elements = sequenceExpr.elements
+        guard case .expression(let ele0) = elements[0], ele0 is IdentifierExpression,
+          case .ternaryConditionalOperator(let ele1) = elements[1], ele1 is IdentifierExpression,
+          case .expression(let ele2) = elements[2], ele2 is IdentifierExpression,
+          case .ternaryConditionalOperator(let ele3) = elements[3], ele3 is TernaryConditionalOperatorExpression,
+          case .expression(let ele4) = elements[4], ele4 is IdentifierExpression
+        else {
+          XCTFail("Failed in getting a sequence element")
+          return
+        }
+        XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 26))
+      }
+    )
+  }
+
   static var allTests = [
     ("testBinaryOperators", testBinaryOperators),
     ("testAssignmentOperators", testAssignmentOperators),
+    ("testTernaryConditionalOperators", testTernaryConditionalOperators),
   ]
 }

@@ -2,3 +2,4 @@ a / b <> c
 a / b <> c ... d
 foo = bar = true
 foo = try! bar = true = try a()
+a ? b : c ? d ? e : f : g
