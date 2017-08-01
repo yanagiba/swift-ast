@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-37:23>
+top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-86:14>
   sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-17:9>
     0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:1-17:2>
         kind: `identifier`, identifier: `a`
@@ -143,3 +143,337 @@ top_level_decl <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:17:
         kind: `identifier`, identifier: `foobar`
     1: type: forced_cast Foo
     2: type: forced_cast Bar
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:38:1-38:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:38:1-38:2>
+        kind: `identifier`, identifier: `a`
+    1: type: binary_op operator: `&&`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:38:6-38:7>
+        kind: `identifier`, identifier: `b`
+    3: type: binary_op operator: `||`
+    4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:38:11-38:12>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:40:1-40:15>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:40:1-40:2>
+        kind: `identifier`, identifier: `a`
+    1: type: binary_op operator: `&&`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:40:6-40:7>
+        kind: `identifier`, identifier: `b`
+    3: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:40:10-40:11>
+        kind: `identifier`, identifier: `c`
+    4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:40:14-40:15>
+        kind: `identifier`, identifier: `d`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:41:1-41:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:41:1-41:2>
+        kind: `identifier`, identifier: `a`
+    1: type: binary_op operator: `&&`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:41:6-41:7>
+        kind: `identifier`, identifier: `b`
+    3: type: check c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:42:1-42:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:42:1-42:2>
+        kind: `identifier`, identifier: `a`
+    1: type: binary_op operator: `&&`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:42:6-42:7>
+        kind: `identifier`, identifier: `b`
+    3: type: cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:43:1-43:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:43:1-43:2>
+        kind: `identifier`, identifier: `a`
+    1: type: binary_op operator: `&&`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:43:6-43:7>
+        kind: `identifier`, identifier: `b`
+    3: type: conditional_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:44:1-44:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:44:1-44:2>
+        kind: `identifier`, identifier: `a`
+    1: type: binary_op operator: `&&`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:44:6-44:7>
+        kind: `identifier`, identifier: `b`
+    3: type: forced_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:45:1-45:11>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:45:1-45:2>
+        kind: `identifier`, identifier: `a`
+    1: type: assignment_op
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:45:5-45:6>
+        kind: `identifier`, identifier: `b`
+    3: type: binary_op operator: `||`
+    4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:45:10-45:11>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:46:1-46:10>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:46:1-46:2>
+        kind: `identifier`, identifier: `a`
+    1: type: assignment_op
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:46:5-46:6>
+        kind: `identifier`, identifier: `b`
+    3: type: assignment_op
+    4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:46:9-46:10>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:47:1-47:14>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:47:1-47:2>
+        kind: `identifier`, identifier: `a`
+    1: type: assignment_op
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:47:5-47:6>
+        kind: `identifier`, identifier: `b`
+    3: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:47:9-47:10>
+        kind: `identifier`, identifier: `c`
+    4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:47:13-47:14>
+        kind: `identifier`, identifier: `d`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:48:1-48:11>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:48:1-48:2>
+        kind: `identifier`, identifier: `a`
+    1: type: assignment_op
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:48:5-48:6>
+        kind: `identifier`, identifier: `b`
+    3: type: check c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:49:1-49:11>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:49:1-49:2>
+        kind: `identifier`, identifier: `a`
+    1: type: assignment_op
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:49:5-49:6>
+        kind: `identifier`, identifier: `b`
+    3: type: cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:50:1-50:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:50:1-50:2>
+        kind: `identifier`, identifier: `a`
+    1: type: assignment_op
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:50:5-50:6>
+        kind: `identifier`, identifier: `b`
+    3: type: conditional_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:51:1-51:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:51:1-51:2>
+        kind: `identifier`, identifier: `a`
+    1: type: assignment_op
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:51:5-51:6>
+        kind: `identifier`, identifier: `b`
+    3: type: forced_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:52:1-52:15>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:52:1-52:2>
+        kind: `identifier`, identifier: `x`
+    1: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:52:5-52:6>
+        kind: `identifier`, identifier: `y`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:52:9-52:10>
+        kind: `identifier`, identifier: `z`
+    3: type: binary_op operator: `||`
+    4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:52:14-52:15>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:53:1-53:14>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:53:1-53:2>
+        kind: `identifier`, identifier: `x`
+    1: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:53:5-53:6>
+        kind: `identifier`, identifier: `y`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:53:9-53:10>
+        kind: `identifier`, identifier: `z`
+    3: type: assignment_op
+    4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:53:13-53:14>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:54:1-54:18>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:54:1-54:2>
+        kind: `identifier`, identifier: `x`
+    1: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:54:5-54:6>
+        kind: `identifier`, identifier: `y`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:54:9-54:10>
+        kind: `identifier`, identifier: `z`
+    3: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:54:13-54:14>
+        kind: `identifier`, identifier: `c`
+    4: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:54:17-54:18>
+        kind: `identifier`, identifier: `d`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:55:1-55:15>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:55:1-55:2>
+        kind: `identifier`, identifier: `x`
+    1: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:55:5-55:6>
+        kind: `identifier`, identifier: `y`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:55:9-55:10>
+        kind: `identifier`, identifier: `z`
+    3: type: check c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:56:1-56:15>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:56:1-56:2>
+        kind: `identifier`, identifier: `x`
+    1: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:56:5-56:6>
+        kind: `identifier`, identifier: `y`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:56:9-56:10>
+        kind: `identifier`, identifier: `z`
+    3: type: cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:57:1-57:16>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:57:1-57:2>
+        kind: `identifier`, identifier: `x`
+    1: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:57:5-57:6>
+        kind: `identifier`, identifier: `y`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:57:9-57:10>
+        kind: `identifier`, identifier: `z`
+    3: type: conditional_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:58:1-58:16>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:58:1-58:2>
+        kind: `identifier`, identifier: `x`
+    1: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:58:5-58:6>
+        kind: `identifier`, identifier: `y`
+    2: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:58:9-58:10>
+        kind: `identifier`, identifier: `z`
+    3: type: forced_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:59:1-59:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:59:1-59:2>
+        kind: `identifier`, identifier: `a`
+    1: type: check b
+    2: type: binary_op operator: `||`
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:59:11-59:12>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:60:1-60:11>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:60:1-60:2>
+        kind: `identifier`, identifier: `a`
+    1: type: check b
+    2: type: assignment_op
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:60:10-60:11>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:61:1-61:15>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:61:1-61:2>
+        kind: `identifier`, identifier: `a`
+    1: type: check b
+    2: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:61:10-61:11>
+        kind: `identifier`, identifier: `c`
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:61:14-61:15>
+        kind: `identifier`, identifier: `d`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:62:1-62:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:62:1-62:2>
+        kind: `identifier`, identifier: `a`
+    1: type: check b
+    2: type: check c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:63:1-63:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:63:1-63:2>
+        kind: `identifier`, identifier: `a`
+    1: type: check b
+    2: type: cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:64:1-64:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:64:1-64:2>
+        kind: `identifier`, identifier: `a`
+    1: type: check b
+    2: type: conditional_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:65:1-65:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:65:1-65:2>
+        kind: `identifier`, identifier: `a`
+    1: type: check b
+    2: type: forced_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:66:1-66:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:66:1-66:2>
+        kind: `identifier`, identifier: `a`
+    1: type: cast b
+    2: type: binary_op operator: `||`
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:66:11-66:12>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:67:1-67:11>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:67:1-67:2>
+        kind: `identifier`, identifier: `a`
+    1: type: cast b
+    2: type: assignment_op
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:67:10-67:11>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:68:1-68:15>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:68:1-68:2>
+        kind: `identifier`, identifier: `a`
+    1: type: cast b
+    2: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:68:10-68:11>
+        kind: `identifier`, identifier: `c`
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:68:14-68:15>
+        kind: `identifier`, identifier: `d`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:69:1-69:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:69:1-69:2>
+        kind: `identifier`, identifier: `a`
+    1: type: cast b
+    2: type: check c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:70:1-70:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:70:1-70:2>
+        kind: `identifier`, identifier: `a`
+    1: type: cast b
+    2: type: cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:71:1-71:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:71:1-71:2>
+        kind: `identifier`, identifier: `a`
+    1: type: cast b
+    2: type: conditional_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:72:1-72:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:72:1-72:2>
+        kind: `identifier`, identifier: `a`
+    1: type: cast b
+    2: type: forced_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:73:1-73:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:73:1-73:2>
+        kind: `identifier`, identifier: `a`
+    1: type: conditional_cast b
+    2: type: binary_op operator: `||`
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:73:12-73:13>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:74:1-74:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:74:1-74:2>
+        kind: `identifier`, identifier: `a`
+    1: type: conditional_cast b
+    2: type: assignment_op
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:74:11-74:12>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:75:1-75:16>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:75:1-75:2>
+        kind: `identifier`, identifier: `a`
+    1: type: conditional_cast b
+    2: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:75:11-75:12>
+        kind: `identifier`, identifier: `c`
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:75:15-75:16>
+        kind: `identifier`, identifier: `d`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:76:1-76:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:76:1-76:2>
+        kind: `identifier`, identifier: `a`
+    1: type: conditional_cast b
+    2: type: check c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:77:1-77:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:77:1-77:2>
+        kind: `identifier`, identifier: `a`
+    1: type: conditional_cast b
+    2: type: cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:78:1-78:14>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:78:1-78:2>
+        kind: `identifier`, identifier: `a`
+    1: type: conditional_cast b
+    2: type: conditional_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:79:1-79:14>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:79:1-79:2>
+        kind: `identifier`, identifier: `a`
+    1: type: conditional_cast b
+    2: type: forced_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:80:1-80:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:80:1-80:2>
+        kind: `identifier`, identifier: `a`
+    1: type: forced_cast b
+    2: type: binary_op operator: `||`
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:80:12-80:13>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:81:1-81:12>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:81:1-81:2>
+        kind: `identifier`, identifier: `a`
+    1: type: forced_cast b
+    2: type: assignment_op
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:81:11-81:12>
+        kind: `identifier`, identifier: `c`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:82:1-82:16>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:82:1-82:2>
+        kind: `identifier`, identifier: `a`
+    1: type: forced_cast b
+    2: type: ternary_conditional_op   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:82:11-82:12>
+        kind: `identifier`, identifier: `c`
+    3: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:82:15-82:16>
+        kind: `identifier`, identifier: `d`
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:83:1-83:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:83:1-83:2>
+        kind: `identifier`, identifier: `a`
+    1: type: forced_cast b
+    2: type: check c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:84:1-84:13>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:84:1-84:2>
+        kind: `identifier`, identifier: `a`
+    1: type: forced_cast b
+    2: type: cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:85:1-85:14>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:85:1-85:2>
+        kind: `identifier`, identifier: `a`
+    1: type: forced_cast b
+    2: type: conditional_cast c
+  sequence_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:86:1-86:14>
+    0: type: expression   identifier_expr <range: TTYASTDumpTestResources/SequenceExpressionTests.swift:86:1-86:2>
+        kind: `identifier`, identifier: `a`
+    1: type: forced_cast b
+    2: type: forced_cast c

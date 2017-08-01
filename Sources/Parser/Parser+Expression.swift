@@ -105,62 +105,31 @@ extension Parser {
       return self._lexer.examine(potentialBinaryTokens)
     }
 
-    func append(_ biExpr: BinaryExpression) { // swift-lint:suppress(high_ncss)
-      switch (resultExpr, biExpr) {
-      case let (lhs as BinaryOperatorExpression, rhs as BinaryOperatorExpression):
-        var elements = [SequenceExpression.Element]()
-        elements.append(.expression(lhs.leftExpression))
-        elements.append(.binaryOperator(lhs.binaryOperator))
-        elements.append(.expression(lhs.rightExpression))
-        elements.append(.binaryOperator(rhs.binaryOperator))
-        elements.append(.expression(rhs.rightExpression))
-        let seqExpr = SequenceExpression(elements: elements)
-        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
-        resultExpr = seqExpr
-      case let (lhs as SequenceExpression, rhs as BinaryOperatorExpression):
-        var elements = lhs.elements
-        elements.append(.binaryOperator(rhs.binaryOperator))
-        elements.append(.expression(rhs.rightExpression))
-        let seqExpr = SequenceExpression(elements: elements)
-        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
-        resultExpr = seqExpr
-      case let (lhs as AssignmentOperatorExpression, rhs as AssignmentOperatorExpression):
-        var elements = [SequenceExpression.Element]()
-        elements.append(.expression(lhs.leftExpression))
+    func append(_ biExpr: BinaryExpression) { /*
+      swift-lint:suppress(high_ncss,high_cyclomatic_complexity,high_npath_complexity)
+      */
+      var elements = [SequenceExpression.Element]()
+      var startLocation: SourceLocation?
+      var endLocation: SourceLocation?
+
+      switch resultExpr {
+      case let biOp as BinaryOperatorExpression:
+        elements.append(.expression(biOp.leftExpression))
+        elements.append(.binaryOperator(biOp.binaryOperator))
+        elements.append(.expression(biOp.rightExpression))
+        startLocation = biOp.sourceRange.start
+      case let assignOp as AssignmentOperatorExpression:
+        elements.append(.expression(assignOp.leftExpression))
         elements.append(.assignmentOperator)
-        elements.append(.expression(lhs.rightExpression))
-        elements.append(.assignmentOperator)
-        elements.append(.expression(rhs.rightExpression))
-        let seqExpr = SequenceExpression(elements: elements)
-        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
-        resultExpr = seqExpr
-      case let (lhs as SequenceExpression, rhs as AssignmentOperatorExpression):
-        var elements = lhs.elements
-        elements.append(.assignmentOperator)
-        elements.append(.expression(rhs.rightExpression))
-        let seqExpr = SequenceExpression(elements: elements)
-        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
-        resultExpr = seqExpr
-      case let (lhs as TernaryConditionalOperatorExpression, rhs as TernaryConditionalOperatorExpression):
-        var elements = [SequenceExpression.Element]()
-        elements.append(.expression(lhs.conditionExpression))
-        elements.append(.ternaryConditionalOperator(lhs.trueExpression))
-        elements.append(.expression(lhs.falseExpression))
-        elements.append(.ternaryConditionalOperator(rhs.trueExpression))
-        elements.append(.expression(rhs.falseExpression))
-        let seqExpr = SequenceExpression(elements: elements)
-        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
-        resultExpr = seqExpr
-      case let (lhs as SequenceExpression, rhs as TernaryConditionalOperatorExpression):
-        var elements = lhs.elements
-        elements.append(.ternaryConditionalOperator(rhs.trueExpression))
-        elements.append(.expression(rhs.falseExpression))
-        let seqExpr = SequenceExpression(elements: elements)
-        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
-        resultExpr = seqExpr
-      case let (lhs as TypeCastingOperatorExpression, rhs as TypeCastingOperatorExpression):
-        var elements = [SequenceExpression.Element]()
-        switch lhs.kind {
+        elements.append(.expression(assignOp.rightExpression))
+        startLocation = assignOp.sourceRange.start
+      case let condOp as TernaryConditionalOperatorExpression:
+        elements.append(.expression(condOp.conditionExpression))
+        elements.append(.ternaryConditionalOperator(condOp.trueExpression))
+        elements.append(.expression(condOp.falseExpression))
+        startLocation = condOp.sourceRange.start
+      case let castingOp as TypeCastingOperatorExpression:
+        switch castingOp.kind {
         case let .check(expr, type):
           elements.append(.expression(expr))
           elements.append(.typeCheck(type))
@@ -174,35 +143,51 @@ extension Parser {
           elements.append(.expression(expr))
           elements.append(.typeForcedCast(type))
         }
-        switch rhs.kind {
-        case .check(_, let type):
-          elements.append(.typeCheck(type))
-        case .cast(_, let type):
-          elements.append(.typeCast(type))
-        case .conditionalCast(_, let type):
-          elements.append(.typeConditionalCast(type))
-        case .forcedCast(_, let type):
-          elements.append(.typeForcedCast(type))
-        }
-        let seqExpr = SequenceExpression(elements: elements)
-        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
-        resultExpr = seqExpr
-      case let (lhs as SequenceExpression, rhs as TypeCastingOperatorExpression):
-        var elements = lhs.elements
-        switch rhs.kind {
-        case .check(_, let type):
-          elements.append(.typeCheck(type))
-        case .cast(_, let type):
-          elements.append(.typeCast(type))
-        case .conditionalCast(_, let type):
-          elements.append(.typeConditionalCast(type))
-        case .forcedCast(_, let type):
-          elements.append(.typeForcedCast(type))
-        }
-        let seqExpr = SequenceExpression(elements: elements)
-        seqExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
-        resultExpr = seqExpr
+        startLocation = castingOp.sourceRange.start
+      case let seqExpr as SequenceExpression:
+        elements = seqExpr.elements
+        startLocation = seqExpr.sourceRange.start
       default:
+        break
+      }
+
+      switch biExpr {
+      case let biOp as BinaryOperatorExpression:
+        elements.append(.binaryOperator(biOp.binaryOperator))
+        elements.append(.expression(biOp.rightExpression))
+        endLocation = biOp.sourceRange.end
+      case let assignOp as AssignmentOperatorExpression:
+        elements.append(.assignmentOperator)
+        elements.append(.expression(assignOp.rightExpression))
+        endLocation = assignOp.sourceRange.end
+      case let condOp as TernaryConditionalOperatorExpression:
+        elements.append(.ternaryConditionalOperator(condOp.trueExpression))
+        elements.append(.expression(condOp.falseExpression))
+        endLocation = condOp.sourceRange.end
+      case let castingOp as TypeCastingOperatorExpression:
+        switch castingOp.kind {
+        case .check(_, let type):
+          elements.append(.typeCheck(type))
+        case .cast(_, let type):
+          elements.append(.typeCast(type))
+        case .conditionalCast(_, let type):
+          elements.append(.typeConditionalCast(type))
+        case .forcedCast(_, let type):
+          elements.append(.typeForcedCast(type))
+        }
+        endLocation = castingOp.sourceRange.end
+      default:
+        break
+      }
+
+      if resultExpr is BinaryOperatorExpression && biExpr is AssignmentOperatorExpression {
+        // Note: directly take the assignment-operator-expr form for cases such as `case a..<b = foo`
+        resultExpr = biExpr
+      } else if !elements.isEmpty, let start = startLocation, let end = endLocation {
+        let seqExpr = SequenceExpression(elements: elements)
+        seqExpr.setSourceRange(start, end)
+        resultExpr = seqExpr
+      } else {
         resultExpr = biExpr
       }
     }

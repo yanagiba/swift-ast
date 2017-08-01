@@ -41,7 +41,7 @@ class ParserCodeBlockTests: XCTestCase {
       XCTAssertEqual(stmts.count, 4)
       XCTAssertTrue(stmts[0] is AssignmentOperatorExpression)
       XCTAssertTrue(stmts[1] is AssignmentOperatorExpression)
-      XCTAssertTrue(stmts[2] is TernaryConditionalOperatorExpression)
+      XCTAssertTrue(stmts[2] is SequenceExpression)
       XCTAssertTrue(stmts[3] is FunctionCallExpression)
     } catch {
       XCTFail("Failed in parsing a code block declaration.")

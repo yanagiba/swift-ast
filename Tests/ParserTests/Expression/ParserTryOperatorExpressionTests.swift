@@ -46,26 +46,19 @@ class ParserTryOperatorExpressionTests: XCTestCase {
         XCTFail("Failed in getting a try operator expression")
         return
       }
-
-      guard let biOpExpr = tryExpr as? BinaryOperatorExpression else {
-        XCTFail("Failed in getting a binary operator expression")
-        return
-      }
-
-      XCTAssertTrue(biOpExpr.leftExpression is AssignmentOperatorExpression)
-      XCTAssertTrue(biOpExpr.rightExpression is LiteralExpression)
+      XCTAssertTrue(tryExpr is SequenceExpression)
     })
   }
 
   func testTryScopes() {
     parseExpressionAndTest(
-      "try someThrowingFunction() + anotherThrowingFunction()", 
+      "try someThrowingFunction() + anotherThrowingFunction()",
       "try someThrowingFunction() + anotherThrowingFunction()")
     parseExpressionAndTest(
-      "try (someThrowingFunction() + anotherThrowingFunction())", 
+      "try (someThrowingFunction() + anotherThrowingFunction())",
       "try (someThrowingFunction() + anotherThrowingFunction())")
     parseExpressionAndTest(
-      "(try someThrowingFunction()) + anotherThrowingFunction()", 
+      "(try someThrowingFunction()) + anotherThrowingFunction()",
       "(try someThrowingFunction()) + anotherThrowingFunction()")
   }
 

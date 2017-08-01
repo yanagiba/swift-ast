@@ -169,7 +169,7 @@ class ParserSequenceExpressionTests: XCTestCase {
     )
   }
 
-  func testTypeCastingOperators() {
+  func testTypeCastingOperators() { // swift-lint:suppress(nested_code_block_depth)
     let castings = ["is", "as", "as?", "as!"]
     for c1 in castings {
       for c2 in castings {
@@ -206,10 +206,70 @@ class ParserSequenceExpressionTests: XCTestCase {
     }
   }
 
+  func testCombinations() {
+    let combinations = [
+      "a && b || c",
+      // "a && b = c",
+      "a && b ? c : d",
+      "a && b is c",
+      "a && b as c",
+      "a && b as? c",
+      "a && b as! c",
+      "a = b || c",
+      "a = b = c",
+      "a = b ? c : d",
+      "a = b is c",
+      "a = b as c",
+      "a = b as? c",
+      "a = b as! c",
+      "x ? y : z || c",
+      "x ? y : z = c",
+      "x ? y : z ? c : d",
+      "x ? y : z is c",
+      "x ? y : z as c",
+      "x ? y : z as? c",
+      "x ? y : z as! c",
+      "a is b || c",
+      "a is b = c",
+      "a is b ? c : d",
+      "a is b is c",
+      "a is b as c",
+      "a is b as? c",
+      "a is b as! c",
+      "a as b || c",
+      "a as b = c",
+      "a as b ? c : d",
+      "a as b is c",
+      "a as b as c",
+      "a as b as? c",
+      "a as b as! c",
+      "a as? b || c",
+      "a as? b = c",
+      "a as? b ? c : d",
+      "a as? b is c",
+      "a as? b as c",
+      "a as? b as? c",
+      "a as? b as! c",
+      "a as! b || c",
+      "a as! b = c",
+      "a as! b ? c : d",
+      "a as! b is c",
+      "a as! b as c",
+      "a as! b as? c",
+      "a as! b as! c",
+    ]
+    for c in combinations {
+      parseExpressionAndTest(c, c, testClosure: { expr in
+        XCTAssertTrue(expr is SequenceExpression)
+      })
+    }
+  }
+
   static var allTests = [
     ("testBinaryOperators", testBinaryOperators),
     ("testAssignmentOperators", testAssignmentOperators),
     ("testTernaryConditionalOperators", testTernaryConditionalOperators),
     ("testTypeCastingOperators", testTypeCastingOperators),
+    ("testCombinations", testCombinations),
   ]
 }
