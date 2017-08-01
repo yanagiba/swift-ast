@@ -45,25 +45,6 @@ class ParserAssignmentOperatorExpressionTests: XCTestCase {
     }
   }
 
-  func testAssignments() {
-    parseExpressionAndTest("foo = bar = true", "foo = bar = true", testClosure: { expr in
-      guard let outterExpr = expr as? AssignmentOperatorExpression else {
-        XCTFail("Failed in getting an assignment operator expression")
-        return
-      }
-
-      XCTAssertTrue(outterExpr.rightExpression is LiteralExpression)
-
-      guard let innerExpr = outterExpr.leftExpression as? AssignmentOperatorExpression else {
-        XCTFail("Failed in getting an assignment operator expression")
-        return
-      }
-
-      XCTAssertTrue(innerExpr.leftExpression is IdentifierExpression)
-      XCTAssertTrue(innerExpr.rightExpression is IdentifierExpression)
-    })
-  }
-
   func testTupleAssignment() {
     parseExpressionAndTest("(a, _, (b, c)) = (\"test\", 9.45, (12, 3))", "(a, _, (b, c)) = (\"test\", 9.45, (12, 3))")
   }
@@ -83,7 +64,6 @@ class ParserAssignmentOperatorExpressionTests: XCTestCase {
   static var allTests = [
     ("testAssignment", testAssignment),
     ("testRhsIsTryOperator", testRhsIsTryOperator),
-    ("testAssignments", testAssignments),
     ("testTupleAssignment", testTupleAssignment),
     ("testSourceRange", testSourceRange),
   ]

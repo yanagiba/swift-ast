@@ -65,18 +65,20 @@ class ParserTernaryConditionalOperatorExpressionTests: XCTestCase {
   }
 
   func testNested() {
-     // (a ? (b ? c : d) : e) ? (f ? g : h) : i
+     // a ? (b ? (c ? d : e) : f) : g
     parseExpressionAndTest(
-      "a ? b ? c : d : e ? f ? g : h : i",
-      "a ? b ? c : d : e ? f ? g : h : i",
+      "a ? b ? c ? d : e : f : g",
+      "a ? b ? c ? d : e : f : g",
       testClosure: { expr in
         guard let ternaryOpExpr = expr as? TernaryConditionalOperatorExpression else {
-          XCTFail("Failed in getting a ternary cond op expr for code `a ? b ? c : d : e ? f ? g : h : i`.")
+          XCTFail("Failed in getting a ternary cond op expr for code `a ? b ? c ? d : e : f : g`.")
           return
         }
 
+        XCTAssertTrue(ternaryOpExpr.conditionExpression is IdentifierExpression)
+        XCTAssertEqual(ternaryOpExpr.conditionExpression.textDescription, "a")
         XCTAssertTrue(ternaryOpExpr.falseExpression is IdentifierExpression)
-        XCTAssertEqual(ternaryOpExpr.falseExpression.textDescription, "i")
+        XCTAssertEqual(ternaryOpExpr.falseExpression.textDescription, "g")
 
         guard let trueTernaryOpExpr =
           ternaryOpExpr.trueExpression as? TernaryConditionalOperatorExpression
@@ -84,31 +86,25 @@ class ParserTernaryConditionalOperatorExpressionTests: XCTestCase {
           XCTFail("Failed in getting a ternary conditional operator expression for code `f ? g : h`.")
           return
         }
-        XCTAssertEqual(trueTernaryOpExpr.textDescription, "f ? g : h")
+        XCTAssertEqual(trueTernaryOpExpr.textDescription, "b ? c ? d : e : f")
         XCTAssertTrue(trueTernaryOpExpr.conditionExpression is IdentifierExpression)
-        XCTAssertTrue(trueTernaryOpExpr.trueExpression is IdentifierExpression)
+        XCTAssertEqual(trueTernaryOpExpr.conditionExpression.textDescription, "b")
         XCTAssertTrue(trueTernaryOpExpr.falseExpression is IdentifierExpression)
+        XCTAssertEqual(trueTernaryOpExpr.falseExpression.textDescription, "f")
 
-        guard let condTernaryOpExpr =
-          ternaryOpExpr.conditionExpression as? TernaryConditionalOperatorExpression
+        guard let trueTrueTernaryOpExpr =
+          trueTernaryOpExpr.trueExpression as? TernaryConditionalOperatorExpression
         else {
-          XCTFail("Failed in getting a ternary conditional operator expression for code `a ? (b ? c : d) : e`.")
+          XCTFail("Failed in getting a ternary conditional operator expression for code `c ? d : e`.")
           return
         }
-        XCTAssertEqual(condTernaryOpExpr.textDescription, "a ? b ? c : d : e")
-        XCTAssertTrue(condTernaryOpExpr.conditionExpression is IdentifierExpression)
-        XCTAssertTrue(condTernaryOpExpr.falseExpression is IdentifierExpression)
-
-        guard let condTrueTernaryOpExpr =
-          condTernaryOpExpr.trueExpression as? TernaryConditionalOperatorExpression
-        else {
-          XCTFail("Failed in getting a ternary conditional operator expression for code `b ? c : d`.")
-          return
-        }
-        XCTAssertEqual(condTrueTernaryOpExpr.textDescription, "b ? c : d")
-        XCTAssertTrue(condTrueTernaryOpExpr.conditionExpression is IdentifierExpression)
-        XCTAssertTrue(condTrueTernaryOpExpr.trueExpression is IdentifierExpression)
-        XCTAssertTrue(condTrueTernaryOpExpr.falseExpression is IdentifierExpression)
+        XCTAssertEqual(trueTrueTernaryOpExpr.textDescription, "c ? d : e")
+        XCTAssertTrue(trueTrueTernaryOpExpr.conditionExpression is IdentifierExpression)
+        XCTAssertEqual(trueTrueTernaryOpExpr.conditionExpression.textDescription, "c")
+        XCTAssertTrue(trueTrueTernaryOpExpr.trueExpression is IdentifierExpression)
+        XCTAssertEqual(trueTrueTernaryOpExpr.trueExpression.textDescription, "d")
+        XCTAssertTrue(trueTrueTernaryOpExpr.falseExpression is IdentifierExpression)
+        XCTAssertEqual(trueTrueTernaryOpExpr.falseExpression.textDescription, "e")
       }
     )
   }

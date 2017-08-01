@@ -1,0 +1,69 @@
+a / b <> c
+a / b <> c ... d
+foo = bar = true
+foo = try! bar = true = try a()
+a ? b : c ? d ? e : f : g
+foobar is Foo is Bar
+foobar is Foo as Bar
+foobar is Foo as? Bar
+foobar is Foo as! Bar
+foobar as Foo is Bar
+foobar as Foo as Bar
+foobar as Foo as? Bar
+foobar as Foo as! Bar
+foobar as? Foo is Bar
+foobar as? Foo as Bar
+foobar as? Foo as? Bar
+foobar as? Foo as! Bar
+foobar as! Foo is Bar
+foobar as! Foo as Bar
+foobar as! Foo as? Bar
+foobar as! Foo as! Bar
+a && b || c
+a && b ? c : d
+a && b is c
+a && b as c
+a && b as? c
+a && b as! c
+a = b || c
+a = b = c
+a = b ? c : d
+a = b is c
+a = b as c
+a = b as? c
+a = b as! c
+x ? y : z || c
+x ? y : z = c
+x ? y : z ? c : d
+x ? y : z is c
+x ? y : z as c
+x ? y : z as? c
+x ? y : z as! c
+a is b || c
+a is b = c
+a is b ? c : d
+a is b is c
+a is b as c
+a is b as? c
+a is b as! c
+a as b || c
+a as b = c
+a as b ? c : d
+a as b is c
+a as b as c
+a as b as? c
+a as b as! c
+a as? b || c
+a as? b = c
+a as? b ? c : d
+a as? b is c
+a as? b as c
+a as? b as? c
+a as? b as! c
+a as! b || c
+a as! b = c
+a as! b ? c : d
+a as! b is c
+a as! b as c
+a as! b as? c
+a as! b as! c

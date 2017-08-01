@@ -3,4 +3,3 @@ foo = bar
 foo = try bar
 foo = try? bar
 foo = try! bar
-foo = bar = true

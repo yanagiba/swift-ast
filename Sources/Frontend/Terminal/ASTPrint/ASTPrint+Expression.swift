@@ -220,6 +220,17 @@ extension SelfExpression : TTYASTPrintRepresentable {
   }
 }
 
+extension SequenceExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return elements.map({ elem -> String in
+      if case .expression(let expr) = elem {
+        return expr.ttyPrint
+      }
+      return elem.textDescription
+    }).joined(separator: " ")
+  }
+}
+
 extension SubscriptExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     return "\(postfixExpression.ttyPrint)[\(arguments.map { $0.ttyPrint }.joined(separator: ", "))]"

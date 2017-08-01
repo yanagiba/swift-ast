@@ -65,6 +65,7 @@ public func allTests() -> [XCTestCaseEntry] {
     testCase(ParserAssignmentOperatorExpressionTests.allTests),
     testCase(ParserTernaryConditionalOperatorExpressionTests.allTests),
     testCase(ParserTypeCastingOperatorExpressionTests.allTests),
+    testCase(ParserSequenceExpressionTests.allTests),
     testCase(ParserTryOperatorExpressionTests.allTests),
     ///////// Pattern
     testCase(ParserWildcardPatternTests.allTests),
