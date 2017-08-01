@@ -19,7 +19,8 @@ import Bocho
 
 extension TopLevelDeclaration : TTYASTPrintRepresentable {
   var ttyPrint: String {
-    return statements.ttyPrint + "\n"
+    let shebangLine = shebang.map({ "#!\($0.interpreterDirective)\n\n" }) ?? ""
+    return shebangLine + statements.ttyPrint + "\n"
   }
 }
 

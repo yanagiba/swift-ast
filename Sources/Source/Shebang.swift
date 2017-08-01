@@ -14,14 +14,10 @@
    limitations under the License.
 */
 
-import XCTest
+public struct Shebang {
+  public let interpreterDirective: String
 
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(TTYASTDumpTests.allTests),
-    testCase(TTYASTPrintTests.allTests),
-    testCase(ShebangIntegrationTests.allTests),
-  ]
+  public init(interpreterDirective: String) {
+    self.interpreterDirective = interpreterDirective
+  }
 }
-#endif

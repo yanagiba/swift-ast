@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ class ParserTopLevelDeclarationTests: XCTestCase {
       XCTAssertTrue(stmts[2] is SequenceExpression)
       XCTAssertTrue(stmts[3] is FunctionCallExpression)
       XCTAssertTrue(topLevel.comments.isEmpty)
+      XCTAssertNil(topLevel.shebang)
     } catch {
       XCTFail("Failed in parsing a top level declaration.")
     }
@@ -72,9 +73,44 @@ class ParserTopLevelDeclarationTests: XCTestCase {
         Comment(
           content: " and a single line comment",
           location: SourceLocation(identifier: "ParserTests/ParserTests.swift", line: 4, column: 1)))
+      XCTAssertNil(topLevel.shebang)
     } catch {
       XCTFail("Failed in parsing a top level declaration.")
     }
+  }
+
+  func testShebang() {
+    let shebangs = ["/bin/sh", "/usr/bin/env swift", "/bin/csh -f"]
+    for shebang in shebangs {
+      for space in ["", " ", "     "] {
+        let declParser = getParser("""
+          #!\(space)\(shebang)
+
+          print("foobar")
+          """)
+
+        do {
+          let topLevel = try declParser.parseTopLevelDeclaration()
+          XCTAssertEqual(topLevel.textDescription, """
+            #!\(shebang)
+
+            print("foobar")
+            """)
+          let stmts = topLevel.statements
+          XCTAssertEqual(stmts.count, 1)
+          XCTAssertTrue(stmts[0] is FunctionCallExpression)
+          XCTAssertTrue(topLevel.comments.isEmpty)
+          guard let interpreterDirective = topLevel.shebang?.interpreterDirective else {
+            XCTFail("Failed in getting a shebang for `\(shebang)`.")
+            return
+          }
+          XCTAssertEqual(interpreterDirective, shebang)
+        } catch {
+          XCTFail("Failed in parsing a top level declaration for `\(shebang)`.")
+        }
+      }
+    }
+
   }
 
   func testSourceRange() {
@@ -105,6 +141,7 @@ class ParserTopLevelDeclarationTests: XCTestCase {
   static var allTests = [
     ("testSimpleCase", testSimpleCase),
     ("testComments", testComments),
+    ("testShebang", testShebang),
     ("testSourceRange", testSourceRange),
     ("testLexicalParent", testLexicalParent),
   ]

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ import Source
 public class TopLevelDeclaration : ASTNode {
   public let statements: Statements
   public let comments: CommentSet
+  public let shebang: Shebang?
 
-  public init(statements: Statements = [], comments: CommentSet = []) {
+  public init(statements: Statements = [], comments: CommentSet = [], shebang: Shebang? = nil) {
     self.statements = statements
     self.comments = comments
+    self.shebang = shebang
   }
 
   // MARK: - ASTNodeContext
@@ -40,6 +42,7 @@ public class TopLevelDeclaration : ASTNode {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    return statements.textDescription
+    let shebangLine = shebang.map({ "#!\($0.interpreterDirective)\n\n" }) ?? ""
+    return shebangLine + statements.textDescription
   }
 }

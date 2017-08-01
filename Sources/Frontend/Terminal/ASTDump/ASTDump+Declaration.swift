@@ -19,10 +19,14 @@ import Bocho
 
 extension TopLevelDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
+    var firstLine: [String] = []
+    if let interpreterDirective = shebang?.interpreterDirective {
+      firstLine.append("shebang `\(interpreterDirective)`")
+    }
     let head = dump("top_level_decl", sourceRange)
     let body = statements.map { $0.ttyDump.indented }
     let tail = ""
-    return ([head] + body + [tail]).joined(separator: "\n")
+    return (firstLine + [head] + body + [tail]).joined(separator: "\n")
   }
 }
 
