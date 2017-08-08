@@ -41,6 +41,46 @@ class ParserReturnStatementTests: XCTestCase {
     })
   }
 
+  func testReturnWithExprInNewLine() {
+    parseStatementAndTest("return\n foo", "return foo", testClosure: { stmt in
+      guard let returnStmt = stmt as? ReturnStatement, let expr = returnStmt.expression else {
+        XCTFail("Failed in parsing a return statement.")
+        return
+      }
+      XCTAssertTrue(expr is IdentifierExpression)
+      XCTAssertEqual(expr.textDescription, "foo")
+    })
+    parseStatementAndTest("return\n\tfoo", "return foo", testClosure: { stmt in
+      guard let returnStmt = stmt as? ReturnStatement, let expr = returnStmt.expression else {
+        XCTFail("Failed in parsing a return statement.")
+        return
+      }
+      XCTAssertTrue(expr is IdentifierExpression)
+      XCTAssertEqual(expr.textDescription, "foo")
+    })
+    parseStatementAndTest("return\nfoo", "return", testClosure: { stmt in
+      guard let returnStmt = stmt as? ReturnStatement else {
+        XCTFail("Failed in parsing a return statement.")
+        return
+      }
+      XCTAssertNil(returnStmt.expression)
+    })
+    parseStatementAndTest("  return\nfoo", "return", testClosure: { stmt in
+      guard let returnStmt = stmt as? ReturnStatement else {
+        XCTFail("Failed in parsing a return statement.")
+        return
+      }
+      XCTAssertNil(returnStmt.expression)
+    })
+    parseStatementAndTest("return\n return", "return", testClosure: { stmt in
+      guard let returnStmt = stmt as? ReturnStatement else {
+        XCTFail("Failed in parsing a return statement.")
+        return
+      }
+      XCTAssertNil(returnStmt.expression)
+    })
+  }
+
   func testSourceRange() {
     parseStatementAndTest("return", "return", testClosure: { stmt in
       XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 7))
@@ -53,6 +93,7 @@ class ParserReturnStatementTests: XCTestCase {
   static var allTests = [
     ("testReturn", testReturn),
     ("testReturnWithExpression", testReturnWithExpression),
+    ("testReturnWithExprInNewLine", testReturnWithExprInNewLine),
     ("testSourceRange", testSourceRange),
   ]
 }

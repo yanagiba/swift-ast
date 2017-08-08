@@ -120,19 +120,42 @@ extension Parser {
     return throwStmt
   }
 
-  func parseReturnStatement(
-    startRange: SourceRange
-  ) throws -> ReturnStatement {
-    switch _lexer.look(skipLineFeed: false).kind {
-    case .semicolon, .lineFeed, .eof, .rightBrace:
-      let retStmt = ReturnStatement()
-      retStmt.setSourceRange(startRange)
-      return retStmt
-    default:
-      let expr = try parseExpression()
+  func parseReturnStatement(startRange: SourceRange) throws -> ReturnStatement {
+    func returnStmt(willParseExpression: Bool = false) throws -> ReturnStatement {
+      let expr = willParseExpression ? try parseExpression() : nil
+      let endLocation = expr?.sourceRange.end ?? startRange.end
       let retStmt = ReturnStatement(expression: expr)
-      retStmt.setSourceRange(startRange.start, expr.sourceRange.end)
+      retStmt.setSourceRange(startRange.start, endLocation)
       return retStmt
+    }
+
+    switch _lexer.look(skipLineFeed: false).kind {
+    case .semicolon, .eof, .rightBrace:
+      return try returnStmt()
+    case .lineFeed:
+      // NOTE: without knowing whether it is inside a Void function, we will
+      // agressively consume the next token as an expression if possible, and
+      // let semantic analysis later decides whether keep it this way or split
+      // into two statements (a return statement, and an expression).
+      // So here, if next line is indented and can be parsed as an expression,
+      // then treat it as part of the return statement;
+      // otherwise, then directly return
+      let nextToken = _lexer.look(ahead: 1, skipLineFeed: false)
+      if nextToken.sourceRange.start.column > startRange.start.column {
+        switch nextToken.kind {
+        case .for, .while, .repeat, .if, .guard, .switch, .defer, .do, .break,
+          .continue, .fallthrough, .return, .throw, .hash, .import, .let, .var,
+          .typealias, .func, .enum, .indirect, .struct, .init, .deinit,
+          .extension, .subscript, .operator, .protocol, .at:
+          return try returnStmt()
+        default:
+          return nextToken.kind.isModifier ?
+            try returnStmt() : try returnStmt(willParseExpression: true)
+        }
+      }
+      return try returnStmt()
+    default:
+      return try returnStmt(willParseExpression: true)
     }
   }
 
