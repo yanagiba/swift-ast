@@ -84,7 +84,7 @@ public class Lexer {
       if p == startStr {
         return consumeTokenAndAdvance()
       } else if p.hasPrefix(startStr) && splitOperator {
-        let newOperator = p.substring(from: p.index(after: p.startIndex))
+        let newOperator = String(p[p.index(after: p.startIndex)...])
         let newKind = newToken(newOperator)
         let oldStart = looked.sourceRange.start
         let newStart = SourceLocation(

@@ -1220,7 +1220,7 @@ extension Parser {
       let endIndexOffset = ir.hasSuffix(multilineDelimiter) ? -3 : -1
       let startIndex = ir.index(ir.startIndex, offsetBy: startIndexOffset)
       let endIndex = ir.index(ir.endIndex, offsetBy: endIndexOffset)
-      rawText += ir.substring(with: startIndex..<endIndex)
+      rawText += String(ir[startIndex..<endIndex])
       endLocation = nested.sourceRange.end
     default:
       throw _raiseFatal(.expectedStringInterpolation)
