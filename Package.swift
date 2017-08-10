@@ -38,14 +38,14 @@ let package = Package(
       ]
     ),
     .library(
-      name: "SwiftAST+Frontend",
+      name: "SwiftAST+Tooling",
       targets: [
         "Source",
         "Diagnostic",
         "AST",
         "Lexer",
         "Parser",
-        "Frontend",
+        "Tooling",
       ]
     ),
   ],
@@ -92,11 +92,15 @@ let package = Package(
       ]
     ),
     .target(
+      name: "Tooling",
+      dependencies: [
+        "Parser",
+      ]
+    ),
+    .target(
       name: "Frontend",
       dependencies: [
-        "AST",
-        "Lexer",
-        "Parser",
+        "Tooling",
         "Bocho",
       ]
     ),

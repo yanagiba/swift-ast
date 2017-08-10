@@ -2,6 +2,7 @@ comment:
   layout: header, changes, diff
 coverage:
   ignore:
+  - Sources/Tooling
   - Sources/Frontend
   - Sources/swift-ast
   - Tests
