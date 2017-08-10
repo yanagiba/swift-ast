@@ -47,9 +47,12 @@ public func terminalMain(
   }
 
   let diagnosticConsumer = TerminalDiagnosticConsumer()
+  let toolingOption = ToolActionOption(sequenceExpressionFoldingEnabled: true)
   let tooling = ToolAction()
   let result = tooling.run(
-    sourceFiles: sourceFiles, diagnosticConsumer: diagnosticConsumer)
+    sourceFiles: sourceFiles,
+    diagnosticConsumer: diagnosticConsumer,
+    option: toolingOption)
 
   guard result.exitCode == ToolActionResult.success else {
     for sourceFile in result.unparsedSourceFiles {

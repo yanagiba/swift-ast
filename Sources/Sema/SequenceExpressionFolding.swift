@@ -14,10 +14,12 @@
    limitations under the License.
 */
 
-open class ToolActionOption {
-  open var sequenceExpressionFoldingEnabled: Bool
+import AST
 
-  public init(sequenceExpressionFoldingEnabled: Bool = false) {
-    self.sequenceExpressionFoldingEnabled = sequenceExpressionFoldingEnabled
+public struct SequenceExpressionFolding {
+  public init() {}
+
+  public func fold(_ collection: ASTUnitCollection) -> ASTUnitCollection {
+    return collection
   }
 }

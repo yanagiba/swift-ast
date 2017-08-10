@@ -35,6 +35,7 @@ let package = Package(
         "AST",
         "Lexer",
         "Parser",
+        "Sema",
       ]
     ),
     .library(
@@ -45,6 +46,7 @@ let package = Package(
         "AST",
         "Lexer",
         "Parser",
+        "Sema",
         "Tooling",
       ]
     ),
@@ -92,9 +94,17 @@ let package = Package(
       ]
     ),
     .target(
+      name: "Sema",
+      dependencies: [
+        "Source",
+        "AST",
+      ]
+    ),
+    .target(
       name: "Tooling",
       dependencies: [
         "Parser",
+        "Sema",
       ]
     ),
     .target(

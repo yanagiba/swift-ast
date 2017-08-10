@@ -18,6 +18,7 @@ import AST
 import Parser
 import Source
 import Diagnostic
+import Sema
 
 open class ToolAction {
   public init() {}
@@ -47,6 +48,11 @@ open class ToolAction {
       return .failedParsing(
         withSuccessUnitCollection: unitCollection,
         andUnparsedSourceFiles: unparsedSourceFiles)
+    }
+
+    if option.sequenceExpressionFoldingEnabled {
+      let seqExprFolding = SequenceExpressionFolding()
+      unitCollection = seqExprFolding.fold(unitCollection)
     }
 
     return .success(withUnitCollection: unitCollection)

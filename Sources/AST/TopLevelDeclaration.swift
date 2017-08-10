@@ -20,7 +20,7 @@ public class TopLevelDeclaration : ASTNode, ASTUnit {
   public let statements: Statements
   public let comments: CommentSet
   public let shebang: Shebang?
-  public var sourceFile: SourceFile? = nil
+  public var sourceFile: SourceFile?
 
   public init(statements: Statements = [], comments: CommentSet = [], shebang: Shebang? = nil) {
     self.statements = statements
