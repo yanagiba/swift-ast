@@ -14,6 +14,9 @@
    limitations under the License.
 */
 
+import Source
+
 public protocol ASTUnit {
   var translationUnit: TopLevelDeclaration { get }
+  var sourceFile: SourceFile? { get }
 }

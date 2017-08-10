@@ -19,13 +19,17 @@ import Lexer
 import Source
 
 public class Parser {
+  let _sourceFile: SourceFile
   let _lexer: Lexer
 
   public init(source: SourceFile) {
+    _sourceFile = source
     _lexer = Lexer(source: source)
   }
 
   public func parse() throws -> TopLevelDeclaration {
-    return try parseTopLevelDeclaration()
+    let topLevelDecl = try parseTopLevelDeclaration()
+    topLevelDecl.sourceFile = _sourceFile
+    return topLevelDecl
   }
 }

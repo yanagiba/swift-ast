@@ -20,6 +20,8 @@ import Source
 import Diagnostic
 
 open class ToolAction {
+  public init() {}
+
   open func run(
     sourceFiles: [SourceFile],
     diagnosticConsumer: DiagnosticConsumer,
