@@ -163,6 +163,12 @@ let package = Package(
       ]
     ),
     .testTarget(
+      name: "SemaTests",
+      dependencies: [
+        "Sema",
+      ]
+    ),
+    .testTarget(
       name: "IntegrationTests",
       dependencies: [
         "Frontend",

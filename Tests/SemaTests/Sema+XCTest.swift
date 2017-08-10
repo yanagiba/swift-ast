@@ -16,13 +16,21 @@
 
 import XCTest
 
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(TTYASTDumpTests.allTests),
-    testCase(TTYASTPrintTests.allTests),
-    testCase(ShebangIntegrationTests.allTests),
-    testCase(SemaIntegrationTests.allTests),
-  ]
+@testable import Parser
+@testable import Source
+@testable import AST
+
+let sourcePath = "SemaTests/SemaTests.swift"
+
+func getParser(_ content: String) -> Parser {
+  let source = SourceFile(path: sourcePath, content: content)
+  return Parser(source: source)
 }
-#endif
+
+func parse(_ content: String) -> TopLevelDeclaration {
+  do {
+    return try getParser(content).parse()
+  } catch {
+    fatalError("Failed in parsing `\(content)` with error: \(error)")
+  }
+}

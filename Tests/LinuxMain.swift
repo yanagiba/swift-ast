@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import ASTVisitorTests
 import DiagnosticTests
 import LexerTests
 import ParserTests
+import SemaTests
 import IntegrationTests
 
 var tests = [XCTestCaseEntry]()
@@ -33,5 +34,6 @@ tests += ASTVisitorTests.allTests()
 tests += DiagnosticTests.allTests()
 tests += LexerTests.allTests()
 tests += ParserTests.allTests()
+tests += SemaTests.allTests()
 tests += IntegrationTests.allTests()
 XCTMain(tests)
