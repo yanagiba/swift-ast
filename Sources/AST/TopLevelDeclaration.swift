@@ -16,7 +16,7 @@
 
 import Source
 
-public class TopLevelDeclaration : ASTNode {
+public class TopLevelDeclaration : ASTNode, ASTUnit {
   public let statements: Statements
   public let comments: CommentSet
   public let shebang: Shebang?
@@ -25,6 +25,12 @@ public class TopLevelDeclaration : ASTNode {
     self.statements = statements
     self.comments = comments
     self.shebang = shebang
+  }
+
+  // MARK: - ASTUnit
+
+  public var translationUnit: TopLevelDeclaration {
+    return self
   }
 
   // MARK: - ASTNodeContext
