@@ -80,6 +80,121 @@ private func foldElements(
   return resultElements
 }
 
+private func foldElementsForTypeCasting(
+  _ elements: [SequenceExpression.Element]
+) -> [SequenceExpression.Element] {
+  guard elements.count >= 2 else {
+    return elements
+  }
+
+  var resultElements: [SequenceExpression.Element] = []
+
+  var i = 0
+  while i < elements.count {
+    let e = elements[i]
+    if case .expression(let expr)? = resultElements.last {
+      switch e {
+      case .typeCheck(let t):
+        resultElements.removeLast()
+        let typeCastingOpExpr = TypeCastingOperatorExpression(kind: .check(expr, t))
+        typeCastingOpExpr.setSourceRange(expr.sourceRange.start, t.sourceRange.end)
+        resultElements.append(.expression(typeCastingOpExpr))
+      case .typeCast(let t):
+        resultElements.removeLast()
+        let typeCastingOpExpr = TypeCastingOperatorExpression(kind: .cast(expr, t))
+        typeCastingOpExpr.setSourceRange(expr.sourceRange.start, t.sourceRange.end)
+        resultElements.append(.expression(typeCastingOpExpr))
+      case .typeConditionalCast(let t):
+        resultElements.removeLast()
+        let typeCastingOpExpr = TypeCastingOperatorExpression(kind: .conditionalCast(expr, t))
+        typeCastingOpExpr.setSourceRange(expr.sourceRange.start, t.sourceRange.end)
+        resultElements.append(.expression(typeCastingOpExpr))
+      case .typeForcedCast(let t):
+        resultElements.removeLast()
+        let typeCastingOpExpr = TypeCastingOperatorExpression(kind: .forcedCast(expr, t))
+        typeCastingOpExpr.setSourceRange(expr.sourceRange.start, t.sourceRange.end)
+        resultElements.append(.expression(typeCastingOpExpr))
+      default:
+        resultElements.append(e)
+      }
+    } else {
+      resultElements.append(e)
+    }
+
+    i += 1
+  }
+
+  return resultElements
+}
+
+private func foldElementsForTernary(
+  _ elements: [SequenceExpression.Element]
+) -> [SequenceExpression.Element] {
+  guard elements.count >= 3 else {
+    return elements
+  }
+
+  var resultElements: [SequenceExpression.Element] = []
+
+  var i = 0
+  while i < elements.count {
+    let e = elements[i]
+    if case .ternaryConditionalOperator(let trueExpr) = e,
+      case .expression(let condExpr)? = resultElements.last,
+      case .expression(let falseExpr) = elements[i+1]
+    {
+      resultElements.removeLast()
+      let assignOpExpr = TernaryConditionalOperatorExpression(
+        conditionExpression: condExpr,
+        trueExpression: trueExpr,
+        falseExpression: falseExpr)
+      assignOpExpr.setSourceRange(
+        condExpr.sourceRange.start, falseExpr.sourceRange.end)
+      resultElements.append(.expression(assignOpExpr))
+      i += 1
+    } else {
+      resultElements.append(e)
+    }
+
+    i += 1
+  }
+
+  return resultElements
+}
+
+private func foldElementsForAssignment(
+  _ elements: [SequenceExpression.Element]
+) -> [SequenceExpression.Element] {
+  guard elements.count >= 3 else {
+    return elements
+  }
+
+  var resultElements: [SequenceExpression.Element] = []
+
+  var i = 0
+  while i < elements.count {
+    let e = elements[i]
+    if case .assignmentOperator = e,
+      case .expression(let lhs)? = resultElements.last,
+      case .expression(let rhs) = elements[i+1]
+    {
+      resultElements.removeLast()
+      let assignOpExpr = AssignmentOperatorExpression(
+        leftExpression: lhs,
+        rightExpression: rhs)
+      assignOpExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
+      resultElements.append(.expression(assignOpExpr))
+      i += 1
+    } else {
+      resultElements.append(e)
+    }
+
+    i += 1
+  }
+
+  return resultElements
+}
+
 private func foldSequenceExpression(_ seqExpr: SequenceExpression) -> Expression {
   // Start with brutal hardcoding approach
 
@@ -90,11 +205,14 @@ private func foldSequenceExpression(_ seqExpr: SequenceExpression) -> Expression
   resultElements = foldElements(resultElements,
     forBinaryOperators: ["+", "&+", "-", "&-", "|", "^"])
   resultElements = foldElements(resultElements, forBinaryOperators: ["...", "..<"])
+  resultElements = foldElementsForTypeCasting(resultElements)
   resultElements = foldElements(resultElements, forBinaryOperators: ["??"])
   resultElements = foldElements(resultElements,
     forBinaryOperators: ["<", "<=", ">", ">=", "==", "!=", "===", "!==", "~=",])
   resultElements = foldElements(resultElements, forBinaryOperators: ["&&"])
   resultElements = foldElements(resultElements, forBinaryOperators: ["||"])
+  resultElements = foldElementsForTernary(resultElements)
+  resultElements = foldElementsForAssignment(resultElements)
   resultElements = foldElements(resultElements,
     forBinaryOperators: ["*=", "/=", "%=", "+=", "-=", "<<=", ">>=", "&=", "^=", "|=",])
 

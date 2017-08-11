@@ -185,6 +185,32 @@ class SequenceExpressionFoldingTests: XCTestCase {
     })
   }
 
+  func testRangeFormationHigherThanCasting() {
+    for c in ["is", "as", "as?", "as!"] {
+      semaSeqExprFoldingAndTest("1 ..< b \(c) Foo", testFlat: { seqExpr in
+        XCTAssertEqual(seqExpr.elements.count, 4)
+      }, testFolded: { expr in
+        XCTAssertTrue(expr is TypeCastingOperatorExpression)
+      })
+    }
+  }
+
+  func testCastingHigherThanNilCoalescing() {
+    for c in ["is", "as", "as?", "as!"] {
+      semaSeqExprFoldingAndTest("a ?? b \(c) Foo", testFlat: { seqExpr in
+        XCTAssertEqual(seqExpr.elements.count, 4)
+      }, testFolded: { expr in
+        guard let nilBiOpExpr = expr as? BinaryOperatorExpression else {
+          XCTFail("Failed in getting a binary operator expression for `a ?? b \(c) Foo`.")
+          return
+        }
+        XCTAssertEqual(nilBiOpExpr.binaryOperator, "??")
+        XCTAssertTrue(nilBiOpExpr.leftExpression is IdentifierExpression)
+        XCTAssertTrue(nilBiOpExpr.rightExpression is TypeCastingOperatorExpression)
+      })
+    }
+  }
+
   func testNilCoalescingHigherThanComparison() {
     semaSeqExprFoldingAndTest("1<b??2", testFlat: { seqExpr in
       XCTAssertEqual(seqExpr.elements.count, 5)
@@ -252,7 +278,17 @@ class SequenceExpressionFoldingTests: XCTestCase {
   }
 
   func testLogicalDisjunctionHigherThanAssignment() {
-    // TODO: semaSeqExprFoldingAndTest("a=false||b", testFlat: { seqExpr in
+    semaSeqExprFoldingAndTest("a=false||b", testFlat: { seqExpr in
+      XCTAssertEqual(seqExpr.elements.count, 5)
+    }, testFolded: { expr in
+      guard let assignOpExpr = expr as? AssignmentOperatorExpression else {
+        XCTFail("Failed in getting an assignment expression for `a=false||b`.")
+        return
+      }
+      XCTAssertEqual(assignOpExpr.sourceRange, getRange(1, 1, 1, 11))
+      XCTAssertTrue(assignOpExpr.leftExpression is IdentifierExpression)
+      XCTAssertTrue(assignOpExpr.rightExpression is BinaryOperatorExpression)
+    })
 
     semaSeqExprFoldingAndTest("a+=1+b", testFlat: { seqExpr in
       XCTAssertEqual(seqExpr.elements.count, 5)
@@ -272,6 +308,27 @@ class SequenceExpressionFoldingTests: XCTestCase {
       XCTAssertEqual(addBiOpExpr.binaryOperator, "+")
       XCTAssertTrue(addBiOpExpr.leftExpression is LiteralExpression)
       XCTAssertTrue(addBiOpExpr.rightExpression is IdentifierExpression)
+    })
+  }
+
+  func testLogicalDisjunctionHigherThanTernaryHigherThanAssignment() {
+    semaSeqExprFoldingAndTest("a = b ? true : bar || foo", testFlat: { seqExpr in
+      XCTAssertEqual(seqExpr.elements.count, 7)
+    }, testFolded: { expr in
+      guard let assignOpExpr = expr as? AssignmentOperatorExpression else {
+        XCTFail("Failed in getting an assignment expression for `a=false||b`.")
+        return
+      }
+      XCTAssertEqual(assignOpExpr.sourceRange, getRange(1, 1, 1, 26))
+      XCTAssertTrue(assignOpExpr.leftExpression is IdentifierExpression)
+      guard let ternaryCondOpExpr = assignOpExpr.rightExpression as? TernaryConditionalOperatorExpression else {
+        XCTFail("Failed in getting a ternary conditional operator expression for `b ? true : bar || foo`.")
+        return
+      }
+      XCTAssertEqual(ternaryCondOpExpr.sourceRange, getRange(1, 5, 1, 26))
+      XCTAssertTrue(ternaryCondOpExpr.conditionExpression is IdentifierExpression)
+      XCTAssertTrue(ternaryCondOpExpr.trueExpression is LiteralExpression)
+      XCTAssertTrue(ternaryCondOpExpr.falseExpression is BinaryOperatorExpression)
     })
   }
 
@@ -300,9 +357,13 @@ class SequenceExpressionFoldingTests: XCTestCase {
     ("testMultiplicationHigherThanAddition", testMultiplicationHigherThanAddition),
     ("testAdditionHigherThanRangeFormation", testAdditionHigherThanRangeFormation),
     ("testRangeFormationHigherThanNilCoalescing", testRangeFormationHigherThanNilCoalescing),
+    ("testRangeFormationHigherThanCasting", testRangeFormationHigherThanCasting),
+    ("testCastingHigherThanNilCoalescing", testCastingHigherThanNilCoalescing),
     ("testNilCoalescingHigherThanComparison", testNilCoalescingHigherThanComparison),
     ("testComparisonHigherThanLogicalConjunction", testComparisonHigherThanLogicalConjunction),
     ("testLogicalConjunctionHigherThanLogicalDisjunction", testLogicalConjunctionHigherThanLogicalDisjunction),
     ("testLogicalDisjunctionHigherThanAssignment", testLogicalDisjunctionHigherThanAssignment),
+    ("testLogicalDisjunctionHigherThanTernaryHigherThanAssignment",
+      testLogicalDisjunctionHigherThanTernaryHigherThanAssignment),
   ]
 }
