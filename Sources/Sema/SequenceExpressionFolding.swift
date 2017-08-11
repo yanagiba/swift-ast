@@ -32,67 +32,10 @@ public struct SequenceExpressionFolding {
   }
 
   private class FoldingVisitor : ASTVisitor {
-    private func fold(_ seqExpr: SequenceExpression) -> Expression {
-      // Start with brutal hardcoding approach
-
-      var multiplicationFoldedStack: [SequenceExpression.Element] = []
-
-      var i = 0
-      while i < seqExpr.elements.count {
-        let e = seqExpr.elements[i]
-        if case .binaryOperator(let op) = e,
-          op == "*" || op == "/",
-          case .expression(let lhs) = multiplicationFoldedStack.removeLast(),
-          case .expression(let rhs) = seqExpr.elements[i+1]
-        {
-          let biOpExpr = BinaryOperatorExpression(
-            binaryOperator: op,
-            leftExpression: lhs,
-            rightExpression: rhs)
-          biOpExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
-          multiplicationFoldedStack.append(.expression(biOpExpr))
-          i += 1
-        } else {
-          multiplicationFoldedStack.append(e)
-        }
-        i += 1
-      }
-
-      var additionFoldedStack: [SequenceExpression.Element] = []
-      var j = 0
-      while j < multiplicationFoldedStack.count {
-        let e = multiplicationFoldedStack[j]
-        if case .binaryOperator(let op) = e,
-          op == "+" || op == "-",
-          case .expression(let lhs) = additionFoldedStack.removeLast(),
-          case .expression(let rhs) = multiplicationFoldedStack[j+1]
-        {
-          let biOpExpr = BinaryOperatorExpression(
-            binaryOperator: op,
-            leftExpression: lhs,
-            rightExpression: rhs)
-          biOpExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
-          additionFoldedStack.append(.expression(biOpExpr))
-          j += 1
-        } else {
-          additionFoldedStack.append(e)
-        }
-        j += 1
-      }
-
-      guard additionFoldedStack.count == 1,
-        case .expression(let resultExpr) = additionFoldedStack[0]
-      else {
-        return WildcardExpression()
-      }
-
-      return resultExpr
-    }
-
     func visit(_ topLevelDecl: TopLevelDeclaration) throws -> Bool {
       for i in topLevelDecl.statements.indices {
         if let seqExpr = topLevelDecl.statements[i] as? SequenceExpression {
-          let foldedExpr = fold(seqExpr)
+          let foldedExpr = foldSequenceExpression(seqExpr)
           topLevelDecl.replaceStatement(at: i, with: foldedExpr)
         }
       }
@@ -100,4 +43,49 @@ public struct SequenceExpressionFolding {
       return true
     }
   }
+}
+
+private func foldElements(
+  _ elements: [SequenceExpression.Element],
+  forBinaryOperators biOps: [String]
+) -> [SequenceExpression.Element] {
+  var resultElements: [SequenceExpression.Element] = []
+
+  var i = 0
+  while i < elements.count {
+    let e = elements[i]
+    if case .binaryOperator(let op) = e,
+      biOps.contains(op),
+      case .expression(let lhs) = resultElements.removeLast(),
+      case .expression(let rhs) = elements[i+1]
+    {
+      let biOpExpr = BinaryOperatorExpression(
+        binaryOperator: op,
+        leftExpression: lhs,
+        rightExpression: rhs)
+      biOpExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
+      resultElements.append(.expression(biOpExpr))
+      i += 1
+    } else {
+      resultElements.append(e)
+    }
+    i += 1
+  }
+
+  return resultElements
+}
+
+private func foldSequenceExpression(_ seqExpr: SequenceExpression) -> Expression {
+  // Start with brutal hardcoding approach
+
+  var resultElements = foldElements(seqExpr.elements, forBinaryOperators: ["*", "&*", "/", "%", "&"])
+  resultElements = foldElements(resultElements, forBinaryOperators: ["+", "&+", "-", "&-", "|", "^"])
+
+  guard resultElements.count == 1,
+    case .expression(let resultExpr) = resultElements[0]
+  else {
+    fatalError("Failed in folding sequence expression `\(seqExpr)`.")
+  }
+
+  return resultExpr
 }

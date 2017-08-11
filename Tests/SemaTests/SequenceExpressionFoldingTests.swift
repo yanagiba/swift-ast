@@ -64,42 +64,42 @@ class SequenceExpressionFoldingTests: XCTestCase {
       XCTAssertTrue(divBiOpExpr.rightExpression is LiteralExpression)
     })
 
-    semaSeqExprFoldingAndTest("a+1*b+2", testFlat: { seqExpr in
+    semaSeqExprFoldingAndTest("a&+1%b&-2", testFlat: { seqExpr in
       XCTAssertEqual(seqExpr.elements.count, 7)
     }, testFolded: { expr in
       guard let outerAddBiOpExpr = expr as? BinaryOperatorExpression else {
-        XCTFail("Failed in getting a binary operator expression for `a+1*b+2`.")
+        XCTFail("Failed in getting a binary operator expression for `a&+1%b&-2`.")
         return
       }
-      XCTAssertEqual(outerAddBiOpExpr.sourceRange, getRange(1, 1, 1, 8))
-      XCTAssertEqual(outerAddBiOpExpr.binaryOperator, "+")
+      XCTAssertEqual(outerAddBiOpExpr.sourceRange, getRange(1, 1, 1, 10))
+      XCTAssertEqual(outerAddBiOpExpr.binaryOperator, "&-")
       XCTAssertTrue(outerAddBiOpExpr.rightExpression is LiteralExpression)
       guard let innerAddBiOpExpr = outerAddBiOpExpr.leftExpression as? BinaryOperatorExpression else {
-        XCTFail("Failed in getting a binary operator expression for `a+1*b`.")
+        XCTFail("Failed in getting a binary operator expression for `a&+1%b`.")
         return
       }
-      XCTAssertEqual(innerAddBiOpExpr.sourceRange, getRange(1, 1, 1, 6))
-      XCTAssertEqual(innerAddBiOpExpr.binaryOperator, "+")
+      XCTAssertEqual(innerAddBiOpExpr.sourceRange, getRange(1, 1, 1, 7))
+      XCTAssertEqual(innerAddBiOpExpr.binaryOperator, "&+")
       XCTAssertTrue(innerAddBiOpExpr.leftExpression is IdentifierExpression)
       guard let multiBiOpExpr = innerAddBiOpExpr.rightExpression as? BinaryOperatorExpression else {
-        XCTFail("Failed in getting a binary operator expression for `1*b`.")
+        XCTFail("Failed in getting a binary operator expression for `1%b`.")
         return
       }
-      XCTAssertEqual(multiBiOpExpr.sourceRange, getRange(1, 3, 1, 6))
-      XCTAssertEqual(multiBiOpExpr.binaryOperator, "*")
+      XCTAssertEqual(multiBiOpExpr.sourceRange, getRange(1, 4, 1, 7))
+      XCTAssertEqual(multiBiOpExpr.binaryOperator, "%")
       XCTAssertTrue(multiBiOpExpr.leftExpression is LiteralExpression)
       XCTAssertTrue(multiBiOpExpr.rightExpression is IdentifierExpression)
     })
 
-    semaSeqExprFoldingAndTest("1/a-2/b", testFlat: { seqExpr in
+    semaSeqExprFoldingAndTest("1/a^2/b", testFlat: { seqExpr in
       XCTAssertEqual(seqExpr.elements.count, 7)
     }, testFolded: { expr in
       guard let minusBiOpExpr = expr as? BinaryOperatorExpression else {
-        XCTFail("Failed in getting a binary operator expression for `1/a-2/b`.")
+        XCTFail("Failed in getting a binary operator expression for `1/a^2/b`.")
         return
       }
       XCTAssertEqual(minusBiOpExpr.sourceRange, getRange(1, 1, 1, 8))
-      XCTAssertEqual(minusBiOpExpr.binaryOperator, "-")
+      XCTAssertEqual(minusBiOpExpr.binaryOperator, "^")
       guard let leftDivBiOpExpr = minusBiOpExpr.leftExpression as? BinaryOperatorExpression else {
         XCTFail("Failed in getting a binary operator expression for `1/a`.")
         return
