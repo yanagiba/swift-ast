@@ -22,6 +22,9 @@ import XCTest
 
 class SemaIntegrationTests : XCTestCase {
   func testSequenceExpressionFolding() {
+    // This test focuses on where to perform the foldings, check out
+    // SequenceExpressionFoldingTests for testing the actual folding logic
+
     testIntegration("SemaTestResources", "SequenceExpressionFolding") { source -> String in
       let parser = Parser(source: source)
       guard let topLevelDecl = try? parser.parse() else {
@@ -29,12 +32,9 @@ class SemaIntegrationTests : XCTestCase {
       }
 
       let seqExprFolding = SequenceExpressionFolding()
-      let collection = seqExprFolding.fold([topLevelDecl])
-      guard let newTopLevelDecl = collection.first?.translationUnit else {
-        return "error: failed in folding the sequence expression."
-      }
+      seqExprFolding.fold([topLevelDecl])
 
-      return newTopLevelDecl.ttyDump
+      return topLevelDecl.ttyDump
     }
   }
 

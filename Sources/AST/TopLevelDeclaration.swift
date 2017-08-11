@@ -17,7 +17,7 @@
 import Source
 
 public class TopLevelDeclaration : ASTNode, ASTUnit {
-  public let statements: Statements
+  public private(set) var statements: Statements
   public let comments: CommentSet
   public let shebang: Shebang?
   public var sourceFile: SourceFile?
@@ -26,6 +26,13 @@ public class TopLevelDeclaration : ASTNode, ASTUnit {
     self.statements = statements
     self.comments = comments
     self.shebang = shebang
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceStatement(at index: Int, with statement: Statement) {
+    guard index >= 0 && index < statements.count else { return }
+    statements[index] = statement
   }
 
   // MARK: - ASTUnit

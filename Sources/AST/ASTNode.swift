@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import Source
 
 public class ASTNode : LocatableNode {
-  public private(set) var lexicalParent: ASTNode?
+  public private(set) weak var lexicalParent: ASTNode?
 
   public func setLexicalParent(_ node: ASTNode) {
     lexicalParent = node

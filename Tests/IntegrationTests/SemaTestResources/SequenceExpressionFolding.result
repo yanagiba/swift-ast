@@ -1,43 +1,49 @@
 top_level_decl <range: SemaTestResources/SequenceExpressionFoldingTests.swift:17:1-20:8>
-  sequence_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:17:1-17:6>
-    0: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:17:1-17:2>
-        kind: `identifier`, identifier: `a`
-    1: type: binary_op operator: `+`
-    2: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:17:3-17:4>
+  binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:17:1-17:6>
+    operator: `+`
+    identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:17:1-17:2>
+      kind: `identifier`, identifier: `a`
+    binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:17:3-17:6>
+      operator: `*`
+      identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:17:3-17:4>
         kind: `identifier`, identifier: `b`
-    3: type: binary_op operator: `*`
-    4: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:17:5-17:6>
+      identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:17:5-17:6>
         kind: `identifier`, identifier: `c`
-  sequence_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:18:1-18:6>
-    0: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:18:1-18:2>
+  binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:18:1-18:6>
+    operator: `-`
+    binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:18:1-18:4>
+      operator: `/`
+      identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:18:1-18:2>
         kind: `identifier`, identifier: `a`
-    1: type: binary_op operator: `/`
-    2: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:18:3-18:4>
+      identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:18:3-18:4>
         kind: `identifier`, identifier: `b`
-    3: type: binary_op operator: `-`
-    4: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:18:5-18:6>
-        kind: `identifier`, identifier: `c`
-  sequence_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:1-19:8>
-    0: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:1-19:2>
+    identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:18:5-18:6>
+      kind: `identifier`, identifier: `c`
+  binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:1-19:8>
+    operator: `+`
+    binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:1-19:6>
+      operator: `+`
+      identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:1-19:2>
         kind: `identifier`, identifier: `a`
-    1: type: binary_op operator: `+`
-    2: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:3-19:4>
-        kind: `identifier`, identifier: `b`
-    3: type: binary_op operator: `*`
-    4: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:5-19:6>
-        kind: `identifier`, identifier: `c`
-    5: type: binary_op operator: `+`
-    6: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:7-19:8>
-        kind: `identifier`, identifier: `d`
-  sequence_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:1-20:8>
-    0: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:1-20:2>
+      binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:3-19:6>
+        operator: `*`
+        identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:3-19:4>
+          kind: `identifier`, identifier: `b`
+        identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:5-19:6>
+          kind: `identifier`, identifier: `c`
+    identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:19:7-19:8>
+      kind: `identifier`, identifier: `d`
+  binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:1-20:8>
+    operator: `-`
+    binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:1-20:4>
+      operator: `/`
+      identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:1-20:2>
         kind: `identifier`, identifier: `a`
-    1: type: binary_op operator: `/`
-    2: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:3-20:4>
+      identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:3-20:4>
         kind: `identifier`, identifier: `b`
-    3: type: binary_op operator: `-`
-    4: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:5-20:6>
+    binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:5-20:8>
+      operator: `/`
+      identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:5-20:6>
         kind: `identifier`, identifier: `c`
-    5: type: binary_op operator: `/`
-    6: type: expression   identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:7-20:8>
+      identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:20:7-20:8>
         kind: `identifier`, identifier: `d`

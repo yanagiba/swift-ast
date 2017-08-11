@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,10 +15,17 @@
 */
 
 public class CodeBlock : ASTNode {
-  public let statements: Statements
+  public private(set) var statements: Statements
 
   public init(statements: Statements = []) {
     self.statements = statements
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceStatement(at index: Int, with statement: Statement) {
+    guard index >= 0 && index < statements.count else { return }
+    statements[index] = statement
   }
 
   // MARK: - ASTTextRepresentable

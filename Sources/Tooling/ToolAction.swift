@@ -52,7 +52,7 @@ open class ToolAction {
 
     if option.sequenceExpressionFoldingEnabled {
       let seqExprFolding = SequenceExpressionFolding()
-      unitCollection = seqExprFolding.fold(unitCollection)
+      seqExprFolding.fold(unitCollection)
     }
 
     return .success(withUnitCollection: unitCollection)
