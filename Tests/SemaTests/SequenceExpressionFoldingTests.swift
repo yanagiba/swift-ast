@@ -23,6 +23,28 @@ class SequenceExpressionFoldingTests: XCTestCase {
   // These tests focus on the folding logic, check out SemaIntegrationTests
   // for testing where to perform the folding.
 
+  func testBitwiseShiftHigherThanMultiplication() {
+    semaSeqExprFoldingAndTest("1*a<<2", testFlat: { seqExpr in
+      XCTAssertEqual(seqExpr.elements.count, 5)
+    }, testFolded: { expr in
+      guard let multiBiOpExpr = expr as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `1*a<<2`.")
+        return
+      }
+      XCTAssertEqual(multiBiOpExpr.sourceRange, getRange(1, 1, 1, 7))
+      XCTAssertEqual(multiBiOpExpr.binaryOperator, "*")
+      XCTAssertTrue(multiBiOpExpr.leftExpression is LiteralExpression)
+      guard let shiftBiOpExpr = multiBiOpExpr.rightExpression as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `a<<2`.")
+        return
+      }
+      XCTAssertEqual(shiftBiOpExpr.sourceRange, getRange(1, 3, 1, 7))
+      XCTAssertEqual(shiftBiOpExpr.binaryOperator, "<<")
+      XCTAssertTrue(shiftBiOpExpr.leftExpression is IdentifierExpression)
+      XCTAssertTrue(shiftBiOpExpr.rightExpression is LiteralExpression)
+    })
+  }
+
   func testMultiplicationHigherThanAddition() { // swift-lint:suppress(high_ncss)
     semaSeqExprFoldingAndTest("1+a*2", testFlat: { seqExpr in
       XCTAssertEqual(seqExpr.elements.count, 5)
@@ -119,6 +141,140 @@ class SequenceExpressionFoldingTests: XCTestCase {
     })
   }
 
+  func testAdditionHigherThanRangeFormation() {
+    semaSeqExprFoldingAndTest("1...a+2", testFlat: { seqExpr in
+      XCTAssertEqual(seqExpr.elements.count, 5)
+    }, testFolded: { expr in
+      guard let rangeBiOpExpr = expr as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `1...a+2`.")
+        return
+      }
+      XCTAssertEqual(rangeBiOpExpr.sourceRange, getRange(1, 1, 1, 8))
+      XCTAssertEqual(rangeBiOpExpr.binaryOperator, "...")
+      XCTAssertTrue(rangeBiOpExpr.leftExpression is LiteralExpression)
+      guard let addBiOpExpr = rangeBiOpExpr.rightExpression as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `a+2`.")
+        return
+      }
+      XCTAssertEqual(addBiOpExpr.sourceRange, getRange(1, 5, 1, 8))
+      XCTAssertEqual(addBiOpExpr.binaryOperator, "+")
+      XCTAssertTrue(addBiOpExpr.leftExpression is IdentifierExpression)
+      XCTAssertTrue(addBiOpExpr.rightExpression is LiteralExpression)
+    })
+  }
+
+  func testRangeFormationHigherThanNilCoalescing() {
+    semaSeqExprFoldingAndTest("a??1..<b", testFlat: { seqExpr in
+      XCTAssertEqual(seqExpr.elements.count, 5)
+    }, testFolded: { expr in
+      guard let nilBiOpExpr = expr as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `a??1..<b`.")
+        return
+      }
+      XCTAssertEqual(nilBiOpExpr.sourceRange, getRange(1, 1, 1, 9))
+      XCTAssertEqual(nilBiOpExpr.binaryOperator, "??")
+      XCTAssertTrue(nilBiOpExpr.leftExpression is IdentifierExpression)
+      guard let rangeBiOpExpr = nilBiOpExpr.rightExpression as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `1..<b`.")
+        return
+      }
+      XCTAssertEqual(rangeBiOpExpr.sourceRange, getRange(1, 4, 1, 9))
+      XCTAssertEqual(rangeBiOpExpr.binaryOperator, "..<")
+      XCTAssertTrue(rangeBiOpExpr.leftExpression is LiteralExpression)
+      XCTAssertTrue(rangeBiOpExpr.rightExpression is IdentifierExpression)
+    })
+  }
+
+  func testNilCoalescingHigherThanComparison() {
+    semaSeqExprFoldingAndTest("1<b??2", testFlat: { seqExpr in
+      XCTAssertEqual(seqExpr.elements.count, 5)
+    }, testFolded: { expr in
+      guard let compBiOpExpr = expr as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `1<b??2`.")
+        return
+      }
+      XCTAssertEqual(compBiOpExpr.sourceRange, getRange(1, 1, 1, 7))
+      XCTAssertEqual(compBiOpExpr.binaryOperator, "<")
+      XCTAssertTrue(compBiOpExpr.leftExpression is LiteralExpression)
+      guard let nilBiOpExpr = compBiOpExpr.rightExpression as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `b??2`.")
+        return
+      }
+      XCTAssertEqual(nilBiOpExpr.sourceRange, getRange(1, 3, 1, 7))
+      XCTAssertEqual(nilBiOpExpr.binaryOperator, "??")
+      XCTAssertTrue(nilBiOpExpr.leftExpression is IdentifierExpression)
+      XCTAssertTrue(nilBiOpExpr.rightExpression is LiteralExpression)
+    })
+  }
+
+  func testComparisonHigherThanLogicalConjunction() {
+    semaSeqExprFoldingAndTest("true&&b<2", testFlat: { seqExpr in
+      XCTAssertEqual(seqExpr.elements.count, 5)
+    }, testFolded: { expr in
+      guard let conjBiOpExpr = expr as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `true&&b<2`.")
+        return
+      }
+      XCTAssertEqual(conjBiOpExpr.sourceRange, getRange(1, 1, 1, 10))
+      XCTAssertEqual(conjBiOpExpr.binaryOperator, "&&")
+      XCTAssertTrue(conjBiOpExpr.leftExpression is LiteralExpression)
+      guard let compBiOpExpr = conjBiOpExpr.rightExpression as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `b<2`.")
+        return
+      }
+      XCTAssertEqual(compBiOpExpr.sourceRange, getRange(1, 7, 1, 10))
+      XCTAssertEqual(compBiOpExpr.binaryOperator, "<")
+      XCTAssertTrue(compBiOpExpr.leftExpression is IdentifierExpression)
+      XCTAssertTrue(compBiOpExpr.rightExpression is LiteralExpression)
+    })
+  }
+
+  func testLogicalConjunctionHigherThanLogicalDisjunction() {
+    semaSeqExprFoldingAndTest("false||b&&true", testFlat: { seqExpr in
+      XCTAssertEqual(seqExpr.elements.count, 5)
+    }, testFolded: { expr in
+      guard let disjBiOpExpr = expr as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `false||b&&true`.")
+        return
+      }
+      XCTAssertEqual(disjBiOpExpr.sourceRange, getRange(1, 1, 1, 15))
+      XCTAssertEqual(disjBiOpExpr.binaryOperator, "||")
+      XCTAssertTrue(disjBiOpExpr.leftExpression is LiteralExpression)
+      guard let conjBiOpExpr = disjBiOpExpr.rightExpression as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `b&&true`.")
+        return
+      }
+      XCTAssertEqual(conjBiOpExpr.sourceRange, getRange(1, 8, 1, 15))
+      XCTAssertEqual(conjBiOpExpr.binaryOperator, "&&")
+      XCTAssertTrue(conjBiOpExpr.leftExpression is IdentifierExpression)
+      XCTAssertTrue(conjBiOpExpr.rightExpression is LiteralExpression)
+    })
+  }
+
+  func testLogicalDisjunctionHigherThanAssignment() {
+    // TODO: semaSeqExprFoldingAndTest("a=false||b", testFlat: { seqExpr in
+
+    semaSeqExprFoldingAndTest("a+=1+b", testFlat: { seqExpr in
+      XCTAssertEqual(seqExpr.elements.count, 5)
+    }, testFolded: { expr in
+      guard let assignBiOpExpr = expr as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `a+=1+b`.")
+        return
+      }
+      XCTAssertEqual(assignBiOpExpr.sourceRange, getRange(1, 1, 1, 7))
+      XCTAssertEqual(assignBiOpExpr.binaryOperator, "+=")
+      XCTAssertTrue(assignBiOpExpr.leftExpression is IdentifierExpression)
+      guard let addBiOpExpr = assignBiOpExpr.rightExpression as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a binary operator expression for `1+b`.")
+        return
+      }
+      XCTAssertEqual(addBiOpExpr.sourceRange, getRange(1, 4, 1, 7))
+      XCTAssertEqual(addBiOpExpr.binaryOperator, "+")
+      XCTAssertTrue(addBiOpExpr.leftExpression is LiteralExpression)
+      XCTAssertTrue(addBiOpExpr.rightExpression is IdentifierExpression)
+    })
+  }
+
   private func semaSeqExprFoldingAndTest(
     _ content: String,
     testFlat: (SequenceExpression) -> Void,
@@ -140,6 +296,13 @@ class SequenceExpressionFoldingTests: XCTestCase {
   }
 
   static var allTests = [
+    ("testBitwiseShiftHigherThanMultiplication", testBitwiseShiftHigherThanMultiplication),
     ("testMultiplicationHigherThanAddition", testMultiplicationHigherThanAddition),
+    ("testAdditionHigherThanRangeFormation", testAdditionHigherThanRangeFormation),
+    ("testRangeFormationHigherThanNilCoalescing", testRangeFormationHigherThanNilCoalescing),
+    ("testNilCoalescingHigherThanComparison", testNilCoalescingHigherThanComparison),
+    ("testComparisonHigherThanLogicalConjunction", testComparisonHigherThanLogicalConjunction),
+    ("testLogicalConjunctionHigherThanLogicalDisjunction", testLogicalConjunctionHigherThanLogicalDisjunction),
+    ("testLogicalDisjunctionHigherThanAssignment", testLogicalDisjunctionHigherThanAssignment),
   ]
 }

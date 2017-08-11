@@ -49,6 +49,10 @@ private func foldElements(
   _ elements: [SequenceExpression.Element],
   forBinaryOperators biOps: [String]
 ) -> [SequenceExpression.Element] {
+  guard elements.count >= 3 else {
+    return elements
+  }
+
   var resultElements: [SequenceExpression.Element] = []
 
   var i = 0
@@ -56,9 +60,10 @@ private func foldElements(
     let e = elements[i]
     if case .binaryOperator(let op) = e,
       biOps.contains(op),
-      case .expression(let lhs) = resultElements.removeLast(),
+      case .expression(let lhs)? = resultElements.last,
       case .expression(let rhs) = elements[i+1]
     {
+      resultElements.removeLast()
       let biOpExpr = BinaryOperatorExpression(
         binaryOperator: op,
         leftExpression: lhs,
@@ -78,8 +83,20 @@ private func foldElements(
 private func foldSequenceExpression(_ seqExpr: SequenceExpression) -> Expression {
   // Start with brutal hardcoding approach
 
-  var resultElements = foldElements(seqExpr.elements, forBinaryOperators: ["*", "&*", "/", "%", "&"])
-  resultElements = foldElements(resultElements, forBinaryOperators: ["+", "&+", "-", "&-", "|", "^"])
+  var resultElements = foldElements(seqExpr.elements,
+    forBinaryOperators: ["<<", ">>"])
+  resultElements = foldElements(resultElements,
+    forBinaryOperators: ["*", "&*", "/", "%", "&"])
+  resultElements = foldElements(resultElements,
+    forBinaryOperators: ["+", "&+", "-", "&-", "|", "^"])
+  resultElements = foldElements(resultElements, forBinaryOperators: ["...", "..<"])
+  resultElements = foldElements(resultElements, forBinaryOperators: ["??"])
+  resultElements = foldElements(resultElements,
+    forBinaryOperators: ["<", "<=", ">", ">=", "==", "!=", "===", "!==", "~=",])
+  resultElements = foldElements(resultElements, forBinaryOperators: ["&&"])
+  resultElements = foldElements(resultElements, forBinaryOperators: ["||"])
+  resultElements = foldElements(resultElements,
+    forBinaryOperators: ["*=", "/=", "%=", "+=", "-=", "<<=", ">>=", "&=", "^=", "|=",])
 
   guard resultElements.count == 1,
     case .expression(let resultExpr) = resultElements[0]
