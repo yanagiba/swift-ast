@@ -311,12 +311,34 @@ class SequenceExpressionFoldingTests: XCTestCase {
     })
   }
 
+  func testLogicalDisjunctionHigherThanDefaultHigherThanTernary() {
+    semaSeqExprFoldingAndTest("b ? true : bar || foo <> c", testFlat: { seqExpr in
+      XCTAssertEqual(seqExpr.elements.count, 7)
+    }, testFolded: { expr in
+      guard let ternaryCondOpExpr = expr as? TernaryConditionalOperatorExpression else {
+        XCTFail("Failed in getting a ternary expression for `b ? true : bar || foo <> c`.")
+        return
+      }
+      XCTAssertEqual(ternaryCondOpExpr.sourceRange, getRange(1, 1, 1, 27))
+      XCTAssertTrue(ternaryCondOpExpr.conditionExpression is IdentifierExpression)
+      XCTAssertTrue(ternaryCondOpExpr.trueExpression is LiteralExpression)
+      guard let biOpExpr = ternaryCondOpExpr.falseExpression as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a ternary conditional operator expression for `bar || foo <> c`.")
+        return
+      }
+      XCTAssertEqual(biOpExpr.sourceRange, getRange(1, 12, 1, 27))
+      XCTAssertEqual(biOpExpr.binaryOperator, "<>")
+      XCTAssertTrue(biOpExpr.leftExpression is BinaryOperatorExpression)
+      XCTAssertTrue(biOpExpr.rightExpression is IdentifierExpression)
+    })
+  }
+
   func testLogicalDisjunctionHigherThanTernaryHigherThanAssignment() {
     semaSeqExprFoldingAndTest("a = b ? true : bar || foo", testFlat: { seqExpr in
       XCTAssertEqual(seqExpr.elements.count, 7)
     }, testFolded: { expr in
       guard let assignOpExpr = expr as? AssignmentOperatorExpression else {
-        XCTFail("Failed in getting an assignment expression for `a=false||b`.")
+        XCTFail("Failed in getting an assignment expression for `a = b ? true : bar || foo`.")
         return
       }
       XCTAssertEqual(assignOpExpr.sourceRange, getRange(1, 1, 1, 26))
@@ -363,6 +385,8 @@ class SequenceExpressionFoldingTests: XCTestCase {
     ("testComparisonHigherThanLogicalConjunction", testComparisonHigherThanLogicalConjunction),
     ("testLogicalConjunctionHigherThanLogicalDisjunction", testLogicalConjunctionHigherThanLogicalDisjunction),
     ("testLogicalDisjunctionHigherThanAssignment", testLogicalDisjunctionHigherThanAssignment),
+    ("testLogicalDisjunctionHigherThanDefaultHigherThanTernary",
+      testLogicalDisjunctionHigherThanDefaultHigherThanTernary),
     ("testLogicalDisjunctionHigherThanTernaryHigherThanAssignment",
       testLogicalDisjunctionHigherThanTernaryHigherThanAssignment),
   ]

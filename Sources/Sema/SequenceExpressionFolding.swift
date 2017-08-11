@@ -30,18 +30,18 @@ public struct SequenceExpressionFolding {
       _ = try _foldingVisitor.traverse(unit.translationUnit)
     } catch {}
   }
+}
 
-  private class FoldingVisitor : ASTVisitor {
-    func visit(_ topLevelDecl: TopLevelDeclaration) throws -> Bool {
-      for i in topLevelDecl.statements.indices {
-        if let seqExpr = topLevelDecl.statements[i] as? SequenceExpression {
-          let foldedExpr = foldSequenceExpression(seqExpr)
-          topLevelDecl.replaceStatement(at: i, with: foldedExpr)
-        }
+private class FoldingVisitor : ASTVisitor {
+  func visit(_ topLevelDecl: TopLevelDeclaration) throws -> Bool {
+    for i in topLevelDecl.statements.indices {
+      if let seqExpr = topLevelDecl.statements[i] as? SequenceExpression {
+        let foldedExpr = foldSequenceExpression(seqExpr)
+        topLevelDecl.replaceStatement(at: i, with: foldedExpr)
       }
-
-      return true
     }
+
+    return true
   }
 }
 
@@ -195,6 +195,43 @@ private func foldElementsForAssignment(
   return resultElements
 }
 
+
+private func foldElementsForDefault(
+  _ elements: [SequenceExpression.Element]
+) -> [SequenceExpression.Element] {
+  guard elements.count >= 3 else {
+    return elements
+  }
+
+  let assignOps = ["*=", "/=", "%=", "+=", "-=", "<<=", ">>=", "&=", "^=", "|="]
+
+  var resultElements: [SequenceExpression.Element] = []
+
+  var i = 0
+  while i < elements.count {
+    let e = elements[i]
+    if case .binaryOperator(let op) = e,
+      !assignOps.contains(op),
+      case .expression(let lhs)? = resultElements.last,
+      case .expression(let rhs) = elements[i+1]
+    {
+      resultElements.removeLast()
+      let biOpExpr = BinaryOperatorExpression(
+        binaryOperator: op,
+        leftExpression: lhs,
+        rightExpression: rhs)
+      biOpExpr.setSourceRange(lhs.sourceRange.start, rhs.sourceRange.end)
+      resultElements.append(.expression(biOpExpr))
+      i += 1
+    } else {
+      resultElements.append(e)
+    }
+    i += 1
+  }
+
+  return resultElements
+}
+
 private func foldSequenceExpression(_ seqExpr: SequenceExpression) -> Expression {
   // Start with brutal hardcoding approach
 
@@ -211,6 +248,7 @@ private func foldSequenceExpression(_ seqExpr: SequenceExpression) -> Expression
     forBinaryOperators: ["<", "<=", ">", ">=", "==", "!=", "===", "!==", "~=",])
   resultElements = foldElements(resultElements, forBinaryOperators: ["&&"])
   resultElements = foldElements(resultElements, forBinaryOperators: ["||"])
+  resultElements = foldElementsForDefault(resultElements)
   resultElements = foldElementsForTernary(resultElements)
   resultElements = foldElementsForAssignment(resultElements)
   resultElements = foldElements(resultElements,
