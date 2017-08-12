@@ -393,6 +393,7 @@ class SequenceExpressionFoldingTests: XCTestCase {
     testFolded: (Expression) -> Void
   ) {
     let topLevelDecl = parse(content)
+    XCTAssertFalse(topLevelDecl.sequenceExpressionFolded)
     guard let seqExpr = topLevelDecl.statements.first as? SequenceExpression else {
       XCTFail("Failed in parsing a sequence expression with content `\(content)`.")
       return
@@ -400,6 +401,7 @@ class SequenceExpressionFoldingTests: XCTestCase {
     testFlat(seqExpr)
     let seqExprFolding = SequenceExpressionFolding()
     seqExprFolding.fold([topLevelDecl])
+    XCTAssertTrue(topLevelDecl.sequenceExpressionFolded)
     guard let foldedExpr = topLevelDecl.statements.first as? Expression else {
       XCTFail("Failed in folding sequence expression.")
       return

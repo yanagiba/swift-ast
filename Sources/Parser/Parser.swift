@@ -29,7 +29,7 @@ public class Parser {
 
   public func parse() throws -> TopLevelDeclaration {
     let topLevelDecl = try parseTopLevelDeclaration()
-    topLevelDecl.sourceFile = _sourceFile
+    topLevelDecl.setSourceFile(_sourceFile)
     return topLevelDecl
   }
 }

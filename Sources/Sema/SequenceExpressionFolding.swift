@@ -28,6 +28,7 @@ public struct SequenceExpressionFolding {
   private func fold(_ unit: ASTUnit) {
     do {
       _ = try _foldingVisitor.traverse(unit.translationUnit)
+      unit.translationUnit.foldedSequenceExpression()
     } catch {}
   }
 }
