@@ -14,7 +14,42 @@
    limitations under the License.
 */
 
-a+b*c
-a/b-c
-a+b*c+d
-a/b-c/d
+1<<2*3
+
+_ = a(a+b*c, foo: a+b*c) {
+  a+b*c
+}
+
+_ = "\(a/b-c)\(a/b-c)"
+_ = [a/b-c, a/b-c, a/b-c,]
+_ = [a/b-c: a/b-c, a/b-c: a/b-c, a/b-c: a/b-c,]
+
+_ = (a^b&c^d)
+
+_ = foo[1+4%3]
+_ = self[1+4%3, 1+4%3]
+_ = super[1+4%3, 1+4%3, 1+4%3]
+
+try a|b..<c
+try? a|b..<c
+try! a|b..<c
+
+_ = (b as? Foo ?? Bar(), b as? Foo ?? Bar())
+_ = (a: b as? Foo ?? Bar(), b: b as? Foo ?? Bar(), c: b as? Foo ?? Bar())
+
+if foo {
+  19%3>>4
+}
+
+//
+//
+//
+// a..<b as Foo
+// b as? Foo ?? Bar()
+// b ?? 0 != 0
+// c && d > 3
+// d || e && f
+// g <> h || i
+// a ? b : c <> d
+// a = b ? c : d
+// a = b+c

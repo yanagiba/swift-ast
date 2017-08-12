@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,10 +15,16 @@
 */
 
 public class ParenthesizedExpression : ASTNode, PrimaryExpression {
-  public let expression: Expression
+  public private(set) var expression: Expression
 
   public init(expression: Expression) {
     self.expression = expression
+  }
+
+  // MARK: - Node Mutations
+
+  public func reset(with newExpression: Expression) {
+    expression = newExpression
   }
 
   // MARK: - ASTTextRepresentable

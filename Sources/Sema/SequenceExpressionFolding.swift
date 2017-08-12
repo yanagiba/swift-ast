@@ -44,6 +44,168 @@ private class FoldingVisitor : ASTVisitor {
 
     return true
   }
+
+  func visit(_ codeBlock: CodeBlock) throws -> Bool {
+    for i in codeBlock.statements.indices {
+      if let seqExpr = codeBlock.statements[i] as? SequenceExpression {
+        let foldedExpr = foldSequenceExpression(seqExpr)
+        codeBlock.replaceStatement(at: i, with: foldedExpr)
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ expr: ClosureExpression) throws -> Bool {
+
+    /*
+    if let captureList = expr.signature?.captureList {
+      for captureItem in captureList {
+        captureItem.expression
+        // NOTE: this should never be SequenceExpression, so leave a note, and move on
+      }
+    }
+    */
+
+    if let stmts = expr.statements {
+      for i in stmts.indices {
+        if let seqExpr = stmts[i] as? SequenceExpression {
+          let foldedExpr = foldSequenceExpression(seqExpr)
+          expr.replaceStatement(at: i, with: foldedExpr)
+        }
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ expr: FunctionCallExpression) throws -> Bool {
+    if let argumentList = expr.argumentClause {
+      for i in argumentList.indices {
+        let argument = argumentList[i]
+        switch argument {
+        case .expression(let argExpr):
+          let foldedExpr = foldExpression(argExpr)
+          expr.replaceArgument(at: i, with: .expression(foldedExpr))
+        case let .namedExpression(name, argExpr):
+          let foldedExpr = foldExpression(argExpr)
+          expr.replaceArgument(at: i, with: .namedExpression(name, foldedExpr))
+        /*
+        // NOTE: should never happen
+        case .memoryReference(let argExpr):
+          continue
+        case .namedMemoryReference(_, let argExpr):
+          continue
+        */
+        default:
+          continue
+        }
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ expr: LiteralExpression) throws -> Bool {
+    switch expr.kind {
+    case let .interpolatedString(exprs, str):
+      let foldedExprs = exprs.map(foldExpression)
+      expr.reset(with: .interpolatedString(foldedExprs, str))
+    case .array(let exprs):
+      let foldedExprs = exprs.map(foldExpression)
+      expr.reset(with: .array(foldedExprs))
+    case .dictionary(let dictEntries):
+      let foldedEntries = dictEntries.map { e -> DictionaryEntry in
+        let foldedKey = foldExpression(e.key)
+        let foldedValue = foldExpression(e.value)
+        return DictionaryEntry(key: foldedKey, value: foldedValue)
+      }
+      expr.reset(with: .dictionary(foldedEntries))
+    default:
+      break
+    }
+
+    return true
+  }
+
+  func visit(_ expr: ParenthesizedExpression) throws -> Bool {
+    let foldedExpr = foldExpression(expr.expression)
+    expr.reset(with: foldedExpr)
+
+    return true
+  }
+
+  func visit(_ expr: SelfExpression) throws -> Bool {
+    if case .subscript(let arguments) = expr.kind {
+      let foldedArguments = arguments.map { a -> SubscriptArgument in
+        let foldedExpr = foldExpression(a.expression)
+        return SubscriptArgument(identifier: a.identifier, expression: foldedExpr)
+      }
+      expr.reset(with: .subscript(foldedArguments))
+    }
+
+    return true
+  }
+
+  func visit(_ expr: SuperclassExpression) throws -> Bool {
+    if case .subscript(let arguments) = expr.kind {
+      let foldedArguments = arguments.map { a -> SubscriptArgument in
+        let foldedExpr = foldExpression(a.expression)
+        return SubscriptArgument(identifier: a.identifier, expression: foldedExpr)
+      }
+      expr.reset(with: .subscript(foldedArguments))
+    }
+
+    return true
+  }
+
+  func visit(_ expr: SubscriptExpression) throws -> Bool {
+    for i in expr.arguments.indices {
+      let arg = expr.arguments[i]
+      let foldedExpr = foldExpression(arg.expression)
+      let foldedArg = SubscriptArgument(identifier: arg.identifier, expression: foldedExpr)
+      expr.replaceArgument(at: i, with: foldedArg)
+    }
+
+    return true
+  }
+
+  func visit(_ expr: TryOperatorExpression) throws -> Bool {
+    switch expr.kind {
+    case .try(let expression):
+      let foldedExpr = foldExpression(expression)
+      expr.reset(with: .try(foldedExpr))
+    case .forced(let expression):
+      let foldedExpr = foldExpression(expression)
+      expr.reset(with: .forced(foldedExpr))
+    case .optional(let expression):
+      let foldedExpr = foldExpression(expression)
+      expr.reset(with: .optional(foldedExpr))
+    }
+
+    return true
+  }
+
+  func visit(_ expr: TupleExpression) throws -> Bool {
+    for i in expr.elementList.indices {
+      let element = expr.elementList[i]
+      let foldedExpr = foldExpression(element.expression)
+      let foldedElement = TupleExpression.Element(
+        identifier: element.identifier, expression: foldedExpr)
+      expr.replaceElement(at: i, with: foldedElement)
+    }
+
+    return true
+  }
+
+  func visit(_ seqExpr: SequenceExpression) throws -> Bool {
+    debugPrint("Shouldn't see SequenceExpression in SequenceExpressionFolding.FoldVisitor")
+    if let lexicalParentDescription = seqExpr.lexicalParent?.textDescription {
+      debugPrint(lexicalParentDescription)
+    }
+
+    return true
+  }
 }
 
 private func foldElements(
@@ -288,4 +450,11 @@ private func foldSequenceExpression(_ seqExpr: SequenceExpression) -> Expression
   }
 
   return resultExpr
+}
+
+private func foldExpression(_ expr: Expression) -> Expression {
+  guard let seqExpr = expr as? SequenceExpression else {
+    return expr
+  }
+  return foldSequenceExpression(seqExpr)
 }

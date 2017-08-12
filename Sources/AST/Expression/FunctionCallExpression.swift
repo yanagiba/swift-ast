@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public class FunctionCallExpression : ASTNode, PostfixExpression {
   public typealias ArgumentList = [Argument]
 
   public let postfixExpression: PostfixExpression
-  public let argumentClause: ArgumentList?
+  public private(set) var argumentClause: ArgumentList?
   public let trailingClosure: ClosureExpression?
 
   public init(
@@ -46,6 +46,13 @@ public class FunctionCallExpression : ASTNode, PostfixExpression {
     self.postfixExpression = postfixExpression
     self.argumentClause = argumentClause
     self.trailingClosure = trailingClosure
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceArgument(at index: Int, with argument: Argument) {
+    guard index >= 0 && index < (argumentClause?.count ?? 0) else { return }
+    argumentClause?[index] = argument
   }
 
   // MARK: - ASTTextRepresentable

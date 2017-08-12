@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -80,11 +80,18 @@ public class ClosureExpression : ASTNode, PrimaryExpression {
   }
 
   public let signature: Signature?
-  public let statements: Statements?
+  public private(set) var statements: Statements?
 
   public init(signature: Signature? = nil, statements: Statements? = nil) {
     self.signature = signature
     self.statements = statements
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceStatement(at index: Int, with statement: Statement) {
+    guard index >= 0 && index < (statements?.count ?? 0) else { return }
+    statements?[index] = statement
   }
 
   // MARK: - ASTTextRepresentable

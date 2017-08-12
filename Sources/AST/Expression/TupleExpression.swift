@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -29,10 +29,17 @@ public class TupleExpression : ASTNode, PrimaryExpression {
     }
   }
 
-  public let elementList: [Element]
+  public private(set) var elementList: [Element]
 
   public init(elementList: [Element] = []) {
     self.elementList = elementList
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceElement(at index: Int, with element: Element) {
+    guard index >= 0 && index < elementList.count else { return }
+    elementList[index] = element
   }
 
   // MARK: - ASTTextRepresentable

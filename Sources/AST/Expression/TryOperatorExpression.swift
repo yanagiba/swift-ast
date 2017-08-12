@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,10 +21,16 @@ public class TryOperatorExpression : ASTNode, Expression {
     case optional(Expression)
   }
 
-  public let kind: Kind
+  public private(set) var kind: Kind
 
   public init(kind: Kind) {
     self.kind = kind
+  }
+
+  // MARK: - Node Mutations
+
+  public func reset(with newKind: Kind) {
+    kind = newKind
   }
 
   // MARK: - ASTTextRepresentable
