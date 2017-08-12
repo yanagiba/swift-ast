@@ -524,6 +524,8 @@ extension ASTVisitor {
       return try traverse(expr)
     case let expr as SelfExpression:
       return try traverse(expr)
+    case let expr as SequenceExpression:
+      return try traverse(expr)
     case let expr as SubscriptExpression:
       return try traverse(expr)
     case let expr as SuperclassExpression:
@@ -711,6 +713,23 @@ extension ASTVisitor {
     if case .subscript(let arguments) = expr.kind {
       let exprs = arguments.map({ $0.expression })
       return try traverse(exprs)
+    }
+
+    return true
+  }
+
+  public func traverse(_ expr: SequenceExpression) throws -> Bool {
+    guard try visit(expr) else { return false }
+
+    for element in expr.elements {
+      switch element {
+      case .expression(let expr):
+        guard try traverse(expr) else { return false }
+      case .ternaryConditionalOperator(let expr):
+        guard try traverse(expr) else { return false }
+      default:
+        continue
+      }
     }
 
     return true
