@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -30,12 +30,23 @@ public class SwitchStatement : ASTNode, Statement {
     case `case`([Item], Statements)
     case `default`(Statements)
   }
-  public let expression: Expression
-  public let cases: [Case]
+  public private(set) var expression: Expression
+  public private(set) var cases: [Case]
 
   public init(expression: Expression, cases: [Case] = []) {
     self.expression = expression
     self.cases = cases
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceExpression(with expr: Expression) {
+    expression = expr
+  }
+
+  public func replaceCase(at index: Int, with newCase: Case) {
+    guard index >= 0 && index < cases.count else { return }
+    cases[index] = newCase
   }
 
   // MARK: - ASTTextRepresentable

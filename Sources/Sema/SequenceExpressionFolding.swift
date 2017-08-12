@@ -56,6 +56,155 @@ private class FoldingVisitor : ASTVisitor {
     return true
   }
 
+  func visit(_ stmt: DoStatement) throws -> Bool {
+    for i in stmt.catchClauses.indices {
+      let catchClause = stmt.catchClauses[i]
+      if let seqExpr = catchClause.whereExpression as? SequenceExpression {
+        let foldedExpr = foldSequenceExpression(seqExpr)
+        let foldedCatchClause = DoStatement.CatchClause(
+          pattern: catchClause.pattern,
+          whereExpression: foldedExpr,
+          codeBlock: catchClause.codeBlock)
+        stmt.replaceCatchClause(at: i, with: foldedCatchClause)
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ stmt: ForInStatement) throws -> Bool {
+    if let collSeqExpr = stmt.collection as? SequenceExpression {
+      let foldedExpr = foldSequenceExpression(collSeqExpr)
+      stmt.replaceCollection(with: foldedExpr)
+    }
+
+    if let whereSeqExpr = stmt.item.whereClause as? SequenceExpression {
+      let foldedExpr = foldSequenceExpression(whereSeqExpr)
+      stmt.replaceWhereClause(with: foldedExpr)
+    }
+
+    return true
+  }
+
+  private func foldCondition(_ condition: Condition) -> Condition {
+    switch condition {
+    case .expression(let expr):
+      return .expression(foldExpression(expr))
+    case let .case(pttrn, expr):
+      return .case(pttrn, foldExpression(expr))
+    case let .let(pttrn, expr):
+      return .let(pttrn, foldExpression(expr))
+    case let .var(pttrn, expr):
+      return .var(pttrn, foldExpression(expr))
+    default:
+      return condition
+    }
+  }
+
+  func visit(_ stmt: GuardStatement) throws -> Bool {
+    for i in stmt.conditionList.indices {
+      let condition = stmt.conditionList[i]
+      let foldedCondition = foldCondition(condition)
+      stmt.replaceCondition(at: i, with: foldedCondition)
+    }
+
+    return true
+  }
+
+  func visit(_ stmt: IfStatement) throws -> Bool {
+    for i in stmt.conditionList.indices {
+      let condition = stmt.conditionList[i]
+      let foldedCondition = foldCondition(condition)
+      stmt.replaceCondition(at: i, with: foldedCondition)
+    }
+
+    return true
+  }
+
+  func visit(_ stmt: RepeatWhileStatement) throws -> Bool {
+    if let seqExpr = stmt.conditionExpression as? SequenceExpression {
+      let foldedExpr = foldSequenceExpression(seqExpr)
+      stmt.replaceCondition(with: foldedExpr)
+    }
+
+    return true
+  }
+
+  func visit(_ stmt: ReturnStatement) throws -> Bool {
+    if let seqExpr = stmt.expression as? SequenceExpression {
+      let foldedExpr = foldSequenceExpression(seqExpr)
+      stmt.replaceExpression(with: foldedExpr)
+    }
+
+    return true
+  }
+
+  private func foldStatements(_ stmts: Statements) -> Statements {
+    return stmts.map { stmt -> Statement in
+      if let defaultStmtSeqExpr = stmt as? SequenceExpression {
+        let foldedExpr = foldSequenceExpression(defaultStmtSeqExpr)
+        return foldedExpr
+      } else {
+        return stmt
+      }
+    }
+  }
+
+  func visit(_ stmt: SwitchStatement) throws -> Bool {
+    if let seqExpr = stmt.expression as? SequenceExpression {
+      let foldedExpr = foldSequenceExpression(seqExpr)
+      stmt.replaceExpression(with: foldedExpr)
+    }
+
+    for i in stmt.cases.indices {
+      let eachCase = stmt.cases[i]
+      switch eachCase {
+      case let .case(items, statements):
+        let foldedItems = items.map { i -> SwitchStatement.Case.Item in
+          var foldedWhereExpression: Expression?
+          if let whereSeqExpr = i.whereExpression as? SequenceExpression {
+            foldedWhereExpression = foldSequenceExpression(whereSeqExpr)
+          }
+          var foldedPattern = i.pattern
+          if let exprPattern = i.pattern as? ExpressionPattern,
+            let pttrnSeqExpr = exprPattern.expression as? SequenceExpression
+          {
+            let foldedPttrnSeqExpr = foldSequenceExpression(pttrnSeqExpr)
+            foldedPattern = ExpressionPattern(expression: foldedPttrnSeqExpr)
+          }
+          return SwitchStatement.Case.Item(
+            pattern: foldedPattern, whereExpression: foldedWhereExpression)
+        }
+        let foldedStmts = foldStatements(statements)
+        stmt.replaceCase(at: i, with: .case(foldedItems, foldedStmts))
+      case .default(let statements):
+        let foldedStmts = foldStatements(statements)
+        stmt.replaceCase(at: i, with: .default(foldedStmts))
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ stmt: ThrowStatement) throws -> Bool {
+    if let seqExpr = stmt.expression as? SequenceExpression {
+      let foldedExpr = foldSequenceExpression(seqExpr)
+      stmt.replaceExpression(with: foldedExpr)
+    }
+
+    return true
+  }
+
+  func visit(_ stmt: WhileStatement) throws -> Bool {
+    for i in stmt.conditionList.indices {
+      let condition = stmt.conditionList[i]
+      let foldedCondition = foldCondition(condition)
+      stmt.replaceCondition(at: i, with: foldedCondition)
+    }
+
+    return true
+  }
+
   func visit(_ expr: ClosureExpression) throws -> Bool {
 
     /*

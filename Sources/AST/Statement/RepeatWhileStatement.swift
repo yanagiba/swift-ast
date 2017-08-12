@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,12 +16,18 @@
 
 
 public class RepeatWhileStatement : ASTNode, Statement {
-  public let conditionExpression: Expression
+  public private(set) var conditionExpression: Expression
   public let codeBlock: CodeBlock
 
   public init(conditionExpression: Expression, codeBlock: CodeBlock) {
     self.conditionExpression = conditionExpression
     self.codeBlock = codeBlock
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceCondition(with expr: Expression) {
+    conditionExpression = expr
   }
 
   // MARK: - ASTTextRepresentable

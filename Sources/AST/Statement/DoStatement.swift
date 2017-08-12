@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -32,11 +32,18 @@ public class DoStatement : ASTNode, Statement {
     }
   }
   public let codeBlock: CodeBlock
-  public let catchClauses: [CatchClause]
+  public private(set) var catchClauses: [CatchClause]
 
   public init(codeBlock: CodeBlock, catchClauses: [CatchClause] = []) {
     self.codeBlock = codeBlock
     self.catchClauses = catchClauses
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceCatchClause(at index: Int, with catchClause: CatchClause) {
+    guard index >= 0 && index < catchClauses.count else { return }
+    catchClauses[index] = catchClause
   }
 
   // MARK: - ASTTextRepresentable

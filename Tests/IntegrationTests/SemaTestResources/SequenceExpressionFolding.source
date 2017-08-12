@@ -37,19 +37,58 @@ try! a|b..<c
 _ = (b as? Foo ?? Bar(), b as? Foo ?? Bar())
 _ = (a: b as? Foo ?? Bar(), b: b as? Foo ?? Bar(), c: b as? Foo ?? Bar())
 
-if foo {
+defer {
+  _ = a..<b as Foo
+}
+
+do {
+  try a|b..<c
+} catch b where b ?? 0 != 0 {
+  _ = c && d > 3
+} catch c where c ?? 0 != 0 {
+  _ = c && d > 3
+} catch {
+  _ = c && d > 3
+}
+
+for i in [a] + [b, c] + [d, e, f] where i + j + i {
+  [a] + [b, c] + [d, e, f]
+  i + j + i
+}
+
+guard 1+2+3, .case(a)=b+c+d, let a = b+c+d, var a = b+c+d else {
+  b+c+d
+}
+
+if 1+2+3, .case(a)=b+c+d, let a = b+c+d, var a = b+c+d {
+  19%3>>4
+} else if 1+2+3, .case(a)=b+c+d, let a = b+c+d, var a = b+c+d {
+  19%3>>4
+} else {
   19%3>>4
 }
 
+repeat {
+  19%3>>4
+} while g <> h || i
+
+return a+b+c
+
+switch a+b+c {
+case 1+2+3, 4+5+6, 7+8+9 where a || b && c:
+  19%3>>4
+default:
+  19%3>>4
+}
+
+throw a+b+c
+
+while 1+2+3, .case(a)=b+c+d, let a = b+c+d, var a = b+c+d {
+  b+c+d
+}
+
 //
-//
-//
-// a..<b as Foo
-// b as? Foo ?? Bar()
-// b ?? 0 != 0
-// c && d > 3
 // d || e && f
-// g <> h || i
 // a ? b : c <> d
 // a = b ? c : d
 // a = b+c

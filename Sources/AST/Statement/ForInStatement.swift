@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ public class ForInStatement : ASTNode, Statement {
     public let matchingPattern: Pattern
     public let whereClause: Expression?
   }
-  public let item: Item
-  public let collection: Expression
+  public private(set) var item: Item
+  public private(set) var collection: Expression
   public let codeBlock: CodeBlock
 
   public init(
@@ -36,6 +36,17 @@ public class ForInStatement : ASTNode, Statement {
       matchingPattern: matchingPattern, whereClause: whereClause)
     self.collection = collection
     self.codeBlock = codeBlock
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceCollection(with expr: Expression) {
+    collection = expr
+  }
+
+  public func replaceWhereClause(with expr: Expression) {
+    item = Item(isCaseMatching: item.isCaseMatching,
+      matchingPattern: item.matchingPattern, whereClause: expr)
   }
 
   // MARK: - ASTTextRepresentable
