@@ -354,6 +354,39 @@ class SequenceExpressionFoldingTests: XCTestCase {
     })
   }
 
+  func testNestedSequenceExpressionFolding() {
+    semaSeqExprFoldingAndTest("a = b ? a && b ? b : c : bar", testFlat: { seqExpr in
+      XCTAssertEqual(seqExpr.elements.count, 5)
+      guard case .ternaryConditionalOperator(let expr) = seqExpr.elements[3] else {
+        XCTFail("Failed in getting a ternary element.")
+        return
+      }
+      XCTAssertTrue(expr is SequenceExpression)
+    }, testFolded: { expr in
+      guard let assignOpExpr = expr as? AssignmentOperatorExpression else {
+        XCTFail("Failed in getting an assignment expression for `a = b ? a && b ? b : c : bar`.")
+        return
+      }
+      XCTAssertEqual(assignOpExpr.sourceRange, getRange(1, 1, 1, 29))
+      XCTAssertTrue(assignOpExpr.leftExpression is IdentifierExpression)
+      guard let ternaryCondOpExpr = assignOpExpr.rightExpression as? TernaryConditionalOperatorExpression else {
+        XCTFail("Failed in getting a ternary conditional operator expression for `b ? a && b ? b : c : bar`.")
+        return
+      }
+      XCTAssertEqual(ternaryCondOpExpr.sourceRange, getRange(1, 5, 1, 29))
+      XCTAssertTrue(ternaryCondOpExpr.conditionExpression is IdentifierExpression)
+      XCTAssertTrue(ternaryCondOpExpr.falseExpression is IdentifierExpression)
+      guard let innerTernaryExpr = ternaryCondOpExpr.trueExpression as? TernaryConditionalOperatorExpression else {
+        XCTFail("Failed in getting a ternary conditional operator expression for `a && b ? b : c`.")
+        return
+      }
+      XCTAssertEqual(innerTernaryExpr.sourceRange, getRange(1, 9, 1, 23))
+      XCTAssertTrue(innerTernaryExpr.conditionExpression is BinaryOperatorExpression)
+      XCTAssertTrue(innerTernaryExpr.trueExpression is IdentifierExpression)
+      XCTAssertTrue(innerTernaryExpr.falseExpression is IdentifierExpression)
+    })
+  }
+
   private func semaSeqExprFoldingAndTest(
     _ content: String,
     testFlat: (SequenceExpression) -> Void,
@@ -389,5 +422,6 @@ class SequenceExpressionFoldingTests: XCTestCase {
       testLogicalDisjunctionHigherThanDefaultHigherThanTernary),
     ("testLogicalDisjunctionHigherThanTernaryHigherThanAssignment",
       testLogicalDisjunctionHigherThanTernaryHigherThanAssignment),
+    ("testNestedSequenceExpressionFolding", testNestedSequenceExpressionFolding),
   ]
 }

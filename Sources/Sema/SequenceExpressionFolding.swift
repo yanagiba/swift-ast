@@ -232,10 +232,36 @@ private func foldElementsForDefault(
   return resultElements
 }
 
+private func foldElementsContainSeqExpr(
+  _ elements: [SequenceExpression.Element]
+) -> [SequenceExpression.Element] {
+  return elements.map { e in
+    switch e {
+    case .expression(let expr):
+      if let seqExpr = expr as? SequenceExpression {
+        let foldedExpr = foldSequenceExpression(seqExpr)
+        return .expression(foldedExpr)
+      } else {
+        return e
+      }
+    case .ternaryConditionalOperator(let expr):
+      if let seqExpr = expr as? SequenceExpression {
+        let foldedExpr = foldSequenceExpression(seqExpr)
+        return .ternaryConditionalOperator(foldedExpr)
+      } else {
+        return e
+      }
+    default:
+      return e
+    }
+  }
+}
+
 private func foldSequenceExpression(_ seqExpr: SequenceExpression) -> Expression {
   // Start with brutal hardcoding approach
 
-  var resultElements = foldElements(seqExpr.elements,
+  var resultElements = foldElementsContainSeqExpr(seqExpr.elements)
+  resultElements = foldElements(resultElements,
     forBinaryOperators: ["<<", ">>"])
   resultElements = foldElements(resultElements,
     forBinaryOperators: ["*", "&*", "/", "%", "&"])
