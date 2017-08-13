@@ -301,6 +301,400 @@ class LexicalParentAssignmentTests: XCTestCase {
     }
   }
 
+  func testAssignmentOperatorExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    a = 1
+    """) { topLevelDecl in
+      guard let assignOpExpr = topLevelDecl.statements[0] as? AssignmentOperatorExpression else {
+        XCTFail("Failed in getting an assignment operator expression.")
+        return
+      }
+
+      XCTAssertTrue(assignOpExpr.leftExpression.lexicalParent === assignOpExpr)
+      XCTAssertTrue(assignOpExpr.rightExpression.lexicalParent === assignOpExpr)
+    }
+  }
+
+  func testBinaryOperatorExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    a + b
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? BinaryOperatorExpression else {
+        XCTFail("Failed in getting a BinaryOperatorExpression.")
+        return
+      }
+      XCTAssertTrue(expr.leftExpression.lexicalParent === expr)
+      XCTAssertTrue(expr.rightExpression.lexicalParent === expr)
+    }
+  }
+
+  func testExplicitMemberExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    foo.0
+    foo.bar
+    foo.bar<T>
+    foo.bar(a:b:c:)
+    """) { topLevelDecl in
+      for stmt in topLevelDecl.statements {
+        guard let expr = stmt as? ExplicitMemberExpression else {
+          XCTFail("Failed in getting a ExplicitMemberExpression.")
+          return
+        }
+        switch expr.kind {
+        case .tuple(let e, _):
+          XCTAssertTrue(e.lexicalParent === expr)
+        case .namedType(let e, _):
+          XCTAssertTrue(e.lexicalParent === expr)
+        case .generic(let e, _, _):
+          XCTAssertTrue(e.lexicalParent === expr)
+        case .argument(let e, _, _):
+          XCTAssertTrue(e.lexicalParent === expr)
+        }
+      }
+    }
+  }
+
+  func testForcedValueExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    a!
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? ForcedValueExpression else {
+        XCTFail("Failed in getting a ForcedValueExpression.")
+        return
+      }
+      XCTAssertTrue(expr.postfixExpression.lexicalParent === expr)
+    }
+  }
+
+  func testFunctionCallExpressionAndClosureExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    foo(a, b: b, &c, d: &d) {
+      print(a)
+      print(b)
+    }
+    """) { topLevelDecl in
+      guard let funcCallExpr = topLevelDecl.statements[0] as? FunctionCallExpression,
+        let args = funcCallExpr.argumentClause,
+        let closureExpr = funcCallExpr.trailingClosure,
+        let closureStmts = closureExpr.statements
+      else {
+        XCTFail("Failed in getting a FunctionCallExpression.")
+        return
+      }
+      XCTAssertTrue(funcCallExpr.postfixExpression.lexicalParent === funcCallExpr)
+      for arg in args {
+        switch arg {
+        case .expression(let e):
+          XCTAssertTrue(e.lexicalParent === funcCallExpr)
+        case .namedExpression(_, let e):
+          XCTAssertTrue(e.lexicalParent === funcCallExpr)
+        case .memoryReference(let e):
+          XCTAssertTrue(e.lexicalParent === funcCallExpr)
+        case .namedMemoryReference(_, let e):
+          XCTAssertTrue(e.lexicalParent === funcCallExpr)
+        default:
+          continue
+        }
+      }
+      XCTAssertTrue(closureExpr.lexicalParent === funcCallExpr)
+      for cs in closureStmts {
+        XCTAssertTrue(cs.lexicalParent === closureExpr)
+      }
+    }
+  }
+
+  func testInitializerExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    foo.init(a:b:c:)
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? InitializerExpression else {
+        XCTFail("Failed in getting a InitializerExpression.")
+        return
+      }
+      XCTAssertTrue(expr.postfixExpression.lexicalParent === expr)
+    }
+  }
+
+  func testKeyPathStringExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    _ = #keyPath(foo)
+    """) { topLevelDecl in
+      guard let assignOpExpr = topLevelDecl.statements[0] as? AssignmentOperatorExpression,
+        let expr = assignOpExpr.rightExpression as? KeyPathStringExpression
+      else {
+        XCTFail("Failed in getting a key-path string expression.")
+        return
+      }
+      XCTAssertTrue(expr.expression.lexicalParent === expr)
+    }
+  }
+
+  func testLiteralExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    _ = "\(1)\(2)\(3)"
+    _ = [1, 2, 3]
+    _ = [a: 1, b: 2, c: 3]
+    """) { topLevelDecl in
+      for stmt in topLevelDecl.statements {
+        guard let assignOpExpr = stmt as? AssignmentOperatorExpression,
+          let expr = assignOpExpr.rightExpression as? LiteralExpression
+        else {
+          XCTFail("Failed in getting a LiteralExpression.")
+          return
+        }
+        switch expr.kind {
+        case .interpolatedString(let es, _):
+          for e in es {
+            XCTAssertTrue(e.lexicalParent === expr)
+          }
+        case .array(let es):
+          for e in es {
+            XCTAssertTrue(e.lexicalParent === expr)
+          }
+        case .dictionary(let d):
+          for entry in d {
+            XCTAssertTrue(entry.key.lexicalParent === expr)
+            XCTAssertTrue(entry.value.lexicalParent === expr)
+          }
+        default:
+          continue
+        }
+      }
+    }
+  }
+
+  func testOptionalChainingExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    a?
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? OptionalChainingExpression else {
+        XCTFail("Failed in getting a OptionalChainingExpression.")
+        return
+      }
+      XCTAssertTrue(expr.postfixExpression.lexicalParent === expr)
+    }
+  }
+
+  func testParenthesizedExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    (a)
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? ParenthesizedExpression else {
+        XCTFail("Failed in getting a ParenthesizedExpression.")
+        return
+      }
+      XCTAssertTrue(expr.expression.lexicalParent === expr)
+    }
+  }
+
+  func testPostfixOperatorExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    a++
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? PostfixOperatorExpression else {
+        XCTFail("Failed in getting a PostfixOperatorExpression.")
+        return
+      }
+      XCTAssertTrue(expr.postfixExpression.lexicalParent === expr)
+    }
+  }
+
+  func testPostfixSelfExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    a.self
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? PostfixSelfExpression else {
+        XCTFail("Failed in getting a PostfixSelfExpression.")
+        return
+      }
+      XCTAssertTrue(expr.postfixExpression.lexicalParent === expr)
+    }
+  }
+
+  func testPrefixOperatorExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    --a
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? PrefixOperatorExpression else {
+        XCTFail("Failed in getting a PrefixOperatorExpression.")
+        return
+      }
+      XCTAssertTrue(expr.postfixExpression.lexicalParent === expr)
+    }
+  }
+
+  func testSelectorExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    _ = #selector(foo)
+    _ = #selector(getter: bar)
+    _ = #selector(setter: bar)
+    """) { topLevelDecl in
+      for stmt in topLevelDecl.statements {
+        guard let assignOpExpr = stmt as? AssignmentOperatorExpression,
+          let expr = assignOpExpr.rightExpression as? SelectorExpression
+        else {
+          XCTFail("Failed in getting a SelectorExpression.")
+          return
+        }
+        switch expr.kind {
+        case .selector(let e):
+          XCTAssertTrue(e.lexicalParent === expr)
+        case .getter(let e):
+          XCTAssertTrue(e.lexicalParent === expr)
+        case .setter(let e):
+          XCTAssertTrue(e.lexicalParent === expr)
+        default:
+          continue
+        }
+      }
+    }
+  }
+
+  func testSelfExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    self[a, b]
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? SelfExpression else {
+        XCTFail("Failed in getting a SelfExpression.")
+        return
+      }
+      if case .subscript(let args) = expr.kind {
+        for arg in args {
+          XCTAssertTrue(arg.expression.lexicalParent === expr)
+        }
+      }
+    }
+  }
+
+  func testSequenceExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    a + b ? c : d
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? SequenceExpression else {
+        XCTFail("Failed in getting a SequenceExpression.")
+        return
+      }
+      for element in expr.elements {
+        switch element {
+        case .expression(let e):
+          XCTAssertTrue(e.lexicalParent === expr)
+        case .ternaryConditionalOperator(let e):
+          XCTAssertTrue(e.lexicalParent === expr)
+        default:
+          continue
+        }
+      }
+    }
+  }
+
+  func testSubscriptExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    foo[a, b]
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? SubscriptExpression else {
+        XCTFail("Failed in getting a SubscriptExpression.")
+        return
+      }
+      XCTAssertTrue(expr.postfixExpression.lexicalParent === expr)
+      for arg in expr.arguments {
+        XCTAssertTrue(arg.expression.lexicalParent === expr)
+      }
+    }
+  }
+
+  func testSuperclassExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    super[a, b]
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? SuperclassExpression else {
+        XCTFail("Failed in getting a SuperclassExpression.")
+        return
+      }
+      if case .subscript(let args) = expr.kind {
+        for arg in args {
+          XCTAssertTrue(arg.expression.lexicalParent === expr)
+        }
+      }
+    }
+  }
+
+  func testTernaryConditionalOperatorExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    a ? b : c
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? TernaryConditionalOperatorExpression else {
+        XCTFail("Failed in getting a TernaryConditionalOperatorExpression.")
+        return
+      }
+      XCTAssertTrue(expr.conditionExpression.lexicalParent === expr)
+      XCTAssertTrue(expr.trueExpression.lexicalParent === expr)
+      XCTAssertTrue(expr.falseExpression.lexicalParent === expr)
+    }
+  }
+
+  func testTryOperatorExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    try foo()
+    try! foo()
+    try? foo()
+    """) { topLevelDecl in
+      for stmt in topLevelDecl.statements {
+        guard let expr = stmt as? TryOperatorExpression else {
+          XCTFail("Failed in getting a TryOperatorExpression.")
+          return
+        }
+        switch expr.kind {
+        case .try(let e):
+          XCTAssertTrue(e.lexicalParent === expr)
+        case .forced(let e):
+          XCTAssertTrue(e.lexicalParent === expr)
+        case .optional(let e):
+          XCTAssertTrue(e.lexicalParent === expr)
+        }
+      }
+    }
+  }
+
+  func testTupleExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    (1, 2, 3)
+    """) { topLevelDecl in
+      guard let expr = topLevelDecl.statements[0] as? TupleExpression else {
+        XCTFail("Failed in getting a TupleExpression.")
+        return
+      }
+      for element in expr.elementList {
+        XCTAssertTrue(element.expression.lexicalParent === expr)
+      }
+    }
+  }
+
+  func testTypeCastingOperatorExpression() {
+    semaLexicalParentAssignmentAndTest("""
+    foo is Foo
+    foo as Foo
+    foo as? Foo
+    foo as! Foo
+    """) { topLevelDecl in
+      for stmt in topLevelDecl.statements {
+        guard let expr = stmt as? TypeCastingOperatorExpression else {
+          XCTFail("Failed in getting a TypeCastingOperatorExpression.")
+          return
+        }
+        switch expr.kind {
+        case .check(let e, _):
+          XCTAssertTrue(e.lexicalParent === expr)
+        case .cast(let e, _):
+          XCTAssertTrue(e.lexicalParent === expr)
+        case .conditionalCast(let e, _):
+          XCTAssertTrue(e.lexicalParent === expr)
+        case .forcedCast(let e, _):
+          XCTAssertTrue(e.lexicalParent === expr)
+        }
+      }
+    }
+  }
+
   private func semaLexicalParentAssignmentAndTest(
     _ content: String,
     testAssigned: (TopLevelDeclaration) -> Void
@@ -328,5 +722,28 @@ class LexicalParentAssignmentTests: XCTestCase {
     ("testSwitchStatement", testSwitchStatement),
     ("testThrowStatement", testThrowStatement),
     ("testWhileStatement", testWhileStatement),
+    ("testAssignmentOperatorExpression", testAssignmentOperatorExpression),
+    ("testBinaryOperatorExpression", testBinaryOperatorExpression),
+    ("testExplicitMemberExpression", testExplicitMemberExpression),
+    ("testForcedValueExpression", testForcedValueExpression),
+    ("testFunctionCallExpressionAndClosureExpression",
+      testFunctionCallExpressionAndClosureExpression),
+    ("testInitializerExpression", testInitializerExpression),
+    ("testKeyPathStringExpression", testKeyPathStringExpression),
+    ("testLiteralExpression", testLiteralExpression),
+    ("testOptionalChainingExpression", testOptionalChainingExpression),
+    ("testParenthesizedExpression", testParenthesizedExpression),
+    ("testPostfixOperatorExpression", testPostfixOperatorExpression),
+    ("testPostfixSelfExpression", testPostfixSelfExpression),
+    ("testPrefixOperatorExpression", testPrefixOperatorExpression),
+    ("testSelectorExpression", testSelectorExpression),
+    ("testSelfExpression", testSelfExpression),
+    ("testSequenceExpression", testSequenceExpression),
+    ("testSubscriptExpression", testSubscriptExpression),
+    ("testSuperclassExpression", testSuperclassExpression),
+    ("testTernaryConditionalOperatorExpression", testTernaryConditionalOperatorExpression),
+    ("testTryOperatorExpression", testTryOperatorExpression),
+    ("testTupleExpression", testTupleExpression),
+    ("testTypeCastingOperatorExpression", testTypeCastingOperatorExpression),
   ]
 }

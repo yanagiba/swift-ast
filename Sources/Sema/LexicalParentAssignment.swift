@@ -186,6 +186,229 @@ private class AssignmentVisitor : ASTVisitor {
     return true
   }
 
+  func visit(_ expr: AssignmentOperatorExpression) throws -> Bool {
+    expr.leftExpression.setLexicalParent(expr)
+    expr.rightExpression.setLexicalParent(expr)
+
+    return true
+  }
+
+  func visit(_ expr: BinaryOperatorExpression) throws -> Bool {
+    expr.leftExpression.setLexicalParent(expr)
+    expr.rightExpression.setLexicalParent(expr)
+
+    return true
+  }
+
+  func visit(_ expr: ClosureExpression) throws -> Bool {
+    for stmt in expr.statements ?? [] {
+      stmt.setLexicalParent(expr)
+    }
+
+    return true
+  }
+
+  func visit(_ expr: ExplicitMemberExpression) throws -> Bool {
+    switch expr.kind {
+    case .tuple(let e, _):
+      e.setLexicalParent(expr)
+    case .namedType(let e, _):
+      e.setLexicalParent(expr)
+    case .generic(let e, _, _):
+      e.setLexicalParent(expr)
+    case .argument(let e, _, _):
+      e.setLexicalParent(expr)
+    }
+
+    return true
+  }
+
+  func visit(_ expr: ForcedValueExpression) throws -> Bool {
+    expr.postfixExpression.setLexicalParent(expr)
+
+    return true
+  }
+
+  func visit(_ expr: FunctionCallExpression) throws -> Bool {
+    expr.postfixExpression.setLexicalParent(expr)
+    for arg in expr.argumentClause ?? [] {
+      switch arg {
+      case .expression(let e):
+        e.setLexicalParent(expr)
+      case .namedExpression(_, let e):
+        e.setLexicalParent(expr)
+      case .memoryReference(let e):
+        e.setLexicalParent(expr)
+      case .namedMemoryReference(_, let e):
+        e.setLexicalParent(expr)
+      default:
+        continue
+      }
+    }
+    expr.trailingClosure?.setLexicalParent(expr)
+
+    return true
+  }
+
+  func visit(_ expr: InitializerExpression) throws -> Bool {
+    expr.postfixExpression.setLexicalParent(expr)
+    return true
+  }
+
+  func visit(_ expr: KeyPathStringExpression) throws -> Bool {
+    expr.expression.setLexicalParent(expr)
+    return true
+  }
+
+  func visit(_ expr: LiteralExpression) throws -> Bool {
+    switch expr.kind {
+    case .interpolatedString(let es, _):
+      for e in es {
+        e.setLexicalParent(expr)
+      }
+    case .array(let es):
+      for e in es {
+        e.setLexicalParent(expr)
+      }
+    case .dictionary(let d):
+      for entry in d {
+        entry.key.setLexicalParent(expr)
+        entry.value.setLexicalParent(expr)
+      }
+    default:
+      break
+    }
+
+    return true
+  }
+
+  func visit(_ expr: OptionalChainingExpression) throws -> Bool {
+    expr.postfixExpression.setLexicalParent(expr)
+    return true
+  }
+
+  func visit(_ expr: ParenthesizedExpression) throws -> Bool {
+    expr.expression.setLexicalParent(expr)
+    return true
+  }
+
+  func visit(_ expr: PostfixOperatorExpression) throws -> Bool {
+    expr.postfixExpression.setLexicalParent(expr)
+    return true
+  }
+
+  func visit(_ expr: PostfixSelfExpression) throws -> Bool {
+    expr.postfixExpression.setLexicalParent(expr)
+    return true
+  }
+
+  func visit(_ expr: PrefixOperatorExpression) throws -> Bool {
+    expr.postfixExpression.setLexicalParent(expr)
+    return true
+  }
+
+  func visit(_ expr: SelectorExpression) throws -> Bool {
+    switch expr.kind {
+    case .selector(let e):
+      e.setLexicalParent(expr)
+    case .getter(let e):
+      e.setLexicalParent(expr)
+    case .setter(let e):
+      e.setLexicalParent(expr)
+    default:
+      break
+    }
+
+    return true
+  }
+
+  func visit(_ expr: SelfExpression) throws -> Bool {
+    if case .subscript(let args) = expr.kind {
+      for arg in args {
+        arg.expression.setLexicalParent(expr)
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ expr: SequenceExpression) throws -> Bool {
+    for element in expr.elements {
+      switch element {
+      case .expression(let e):
+        e.setLexicalParent(expr)
+      case .ternaryConditionalOperator(let e):
+        e.setLexicalParent(expr)
+      default:
+        continue
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ expr: SubscriptExpression) throws -> Bool {
+    expr.postfixExpression.setLexicalParent(expr)
+    for arg in expr.arguments {
+      arg.expression.setLexicalParent(expr)
+    }
+
+    return true
+  }
+
+  func visit(_ expr: SuperclassExpression) throws -> Bool {
+    if case .subscript(let args) = expr.kind {
+      for arg in args {
+        arg.expression.setLexicalParent(expr)
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ expr: TernaryConditionalOperatorExpression) throws -> Bool {
+    expr.conditionExpression.setLexicalParent(expr)
+    expr.trueExpression.setLexicalParent(expr)
+    expr.falseExpression.setLexicalParent(expr)
+
+    return true
+  }
+
+  func visit(_ expr: TryOperatorExpression) throws -> Bool {
+    switch expr.kind {
+    case .try(let e):
+      e.setLexicalParent(expr)
+    case .forced(let e):
+      e.setLexicalParent(expr)
+    case .optional(let e):
+      e.setLexicalParent(expr)
+    }
+
+    return true
+  }
+
+  func visit(_ expr: TupleExpression) throws -> Bool {
+    for element in expr.elementList {
+      element.expression.setLexicalParent(expr)
+    }
+
+    return true
+  }
+
+  func visit(_ expr: TypeCastingOperatorExpression) throws -> Bool {
+    switch expr.kind {
+    case .check(let e, _):
+      e.setLexicalParent(expr)
+    case .cast(let e, _):
+      e.setLexicalParent(expr)
+    case .conditionalCast(let e, _):
+      e.setLexicalParent(expr)
+    case .forcedCast(let e, _):
+      e.setLexicalParent(expr)
+    }
+
+    return true
+  }
 }
 
 fileprivate extension Statement {
