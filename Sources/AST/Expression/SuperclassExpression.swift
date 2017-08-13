@@ -22,10 +22,16 @@ public class SuperclassExpression : ASTNode, PrimaryExpression {
     case initializer
   }
 
-  public let kind: Kind
+  public private(set) var kind: Kind
 
   public init(kind: Kind) {
     self.kind = kind
+  }
+
+  // MARK: - Node Mutations
+
+  public func reset(with newKind: Kind) {
+    kind = newKind
   }
 
   // MARK: - ASTTextRepresentable

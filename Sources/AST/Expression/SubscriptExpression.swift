@@ -16,13 +16,20 @@
 
 public class SubscriptExpression : ASTNode, PostfixExpression {
   public let postfixExpression: PostfixExpression
-  public let arguments: [SubscriptArgument]
+  public private(set) var arguments: [SubscriptArgument]
 
   public init(
     postfixExpression: PostfixExpression, arguments: [SubscriptArgument]
   ) {
     self.postfixExpression = postfixExpression
     self.arguments = arguments
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceArgument(at index: Int, with argument: SubscriptArgument) {
+    guard index >= 0 && index < arguments.count else { return }
+    arguments[index] = argument
   }
 
   // MARK: - ASTTextRepresentable

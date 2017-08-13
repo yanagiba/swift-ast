@@ -16,15 +16,44 @@
 
 import Source
 
-public class TopLevelDeclaration : ASTNode {
-  public let statements: Statements
+public class TopLevelDeclaration : ASTNode, ASTUnit {
+  public private(set) var statements: Statements
   public let comments: CommentSet
   public let shebang: Shebang?
+
+  public private(set) var sourceFile: SourceFile?
+  public private(set) var lexicalParentAssigned = false
+  public private(set) var sequenceExpressionFolded = false
 
   public init(statements: Statements = [], comments: CommentSet = [], shebang: Shebang? = nil) {
     self.statements = statements
     self.comments = comments
     self.shebang = shebang
+  }
+
+  public func setSourceFile(_ file: SourceFile) {
+    sourceFile = file
+  }
+
+  public func assignedLexicalParent() {
+    lexicalParentAssigned = true
+  }
+
+  public func foldedSequenceExpression() {
+    sequenceExpressionFolded = true
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceStatement(at index: Int, with statement: Statement) {
+    guard index >= 0 && index < statements.count else { return }
+    statements[index] = statement
+  }
+
+  // MARK: - ASTUnit
+
+  public var translationUnit: TopLevelDeclaration {
+    return self
   }
 
   // MARK: - ASTNodeContext

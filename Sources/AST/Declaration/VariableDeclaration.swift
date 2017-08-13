@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public class VariableDeclaration : ASTNode, Declaration {
   }
   public let attributes: Attributes
   public let modifiers: DeclarationModifiers
-  public let body: Body
+  public private(set) var body: Body
 
   private init(
     attributes: Attributes = [],
@@ -110,6 +110,12 @@ public class VariableDeclaration : ASTNode, Declaration {
       modifiers: modifiers,
       body: .willSetDidSetBlock(
         variableName, typeAnnotation, initializer, willSetDidSetBlock))
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceBody(with newBody: Body) {
+    body = newBody
   }
 
   // MARK: - ASTTextRepresentable

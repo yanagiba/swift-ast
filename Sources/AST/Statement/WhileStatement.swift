@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,12 +16,19 @@
 
 
 public class WhileStatement : ASTNode, Statement {
-  public let conditionList: ConditionList
+  public private(set) var conditionList: ConditionList
   public let codeBlock: CodeBlock
 
   public init(conditionList: ConditionList, codeBlock: CodeBlock) {
     self.conditionList = conditionList
     self.codeBlock = codeBlock
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceCondition(at index: Int, with condition: Condition) {
+    guard index >= 0 && index < conditionList.count else { return }
+    conditionList[index] = condition
   }
 
   // MARK: - ASTTextRepresentable

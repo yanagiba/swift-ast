@@ -35,17 +35,19 @@ let package = Package(
         "AST",
         "Lexer",
         "Parser",
+        "Sema",
       ]
     ),
     .library(
-      name: "SwiftAST+Frontend",
+      name: "SwiftAST+Tooling",
       targets: [
         "Source",
         "Diagnostic",
         "AST",
         "Lexer",
         "Parser",
-        "Frontend",
+        "Sema",
+        "Tooling",
       ]
     ),
   ],
@@ -92,11 +94,23 @@ let package = Package(
       ]
     ),
     .target(
+      name: "Sema",
+      dependencies: [
+        "Source",
+        "AST",
+      ]
+    ),
+    .target(
+      name: "Tooling",
+      dependencies: [
+        "Parser",
+        "Sema",
+      ]
+    ),
+    .target(
       name: "Frontend",
       dependencies: [
-        "AST",
-        "Lexer",
-        "Parser",
+        "Tooling",
         "Bocho",
       ]
     ),
@@ -146,6 +160,12 @@ let package = Package(
       name: "ParserTests",
       dependencies: [
         "Parser",
+      ]
+    ),
+    .testTarget(
+      name: "SemaTests",
+      dependencies: [
+        "Sema",
       ]
     ),
     .testTarget(

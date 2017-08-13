@@ -16,9 +16,9 @@
 
 import Bocho
 import AST
-import Parser
 import Source
 import Diagnostic
+import Tooling
 
 public enum TTYType {
   case astDump
@@ -36,35 +36,50 @@ public func terminalMain(
     return runGitHubIssueGen(for: filePaths)
   }
 
+  var sourceFiles: [SourceFile] = []
   for filePath in filePaths {
-    printHeader(for: filePath)
-
     guard let sourceFile = try? SourceReader.read(at: filePath) else {
       print("Can't read file, please double check the file path is correct.")
       printGitHubIssueInstructions(for: filePath)
-      return -1
+      return -9
     }
-    let diagnosticConsumer = TerminalDiagnosticConsumer()
-    let parser = Parser(source: sourceFile)
-    guard let topLevelDecl = try? parser.parse() else {
-      DiagnosticPool.shared.report(withConsumer: diagnosticConsumer)
-      printGitHubIssueInstructions(for: filePath)
-      return -2
+    sourceFiles.append(sourceFile)
+  }
+
+  let diagnosticConsumer = TerminalDiagnosticConsumer()
+  let toolingOption = ToolActionOption(sequenceExpressionFoldingEnabled: true)
+  let tooling = ToolAction()
+  let result = tooling.run(
+    sourceFiles: sourceFiles,
+    diagnosticConsumer: diagnosticConsumer,
+    option: toolingOption)
+
+  guard result.exitCode == ToolActionResult.success else {
+    for sourceFile in result.unparsedSourceFiles {
+      printGitHubIssueInstructions(for: sourceFile.identifier)
     }
-    DiagnosticPool.shared.report(withConsumer: diagnosticConsumer)
-    switch ttyType {
-    case .astDump:
-      print(topLevelDecl.ttyDump)
-    case .astPrint:
-      print(topLevelDecl.ttyPrint)
-    case .astText:
-      print(topLevelDecl.textDescription)
-    case .diagnosticsOnly:
-      print()
+    return result.exitCode
+  }
+
+  for astUnit in result.astUnitCollection {
+    if let sourceFile = astUnit.sourceFile {
+      printHeader(for: sourceFile.identifier)
+
+      let topLevelDecl = astUnit.translationUnit
+      switch ttyType {
+      case .astDump:
+        print(topLevelDecl.ttyDump)
+      case .astPrint:
+        print(topLevelDecl.ttyPrint)
+      case .astText:
+        print(topLevelDecl.textDescription)
+      case .diagnosticsOnly:
+        print()
+      }
     }
   }
 
-  return 0
+  return result.exitCode
 }
 
 private func printGitHubIssueInstructions(for filePath: String) {

@@ -22,6 +22,7 @@ public func allTests() -> [XCTestCaseEntry] {
     testCase(TTYASTDumpTests.allTests),
     testCase(TTYASTPrintTests.allTests),
     testCase(ShebangIntegrationTests.allTests),
+    testCase(SemaIntegrationTests.allTests),
   ]
 }
 #endif

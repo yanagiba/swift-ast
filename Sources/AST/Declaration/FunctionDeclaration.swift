@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ public class FunctionDeclaration : ASTNode, Declaration {
   public let modifiers: DeclarationModifiers
   public let name: Identifier
   public let genericParameterClause: GenericParameterClause?
-  public let signature: FunctionSignature
+  public private(set) var signature: FunctionSignature
   public let genericWhereClause: GenericWhereClause?
   public let body: CodeBlock?
 
@@ -39,6 +39,12 @@ public class FunctionDeclaration : ASTNode, Declaration {
     self.signature = signature
     self.genericWhereClause = genericWhereClause
     self.body = body
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceSignature(with newSignature: FunctionSignature) {
+    signature = newSignature
   }
 
   // MARK: - ASTTextRepresentable
