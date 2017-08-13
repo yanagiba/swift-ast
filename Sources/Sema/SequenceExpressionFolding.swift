@@ -301,7 +301,7 @@ private class FoldingVisitor : ASTVisitor {
       switch eachCase {
       case let .case(items, statements):
         let foldedItems = items.map { i -> SwitchStatement.Case.Item in
-          var foldedWhereExpression: Expression?
+          var foldedWhereExpression: Expression? = i.whereExpression
           if let whereSeqExpr = i.whereExpression as? SequenceExpression {
             foldedWhereExpression = foldSequenceExpression(whereSeqExpr)
           }
