@@ -38,11 +38,6 @@ extension Parser {
     }
     let codeBlock = CodeBlock(statements: stmts)
     codeBlock.setSourceRange(startLocation, endLocation)
-    for stmt in stmts {
-      if let node = stmt as? ASTNode {
-        node.setLexicalParent(codeBlock)
-      }
-    }
     return codeBlock
   }
 

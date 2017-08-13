@@ -82,7 +82,7 @@ class ParserCodeBlockTests: XCTestCase {
       """)
       XCTAssertNil(codeBlock.lexicalParent)
       for stmt in codeBlock.statements {
-        XCTAssertTrue(stmt.lexicalParent === codeBlock)
+        XCTAssertNil(stmt.lexicalParent)
       }
     } catch {
       XCTFail("Failed in parsing a code block declaration.")
