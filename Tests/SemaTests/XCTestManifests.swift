@@ -20,6 +20,7 @@ import XCTest
 public func allTests() -> [XCTestCaseEntry] {
   return [
     testCase(SequenceExpressionFoldingTests.allTests),
+    testCase(LexicalParentAssignmentTests.allTests),
   ]
 }
 #endif

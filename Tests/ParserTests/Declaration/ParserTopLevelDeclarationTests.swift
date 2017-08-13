@@ -131,7 +131,7 @@ class ParserTopLevelDeclarationTests: XCTestCase {
       XCTAssertEqual(topLevel.textDescription, "import A\nimport B")
       XCTAssertNil(topLevel.lexicalParent)
       for stmt in topLevel.statements {
-        XCTAssertTrue(stmt.lexicalParent === topLevel)
+        XCTAssertNil(stmt.lexicalParent)
       }
     } catch {
       XCTFail("Failed in parsing a top level declaration.")

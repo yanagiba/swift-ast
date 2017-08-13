@@ -23,13 +23,7 @@ extension Parser {
   func parseTopLevelDeclaration() throws -> TopLevelDeclaration {
     let shebang = parseShebang()
     let stmts = try parseStatements()
-    let topLevelDecl = TopLevelDeclaration(statements: stmts, comments: _lexer.comments, shebang: shebang)
-    for stmt in stmts {
-      if let node = stmt as? ASTNode {
-        node.setLexicalParent(topLevelDecl)
-      }
-    }
-    return topLevelDecl
+    return TopLevelDeclaration(statements: stmts, comments: _lexer.comments, shebang: shebang)
   }
 
   func parseCodeBlock() throws -> CodeBlock {
