@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class SubscriptDeclaration : ASTNode, Declaration {
   public let attributes: Attributes
   public let modifiers: DeclarationModifiers
   public let genericParameterClause: GenericParameterClause?
-  public let parameterList: [FunctionSignature.Parameter]
+  public private(set) var parameterList: [FunctionSignature.Parameter]
   public let resultAttributes: Attributes
   public let resultType: Type
   public let genericWhereClause: GenericWhereClause?
@@ -108,6 +108,13 @@ public class SubscriptDeclaration : ASTNode, Declaration {
       resultType: resultType,
       genericWhereClause: genericWhereClause,
       body: .getterSetterKeywordBlock(getterSetterKeywordBlock))
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceParameter(at index: Int, with param: FunctionSignature.Parameter) {
+    guard index >= 0 && index < parameterList.count else { return }
+    parameterList[index] = param
   }
 
   // MARK: - ASTTextRepresentable

@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 public class ConstantDeclaration : ASTNode, Declaration {
   public let attributes: Attributes
   public let modifiers: DeclarationModifiers
-  public let initializerList: [PatternInitializer]
+  public private(set) var initializerList: [PatternInitializer]
 
   public init(
     attributes: Attributes = [],
@@ -27,6 +27,13 @@ public class ConstantDeclaration : ASTNode, Declaration {
     self.attributes = attributes
     self.modifiers = modifiers
     self.initializerList = initializerList
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceInitialize(at index: Int, with newInit: PatternInitializer) {
+    guard index >= 0 && index < initializerList.count else { return }
+    initializerList[index] = newInit
   }
 
   // MARK: - ASTTextRepresentable

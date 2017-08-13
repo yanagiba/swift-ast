@@ -482,7 +482,7 @@ extension ASTVisitor {
   // Expressions
 
   public func traverse(_ expression: Expression) throws -> Bool {/*
-    swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=27)
+    swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=28)
     swift-lint:suppress(high_ncss)
     */
     switch expression {

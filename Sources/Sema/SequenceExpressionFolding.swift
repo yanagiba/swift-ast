@@ -56,6 +56,146 @@ private class FoldingVisitor : ASTVisitor {
     return true
   }
 
+  func visit(_ decl: ConstantDeclaration) throws -> Bool {
+    for i in decl.initializerList.indices {
+      let pttrnInit = decl.initializerList[i]
+      if let seqExpr = pttrnInit.initializerExpression as? SequenceExpression {
+        let foldedExpr = foldSequenceExpression(seqExpr)
+        let foldedInit = PatternInitializer(
+          pattern: pttrnInit.pattern,
+          initializerExpression: foldedExpr)
+        decl.replaceInitialize(at: i, with: foldedInit)
+      }
+    }
+
+    return true
+  }
+
+  private func foldFunctionSignature(_ signature: FunctionSignature) -> FunctionSignature {
+    let foldedParams = signature.parameterList.map(foldFunctionSignatureParameter)
+    return FunctionSignature(
+      parameterList: foldedParams,
+      throwsKind: signature.throwsKind,
+      result: signature.result)
+  }
+
+  private func foldFunctionSignatureParameter(
+    _ p: FunctionSignature.Parameter
+  ) -> FunctionSignature.Parameter {
+    guard let seqExpr = p.defaultArgumentClause as? SequenceExpression else {
+      return p
+    }
+
+    let foldedExpr = foldSequenceExpression(seqExpr)
+    return FunctionSignature.Parameter(
+      externalName: p.externalName,
+      localName: p.localName,
+      typeAnnotation: p.typeAnnotation,
+      defaultArgumentClause: foldedExpr)
+  }
+
+  func visit(_ decl: FunctionDeclaration) throws -> Bool {
+    let foldedSignature = foldFunctionSignature(decl.signature)
+    decl.replaceSignature(with: foldedSignature)
+
+    return true
+  }
+
+  func visit(_ decl: InitializerDeclaration) throws -> Bool {
+    for i in decl.parameterList.indices {
+      let p = decl.parameterList[i]
+      if let expr = p.defaultArgumentClause, expr is SequenceExpression {
+        let foldedParam = foldFunctionSignatureParameter(p)
+        decl.replaceParameter(at: i, with: foldedParam)
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ decl: ProtocolDeclaration) throws -> Bool {
+    for i in decl.members.indices {
+      let member = decl.members[i]
+      switch member {
+      case .method(let methodMember):
+        let foldedSignature = foldFunctionSignature(methodMember.signature)
+        let foldedMethodMember = ProtocolDeclaration.MethodMember(
+          attributes: methodMember.attributes,
+          modifiers: methodMember.modifiers,
+          name: methodMember.name,
+          genericParameter: methodMember.genericParameter,
+          signature: foldedSignature,
+          genericWhere: methodMember.genericWhere)
+        decl.replaceMember(at: i, with: .method(foldedMethodMember))
+      case .initializer(let initMember):
+        let foldedParams = initMember.parameterList.map(foldFunctionSignatureParameter)
+        let foldedInitMember = ProtocolDeclaration.InitializerMember(
+          attributes: initMember.attributes,
+          modifiers: initMember.modifiers,
+          kind: initMember.kind,
+          genericParameter: initMember.genericParameter,
+          parameterList: foldedParams,
+          throwsKind: initMember.throwsKind,
+          genericWhere: initMember.genericWhere)
+        decl.replaceMember(at: i, with: .initializer(foldedInitMember))
+      case .subscript(let subscriptMember):
+        let foldedParams = subscriptMember.parameterList.map(foldFunctionSignatureParameter)
+        let foldedSubscriptMember = ProtocolDeclaration.SubscriptMember(
+          attributes: subscriptMember.attributes,
+          modifiers: subscriptMember.modifiers,
+          genericParameter: subscriptMember.genericParameter,
+          parameterList: foldedParams,
+          resultAttributes: subscriptMember.resultAttributes,
+          resultType: subscriptMember.resultType,
+          genericWhere: subscriptMember.genericWhere,
+          getterSetterKeywordBlock: subscriptMember.getterSetterKeywordBlock)
+        decl.replaceMember(at: i, with: .subscript(foldedSubscriptMember))
+      default:
+        break
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ decl: SubscriptDeclaration) throws -> Bool {
+    for i in decl.parameterList.indices {
+      let p = decl.parameterList[i]
+      if let expr = p.defaultArgumentClause, expr is SequenceExpression {
+        let foldedParam = foldFunctionSignatureParameter(p)
+        decl.replaceParameter(at: i, with: foldedParam)
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ decl: VariableDeclaration) throws -> Bool {
+    switch decl.body {
+    case .initializerList(let inits):
+      let foldedInits = inits.map { i -> PatternInitializer in
+        if let seqExpr = i.initializerExpression as? SequenceExpression {
+          let foldedExpr = foldSequenceExpression(seqExpr)
+          return PatternInitializer(
+            pattern: i.pattern,
+            initializerExpression: foldedExpr)
+        } else {
+          return i
+        }
+      }
+      decl.replaceBody(with: .initializerList(foldedInits))
+    case let .willSetDidSetBlock(id, type, expr, block):
+      if let seqExpr = expr as? SequenceExpression {
+        let foldedExpr = foldSequenceExpression(seqExpr)
+        decl.replaceBody(with: .willSetDidSetBlock(id, type, foldedExpr, block))
+      }
+    default:
+      break
+    }
+
+    return true
+  }
+
   func visit(_ stmt: DoStatement) throws -> Bool {
     for i in stmt.catchClauses.indices {
       let catchClause = stmt.catchClauses[i]

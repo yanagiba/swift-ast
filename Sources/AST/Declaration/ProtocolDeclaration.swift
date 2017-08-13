@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Saito, LLC and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -159,7 +159,7 @@ public class ProtocolDeclaration : ASTNode, Declaration {
   public let accessLevelModifier: AccessLevelModifier?
   public let name: Identifier
   public let typeInheritanceClause: TypeInheritanceClause?
-  public let members: [Member]
+  public private(set) var members: [Member]
 
   public init(
     attributes: Attributes = [],
@@ -173,6 +173,13 @@ public class ProtocolDeclaration : ASTNode, Declaration {
     self.name = name
     self.typeInheritanceClause = typeInheritanceClause
     self.members = members
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceMember(at index: Int, with member: Member) {
+    guard index >= 0 && index < members.count else { return }
+    members[index] = member
   }
 
   // MARK: - ASTTextRepresentable
