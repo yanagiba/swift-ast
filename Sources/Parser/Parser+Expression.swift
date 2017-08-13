@@ -416,9 +416,7 @@ extension Parser {
       }
 
       repeat {
-        if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare { // swift-lint:suppress(inverted_logic,long_line)
-                                  // TODO: we need to suppress the warning because there is a bug on swift-lint
-                                  // due to lacking of minimal expression evaluation with operator precedence
+        if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare {
           guard let id = _lexer.readNamedIdentifier() else {
             throw _raiseFatal(.expectedParameterNameFuncCall)
           }
@@ -810,9 +808,7 @@ extension Parser {
 
     repeat {
       var identifier: Identifier?
-      if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare { // swift-lint:suppress(inverted_logic,long_line)
-                                // TODO: we need to suppress the warning because there is a bug on swift-lint
-                                // due to lacking of minimal expression evaluation with operator precedence
+      if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare {
         guard let id = _lexer.readNamedIdentifier() else {
           throw _raiseFatal(.expectedParameterNameFuncCall)
         }
