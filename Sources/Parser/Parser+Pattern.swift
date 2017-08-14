@@ -59,6 +59,8 @@ struct ParserPatternConfig {
     var tokenKinds: [Token.Kind] = [
       .underscore,
       .dummyIdentifier,
+      .leftParen,
+      // below are keywords also can be used as identifier pattern
       .Any,
       .Self,
       .get,
@@ -66,7 +68,7 @@ struct ParserPatternConfig {
       .left,
       .right,
       .open,
-      .leftParen,
+      .prefix,
     ]
     if !onlyIdWildCardOptional {
       tokenKinds += [
@@ -126,7 +128,7 @@ extension Parser {
     case .identifier(let id):
       return try parseIdentifierHeadedPattern(
         id, config: config, startRange: lookedRange)
-    case .Any, .Self, .get, .set, .left, .right, .open:
+    case .Any, .Self, .get, .set, .left, .right, .open, .prefix:
       guard let idHead = patternHead.namedIdentifier else {
         throw _raiseFatal(.expectedPattern)
       }
