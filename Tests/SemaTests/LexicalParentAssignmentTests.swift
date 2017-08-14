@@ -32,6 +32,198 @@ class LexicalParentAssignmentTests: XCTestCase {
     }
   }
 
+  func testClassDeclaration() {
+    semaLexicalParentAssignmentAndTest("""
+    class foo {
+      #if os(macOS)
+      let a = 1
+      #endif
+      func bar() {}
+    }
+    """) { topLevelDecl in
+      guard let decl = topLevelDecl.statements[0] as? ClassDeclaration else {
+        XCTFail("Failed in getting a ClassDeclaration.")
+        return
+      }
+      for member in decl.members {
+        switch member {
+        case .declaration(let d):
+          XCTAssertTrue(d.lexicalParent === decl)
+        case .compilerControl(let s):
+          XCTAssertTrue(s.lexicalParent === decl)
+        }
+      }
+    }
+  }
+
+  func testConstantDeclaration() {
+    semaLexicalParentAssignmentAndTest("""
+    let a = 1, b = 2
+    """) { topLevelDecl in
+      guard let decl = topLevelDecl.statements[0] as? ConstantDeclaration else {
+        XCTFail("Failed in getting a ConstantDeclaration.")
+        return
+      }
+      for pttrnInit in decl.initializerList {
+        XCTAssertTrue(pttrnInit.initializerExpression?.lexicalParent === decl)
+      }
+    }
+  }
+
+  func testDeinitializerDeclaration() {
+    semaLexicalParentAssignmentAndTest("""
+    deinit {}
+    """) { topLevelDecl in
+      guard let decl = topLevelDecl.statements[0] as? DeinitializerDeclaration else {
+        XCTFail("Failed in getting a DeinitializerDeclaration.")
+        return
+      }
+      XCTAssertTrue(decl.body.lexicalParent === decl)
+    }
+  }
+
+  func testEnumDeclaration() {
+    semaLexicalParentAssignmentAndTest("""
+    enum foo {
+      #if os(macOS)
+      let a = 1
+      #endif
+      func bar() {}
+      case a
+    }
+    """) { topLevelDecl in
+      guard let decl = topLevelDecl.statements[0] as? EnumDeclaration else {
+        XCTFail("Failed in getting a EnumDeclaration.")
+        return
+      }
+      for member in decl.members {
+        switch member {
+        case .declaration(let d):
+          XCTAssertTrue(d.lexicalParent === decl)
+        case .compilerControl(let s):
+          XCTAssertTrue(s.lexicalParent === decl)
+        default:
+          continue
+        }
+      }
+    }
+  }
+
+  func testExtensionDeclaration() {
+    semaLexicalParentAssignmentAndTest("""
+    extension foo {
+      #if os(macOS)
+      var a: Int { return 1 }
+      #endif
+      func bar() {}
+    }
+    """) { topLevelDecl in
+      guard let decl = topLevelDecl.statements[0] as? ExtensionDeclaration else {
+        XCTFail("Failed in getting a ExtensionDeclaration.")
+        return
+      }
+      for member in decl.members {
+        switch member {
+        case .declaration(let d):
+          XCTAssertTrue(d.lexicalParent === decl)
+        case .compilerControl(let s):
+          XCTAssertTrue(s.lexicalParent === decl)
+        }
+      }
+    }
+  }
+
+  func testFunctionDeclaration() {
+    semaLexicalParentAssignmentAndTest("""
+    func foo(i: Int = 1, j: Int = 2) {}
+    """) { topLevelDecl in
+      guard let decl = topLevelDecl.statements[0] as? FunctionDeclaration else {
+        XCTFail("Failed in getting a FunctionDeclaration.")
+        return
+      }
+      XCTAssertTrue(decl.body?.lexicalParent === decl)
+      for param in decl.signature.parameterList {
+        XCTAssertTrue(param.defaultArgumentClause?.lexicalParent === decl)
+      }
+    }
+  }
+
+  func testInitializerDeclaration() {
+    semaLexicalParentAssignmentAndTest("""
+    init(i: Int = 1, j: Int = 2) {}
+    """) { topLevelDecl in
+      guard let decl = topLevelDecl.statements[0] as? InitializerDeclaration else {
+        XCTFail("Failed in getting a InitializerDeclaration.")
+        return
+      }
+      XCTAssertTrue(decl.body.lexicalParent === decl)
+      for param in decl.parameterList {
+        XCTAssertTrue(param.defaultArgumentClause?.lexicalParent === decl)
+      }
+    }
+  }
+
+  func testStructDeclaration() {
+    semaLexicalParentAssignmentAndTest("""
+    struct foo {
+      #if os(macOS)
+      let a = 1
+      #endif
+      func bar() {}
+    }
+    """) { topLevelDecl in
+      guard let decl = topLevelDecl.statements[0] as? StructDeclaration else {
+        XCTFail("Failed in getting a StructDeclaration.")
+        return
+      }
+      for member in decl.members {
+        switch member {
+        case .declaration(let d):
+          XCTAssertTrue(d.lexicalParent === decl)
+        case .compilerControl(let s):
+          XCTAssertTrue(s.lexicalParent === decl)
+        }
+      }
+    }
+  }
+
+  func testSubscriptDeclaration() {
+    semaLexicalParentAssignmentAndTest("""
+    subscript(i: Int = 1, j: Int = 2) -> Element {}
+    """) { topLevelDecl in
+      guard let decl = topLevelDecl.statements[0] as? SubscriptDeclaration else {
+        XCTFail("Failed in getting a SubscriptDeclaration.")
+        return
+      }
+      if case .codeBlock(let codeBlock) = decl.body {
+        XCTAssertTrue(codeBlock.lexicalParent === decl)
+      }
+      for param in decl.parameterList {
+        XCTAssertTrue(param.defaultArgumentClause?.lexicalParent === decl)
+      }
+    }
+  }
+
+  func testVariableDeclaration() {
+    semaLexicalParentAssignmentAndTest("""
+    var a = 1, b = 2
+    var c: Int { return 3 }
+    """) { topLevelDecl in
+      guard let decl1 = topLevelDecl.statements[0] as? VariableDeclaration,
+        let decl2 = topLevelDecl.statements[1] as? VariableDeclaration,
+        case .initializerList(let initList) = decl1.body,
+        case .codeBlock(_, _, let codeBlock) = decl2.body
+      else {
+        XCTFail("Failed in getting VariableDeclarations.")
+        return
+      }
+      for pttrnInit in initList {
+        XCTAssertTrue(pttrnInit.initializerExpression?.lexicalParent === decl1)
+      }
+      XCTAssertTrue(codeBlock.lexicalParent === decl2)
+    }
+  }
+
   func testDeferStatement() {
     semaLexicalParentAssignmentAndTest("""
     defer {
@@ -711,6 +903,16 @@ class LexicalParentAssignmentTests: XCTestCase {
 
   static var allTests = [
     ("testTopLevelDeclaration", testTopLevelDeclaration),
+    ("testClassDeclaration", testClassDeclaration),
+    ("testConstantDeclaration", testConstantDeclaration),
+    ("testDeinitializerDeclaration", testDeinitializerDeclaration),
+    ("testEnumDeclaration", testEnumDeclaration),
+    ("testExtensionDeclaration", testExtensionDeclaration),
+    ("testFunctionDeclaration", testFunctionDeclaration),
+    ("testInitializerDeclaration", testInitializerDeclaration),
+    ("testStructDeclaration", testStructDeclaration),
+    ("testSubscriptDeclaration", testSubscriptDeclaration),
+    ("testVariableDeclaration", testVariableDeclaration),
     ("testDeferStatement", testDeferStatement),
     ("testDoStatement", testDoStatement),
     ("testForInStatement", testForInStatement),

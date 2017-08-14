@@ -50,6 +50,117 @@ private class AssignmentVisitor : ASTVisitor {
     return true
   }
 
+  func visit(_ decl: ClassDeclaration) throws -> Bool {
+    for member in decl.members {
+      switch member {
+      case .declaration(let d):
+        d.setLexicalParent(decl)
+      case .compilerControl(let s):
+        s.setLexicalParent(decl)
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ decl: ConstantDeclaration) throws -> Bool {
+    for pttrnInit in decl.initializerList {
+      pttrnInit.initializerExpression?.setLexicalParent(decl)
+    }
+
+    return true
+  }
+
+  func visit(_ decl: DeinitializerDeclaration) throws -> Bool {
+    decl.body.setLexicalParent(decl)
+    return true
+  }
+
+  func visit(_ decl: EnumDeclaration) throws -> Bool {
+    for member in decl.members {
+      switch member {
+      case .declaration(let d):
+        d.setLexicalParent(decl)
+      case .compilerControl(let s):
+        s.setLexicalParent(decl)
+      default:
+        continue
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ decl: ExtensionDeclaration) throws -> Bool {
+    for member in decl.members {
+      switch member {
+      case .declaration(let d):
+        d.setLexicalParent(decl)
+      case .compilerControl(let s):
+        s.setLexicalParent(decl)
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ decl: FunctionDeclaration) throws -> Bool {
+    decl.body?.setLexicalParent(decl)
+    for param in decl.signature.parameterList {
+      param.defaultArgumentClause?.setLexicalParent(decl)
+    }
+
+    return true
+  }
+
+  func visit(_ decl: InitializerDeclaration) throws -> Bool {
+    decl.body.setLexicalParent(decl)
+    for param in decl.parameterList {
+      param.defaultArgumentClause?.setLexicalParent(decl)
+    }
+
+    return true
+  }
+
+  func visit(_ decl: StructDeclaration) throws -> Bool {
+    for member in decl.members {
+      switch member {
+      case .declaration(let d):
+        d.setLexicalParent(decl)
+      case .compilerControl(let s):
+        s.setLexicalParent(decl)
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ decl: SubscriptDeclaration) throws -> Bool {
+    if case .codeBlock(let codeBlock) = decl.body {
+      codeBlock.setLexicalParent(decl)
+    }
+    for param in decl.parameterList {
+      param.defaultArgumentClause?.setLexicalParent(decl)
+    }
+
+    return true
+  }
+
+  func visit(_ decl: VariableDeclaration) throws -> Bool {
+    switch decl.body {
+    case .initializerList(let initList):
+      for pttrnInit in initList {
+        pttrnInit.initializerExpression?.setLexicalParent(decl)
+      }
+    case .codeBlock(_, _, let codeBlock):
+      codeBlock.setLexicalParent(decl)
+    default:
+      break
+    }
+
+    return true
+  }
+
   func visit(_ stmt: DeferStatement) throws -> Bool {
     stmt.codeBlock.setLexicalParent(stmt)
 
