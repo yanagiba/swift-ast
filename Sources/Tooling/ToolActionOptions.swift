@@ -14,10 +14,13 @@
    limitations under the License.
 */
 
-open class ToolActionOption {
-  open var sequenceExpressionFoldingEnabled: Bool
+public struct ToolActionOptions : OptionSet {
+  public let rawValue: Int
 
-  public init(sequenceExpressionFoldingEnabled: Bool = false) {
-    self.sequenceExpressionFoldingEnabled = sequenceExpressionFoldingEnabled
+  public init(rawValue: Int) {
+    self.rawValue = rawValue
   }
+
+  public static let foldSequenceExpression = ToolActionOptions(rawValue: 1 << 0)
+  public static let assignLexicalParent = ToolActionOptions(rawValue: 1 << 1)
 }

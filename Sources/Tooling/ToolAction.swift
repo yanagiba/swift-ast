@@ -26,7 +26,7 @@ open class ToolAction {
   open func run(
     sourceFiles: [SourceFile],
     diagnosticConsumer: DiagnosticConsumer,
-    option: ToolActionOption = ToolActionOption()
+    options: ToolActionOptions = []
   ) -> ToolActionResult {
     var unitCollection: ASTUnitCollection = []
     var unparsedSourceFiles: [SourceFile] = []
@@ -50,7 +50,12 @@ open class ToolAction {
         andUnparsedSourceFiles: unparsedSourceFiles)
     }
 
-    if option.sequenceExpressionFoldingEnabled {
+    if options.contains(.assignLexicalParent) {
+      let lexicalParentAssignment = LexicalParentAssignment()
+      lexicalParentAssignment.assign(unitCollection)
+    }
+
+    if options.contains(.foldSequenceExpression) {
       let seqExprFolding = SequenceExpressionFolding()
       seqExprFolding.fold(unitCollection)
     }
