@@ -152,7 +152,7 @@ extension SourceLocation {
 
 extension String {
   var containOnlyPositiveDecimals: Bool {
-    for c in characters {
+    for c in self {
       switch c {
       case "0"..."9":
         continue
