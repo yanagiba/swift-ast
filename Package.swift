@@ -54,7 +54,7 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/yanagiba/bocho",
-      .revision("0ae6150eb446c772c03574a911ff5682f8bba72c")
+      .exact("0.1.1")
     ),
   ],
   targets: [

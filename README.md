@@ -52,7 +52,7 @@ catch up as Swift evolves.
 
 ## Requirements
 
-- [Swift 4.0-DEVELOPMENT-SNAPSHOT-2017-09-16-a](https://swift.org/download/)
+- [Swift 4.0](https://swift.org/download/)
 
 ## Installation
 
