@@ -497,12 +497,39 @@ class LexerStringLiteralTests: XCTestCase {
       "*", "/", "!",
     ]
     for seq in invalidEscapeSequences {
-      lexAndTest("\"\\\(seq)\"") { t in
+      lexAndTest("\"a\\\(seq)b\"") { t in
         XCTAssertEqual(t, .invalid(.invalidEscapeSequenceInStringLiteral))
       }
-      lexAndTest("\"\"\"\n\\\(seq)\n\"\"\"") { t in
+      lexAndTest("\"\"\"\na\\\(seq)b\n\"\"\"") { t in
         XCTAssertEqual(t, .invalid(.invalidEscapeSequenceInStringLiteral))
       }
+    }
+  }
+
+  func testNewlineEscapesInMultilineStringLiterals() {
+    lexAndTest("\"\"\"\nline one \\\nline two\n\"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "line one line two")
+      XCTAssertEqual(r, "\"\"\"\nline one \\\nline two\n\"\"\"")
+    }
+    lexAndTest("\"\"\"\nline one \\\nline two \\      \nline th\\ \nree\n\"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "line one line two line three")
+      XCTAssertEqual(r, "\"\"\"\nline one \\\nline two \\      \nline th\\ \nree\n\"\"\"")
+    }
+    lexAndTest("\"\"\"\nline one \\\nline two \\   \t   \nline th\\\t\t\nree\n\"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "line one line two line three")
+      XCTAssertEqual(r, "\"\"\"\nline one \\\nline two \\   \t   \nline th\\\t\t\nree\n\"\"\"")
     }
   }
 
@@ -530,5 +557,6 @@ class LexerStringLiteralTests: XCTestCase {
     ("testSinglelineMultilineComparisons", testSinglelineMultilineComparisons),
     ("testInterpolatedTextInMultilineStringLiterals", testInterpolatedTextInMultilineStringLiterals),
     ("testInvalidEscapeSequenceInStringLiteral", testInvalidEscapeSequenceInStringLiteral),
+    ("testNewlineEscapesInMultilineStringLiterals", testNewlineEscapesInMultilineStringLiterals),
   ]
 }

@@ -167,7 +167,13 @@ extension Lexer /* string literal */ {
           }
           literal.append(unicodeLiteral.string)
         default:
-          return .invalid(.invalidEscapeSequenceInStringLiteral)
+          while char.role == .space {
+            consumeChar()
+            appendRaw()
+          }
+          guard char.role == .lineFeed else {
+            return .invalid(.invalidEscapeSequenceInStringLiteral)
+          }
         }
       default: // just append the current unicode scalar to the string
         literal.append(char.string)
