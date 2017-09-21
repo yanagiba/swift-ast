@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -490,6 +490,19 @@ class LexerStringLiteralTests: XCTestCase {
     }
   }
 
+  func testInvalidEscapeSequenceInStringLiteral() {
+    let invalidEscapeSequences = [
+      " ",
+      "a", "b", "l", "q", "z",
+      "*", "/", "!",
+    ]
+    for seq in invalidEscapeSequences {
+      lexAndTest("\"\\\(seq)\"") { t in
+        XCTAssertEqual(t, .invalid(.invalidEscapeSequenceInStringLiteral))
+      }
+    }
+  }
+
   static var allTests = [
     ("testEmptyStringLiteral", testEmptyStringLiteral),
     ("testSingleCharacter", testSingleCharacter),
@@ -513,5 +526,6 @@ class LexerStringLiteralTests: XCTestCase {
     ("testMultilineDoubleQuoteFuns", testMultilineDoubleQuoteFuns),
     ("testSinglelineMultilineComparisons", testSinglelineMultilineComparisons),
     ("testInterpolatedTextInMultilineStringLiterals", testInterpolatedTextInMultilineStringLiterals),
+    ("testInvalidEscapeSequenceInStringLiteral", testInvalidEscapeSequenceInStringLiteral),
   ]
 }

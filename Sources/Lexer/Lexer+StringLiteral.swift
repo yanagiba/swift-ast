@@ -124,9 +124,7 @@ extension Lexer /* string literal */ {
                   literal, rawRepresentation: rawRepresentation)
               }
 
-              let caliberatedMultilineStringLiteral =
-                caliberateMultlineStringLiteral()
-              return caliberatedMultilineStringLiteral
+              return caliberateMultlineStringLiteral()
             } else {
               literal.append("\"" as Character)
               literal.append("\"" as Character)
@@ -169,7 +167,7 @@ extension Lexer /* string literal */ {
           }
           literal.append(unicodeLiteral.string)
         default:
-          literal.append(char.string)
+          return .invalid(.invalidEscapeSequenceInStringLiteral)
         }
       default: // just append the current unicode scalar to the string
         literal.append(char.string)
