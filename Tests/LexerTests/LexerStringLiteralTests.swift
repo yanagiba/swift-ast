@@ -500,6 +500,9 @@ class LexerStringLiteralTests: XCTestCase {
       lexAndTest("\"\\\(seq)\"") { t in
         XCTAssertEqual(t, .invalid(.invalidEscapeSequenceInStringLiteral))
       }
+      lexAndTest("\"\"\"\n\\\(seq)\n\"\"\"") { t in
+        XCTAssertEqual(t, .invalid(.invalidEscapeSequenceInStringLiteral))
+      }
     }
   }
 
