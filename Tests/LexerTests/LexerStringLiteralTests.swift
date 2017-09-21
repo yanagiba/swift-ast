@@ -533,6 +533,18 @@ class LexerStringLiteralTests: XCTestCase {
     }
   }
 
+  func testNewlineEscapesNotSupportedInStringLiterals() {
+    lexAndTest("\"a\\\nb\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotSupportedInStringLiteral))
+    }
+    lexAndTest("\"a\\ \nb\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotSupportedInStringLiteral))
+    }
+    lexAndTest("\"a\\\t\nb\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotSupportedInStringLiteral))
+    }
+  }
+
   static var allTests = [
     ("testEmptyStringLiteral", testEmptyStringLiteral),
     ("testSingleCharacter", testSingleCharacter),
@@ -558,5 +570,6 @@ class LexerStringLiteralTests: XCTestCase {
     ("testInterpolatedTextInMultilineStringLiterals", testInterpolatedTextInMultilineStringLiterals),
     ("testInvalidEscapeSequenceInStringLiteral", testInvalidEscapeSequenceInStringLiteral),
     ("testNewlineEscapesInMultilineStringLiterals", testNewlineEscapesInMultilineStringLiterals),
+    ("testNewlineEscapesNotSupportedInStringLiterals", testNewlineEscapesNotSupportedInStringLiterals),
   ]
 }

@@ -30,6 +30,7 @@ public enum TokenInvalidReason : DiagnosticKind {
   case insufficientIndentationOfLineInMultilineStringLiteral
   case newLineExpectedAtTheClosingOfMultilineStringLiteral
   case invalidEscapeSequenceInStringLiteral
+  case newlineEscapesNotSupportedInStringLiteral
 
   public var diagnosticMessage: String {
     switch self {
@@ -59,6 +60,8 @@ public enum TokenInvalidReason : DiagnosticKind {
       return "multi-line string literal closing delimiter must begin on a new line"
     case .invalidEscapeSequenceInStringLiteral:
       return "invalid escape sequence in string literal"
+    case .newlineEscapesNotSupportedInStringLiteral:
+      return "newline escape is not supported in single-line string literal"
     }
   }
 }

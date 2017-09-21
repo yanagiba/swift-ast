@@ -174,6 +174,9 @@ extension Lexer /* string literal */ {
           guard char.role == .lineFeed else {
             return .invalid(.invalidEscapeSequenceInStringLiteral)
           }
+          guard isMultiline else {
+            return .invalid(.newlineEscapesNotSupportedInStringLiteral)
+          }
         }
       default: // just append the current unicode scalar to the string
         literal.append(char.string)
