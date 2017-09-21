@@ -531,6 +531,14 @@ class LexerStringLiteralTests: XCTestCase {
       XCTAssertEqual(s, "line one line two line three")
       XCTAssertEqual(r, "\"\"\"\nline one \\\nline two \\   \t   \nline th\\\t\t\nree\n\"\"\"")
     }
+    lexAndTest("\"\"\"\nfoo \\\n \\(123)\n\"\"\"") { t in
+      guard case let .interpolatedStringLiteralHead(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "foo  ")
+      XCTAssertEqual(r, "\"\"\"\nfoo \\\n \\(")
+    }
   }
 
   func testNewlineEscapesNotSupportedInStringLiterals() {
