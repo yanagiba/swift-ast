@@ -541,6 +541,18 @@ class LexerStringLiteralTests: XCTestCase {
     }
   }
 
+  func testNewlineEscapeIsNotAllowedInLastLine() {
+    lexAndTest("\"\"\"\n \\  \n\"\"\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotAllowedOnLastLine))
+    }
+    lexAndTest("\"\"\"\nsingle line \\  \n\"\"\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotAllowedOnLastLine))
+    }
+    lexAndTest("\"\"\"\nfirst line \\  \nsecond line \\  \n\"\"\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotAllowedOnLastLine))
+    }
+  }
+
   func testNewlineEscapesNotSupportedInStringLiterals() {
     lexAndTest("\"a\\\nb\"") { t in
       XCTAssertEqual(t, .invalid(.newlineEscapesNotSupportedInStringLiteral))
@@ -578,6 +590,7 @@ class LexerStringLiteralTests: XCTestCase {
     ("testInterpolatedTextInMultilineStringLiterals", testInterpolatedTextInMultilineStringLiterals),
     ("testInvalidEscapeSequenceInStringLiteral", testInvalidEscapeSequenceInStringLiteral),
     ("testNewlineEscapesInMultilineStringLiterals", testNewlineEscapesInMultilineStringLiterals),
+    ("testNewlineEscapeIsNotAllowedInLastLine", testNewlineEscapeIsNotAllowedInLastLine),
     ("testNewlineEscapesNotSupportedInStringLiterals", testNewlineEscapesNotSupportedInStringLiterals),
   ]
 }

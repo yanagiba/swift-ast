@@ -59,7 +59,19 @@ extension Lexer /* string literal */ {
       return nil
     }
 
+    func isLastRawCharEscaping() -> Bool {
+      var rawRepresentationLines = rawRepresentation.components(separatedBy: .newlines)
+      rawRepresentationLines.removeLast()
+      let lastRawContentLine = rawRepresentationLines.removeLast()
+      let lastRawChar = lastRawContentLine.reversed().drop(while: { $0 == " " || $0 == "\t" }).first
+      return lastRawChar == "\\"
+    }
+
     func caliberateMultlineStringLiteral() -> Token.Kind {
+      if isLastRawCharEscaping() {
+        return .invalid(.newlineEscapesNotAllowedOnLastLine)
+      }
+
       var lines = literal.components(separatedBy: .newlines)
       let indentationPrefix = lines.removeLast()
       guard indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty else {
