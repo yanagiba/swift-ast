@@ -59,7 +59,19 @@ extension Lexer /* string literal */ {
       return nil
     }
 
+    func isLastRawCharEscaping() -> Bool {
+      var rawRepresentationLines = rawRepresentation.components(separatedBy: .newlines)
+      rawRepresentationLines.removeLast()
+      let lastRawContentLine = rawRepresentationLines.removeLast()
+      let lastRawChar = lastRawContentLine.reversed().drop(while: { $0 == " " || $0 == "\t" }).first
+      return lastRawChar == "\\"
+    }
+
     func caliberateMultlineStringLiteral() -> Token.Kind {
+      if isLastRawCharEscaping() {
+        return .invalid(.newlineEscapesNotAllowedOnLastLine)
+      }
+
       var lines = literal.components(separatedBy: .newlines)
       let indentationPrefix = lines.removeLast()
       guard indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty else {
@@ -124,9 +136,7 @@ extension Lexer /* string literal */ {
                   literal, rawRepresentation: rawRepresentation)
               }
 
-              let caliberatedMultilineStringLiteral =
-                caliberateMultlineStringLiteral()
-              return caliberatedMultilineStringLiteral
+              return caliberateMultlineStringLiteral()
             } else {
               literal.append("\"" as Character)
               literal.append("\"" as Character)
@@ -169,7 +179,16 @@ extension Lexer /* string literal */ {
           }
           literal.append(unicodeLiteral.string)
         default:
-          literal.append(char.string)
+          while char.role == .space {
+            consumeChar()
+            appendRaw()
+          }
+          guard char.role == .lineFeed else {
+            return .invalid(.invalidEscapeSequenceInStringLiteral)
+          }
+          guard isMultiline else {
+            return .invalid(.newlineEscapesNotSupportedInStringLiteral)
+          }
         }
       default: // just append the current unicode scalar to the string
         literal.append(char.string)

@@ -109,6 +109,8 @@ class ParserLiteralExpressionTests: XCTestCase {
       ("\"\"\"\na\n\"\"\"", "a"),
       ("\"\"\"\n\nThe quick brown fox\njumps over\nthe lazy dog\n\n\"\"\"",
         "\nThe quick brown fox\njumps over\nthe lazy dog\n"),
+      ("\"\"\"\nThe quick brown fox \\\njumps over \\ \nthe lazy dog\\\t\n\n\"\"\"",
+        "The quick brown fox jumps over the lazy dog"),
       ("\"\"\"\n\\0\\\\\\t\\\"\\\'\n\"\"\"", "\0\\\t\"\'"),
     ]
     for t in testStrings {
@@ -381,6 +383,21 @@ class ParserLiteralExpressionTests: XCTestCase {
           LiteralExpression(kind: .staticString("\n", "")),
           LiteralExpression(kind: .staticString("bar", "\"bar\"")),
           LiteralExpression(kind: .staticString("\n", "")),
+        ]
+      ),
+      (
+        "\"\"\"\na\\\n \\(\"bar\")\n\"\"\"",
+        [
+          LiteralExpression(kind: .staticString("a ", "")),
+          LiteralExpression(kind: .staticString("bar", "\"bar\"")),
+        ]
+      ),
+      (
+        "\"\"\"\n\n  \\(\"bar\")a\\\nb\n  \"\"\"",
+        [
+          LiteralExpression(kind: .staticString("\n", "")),
+          LiteralExpression(kind: .staticString("bar", "\"bar\"")),
+          LiteralExpression(kind: .staticString("ab", "")),
         ]
       ),
     ]

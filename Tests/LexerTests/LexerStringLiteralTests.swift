@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -490,6 +490,81 @@ class LexerStringLiteralTests: XCTestCase {
     }
   }
 
+  func testInvalidEscapeSequenceInStringLiteral() {
+    let invalidEscapeSequences = [
+      " ",
+      "a", "b", "l", "q", "z",
+      "*", "/", "!",
+    ]
+    for seq in invalidEscapeSequences {
+      lexAndTest("\"a\\\(seq)b\"") { t in
+        XCTAssertEqual(t, .invalid(.invalidEscapeSequenceInStringLiteral))
+      }
+      lexAndTest("\"\"\"\na\\\(seq)b\n\"\"\"") { t in
+        XCTAssertEqual(t, .invalid(.invalidEscapeSequenceInStringLiteral))
+      }
+    }
+  }
+
+  func testNewlineEscapesInMultilineStringLiterals() {
+    lexAndTest("\"\"\"\nline one \\\nline two\n\"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "line one line two")
+      XCTAssertEqual(r, "\"\"\"\nline one \\\nline two\n\"\"\"")
+    }
+    lexAndTest("\"\"\"\nline one \\\nline two \\      \nline th\\ \nree\n\"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "line one line two line three")
+      XCTAssertEqual(r, "\"\"\"\nline one \\\nline two \\      \nline th\\ \nree\n\"\"\"")
+    }
+    lexAndTest("\"\"\"\nline one \\\nline two \\   \t   \nline th\\\t\t\nree\n\"\"\"") { t in
+      guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "line one line two line three")
+      XCTAssertEqual(r, "\"\"\"\nline one \\\nline two \\   \t   \nline th\\\t\t\nree\n\"\"\"")
+    }
+    lexAndTest("\"\"\"\nfoo \\\n \\(123)\n\"\"\"") { t in
+      guard case let .interpolatedStringLiteralHead(s, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a string literal.")
+        return
+      }
+      XCTAssertEqual(s, "foo  ")
+      XCTAssertEqual(r, "\"\"\"\nfoo \\\n \\(")
+    }
+  }
+
+  func testNewlineEscapeIsNotAllowedInLastLine() {
+    lexAndTest("\"\"\"\n \\  \n\"\"\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotAllowedOnLastLine))
+    }
+    lexAndTest("\"\"\"\nsingle line \\  \n\"\"\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotAllowedOnLastLine))
+    }
+    lexAndTest("\"\"\"\nfirst line \\  \nsecond line \\  \n\"\"\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotAllowedOnLastLine))
+    }
+  }
+
+  func testNewlineEscapesNotSupportedInStringLiterals() {
+    lexAndTest("\"a\\\nb\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotSupportedInStringLiteral))
+    }
+    lexAndTest("\"a\\ \nb\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotSupportedInStringLiteral))
+    }
+    lexAndTest("\"a\\\t\nb\"") { t in
+      XCTAssertEqual(t, .invalid(.newlineEscapesNotSupportedInStringLiteral))
+    }
+  }
+
   static var allTests = [
     ("testEmptyStringLiteral", testEmptyStringLiteral),
     ("testSingleCharacter", testSingleCharacter),
@@ -513,5 +588,9 @@ class LexerStringLiteralTests: XCTestCase {
     ("testMultilineDoubleQuoteFuns", testMultilineDoubleQuoteFuns),
     ("testSinglelineMultilineComparisons", testSinglelineMultilineComparisons),
     ("testInterpolatedTextInMultilineStringLiterals", testInterpolatedTextInMultilineStringLiterals),
+    ("testInvalidEscapeSequenceInStringLiteral", testInvalidEscapeSequenceInStringLiteral),
+    ("testNewlineEscapesInMultilineStringLiterals", testNewlineEscapesInMultilineStringLiterals),
+    ("testNewlineEscapeIsNotAllowedInLastLine", testNewlineEscapeIsNotAllowedInLastLine),
+    ("testNewlineEscapesNotSupportedInStringLiterals", testNewlineEscapesNotSupportedInStringLiterals),
   ]
 }
