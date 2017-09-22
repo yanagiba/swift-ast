@@ -18,5 +18,5 @@ public struct Version {
   public let library: String
   public let swift: String
 
-  public static let current = Version(library: "0.4.1", swift: "4.0-beta-2017-08-04")
+  public static let current = Version(library: "0.4.1", swift: "4.0")
 }
