@@ -1176,6 +1176,14 @@ extension Parser {
     let isMultiline = raw.hasPrefix(multilineDelimiter)
     let isInterpolatedHead = startLocation != .DUMMY
 
+    func appendRawText(withRawText ir: String) {
+      let startIndexOffset = ir.hasPrefix(multilineDelimiter) ? 3 : 1
+      let endIndexOffset = ir.hasSuffix(multilineDelimiter) ? -3 : -1
+      let startIndex = ir.index(ir.startIndex, offsetBy: startIndexOffset)
+      let endIndex = ir.index(ir.endIndex, offsetBy: endIndexOffset)
+      rawText += String(ir[startIndex..<endIndex])
+    }
+
     if !head.isEmpty {
       // Note: static strings inside the interpolated string literals do not need to preserve raw representation,
       // because they are what they are
@@ -1196,12 +1204,12 @@ extension Parser {
     let tailString = _lexer.lexStringLiteral(
       isMultiline: isMultiline, postponeCaliberation: true)
     switch tailString {
-    case let .staticStringLiteral(str, _):
+    case let .staticStringLiteral(str, raw):
       if !str.isEmpty {
         // Note: static strings inside the interpolated string literals do not need to preserve raw representation,
         // because they are what they are
         exprs.append(LiteralExpression(kind: .staticString(str, "")))
-        rawText += str
+        appendRawText(withRawText: raw)
       }
       endLocation = _lexer._getCurrentLocation() // TODO: need to find a better to do it
     case let .interpolatedStringLiteralHead(headStr, rawStr):
@@ -1211,12 +1219,7 @@ extension Parser {
         throw _raiseFatal(.expectedStringInterpolation)
       }
       exprs.append(contentsOf: es)
-
-      let startIndexOffset = ir.hasPrefix(multilineDelimiter) ? 3 : 1
-      let endIndexOffset = ir.hasSuffix(multilineDelimiter) ? -3 : -1
-      let startIndex = ir.index(ir.startIndex, offsetBy: startIndexOffset)
-      let endIndex = ir.index(ir.endIndex, offsetBy: endIndexOffset)
-      rawText += String(ir[startIndex..<endIndex])
+      appendRawText(withRawText: ir)
       endLocation = nested.sourceRange.end
     default:
       throw _raiseFatal(.expectedStringInterpolation)
