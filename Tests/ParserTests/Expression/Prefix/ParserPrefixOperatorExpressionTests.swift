@@ -60,6 +60,55 @@ class ParserPrefixOperatorExpressionTests: XCTestCase {
     }
   }
 
+  func testPostfixExpressionAsImplicitMemberExpression() {
+    let testOps = [
+      // regular operators
+      "!",
+      "/",
+      "-",
+      "+",
+      "--",
+      "++",
+      "+=",
+      "=-",
+      "==",
+      "!*",
+      "*<",
+      "<>",
+      "<!>",
+      ">?>?>",
+      "&|^~?",
+      ">>>!!>>",
+      // dot operators
+      // "..",
+      // "...",
+      // ".......................",
+      // "../",
+      // "...++",
+      // "..--"
+      // TODO: RS: need more understanding towards dot operators
+      //           followed by an implicit member expression
+    ]
+    for testOp in testOps {
+      let testCode = "\(testOp).pi"
+
+      parseExpressionAndTest(testCode, testCode, testClosure: { expr in
+        guard let prefixOperator = expr as? PrefixOperatorExpression else {
+          XCTFail("Failed in getting a prefix operator expression")
+          return
+        }
+        XCTAssertEqual(prefixOperator.prefixOperator, testOp)
+        guard let implicitMemberExpr =
+          prefixOperator.postfixExpression as? ImplicitMemberExpression
+        else {
+          XCTFail("Failed in getting an implicit member expression.")
+          return
+        }
+        XCTAssertEqual(implicitMemberExpr.identifier, "pi")
+      })
+    }
+  }
+
   func testSourceRange() {
     let testExprs: [(testString: String, expectedEndColumn: Int)] = [
       ("/foo", 5),
@@ -75,6 +124,8 @@ class ParserPrefixOperatorExpressionTests: XCTestCase {
 
   static var allTests = [
     ("testPrefixOperator", testPrefixOperator),
+    ("testPostfixExpressionAsImplicitMemberExpression",
+      testPostfixExpressionAsImplicitMemberExpression),
     ("testSourceRange", testSourceRange),
   ]
 }

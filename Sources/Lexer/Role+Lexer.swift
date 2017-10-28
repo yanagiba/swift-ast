@@ -17,7 +17,7 @@
 extension Role {
   var isSeparator: Bool {
     switch self {
-    case .lineFeed, .semi, .space, .period, .comma, .colon:
+    case .lineFeed, .semi, .space, .comma, .colon:
       return true
     default:
       return false
