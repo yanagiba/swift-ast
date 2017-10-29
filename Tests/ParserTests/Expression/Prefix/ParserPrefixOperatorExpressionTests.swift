@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -61,6 +61,7 @@ class ParserPrefixOperatorExpressionTests: XCTestCase {
   }
 
   func testPostfixExpressionAsImplicitMemberExpression() {
+    // https://github.com/yanagiba/swift-lint/issues/37
     let testOps = [
       // regular operators
       "!",

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -144,6 +144,23 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
     }
   }
 
+  func testPostfixExpressionAsLiteralExpression() {
+    // Address an issue described in @angelolloqui's October 27, 2017 email
+    for member in ["float", "a", "abc", "z", "zyx"] {
+      let expressionString = "3.\(member)"
+      parseExpressionAndTest(expressionString, expressionString, testClosure: { expr in
+        guard let explicitMemberExpr = expr as? ExplicitMemberExpression,
+          case let .namedType(postfixExpr, identifier) = explicitMemberExpr.kind else {
+          XCTFail("Failed in getting an explicit member expression for `\(expressionString)`.")
+          return
+        }
+
+        XCTAssertTrue(postfixExpr is LiteralExpression)
+        XCTAssertEqual(identifier, member)
+      })
+    }
+  }
+
   func testSourceRange() {
     let testExprs: [(testString: String, expectedEndColumn: Int)] = [
       ("foo.0", 6),
@@ -199,6 +216,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
     ("testUnderscoreAsArgumentName", testUnderscoreAsArgumentName),
     ("testNested", testNested),
     ("testImplicitParameterName", testImplicitParameterName),
+    ("testPostfixExpressionAsLiteralExpression", testPostfixExpressionAsLiteralExpression),
     ("testSourceRange", testSourceRange),
   ]
 }
