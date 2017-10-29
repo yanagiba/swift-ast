@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -434,6 +434,34 @@ class ParserFunctionCallExpressionTests: XCTestCase {
     })
   }
 
+  func testPostfixExpressionAsLiteralExpression() {
+    // https://github.com/yanagiba/swift-lint/issues/37
+    parseExpressionAndTest("5.power(of: 2)", "5.power(of: 2)", testClosure: { expr in
+      guard let funcCallExpr = expr as? FunctionCallExpression else {
+        XCTFail("Failed in getting a function call expression")
+        return
+      }
+
+      print(funcCallExpr.postfixExpression)
+
+      guard let explicitMemberExpr = funcCallExpr.postfixExpression as? ExplicitMemberExpression,
+        case let .namedType(postfixExpr, identifier) = explicitMemberExpr.kind else {
+        XCTFail("Failed in getting an explicit member expression")
+        return
+      }
+      XCTAssertTrue(postfixExpr is LiteralExpression)
+      XCTAssertEqual(identifier, "power")
+
+      guard let arguments = funcCallExpr.argumentClause else {
+        XCTFail("Failed in getting an argument clause.")
+        return
+      }
+      XCTAssertEqual(arguments.count, 1)
+
+      XCTAssertNil(funcCallExpr.trailingClosure)
+    })
+  }
+
   func testSourceRange() {
     let testExprs: [(testString: String, expectedEndColumn: Int)] = [
       ("foo()", 6),
@@ -468,6 +496,7 @@ class ParserFunctionCallExpressionTests: XCTestCase {
     ("testNamedMemoryReference", testNamedMemoryReference),
     ("testArgumentAsFunctionCallExprWithTrailingClosure", testArgumentAsFunctionCallExprWithTrailingClosure),
     ("testArgumentAsEmptyDictionary", testArgumentAsEmptyDictionary),
+    ("testPostfixExpressionAsLiteralExpression", testPostfixExpressionAsLiteralExpression),
     ("testSourceRange", testSourceRange),
   ]
 }

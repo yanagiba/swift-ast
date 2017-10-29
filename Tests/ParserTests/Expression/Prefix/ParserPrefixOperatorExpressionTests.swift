@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -60,6 +60,56 @@ class ParserPrefixOperatorExpressionTests: XCTestCase {
     }
   }
 
+  func testPostfixExpressionAsImplicitMemberExpression() {
+    // https://github.com/yanagiba/swift-lint/issues/37
+    let testOps = [
+      // regular operators
+      "!",
+      "/",
+      "-",
+      "+",
+      "--",
+      "++",
+      "+=",
+      "=-",
+      "==",
+      "!*",
+      "*<",
+      "<>",
+      "<!>",
+      ">?>?>",
+      "&|^~?",
+      ">>>!!>>",
+      // dot operators
+      // "..",
+      // "...",
+      // ".......................",
+      // "../",
+      // "...++",
+      // "..--"
+      // TODO: RS: need more understanding towards dot operators
+      //           followed by an implicit member expression
+    ]
+    for testOp in testOps {
+      let testCode = "\(testOp).pi"
+
+      parseExpressionAndTest(testCode, testCode, testClosure: { expr in
+        guard let prefixOperator = expr as? PrefixOperatorExpression else {
+          XCTFail("Failed in getting a prefix operator expression")
+          return
+        }
+        XCTAssertEqual(prefixOperator.prefixOperator, testOp)
+        guard let implicitMemberExpr =
+          prefixOperator.postfixExpression as? ImplicitMemberExpression
+        else {
+          XCTFail("Failed in getting an implicit member expression.")
+          return
+        }
+        XCTAssertEqual(implicitMemberExpr.identifier, "pi")
+      })
+    }
+  }
+
   func testSourceRange() {
     let testExprs: [(testString: String, expectedEndColumn: Int)] = [
       ("/foo", 5),
@@ -75,6 +125,8 @@ class ParserPrefixOperatorExpressionTests: XCTestCase {
 
   static var allTests = [
     ("testPrefixOperator", testPrefixOperator),
+    ("testPostfixExpressionAsImplicitMemberExpression",
+      testPostfixExpressionAsImplicitMemberExpression),
     ("testSourceRange", testSourceRange),
   ]
 }
