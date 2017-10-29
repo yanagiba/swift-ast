@@ -159,6 +159,19 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
         XCTAssertEqual(identifier, member)
       })
     }
+    for member in ["float", "z", "zyx", "abcxyz"] {
+      let expressionString = "0x3a.\(member)"
+      parseExpressionAndTest(expressionString, expressionString, testClosure: { expr in
+        guard let explicitMemberExpr = expr as? ExplicitMemberExpression,
+          case let .namedType(postfixExpr, identifier) = explicitMemberExpr.kind else {
+          XCTFail("Failed in getting an explicit member expression for `\(expressionString)`.")
+          return
+        }
+
+        XCTAssertTrue(postfixExpr is LiteralExpression)
+        XCTAssertEqual(identifier, member)
+      })
+    }
   }
 
   func testSourceRange() {

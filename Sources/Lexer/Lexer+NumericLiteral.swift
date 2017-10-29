@@ -222,7 +222,9 @@ extension Lexer /* numeric literal */ {
     }
 
     // construct token if success
-    if radix == 16 && fractionalPart != nil && exponentPart == nil {
+    if radix == 16 && fractionalPart != nil &&
+      exponentPart == nil && !breakFromBadCharInDecimal
+    {
       return .invalid(.badNumber)
     }
 
