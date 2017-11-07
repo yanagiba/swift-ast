@@ -61,7 +61,7 @@ extension Lexer /* numeric literal */ {
       }
     }
 
-    func consumeDigitHead(withRadix rdx: Int, to prt: Part) {
+    @discardableResult func consumeDigitHead(withRadix rdx: Int, to prt: Part) -> Bool {
       _consume(char.role)
 
       rawRepresentation += char.string
@@ -73,8 +73,9 @@ extension Lexer /* numeric literal */ {
           appendUnicodeScalar(char.unicodeScalar, to: prt, withRadix: rdx):
         radix = rdx
         part = prt
+        return true
       default:
-        break
+        return false
       }
     }
 
@@ -153,12 +154,16 @@ extension Lexer /* numeric literal */ {
       case "e", "E":
         consumeExponentHead(withRadix: 10)
       default:
-          return .invalid(.badChar)
+        return .invalid(.badChar)
       }
     default:
       return .invalid(.badChar)
     }
     _consume(char.role)
+
+    var intRawRepresentation: String?
+    var dotCheckpoint: String?
+    var breakFromBadCharInDecimal = false
 
     // lex second character and forward
     charLoop: while char != .eof {
@@ -186,8 +191,29 @@ extension Lexer /* numeric literal */ {
         rawRepresentation += char.string
         consumeExponentHead(withRadix: 16)
       case (.period, _) where radix >= 10 && part == .integer:
+        let currentRawRepresentation = rawRepresentation
+        let checkpoint = checkPoint()
+
         rawRepresentation += char.string
-        consumeDigitHead(withRadix: radix, to: .decimal)
+        guard consumeDigitHead(withRadix: radix, to: .decimal) else {
+          rawRepresentation = currentRawRepresentation
+          restore(fromCheckpoint: checkpoint)
+          breakFromBadCharInDecimal = true
+          break charLoop
+        }
+
+        intRawRepresentation = currentRawRepresentation
+        dotCheckpoint = checkpoint
+      case (_, "a"..."z"), (_, "_"):
+        if let intRawRepresentation = intRawRepresentation,
+          let dotCheckpoint = dotCheckpoint
+        {
+          rawRepresentation = intRawRepresentation
+          restore(fromCheckpoint: dotCheckpoint)
+          breakFromBadCharInDecimal = true
+        }
+
+        break charLoop
       default:
         break charLoop
       }
@@ -196,12 +222,14 @@ extension Lexer /* numeric literal */ {
     }
 
     // construct token if success
-    if radix == 16 && fractionalPart != nil && exponentPart == nil {
+    if radix == 16 && fractionalPart != nil &&
+      exponentPart == nil && !breakFromBadCharInDecimal
+    {
       return .invalid(.badNumber)
     }
 
     // construct an integer literal
-    if fractionalPart == nil && exponentPart == nil {
+    if (fractionalPart == nil && exponentPart == nil) || breakFromBadCharInDecimal {
       return .integerLiteral(
         negativeNumber ? -integerPart : integerPart,
         rawRepresentation: rawRepresentation
