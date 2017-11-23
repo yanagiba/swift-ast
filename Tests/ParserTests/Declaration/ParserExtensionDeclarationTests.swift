@@ -202,6 +202,10 @@ class ParserExtensionDeclarationTests: XCTestCase {
     })
   }
 
+  func testMembersWithSemicolons() {
+    parseDeclarationAndTest("extension Foo { let issue = 61; }", "extension Foo {\nlet issue = 61\n}")
+  }
+
   func testCompilerControlMember() {
     parseDeclarationAndTest(
       """

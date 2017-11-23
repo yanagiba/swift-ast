@@ -131,6 +131,12 @@ extension Parser {
     return (first, second)
   }
 
+  func removeTrailingSemicolons() {
+    // TODO: this method is good, but I feel its applications to container declarations are
+    //       sort of a quick fix for issues/61, should think about a more general solution
+    while _lexer.match(.semicolon) {}
+  }
+
   func getLookedRange() -> SourceRange {
     return _lexer.look().sourceRange
   }

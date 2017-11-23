@@ -329,6 +329,10 @@ class ParserClassDeclarationTests: XCTestCase {
     })
   }
 
+  func testMembersWithSemicolons() {
+    parseDeclarationAndTest("class Foo { let issue = 61; }", "class Foo {\nlet issue = 61\n}")
+  }
+
   func testCompilerControlMember() {
     parseDeclarationAndTest(
       """
@@ -438,6 +442,7 @@ class ParserClassDeclarationTests: XCTestCase {
     ("testDeclarationMember", testDeclarationMember),
     ("testMultipleDeclarationMembers", testMultipleDeclarationMembers),
     ("testNestedClassDecl", testNestedClassDecl),
+    ("testMembersWithSemicolons", testMembersWithSemicolons),
     ("testCompilerControlMember", testCompilerControlMember),
     ("testSourceRange", testSourceRange),
   ]

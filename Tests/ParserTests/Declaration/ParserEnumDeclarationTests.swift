@@ -867,6 +867,10 @@ class ParserEnumDeclarationTests: XCTestCase {
       "", errorClosure: { _ in })
   }
 
+  func testMembersWithSemicolons() {
+    parseDeclarationAndTest("enum Foo { let issue = 61; }", "enum Foo {\nlet issue = 61\n}")
+  }
+
   func testCompilerControlMember() {
     parseDeclarationAndTest(
       """
