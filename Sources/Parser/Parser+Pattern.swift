@@ -128,7 +128,7 @@ extension Parser {
     case .identifier(let id):
       return try parseIdentifierHeadedPattern(
         id, config: config, startRange: lookedRange)
-    case .Any, .Self, .get, .set, .left, .right, .open, .prefix:
+    case .Any, .Self, .get, .set, .left, .right, .open, .prefix, .postfix:
       guard let idHead = patternHead.namedIdentifier else {
         throw _raiseFatal(.expectedPattern)
       }
