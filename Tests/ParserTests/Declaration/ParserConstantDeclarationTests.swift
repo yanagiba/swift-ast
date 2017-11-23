@@ -175,6 +175,10 @@ class ParserConstantDeclarationTests: XCTestCase {
       "let foo = bar { $0 == 0 }.joined()")
   }
 
+  func testFollowedBySemicolon() {
+    parseDeclarationAndTest("let issue = 61;", "let issue = 61")
+  }
+
   func testSourceRange() {
     parseDeclarationAndTest("let foo", "let foo", testClosure: { decl in
       XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 8))
@@ -199,6 +203,7 @@ class ParserConstantDeclarationTests: XCTestCase {
     ("testModifiers", testModifiers),
     ("testAttributeAndModifiers", testAttributeAndModifiers),
     ("testFollowedByTrailingClosure", testFollowedByTrailingClosure),
+    ("testFollowedBySemicolon", testFollowedBySemicolon),
     ("testSourceRange", testSourceRange),
   ]
 }
