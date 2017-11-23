@@ -41,6 +41,7 @@ class ParserIdentifierPatternTests: XCTestCase {
       "right",
       "open",
       "prefix",
+      "postfix",
     ]
     for keyword in keywords {
       parsePatternAndTest(keyword, keyword, testClosure: { pttrn in
