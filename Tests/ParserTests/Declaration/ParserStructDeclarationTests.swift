@@ -260,6 +260,10 @@ class ParserStructDeclarationTests: XCTestCase {
     })
   }
 
+  func testMembersWithSemicolons() {
+    parseDeclarationAndTest("struct Foo { let issue = 61; }", "struct Foo {\nlet issue = 61\n}")
+  }
+
   func testCompilerControlMember() {
     parseDeclarationAndTest(
       """

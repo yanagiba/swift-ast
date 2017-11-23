@@ -585,6 +585,8 @@ extension Parser {
         members.append(.declaration(decl))
       }
       endLocation = getEndLocation()
+
+      removeTrailingSemicolons()
     }
 
     let extDecl: ExtensionDeclaration
@@ -703,6 +705,8 @@ extension Parser {
         members.append(.declaration(decl))
       }
       endLocation = getEndLocation()
+
+      removeTrailingSemicolons()
     }
 
     let classDecl = ClassDeclaration(
@@ -754,6 +758,8 @@ extension Parser {
         members.append(.declaration(decl))
       }
       endLocation = getEndLocation()
+
+      removeTrailingSemicolons()
     }
 
     let structDecl = StructDeclaration(
@@ -952,6 +958,8 @@ extension Parser {
       let member = try parseMember()
       rawMembers.append(member)
       endLocation = getEndLocation()
+
+      removeTrailingSemicolons()
     }
     let members = try polishMembers(isIndirect: isIndirect,
       hasTypeInheritance: (typeInheritanceClause != nil), members: rawMembers)
