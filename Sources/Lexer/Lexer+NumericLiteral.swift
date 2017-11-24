@@ -22,7 +22,7 @@ extension Lexer /* numeric literal */ {
     */
     var negativeNumber = false
     var integerPart: Int = 0
-    var fractionalPart: (decimal: Int, offset: Int)?
+    var fractionalPart: (decimal: Double, offset: Int)?
     var negativeExponent = false
     var exponentPart: Int?
 
@@ -100,8 +100,12 @@ extension Lexer /* numeric literal */ {
       case .integer:
         integerPart = integerPart * rdx + value
       case .decimal:
-        let decimal = (fractionalPart?.decimal ?? 0) * rdx + value
         let offset = (fractionalPart?.offset ?? 0) + 1
+        var decimalValue = Double(value)
+        for _ in 0..<offset {
+          decimalValue /= Double(rdx)
+        }
+        let decimal = (fractionalPart?.decimal ?? 0.0) + decimalValue
         fractionalPart = (decimal, offset)
       case .exponent:
         exponentPart = (exponentPart ?? 0) * 10 + value
@@ -239,12 +243,7 @@ extension Lexer /* numeric literal */ {
     // construct a floating-point literal
     var floatingPoint = Double(integerPart)
     if let fractionPart = fractionalPart {
-      let rdx: Double = radix == 10 ? 10 : 16
-      var decimalValue = Double(fractionPart.decimal)
-      for _ in 0..<fractionPart.offset {
-        decimalValue /= rdx
-      }
-      floatingPoint += decimalValue
+      floatingPoint += fractionPart.decimal
     }
     if let exponentPart = exponentPart {
       let rdx: Double = radix == 10 ? 10 : 2

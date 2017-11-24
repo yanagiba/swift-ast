@@ -160,6 +160,20 @@ class LexerNumericLiteralTests: XCTestCase {
     }
   }
 
+  func testLongDecimalNumbers() {
+    // https://github.com/yanagiba/swift-ast/issues/58
+
+    let longString = "-0.5773502691896257310588680411456152796745"
+    lexAndTest(longString) { t in
+      guard case let .floatingPointLiteral(d, rawRepresentation: r) = t else {
+        XCTFail("Cannot lex a double literal.")
+        return
+      }
+      XCTAssertEqual(d, -0.5773502691896257310588680411456152796745, accuracy: 0.000000001)
+      XCTAssertEqual(r, longString)
+    }
+  }
+
   static var allTests = [
     ("testBinaryLiterals", testBinaryLiterals),
     ("testOctalLiterals", testOctalLiterals),
@@ -167,5 +181,6 @@ class LexerNumericLiteralTests: XCTestCase {
     ("testHexadecimalLiterals", testHexadecimalLiterals),
     ("testDecimalFloatingLiterals", testDecimalFloatingLiterals),
     ("testHexadecimalFloatingLiterals", testHexadecimalFloatingLiterals),
+    ("testLongDecimalNumbers", testLongDecimalNumbers),
   ]
 }
