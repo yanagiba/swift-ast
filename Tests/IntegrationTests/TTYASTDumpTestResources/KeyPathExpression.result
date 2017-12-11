@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-19:15>
+top_level_decl <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-31:46>
   assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-17:10>
     wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1-17:2>
     key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:5-17:10>
@@ -14,3 +14,61 @@ top_level_decl <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:17:1
       type: `A`
       0: component: `foo`
       1: component: `bar`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:20:1-20:8>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:20:1-20:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:20:5-20:8>
+      0: component: `!`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:21:1-21:8>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:21:1-21:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:21:5-21:8>
+      0: component: `?`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:22:1-22:8>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:22:1-22:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:22:5-22:8>
+      0: component: `[foo, bar]`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:23:1-23:8>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:23:1-23:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:23:5-23:8>
+      0: component: `b!`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:24:1-24:8>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:24:1-24:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:24:5-24:8>
+      0: component: `b?`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:25:1-25:8>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:25:1-25:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:25:5-25:8>
+      0: component: `b[foo, bar]`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:26:1-26:9>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:26:1-26:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:26:5-26:9>
+      type: `a`
+      0: component: `b!`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:27:1-27:9>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:27:1-27:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:27:5-27:9>
+      type: `a`
+      0: component: `b?`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:28:1-28:9>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:28:1-28:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:28:5-28:9>
+      type: `a`
+      0: component: `b[foo, bar]`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:29:1-29:11>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:29:1-29:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:29:5-29:11>
+      0: component: `?!?!`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:30:1-30:8>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:30:1-30:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:30:5-30:8>
+      0: component: `![x]!?[y][z]!`
+  assign_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:31:1-31:46>
+    wildcard_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:31:1-31:2>
+    key_path_expr <range: TTYASTDumpTestResources/KeyPathExpressionTests.swift:31:5-31:46>
+      0: component: `?`
+      1: component: `!`
+      2: component: `[foo, bar]`
+      3: component: `a?`
+      4: component: `b!`
+      5: component: `c[foo, bar]`
+      6: component: `?!?!`
+      7: component: `![x]!?[y][z]!`

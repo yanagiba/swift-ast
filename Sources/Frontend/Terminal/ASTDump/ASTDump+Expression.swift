@@ -210,7 +210,8 @@ extension KeyPathExpression : TTYASTDumpRepresentable {
       body += "\n" + "type: `\(type.textDescription)`".indented
     }
     for (offset, element) in components.enumerated() {
-      body += "\n" + "\(offset): component: `\(element)`".indented
+      let component = (element.0 ?? "") + element.1.map({ $0.textDescription }).joined()
+      body += "\n" + "\(offset): component: `\(component)`".indented
     }
     return "\(head)\(body)"
   }

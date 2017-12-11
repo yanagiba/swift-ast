@@ -95,29 +95,41 @@ extension Parser {
     }
   }
 
-  func splitTrailingExlaimsAndQuestions() -> [String] {
+  func splitTrailingExclaimsAndQuestions() -> [String] {
     // TODO: this is a hacking solution, need some serious refactorings
-    if case .postfixOperator(let puncs) = _lexer.look().kind {
-      var allQnE = true
-      var ops = [String]()
-      for p in puncs {
-        if p == "!" {
-          ops.append("!")
-        } else if p == "?" {
-          ops.append("?")
-        } else {
-          allQnE = false
-          break
-        }
-      }
+    guard case .postfixOperator(let puncs) = _lexer.look().kind else {
+      return []
+    }
+    return splitExclaimsAndQuestions(puncs: puncs)
+  }
 
-      if allQnE {
-        _lexer.advance()
-        return ops
+  func splitNextExclaimsAndQuestions() -> [String] {
+    // TODO: this is a hacking solution, need some serious refactorings
+    switch _lexer.look().kind {
+    case .postfixOperator(let puncs):
+      return splitExclaimsAndQuestions(puncs: puncs)
+    case .binaryOperator(let puncs):
+      return splitExclaimsAndQuestions(puncs: puncs)
+    case .prefixOperator(let puncs):
+      return splitExclaimsAndQuestions(puncs: puncs)
+    default:
+      return []
+    }
+  }
+
+  fileprivate func splitExclaimsAndQuestions(puncs: String) -> [String] {
+    var ops = [String]()
+    for p in puncs {
+      if p == "!" {
+        ops.append("!")
+      } else if p == "?" {
+        ops.append("?")
+      } else {
+        return []
       }
     }
-
-    return []
+    _lexer.advance()
+    return ops
   }
 
   func splitDoubleRawToTwoIntegers(_ raw: String) -> (Int, Int)? {
