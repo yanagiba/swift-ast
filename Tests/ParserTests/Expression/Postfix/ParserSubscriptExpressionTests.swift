@@ -48,6 +48,10 @@ class ParserSubscriptExpressionTests: XCTestCase {
     parseExpressionAndTest("foo [bar: try bar()]", "foo[bar: try bar()]")
   }
 
+  func testArgumentListOnSameLine() {
+    parseExpressionAndTest("foo\n[bar]", "foo")
+  }
+
   func testSourceRange() {
     let testExprs: [(testString: String, expectedEndColumn: Int)] = [
       ("foo[0]", 7),
@@ -65,6 +69,7 @@ class ParserSubscriptExpressionTests: XCTestCase {
     ("testMultipleExprs", testMultipleExprs),
     ("testVariables", testVariables),
     ("testArgumentWithIdentifier", testArgumentWithIdentifier),
+    ("testArgumentListOnSameLine", testArgumentListOnSameLine),
     ("testSourceRange", testSourceRange),
   ]
 }

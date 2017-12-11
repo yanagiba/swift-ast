@@ -316,10 +316,14 @@ extension Parser {
         .dummyPostfixOperator,
         .leftParen,
         .dot,
-        .leftSquare,
         .postfixExclaim,
         .postfixQuestion,
       ]
+
+      let hasNewLineInBetween = self._lexer.lookLineFeed()
+      if !hasNewLineInBetween {
+        tokens.append(.leftSquare)
+      }
 
       if self._lexer.look().kind == .leftBrace &&
         config.parseTrailingClosure &&
@@ -828,9 +832,11 @@ extension Parser {
     startRange: SourceRange
   ) throws -> SuperclassExpression {
     var endLocation = startRange.end
+    let hasNewLineInBetween = _lexer.lookLineFeed()
     let kind: SuperclassExpression.Kind
-    switch _lexer.read([.dot, .leftSquare]) {
+    switch _lexer.look().kind {
     case .dot:
+      _lexer.advance()
       endLocation = getEndLocation()
       if _lexer.match(.init) {
         kind = .initializer
@@ -839,7 +845,8 @@ extension Parser {
       } else {
         throw _raiseFatal(.expectedIdentifierAfterSuperDotExpr)
       }
-    case .leftSquare:
+    case .leftSquare where !hasNewLineInBetween:
+      _lexer.advance()
       let subscriptArguments = try parseSubscriptArguments()
       endLocation = getEndLocation()
       if !_lexer.match(.rightSquare) {
@@ -858,9 +865,11 @@ extension Parser {
     startRange: SourceRange
   ) throws -> SelfExpression {
     var endLocation = startRange.end
+    let hasNewLineInBetween = _lexer.lookLineFeed()
     let kind: SelfExpression.Kind
-    switch _lexer.read([.dot, .leftSquare]) {
+    switch _lexer.look().kind {
     case .dot:
+      _lexer.advance()
       endLocation = getEndLocation()
       if _lexer.match(.init) {
         kind = .initializer
@@ -869,7 +878,8 @@ extension Parser {
       } else {
         throw _raiseFatal(.expectedIdentifierAfterSelfDotExpr)
       }
-    case .leftSquare:
+    case .leftSquare where !hasNewLineInBetween:
+      _lexer.advance()
       let subscriptArguments = try parseSubscriptArguments()
       endLocation = getEndLocation()
       if !_lexer.match(.rightSquare) {

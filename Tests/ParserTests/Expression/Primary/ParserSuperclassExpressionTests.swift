@@ -109,6 +109,12 @@ class ParserSuperclassExpressionTests: XCTestCase {
     })
   }
 
+  func testArgumentListOnSameLine() {
+    parseExpressionAndTest("super\n[foo]", "", errorClosure: { error in
+      // :)
+    })
+  }
+
   func testSourceRange() {
     let testExprs: [(testString: String, expectedEndColumn: Int)] = [
       ("super.foo", 10),
@@ -129,6 +135,7 @@ class ParserSuperclassExpressionTests: XCTestCase {
     ("testSuperclassSubscriptExprWithVariables", testSuperclassSubscriptExprWithVariables),
     ("testSuperclassSubscriptArgumentWithIdentifier", testSuperclassSubscriptArgumentWithIdentifier),
     ("testSuperclassInitializerExpression", testSuperclassInitializerExpression),
+    ("testArgumentListOnSameLine", testArgumentListOnSameLine),
     ("testSourceRange", testSourceRange),
   ]
 }

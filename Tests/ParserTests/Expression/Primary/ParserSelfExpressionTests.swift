@@ -119,6 +119,10 @@ class ParserSelfExpressionTests: XCTestCase {
     })
   }
 
+  func testArgumentListOnSameLine() {
+    parseExpressionAndTest("self\n[foo]", "self")
+  }
+
   func testSourceRange() {
     let testExprs: [(testString: String, expectedEndColumn: Int)] = [
       ("self", 5),
@@ -141,6 +145,7 @@ class ParserSelfExpressionTests: XCTestCase {
     ("testSelfSubscriptExprWithVariables", testSelfSubscriptExprWithVariables),
     ("testSelfSubscriptArgumentWithIdentifier", testSelfSubscriptArgumentWithIdentifier),
     ("testSelfInitializerExpression", testSelfInitializerExpression),
+    ("testArgumentListOnSameLine", testArgumentListOnSameLine),
     ("testSourceRange", testSourceRange),
   ]
 }
