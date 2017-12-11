@@ -8,7 +8,6 @@ if [ "$CI" == "true" ]; then
   rm -rf .swift_lint
   git clone https://github.com/yanagiba/swift-lint .swift_lint
   cd .swift_lint
-  swiftenv install -s
   make
   cd ..
   SWIFT_LINT_ROOT=".swift_lint"
