@@ -321,11 +321,13 @@ extension Parser {
       ]
 
       let hasNewLineInBetween = self._lexer.lookLineFeed()
+
       if !hasNewLineInBetween {
         tokens.append(.leftSquare)
       }
 
-      if self._lexer.look().kind == .leftBrace &&
+      if !hasNewLineInBetween &&
+        self._lexer.look().kind == .leftBrace &&
         config.parseTrailingClosure &&
         self.isPotentialTrailingClosure()
       {
