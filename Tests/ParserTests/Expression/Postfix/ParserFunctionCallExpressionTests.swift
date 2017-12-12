@@ -270,6 +270,10 @@ class ParserFunctionCallExpressionTests: XCTestCase {
     })
   }
 
+  func testTrailingClosureSameLine() {
+    parseExpressionAndTest("foo\n{ self.foo = $0 }", "foo")
+  }
+
   func testDistinguishFromExplicitMemberExpr() {
     // with argument names
     parseExpressionAndTest("foo.bar(x)", "foo.bar(x)", testClosure: { expr in
@@ -491,6 +495,7 @@ class ParserFunctionCallExpressionTests: XCTestCase {
     ("testTrailingClosureOneArgument", testTrailingClosureOneArgument),
     ("testTrailingClosureZeroArgument", testTrailingClosureZeroArgument),
     ("testTrailingClosureNoArgumentClause", testTrailingClosureNoArgumentClause),
+    ("testTrailingClosureSameLine", testTrailingClosureSameLine),
     ("testDistinguishFromExplicitMemberExpr", testDistinguishFromExplicitMemberExpr),
     ("testMemoryReference", testMemoryReference),
     ("testNamedMemoryReference", testNamedMemoryReference),

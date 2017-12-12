@@ -292,7 +292,7 @@ extension Parser {
     var resultExpr: PostfixExpression = try parsePrimaryExpression()
 
     let examine: () -> (Bool, Token.Kind) = {
-      let allQnE = self.splitTrailingExlaimsAndQuestions()
+      let allQnE = self.splitTrailingExclaimsAndQuestions()
       if !allQnE.isEmpty {
         for p in allQnE {
           if p == "!" {
@@ -316,12 +316,18 @@ extension Parser {
         .dummyPostfixOperator,
         .leftParen,
         .dot,
-        .leftSquare,
         .postfixExclaim,
         .postfixQuestion,
       ]
 
-      if self._lexer.look().kind == .leftBrace &&
+      let hasNewLineInBetween = self._lexer.lookLineFeed()
+
+      if !hasNewLineInBetween {
+        tokens.append(.leftSquare)
+      }
+
+      if !hasNewLineInBetween &&
+        self._lexer.look().kind == .leftBrace &&
         config.parseTrailingClosure &&
         self.isPotentialTrailingClosure()
       {
@@ -350,7 +356,7 @@ extension Parser {
         let subscriptArguments = try parseSubscriptArguments()
         let endLocation = getEndLocation()
         if !_lexer.match(.rightSquare) {
-            throw _raiseFatal(.expectedCloseSquareExprList)
+          throw _raiseFatal(.expectedCloseSquareExprList)
         }
         let subscriptExpr = SubscriptExpression(
         postfixExpression: resultExpr, arguments: subscriptArguments)
@@ -828,9 +834,11 @@ extension Parser {
     startRange: SourceRange
   ) throws -> SuperclassExpression {
     var endLocation = startRange.end
+    let hasNewLineInBetween = _lexer.lookLineFeed()
     let kind: SuperclassExpression.Kind
-    switch _lexer.read([.dot, .leftSquare]) {
+    switch _lexer.look().kind {
     case .dot:
+      _lexer.advance()
       endLocation = getEndLocation()
       if _lexer.match(.init) {
         kind = .initializer
@@ -839,7 +847,8 @@ extension Parser {
       } else {
         throw _raiseFatal(.expectedIdentifierAfterSuperDotExpr)
       }
-    case .leftSquare:
+    case .leftSquare where !hasNewLineInBetween:
+      _lexer.advance()
       let subscriptArguments = try parseSubscriptArguments()
       endLocation = getEndLocation()
       if !_lexer.match(.rightSquare) {
@@ -858,9 +867,11 @@ extension Parser {
     startRange: SourceRange
   ) throws -> SelfExpression {
     var endLocation = startRange.end
+    let hasNewLineInBetween = _lexer.lookLineFeed()
     let kind: SelfExpression.Kind
-    switch _lexer.read([.dot, .leftSquare]) {
+    switch _lexer.look().kind {
     case .dot:
+      _lexer.advance()
       endLocation = getEndLocation()
       if _lexer.match(.init) {
         kind = .initializer
@@ -869,11 +880,12 @@ extension Parser {
       } else {
         throw _raiseFatal(.expectedIdentifierAfterSelfDotExpr)
       }
-    case .leftSquare:
+    case .leftSquare where !hasNewLineInBetween:
+      _lexer.advance()
       let subscriptArguments = try parseSubscriptArguments()
       endLocation = getEndLocation()
       if !_lexer.match(.rightSquare) {
-          throw _raiseFatal(.expectedCloseSquareExprList)
+        throw _raiseFatal(.expectedCloseSquareExprList)
       }
       kind = .subscript(subscriptArguments)
     default:
@@ -887,6 +899,39 @@ extension Parser {
   private func parseKeyPathExpression(
     startLocation: SourceLocation
   ) throws -> KeyPathExpression {
+    func parsePostfixes() throws -> [KeyPathExpression.Postfix] {
+      var postfixes: [KeyPathExpression.Postfix] = []
+
+      let allQnE = self.splitNextExclaimsAndQuestions()
+      for p in allQnE {
+        if p == "!" {
+          postfixes.append(.exclaim)
+        } else if p == "?" {
+          postfixes.append(.question)
+        }
+      }
+      switch _lexer.read([.postfixQuestion, .postfixExclaim, .leftSquare]) {
+      case .postfixQuestion:
+        postfixes.append(.question)
+      case .postfixExclaim:
+        postfixes.append(.exclaim)
+      case .leftSquare:
+        let subscriptArguments = try parseSubscriptArguments()
+        if !_lexer.match(.rightSquare) {
+          throw _raiseFatal(.expectedCloseSquareExprList)
+        }
+        postfixes.append(.subscript(subscriptArguments))
+      default:
+        break
+      }
+
+      if postfixes.isEmpty {
+        return postfixes
+      }
+      let nextPostfixes = try parsePostfixes()
+      return postfixes + nextPostfixes
+    }
+
     var endLocation = getEndLocation()
 
     var type: Type?
@@ -894,13 +939,20 @@ extension Parser {
       type = TypeIdentifier(names: [TypeIdentifier.TypeName(name: typeName)])
     }
 
-    var components: [String] = []
+    var components: [KeyPathExpression.Component] = []
     while _lexer.match(.dot) {
       endLocation = getEndLocation()
-      guard case let .identifier(component) = _lexer.read(.dummyIdentifier) else {
-        throw _raiseFatal(.expectedKeyPathComponentIdentifier)
+
+      var componentIdentifier: Identifier?
+      if case let .identifier(componentId) = _lexer.read(.dummyIdentifier) {
+        componentIdentifier = componentId
       }
-      components.append(component)
+      let postfixes = try parsePostfixes()
+
+      guard componentIdentifier != nil || !postfixes.isEmpty else {
+        throw _raiseFatal(.expectedKeyPathComponentIdentifierOrPostfix)
+      }
+      components.append((componentIdentifier, postfixes))
     }
 
     if components.isEmpty {

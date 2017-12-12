@@ -1,3 +1,15 @@
 _ = \.foo
 _ = \.foo.bar
 _ = \A.foo.bar
+_ = \.!
+_ = \.?
+_ = \.[foo, bar]
+_ = \.b!
+_ = \.b?
+_ = \.b[foo, bar]
+_ = \a.b!
+_ = \a.b?
+_ = \a.b[foo, bar]
+_ = \.?!?!
+_ = \.![x]!?[y][z]!
+_ = \.?.!.[foo, bar].a?.b!.c[foo, bar].?!?!.![x]!?[y][z]!
