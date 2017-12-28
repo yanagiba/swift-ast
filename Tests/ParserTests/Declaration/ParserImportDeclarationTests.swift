@@ -94,6 +94,10 @@ class ParserImportDeclarationTests: XCTestCase {
         XCTAssertEqual(importDecl.path[0], "foo")
       })
     }
+
+    // Test for `let` kind introduced in Swift 4 to address issue #70
+    // https://github.com/yanagiba/swift-ast/issues/70
+    parseDeclarationAndTest("import let Foundation.NSNotFound", "import let Foundation.NSNotFound")
   }
 
   func testSourceRange() {

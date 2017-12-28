@@ -1465,6 +1465,7 @@ extension Parser {
       .class,
       .enum,
       .protocol,
+      .let,
       .var,
       .func,
     ]
@@ -1479,6 +1480,8 @@ extension Parser {
       kind = .enum
     case .protocol:
       kind = .protocol
+    case .let:
+      kind = .let
     case .var:
       kind = .var
     case .func:
