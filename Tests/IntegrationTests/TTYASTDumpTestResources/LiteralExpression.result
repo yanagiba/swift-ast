@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1-77:14>
+top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1-80:71>
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1-17:4>
     kind: `nil`, literal: `nil`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:18:1-18:5>
@@ -131,3 +131,15 @@ top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1
     wildcard_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:77:1-77:2>
     literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:77:5-77:14>
       kind: `string`, raw_text: `#function`
+  assign_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:78:1-78:61>
+    wildcard_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:78:1-78:2>
+    literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:78:5-78:61>
+      kind: `playground`, literal: `#colorLiteral(red: 255, green: 127, blue: 0, alpha: 1.0)`
+  assign_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:79:1-79:38>
+    wildcard_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:79:1-79:2>
+    literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:79:5-79:38>
+      kind: `playground`, literal: `#fileLiteral(resourceName: "foo")`
+  assign_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:80:1-80:71>
+    wildcard_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:80:1-80:2>
+    literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:80:5-80:71>
+      kind: `playground`, literal: `#imageLiteral(resourceName: #fileLiteral(resourceName: "bar.png"))`

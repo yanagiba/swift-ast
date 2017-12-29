@@ -160,7 +160,8 @@ func parseDeclarationAndTest(_ content: String,
 func parseProblematic(
   _ content: String,
   _ expectedDiagnosticLevel: Diagnostic.Level,
-  _ expectedParserErrorKind: ParserErrorKind
+  _ expectedParserErrorKind: ParserErrorKind,
+  _ multipleDiagnosticsSelector: ([Diagnostic]) -> Diagnostic = { $0[0] }
 ) {
   class TestParserDiagnosticConsumer : DiagnosticConsumer {
     var diagnostics: [Diagnostic] = []
@@ -181,8 +182,8 @@ func parseProblematic(
   switch diagnostics.count {
   case 0:
     XCTFail("Failed in getting any diagnostics.")
-  case 1:
-    let diagnostic = diagnostics[0]
+  default:
+    let diagnostic = multipleDiagnosticsSelector(diagnostics)
     XCTAssertEqual(diagnostic.level, expectedDiagnosticLevel)
     guard let parserError = diagnostic.kind as? ParserErrorKind else {
       XCTFail("Failed in getting parser error kind.")
@@ -190,11 +191,6 @@ func parseProblematic(
     }
     XCTAssertEqual(parserError.diagnosticMessage,
       expectedParserErrorKind.diagnosticMessage)
-  default:
-    for d in diagnostics {
-      print("\(d.location) \(d.level): \(d.kind.diagnosticMessage)")
-    }
-    XCTFail("Getting too many diagnostics (\(diagnostics.count)).")
   }
 }
 

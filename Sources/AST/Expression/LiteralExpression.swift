@@ -30,6 +30,29 @@ extension DictionaryEntry : ASTTextRepresentable {
   }
 }
 
+public enum PlaygroundLiteral {
+  case color(Expression, Expression, Expression, Expression)
+  case file(Expression)
+  case image(Expression)
+}
+
+extension PlaygroundLiteral : ASTTextRepresentable {
+  public var textDescription: String {
+    switch self {
+    case let .color(red, green, blue, alpha):
+      let colorPropertiesText =
+        [("red", red), ("green", green), ("blue", blue), ("alpha", alpha)]
+          .map { $0.0 + ": " + $0.1.textDescription }
+          .joined(separator: ", ")
+      return "#colorLiteral(\(colorPropertiesText))"
+    case .file(let resourceName):
+      return "#fileLiteral(resourceName: \(resourceName))"
+    case .image(let resourceName):
+      return "#imageLiteral(resourceName: \(resourceName))"
+    }
+  }
+}
+
 public class LiteralExpression : ASTNode, PrimaryExpression {
   public enum Kind {
     case `nil`
@@ -40,6 +63,7 @@ public class LiteralExpression : ASTNode, PrimaryExpression {
     case interpolatedString([Expression], String)
     case array([Expression])
     case dictionary([DictionaryEntry])
+    case playground(PlaygroundLiteral)
   }
 
   public private(set) var kind: Kind
@@ -78,6 +102,8 @@ public class LiteralExpression : ASTNode, PrimaryExpression {
       }
       let dictText = entries.map({ $0.textDescription }).joined(separator: ", ")
       return "[\(dictText)]"
+    case .playground(let playgroundLiteral):
+      return playgroundLiteral.textDescription
     }
   }
 }

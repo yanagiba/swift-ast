@@ -741,6 +741,52 @@ class ParserLiteralExpressionTests: XCTestCase {
         }
       })
     }
+
+    // Tests for playground literals to address issue #71 and #72
+    // https://github.com/yanagiba/swift-ast/issues/71
+    // https://github.com/yanagiba/swift-ast/issues/72
+    parseExpressionAndTest(
+      "#colorLiteral(red: 0, green: 0, blue: 1, alpha: 1)",
+      "#colorLiteral(red: 0, green: 0, blue: 1, alpha: 1)",
+      testClosure: { expr in
+        guard
+          let literalExpr = expr as? LiteralExpression,
+          case .playground(let playgroundLiteral) = literalExpr.kind,
+          case .color = playgroundLiteral
+        else {
+          XCTFail("Failed in getting playground literal")
+          return
+        }
+      }
+    )
+    parseExpressionAndTest(
+      "#imageLiteral(resourceName: \"SomeResource\")",
+      "#imageLiteral(resourceName: \"SomeResource\")",
+      testClosure: { expr in
+        guard
+          let literalExpr = expr as? LiteralExpression,
+          case .playground(let playgroundLiteral) = literalExpr.kind,
+          case .image = playgroundLiteral
+        else {
+          XCTFail("Failed in getting playground literal")
+          return
+        }
+      }
+    )
+    parseExpressionAndTest(
+      "#fileLiteral(resourceName: \"SomeResource\")",
+      "#fileLiteral(resourceName: \"SomeResource\")",
+      testClosure: { expr in
+        guard
+          let literalExpr = expr as? LiteralExpression,
+          case .playground(let playgroundLiteral) = literalExpr.kind,
+          case .file = playgroundLiteral
+        else {
+          XCTFail("Failed in getting playground literal")
+          return
+        }
+      }
+    )
   }
 
   func testSourceRange() {
