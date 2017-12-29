@@ -967,7 +967,7 @@ extension Parser {
   private func parseHashExpression(
     startLocation: SourceLocation
   ) throws -> PrimaryExpression {
-    var endLocation = getEndLocation()
+    let endLocation = getEndLocation()
     guard case let .identifier(magicWord) = _lexer.read(.dummyIdentifier) else {
       throw _raiseFatal(.expectedObjectLiteralIdentifier)
     }
@@ -1015,103 +1015,72 @@ extension Parser {
     return keyPathStringExpression
   }
 
-  private func parsePlaygroundLiteral(
+  private func parsePlaygroundLiteral( // swift-lint:suppress(high_ncss)
     _ magicWord: String, _ startLocation: SourceLocation
   ) throws -> LiteralExpression {
+    func parseComponent(_ cond: Bool, _ err: ParserErrorKind) throws {
+      guard cond else { throw _raiseFatal(err) }
+    }
     switch magicWord {
     case "colorLiteral":
-      guard _lexer.match(.leftParen) else {
-        throw _raiseFatal(.expectedOpenParenPlaygroundLiteral("colorLiteral"))
-      }
-      guard _lexer.read(.dummyIdentifier) == .identifier("red") else {
-        throw _raiseFatal(.expectedKeywordPlaygroundLiteral("colorLiteral", "red"))
-      }
-      guard _lexer.match(.colon) else {
-        throw _raiseFatal(.expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "red"))
-      }
+      try parseComponent(_lexer.match(.leftParen), .expectedOpenParenPlaygroundLiteral("colorLiteral"))
+      try parseComponent(_lexer.read(.dummyIdentifier) == .identifier("red"),
+        .expectedKeywordPlaygroundLiteral("colorLiteral", "red"))
+      try parseComponent(_lexer.match(.colon), .expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "red"))
       guard let red = try? parseExpression() else {
         throw _raiseFatal(.expectedExpressionPlaygroundLiteral("colorLiteral", "red"))
       }
-      guard _lexer.match(.comma) else {
-        throw _raiseFatal(.expectedCommaBeforeKeywordPlaygroundLiteral("colorLiteral", "green"))
-      }
-      guard _lexer.read(.dummyIdentifier) == .identifier("green") else {
-        throw _raiseFatal(.expectedKeywordPlaygroundLiteral("colorLiteral", "green"))
-      }
-      guard _lexer.match(.colon) else {
-        throw _raiseFatal(.expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "green"))
-      }
+      try parseComponent(_lexer.match(.comma), .expectedCommaBeforeKeywordPlaygroundLiteral("colorLiteral", "green"))
+      try parseComponent(_lexer.read(.dummyIdentifier) == .identifier("green"),
+        .expectedKeywordPlaygroundLiteral("colorLiteral", "green"))
+      try parseComponent(_lexer.match(.colon), .expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "green"))
       guard let green = try? parseExpression() else {
         throw _raiseFatal(.expectedExpressionPlaygroundLiteral("colorLiteral", "green"))
       }
-      guard _lexer.match(.comma) else {
-        throw _raiseFatal(.expectedCommaBeforeKeywordPlaygroundLiteral("colorLiteral", "blue"))
-      }
-      guard _lexer.read(.dummyIdentifier) == .identifier("blue") else {
-        throw _raiseFatal(.expectedKeywordPlaygroundLiteral("colorLiteral", "blue"))
-      }
-      guard _lexer.match(.colon) else {
-        throw _raiseFatal(.expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "blue"))
-      }
+      try parseComponent(_lexer.match(.comma), .expectedCommaBeforeKeywordPlaygroundLiteral("colorLiteral", "blue"))
+      try parseComponent(_lexer.read(.dummyIdentifier) == .identifier("blue"),
+        .expectedKeywordPlaygroundLiteral("colorLiteral", "blue"))
+      try parseComponent(_lexer.match(.colon), .expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "blue"))
       guard let blue = try? parseExpression() else {
         throw _raiseFatal(.expectedExpressionPlaygroundLiteral("colorLiteral", "blue"))
       }
-      guard _lexer.match(.comma) else {
-        throw _raiseFatal(.expectedCommaBeforeKeywordPlaygroundLiteral("colorLiteral", "alpha"))
-      }
-      guard _lexer.read(.dummyIdentifier) == .identifier("alpha") else {
-        throw _raiseFatal(.expectedKeywordPlaygroundLiteral("colorLiteral", "alpha"))
-      }
-      guard _lexer.match(.colon) else {
-        throw _raiseFatal(.expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "alpha"))
-      }
+      try parseComponent(_lexer.match(.comma), .expectedCommaBeforeKeywordPlaygroundLiteral("colorLiteral", "alpha"))
+      try parseComponent(_lexer.read(.dummyIdentifier) == .identifier("alpha"),
+        .expectedKeywordPlaygroundLiteral("colorLiteral", "alpha"))
+      try parseComponent(_lexer.match(.colon), .expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "alpha"))
       guard let alpha = try? parseExpression() else {
         throw _raiseFatal(.expectedExpressionPlaygroundLiteral("colorLiteral", "alpha"))
       }
       let endLocation = getEndLocation()
-      guard _lexer.match(.rightParen) else {
-        throw _raiseFatal(.expectedCloseParenPlaygroundLiteral("colorLiteral"))
-      }
+      try parseComponent(_lexer.match(.rightParen), .expectedCloseParenPlaygroundLiteral("colorLiteral"))
       let literalExpr = LiteralExpression(kind: .playground(.color(red, green, blue, alpha)))
       literalExpr.setSourceRange(startLocation, endLocation)
       return literalExpr
     case "fileLiteral":
-      guard _lexer.match(.leftParen) else {
-        throw _raiseFatal(.expectedOpenParenPlaygroundLiteral("fileLiteral"))
-      }
-      guard _lexer.read(.dummyIdentifier) == .identifier("resourceName") else {
-        throw _raiseFatal(.expectedKeywordPlaygroundLiteral("fileLiteral", "resourceName"))
-      }
-      guard _lexer.match(.colon) else {
-        throw _raiseFatal(.expectedColonAfterKeywordPlaygroundLiteral("fileLiteral", "resourceName"))
-      }
+      try parseComponent(_lexer.match(.leftParen), .expectedOpenParenPlaygroundLiteral("fileLiteral"))
+      try parseComponent(_lexer.read(.dummyIdentifier) == .identifier("resourceName"),
+        .expectedKeywordPlaygroundLiteral("fileLiteral", "resourceName"))
+      try parseComponent(_lexer.match(.colon),
+        .expectedColonAfterKeywordPlaygroundLiteral("fileLiteral", "resourceName"))
       guard let expr = try? parseExpression() else {
         throw _raiseFatal(.expectedExpressionPlaygroundLiteral("fileLiteral", "resourceName"))
       }
       let endLocation = getEndLocation()
-      guard _lexer.match(.rightParen) else {
-        throw _raiseFatal(.expectedCloseParenPlaygroundLiteral("fileLiteral"))
-      }
+      try parseComponent(_lexer.match(.rightParen), .expectedCloseParenPlaygroundLiteral("fileLiteral"))
       let literalExpr = LiteralExpression(kind: .playground(.file(expr)))
       literalExpr.setSourceRange(startLocation, endLocation)
       return literalExpr
     case "imageLiteral":
-      guard _lexer.match(.leftParen) else {
-        throw _raiseFatal(.expectedOpenParenPlaygroundLiteral("imageLiteral"))
-      }
-      guard _lexer.read(.dummyIdentifier) == .identifier("resourceName") else {
-        throw _raiseFatal(.expectedKeywordPlaygroundLiteral("imageLiteral", "resourceName"))
-      }
-      guard _lexer.match(.colon) else {
-        throw _raiseFatal(.expectedColonAfterKeywordPlaygroundLiteral("imageLiteral", "resourceName"))
-      }
+      try parseComponent(_lexer.match(.leftParen), .expectedOpenParenPlaygroundLiteral("imageLiteral"))
+      try parseComponent(_lexer.read(.dummyIdentifier) == .identifier("resourceName"),
+        .expectedKeywordPlaygroundLiteral("imageLiteral", "resourceName"))
+      try parseComponent(_lexer.match(.colon),
+        .expectedColonAfterKeywordPlaygroundLiteral("imageLiteral", "resourceName"))
       guard let expr = try? parseExpression() else {
         throw _raiseFatal(.expectedExpressionPlaygroundLiteral("imageLiteral", "resourceName"))
       }
       let endLocation = getEndLocation()
-      guard _lexer.match(.rightParen) else {
-        throw _raiseFatal(.expectedCloseParenPlaygroundLiteral("imageLiteral"))
-      }
+      try parseComponent(_lexer.match(.rightParen), .expectedCloseParenPlaygroundLiteral("imageLiteral"))
       let literalExpr = LiteralExpression(kind: .playground(.image(expr)))
       literalExpr.setSourceRange(startLocation, endLocation)
       return literalExpr
