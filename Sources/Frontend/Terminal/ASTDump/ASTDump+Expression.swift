@@ -262,6 +262,8 @@ extension LiteralExpression : TTYASTDumpRepresentable {
           .joined(separator: "\n")
           .indented
       }
+    case .playground(let playgroundLiteral):
+      body += "kind: `playground`, literal: `\(playgroundLiteral.textDescription)`"
     }
     return "\(head)\n\(body)"
   }

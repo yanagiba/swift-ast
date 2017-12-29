@@ -131,6 +131,12 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedCloseSquareDictionaryLiteral
   case expectedColonDictionaryLiteral
   case expectedCloseSquareArrayLiteral
+  case expectedOpenParenPlaygroundLiteral(String)
+  case expectedCloseParenPlaygroundLiteral(String)
+  case expectedKeywordPlaygroundLiteral(String, String)
+  case expectedExpressionPlaygroundLiteral(String, String)
+  case expectedColonAfterKeywordPlaygroundLiteral(String, String)
+  case expectedCommaBeforeKeywordPlaygroundLiteral(String, String)
   case extraTokenStringInterpolation
   case expectedStringInterpolation
   case newLineExpectedAtTheClosingOfMultilineStringLiteral
@@ -343,6 +349,18 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected ':' in dictionary literal"
     case .expectedCloseSquareArrayLiteral:
       return "expected ']' in array literal expression"
+    case .expectedOpenParenPlaygroundLiteral(let magicWord):
+      return "expected '(' following '#\(magicWord)'"
+    case .expectedCloseParenPlaygroundLiteral(let magicWord):
+      return "expected ')' to complete '#\(magicWord)' playground literal"
+    case let .expectedKeywordPlaygroundLiteral(magicWord, keyword):
+      return "expected keyword '\(keyword)' for '#\(magicWord)' playground literal"
+    case let .expectedExpressionPlaygroundLiteral(magicWord, keyword):
+      return "expected an expression of '\(keyword)' for '#\(magicWord)' playground literal"
+    case let .expectedColonAfterKeywordPlaygroundLiteral(magicWord, keyword):
+      return "expected ':' following '\(keyword)' for '#\(magicWord)' playground literal"
+    case let .expectedCommaBeforeKeywordPlaygroundLiteral(magicWord, keyword):
+      return "expected ',' before '\(keyword)' for '#\(magicWord)' playground literal"
     case .extraTokenStringInterpolation:
       return "extra tokens after interpolated string expression"
     case .expectedStringInterpolation:

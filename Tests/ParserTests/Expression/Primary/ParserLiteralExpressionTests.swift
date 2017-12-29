@@ -613,8 +613,10 @@ class ParserLiteralExpressionTests: XCTestCase {
 
   func testSimpleDictionaryLiteral() { // swift-lint:suppress(high_cyclomatic_complexity)
     parseExpressionAndTest("[\"foo\": true, \"bar\": false]", "[\"foo\": true, \"bar\": false]", testClosure: { expr in
-      guard let dictExpr = expr as? LiteralExpression,
-        case .dictionary(let exprs) = dictExpr.kind else {
+      guard
+        let dictExpr = expr as? LiteralExpression,
+        case .dictionary(let exprs) = dictExpr.kind
+      else {
         XCTFail("Failed in getting a dictionary literal")
         return
       }
@@ -622,22 +624,25 @@ class ParserLiteralExpressionTests: XCTestCase {
         XCTFail("Dictionary literal doesn't contain 2 entries")
         return
       }
-      guard let keyExpr1 = exprs[0].key as? LiteralExpression,
+      guard
+        let keyExpr1 = exprs[0].key as? LiteralExpression,
         let valueExpr1 = exprs[0].value as? LiteralExpression,
         case .staticString(let es1, _) = keyExpr1.kind,
         case .boolean(let eb1) = valueExpr1.kind,
         es1 == "foo",
-        eb1 else {
+        eb1
+      else {
         XCTFail("First entry in dictinoary literal is not correct parsed")
         return
       }
-      guard let keyExpr2 = exprs[1].key as? LiteralExpression,
+      guard
+        let keyExpr2 = exprs[1].key as? LiteralExpression,
         let valueExpr2 = exprs[1].value as? LiteralExpression,
         case .staticString(let es2, _) = keyExpr2.kind,
         case .boolean(let eb2) = valueExpr2.kind,
         es2 == "bar",
-
-        !eb2 else {
+        !eb2
+      else {
         XCTFail("Second entry in dictinoary literal is not correct parsed")
         return
       }
@@ -714,7 +719,7 @@ class ParserLiteralExpressionTests: XCTestCase {
     )
   }
 
-  func testMagicLiterals() {
+  func testMagicLiterals() { // swift-lint:suppress(high_cyclomatic_complexity)
     let testStrings: [(testString: String, expectedExpr: LiteralExpression.Kind)] = [
       ("#file", .staticString("ParserTests/ParserTests.swift", "#file")),
       ("#line", .integer(1, "#line")),
@@ -741,6 +746,52 @@ class ParserLiteralExpressionTests: XCTestCase {
         }
       })
     }
+
+    // Tests for playground literals to address issue #71 and #72
+    // https://github.com/yanagiba/swift-ast/issues/71
+    // https://github.com/yanagiba/swift-ast/issues/72
+    parseExpressionAndTest(
+      "#colorLiteral(red: 0, green: 0, blue: 1, alpha: 1)",
+      "#colorLiteral(red: 0, green: 0, blue: 1, alpha: 1)",
+      testClosure: { expr in
+        guard
+          let literalExpr = expr as? LiteralExpression,
+          case .playground(let playgroundLiteral) = literalExpr.kind,
+          case .color = playgroundLiteral
+        else {
+          XCTFail("Failed in getting playground literal")
+          return
+        }
+      }
+    )
+    parseExpressionAndTest(
+      "#imageLiteral(resourceName: \"SomeResource\")",
+      "#imageLiteral(resourceName: \"SomeResource\")",
+      testClosure: { expr in
+        guard
+          let literalExpr = expr as? LiteralExpression,
+          case .playground(let playgroundLiteral) = literalExpr.kind,
+          case .image = playgroundLiteral
+        else {
+          XCTFail("Failed in getting playground literal")
+          return
+        }
+      }
+    )
+    parseExpressionAndTest(
+      "#fileLiteral(resourceName: \"SomeResource\")",
+      "#fileLiteral(resourceName: \"SomeResource\")",
+      testClosure: { expr in
+        guard
+          let literalExpr = expr as? LiteralExpression,
+          case .playground(let playgroundLiteral) = literalExpr.kind,
+          case .file = playgroundLiteral
+        else {
+          XCTFail("Failed in getting playground literal")
+          return
+        }
+      }
+    )
   }
 
   func testSourceRange() {

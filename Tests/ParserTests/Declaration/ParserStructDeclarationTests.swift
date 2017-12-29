@@ -370,6 +370,7 @@ class ParserStructDeclarationTests: XCTestCase {
     ("testDeclarationMember", testDeclarationMember),
     ("testMultipleDeclarationMembers", testMultipleDeclarationMembers),
     ("testNestedStructDecl", testNestedStructDecl),
+    ("testMembersWithSemicolons", testMembersWithSemicolons),
     ("testCompilerControlMember", testCompilerControlMember),
     ("testSourceRange", testSourceRange),
   ]

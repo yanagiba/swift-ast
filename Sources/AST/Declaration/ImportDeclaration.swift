@@ -16,7 +16,7 @@
 
 public class ImportDeclaration : ASTNode, Declaration {
   public enum Kind : String {
-    case `typealias`, `struct`, `class`, `enum`, `protocol`, `var`, `func`
+    case `typealias`, `struct`, `class`, `enum`, `protocol`, `let`, `var`, `func`
   }
   public typealias PathIdentifier = String
 

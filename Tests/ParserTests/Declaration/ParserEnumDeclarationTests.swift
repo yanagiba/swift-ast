@@ -1020,6 +1020,7 @@ class ParserEnumDeclarationTests: XCTestCase {
     ("testMultipleRawValueStyleMembersAndDeclarations", testMultipleRawValueStyleMembersAndDeclarations),
     ("testVariousTypesOfRawValueLiterals", testVariousTypesOfRawValueLiterals),
     ("testErrorCases", testErrorCases),
+    ("testMembersWithSemicolons", testMembersWithSemicolons),
     ("testCompilerControlMember", testCompilerControlMember),
     ("testSourceRange", testSourceRange),
   ]

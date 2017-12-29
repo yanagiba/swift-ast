@@ -296,7 +296,8 @@ extension Parser {
       var catchWhere: Expression?
       if _lexer.look().kind != .leftBrace {
         if _lexer.look().kind != .where {
-          catchPattern = try parsePattern()
+          catchPattern = try parsePattern(
+            config: ParserPatternConfig(forPatternMatching: true))
         }
         if _lexer.match(.where) {
           catchWhere = try parseExpression(config: noTrailingConfig)
