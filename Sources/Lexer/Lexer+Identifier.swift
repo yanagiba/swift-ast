@@ -67,10 +67,7 @@ extension Lexer /* identifier */ {
 fileprivate extension Role {
   fileprivate var isIdentifierCharacter: Bool {
     switch self {
-      case .identifierHead,
-        .identifierBody,
-        .digit,
-        .underscore:
+      case .identifierHead, .identifierBody, .digit, .underscore:
         return true
       default:
         return false

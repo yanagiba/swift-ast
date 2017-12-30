@@ -172,18 +172,14 @@ fileprivate extension UnicodeScalar {
     }
   }
 
-  private func isOperatorHead(
-    or segment: Role, followedBy peek: UnicodeScalar?
-  ) -> Role {
+  private func isOperatorHead(or segment: Role, followedBy peek: UnicodeScalar?) -> Role {
     if let peek = peek, peek.isOperatorCharacter {
       return .operatorHead
     }
     return segment
   }
 
-  private func isIdentifierHead(
-    or segment: Role, followedBy peek: UnicodeScalar?
-  ) -> Role {
+  private func isIdentifierHead(or segment: Role, followedBy peek: UnicodeScalar?) -> Role {
     if let peek = peek, peek.isIdentifierCharacter {
       return .identifierHead
     }
@@ -328,16 +324,16 @@ fileprivate extension UnicodeScalar {
   }
 
   private var isIdentifierBody: Bool {
-      switch self {
-      case "0"..."9",
-        "\u{0300}"..."\u{036F}",
-        "\u{1DC0}"..."\u{1DFF}",
-        "\u{20D0}"..."\u{20FF}",
-        "\u{FE20}"..."\u{FE2F}":
-        return true
-      default:
-        return false
-      }
+    switch self {
+    case "0"..."9",
+      "\u{0300}"..."\u{036F}",
+      "\u{1DC0}"..."\u{1DFF}",
+      "\u{20D0}"..."\u{20FF}",
+      "\u{FE20}"..."\u{FE2F}":
+      return true
+    default:
+      return false
+    }
   }
 
   private var isIdentifierCharacter: Bool {
