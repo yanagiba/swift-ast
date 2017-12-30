@@ -213,9 +213,7 @@ extension Parser {
         let trueTryKind = parseTryKind()
         var trueExpr = try parseExpression(config: config)
         trueExpr = trueTryKind.wrap(expr: trueExpr)
-        guard _lexer.match(.colon) else {
-          throw _raiseFatal(.expectedColonAfterTrueExpr)
-        }
+        try match(.colon, orFatal: .expectedColonAfterTrueExpr)
         let falseTryKind = parseTryKind()
         var falseExpr: Expression = try parsePrefixExpression(config: config)
         falseExpr = falseTryKind.wrap(expr: falseExpr)
@@ -553,9 +551,7 @@ extension Parser {
       guard let argumentName = _lexer.readNamedIdentifierOrWildcard() else {
         throw _raiseFatal(.expectedArgumentLabel)
       }
-      guard _lexer.match(.colon) else {
-        throw _raiseFatal(.expectedColonAfterArgumentLabel)
-      }
+      try match(.colon, orFatal: .expectedColonAfterArgumentLabel)
       argumentNames.append(argumentName)
       endLocation = getEndLocation()
     } while !_lexer.match(.rightParen)
@@ -949,9 +945,9 @@ extension Parser {
       }
       let postfixes = try parsePostfixes()
 
-      guard componentIdentifier != nil || !postfixes.isEmpty else {
-        throw _raiseFatal(.expectedKeyPathComponentIdentifierOrPostfix)
-      }
+      try assert(
+        componentIdentifier != nil || !postfixes.isEmpty,
+        orFatal: .expectedKeyPathComponentIdentifierOrPostfix)
       components.append((componentIdentifier, postfixes))
     }
 
@@ -1002,14 +998,10 @@ extension Parser {
   private func parseKeyPathStringExpression(
     startLocation: SourceLocation
   ) throws -> KeyPathStringExpression {
-    guard _lexer.match(.leftParen) else {
-      throw _raiseFatal(.expectedOpenParenKeyPathStringExpr)
-    }
+    try match(.leftParen, orFatal: .expectedOpenParenKeyPathStringExpr)
     let expr = try parseExpression() // TODO: can wrap this in a do-catch, and throw a better diagnostic message
     let endLocation = getEndLocation()
-    guard _lexer.match(.rightParen) else {
-      throw _raiseFatal(.expectedCloseParenKeyPathStringExpr)
-    }
+    try match(.rightParen, orFatal: .expectedCloseParenKeyPathStringExpr)
     let keyPathStringExpression = KeyPathStringExpression(expression: expr)
     keyPathStringExpression.setSourceRange(startLocation, endLocation)
     return keyPathStringExpression
@@ -1018,16 +1010,12 @@ extension Parser {
   private func parsePlaygroundLiteral(
     _ magicWord: String, _ startLocation: SourceLocation
   ) throws -> LiteralExpression {
-    func parseComponent(_ cond: Bool, _ err: ParserErrorKind) throws {
-      guard cond else { throw _raiseFatal(err) }
-    }
     func getMagicExpression(for key: String, needsParsingComma: Bool = false) throws -> Expression {
       if needsParsingComma {
-        try parseComponent(_lexer.match(.comma), .expectedCommaBeforeKeywordPlaygroundLiteral(magicWord, key))
+        try match(.comma, orFatal: .expectedCommaBeforeKeywordPlaygroundLiteral(magicWord, key))
       }
-      try parseComponent(_lexer.read(.dummyIdentifier) == .identifier(key),
-        .expectedKeywordPlaygroundLiteral(magicWord, key))
-      try parseComponent(_lexer.match(.colon), .expectedColonAfterKeywordPlaygroundLiteral(magicWord, key))
+      try readIdentifier(key, orFatal: .expectedKeywordPlaygroundLiteral(magicWord, key))
+      try match(.colon, orFatal: .expectedColonAfterKeywordPlaygroundLiteral(magicWord, key))
       guard let expr = try? parseExpression() else {
         throw _raiseFatal(.expectedExpressionPlaygroundLiteral(magicWord, key))
       }
@@ -1035,13 +1023,13 @@ extension Parser {
     }
     func buildLiteralExpression(for playground: PlaygroundLiteral) throws -> LiteralExpression {
       let endLocation = getEndLocation()
-      try parseComponent(_lexer.match(.rightParen), .expectedCloseParenPlaygroundLiteral(magicWord))
+      try match(.rightParen, orFatal: .expectedCloseParenPlaygroundLiteral(magicWord))
       let literalExpr = LiteralExpression(kind: .playground(playground))
       literalExpr.setSourceRange(startLocation, endLocation)
       return literalExpr
     }
 
-    try parseComponent(_lexer.match(.leftParen), .expectedOpenParenPlaygroundLiteral(magicWord))
+    try assert(_lexer.match(.leftParen), orFatal: .expectedOpenParenPlaygroundLiteral(magicWord))
     switch magicWord {
     case "colorLiteral":
       let red = try getMagicExpression(for: "red")
@@ -1077,9 +1065,7 @@ extension Parser {
       }
     }
 
-    guard _lexer.match(.leftParen) else {
-      throw _raiseFatal(.expectedOpenParenSelectorExpr)
-    }
+    try match(.leftParen, orFatal: .expectedOpenParenSelectorExpr)
 
     var key = ""
     if case let .identifier(keyword) = _lexer.look().kind,
@@ -1087,9 +1073,7 @@ extension Parser {
     {
       key = keyword
       _lexer.advance()
-      guard _lexer.match(.colon) else {
-        throw _raiseFatal(.expectedColonAfterPropertyKeywordSelectorExpr(keyword))
-      }
+      try match(.colon, orFatal: .expectedColonAfterPropertyKeywordSelectorExpr(keyword))
     }
 
     let memberIdCp = _lexer.checkPoint()
@@ -1130,9 +1114,7 @@ extension Parser {
     let expr = try parseExpression()
 
     let endLocation = getEndLocation()
-    guard _lexer.match(.rightParen) else {
-      throw _raiseFatal(.expectedCloseParenSelectorExpr)
-    }
+    try match(.rightParen, orFatal: .expectedCloseParenSelectorExpr)
 
     let kind: SelectorExpression.Kind
     switch key {
@@ -1237,9 +1219,9 @@ extension Parser {
           var blockLines = blockStr.components(separatedBy: .newlines)
           if offset == 0 { // let's first of all figure out the indentation prefix
             indentationPrefix = blockLines.removeLast()
-            guard indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty else {
-              throw _raiseFatal(.newLineExpectedAtTheClosingOfMultilineStringLiteral)
-            }
+            try assert(
+              indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty,
+              orFatal: .newLineExpectedAtTheClosingOfMultilineStringLiteral)
           }
 
           let identationLength = indentationPrefix.count
@@ -1250,9 +1232,9 @@ extension Parser {
             } else if origLine.isEmpty {
               caliberatedLines.append(origLine)
             } else {
-              guard origLine.hasPrefix(indentationPrefix) else {
-                throw _raiseFatal(.insufficientIndentationOfLineInMultilineStringLiteral)
-              }
+              try assert(
+                origLine.hasPrefix(indentationPrefix),
+                orFatal: .insufficientIndentationOfLineInMultilineStringLiteral)
               let startIndex = origLine.index(origLine.startIndex, offsetBy: identationLength)
               let caliberatedLine = String(origLine[startIndex...])
               caliberatedLines.append(caliberatedLine)
@@ -1500,9 +1482,7 @@ extension Parser {
     let stmts = try parseStatements()
 
     endLocation = getEndLocation()
-    guard _lexer.match(.rightBrace) else {
-      throw _raiseFatal(.rightBraceExpected("closure expression"))
-    }
+    try match(.rightBrace, orFatal: .rightBraceExpected("closure expression"))
     let closureExpr = ClosureExpression(signature: signature, statements: stmts)
     closureExpr.setSourceRange(startLocation, endLocation)
     return closureExpr

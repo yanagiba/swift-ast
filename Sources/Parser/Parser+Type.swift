@@ -124,9 +124,7 @@ extension Parser {
     case .colon:
       let valueType = try parseType()
       endLocation = getEndLocation()
-      guard _lexer.match(.rightSquare) else {
-        throw _raiseFatal(.expectedCloseSquareDictionaryType)
-      }
+      try match(.rightSquare, orFatal: .expectedCloseSquareDictionaryType)
       let dictType = DictionaryType(keyType: type, valueType: valueType)
       dictType.setSourceRange(startLocation, endLocation)
       return dictType
@@ -266,9 +264,7 @@ extension Parser {
   func parseOldSyntaxProtocolCompositionType(
     _ startLocation: SourceLocation
   ) throws -> ProtocolCompositionType {
-    guard _lexer.matchUnicodeScalar("<") else {
-      throw _raiseFatal(.expectedLeftChevronProtocolComposition)
-    }
+    try assert(_lexer.matchUnicodeScalar("<"), orFatal: .expectedLeftChevronProtocolComposition)
 
     if _lexer.matchUnicodeScalar(">") {
       return ProtocolCompositionType(protocolTypes: [])
@@ -284,9 +280,7 @@ extension Parser {
     } while _lexer.match(.comma)
 
     let endLocation = getEndLocation()
-    guard _lexer.matchUnicodeScalar(">") else {
-      throw _raiseFatal(.expectedRightChevronProtocolComposition)
-    }
+    try assert(_lexer.matchUnicodeScalar(">"), orFatal: .expectedRightChevronProtocolComposition)
 
     let protoType = ProtocolCompositionType(protocolTypes: protocolTypes)
     protoType.setSourceRange(startLocation, endLocation)
@@ -344,15 +338,11 @@ extension Parser {
     var parsedType: Type
     switch examined.1 {
     case .throws:
-      guard _lexer.match(.arrow) else {
-        throw _raiseFatal(.throwsInWrongPosition("throws"))
-      }
+      try match(.arrow, orFatal: .throwsInWrongPosition("throws"))
       parsedType = try parseFunctionType(
         attributes: attrs, type: type, throwKind: .throwing)
     case .rethrows:
-      guard _lexer.match(.arrow) else {
-        throw _raiseFatal(.throwsInWrongPosition("rethrows"))
-      }
+      try match(.arrow, orFatal: .throwsInWrongPosition("rethrows"))
       parsedType = try parseFunctionType(
         attributes: attrs, type: type, throwKind: .rethrowing)
     case .arrow:
