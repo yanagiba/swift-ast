@@ -23,6 +23,10 @@ extension Parser {
     guard cond else { throw _raiseFatal(fatalError) }
   }
 
+  func assert(_ cond: Bool, orError error: ParserErrorKind) throws {
+    if !cond { try _raiseError(error) }
+  }
+
   func match(_ kinds: [Token.Kind], exactMatch: Bool = false, orFatal fatalError: ParserErrorKind) throws {
     try assert(_lexer.match(kinds, exactMatch: exactMatch), orFatal: fatalError)
   }

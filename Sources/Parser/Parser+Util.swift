@@ -18,9 +18,7 @@ import AST
 import Source
 
 extension Parser {
-  func checkOperatorReservation(
-    againstModifier modifier: DeclarationModifier?, op: Operator
-  ) -> Operator? {
+  func checkOperatorReservation(againstModifier modifier: DeclarationModifier?, op: Operator) -> Operator? {
     if modifier == .prefix && (op == "&" || op == "<" || op == "?") {
       return nil
     } else if modifier == .infix && op == "?" {
@@ -46,9 +44,7 @@ extension Parser {
       case .willSet, .didSet:
         return true
       case .at:
-        if _lexer.look(ahead: lookAhead + 1).kind
-          .isEqual(toKindOf: .dummyIdentifier)
-        {
+        if _lexer.look(ahead: lookAhead + 1).kind.isEqual(toKindOf: .dummyIdentifier) {
           lookAhead += 2
         } else {
           return false
@@ -67,9 +63,7 @@ extension Parser {
       case .get, .set:
         return true
       case .at:
-        if _lexer.look(ahead: lookAhead + 1).kind
-          .isEqual(toKindOf: .dummyIdentifier)
-        {
+        if _lexer.look(ahead: lookAhead + 1).kind.isEqual(toKindOf: .dummyIdentifier) {
           lookAhead += 2
         } else {
           return false
