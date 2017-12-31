@@ -79,8 +79,7 @@ extension Parser {
         [Token.Kind.for, .while, .repeat, .if, .switch, .do].contains(_lexer.look(ahead: 2).kind)
       {
         _lexer.advance(by: 2)
-        stmt = try parseLabeledStatement(
-          withLabelName: name, startLocation: lookedRange.start)
+        stmt = try parseLabeledStatement(withLabelName: name, startLocation: lookedRange.start)
       } else if name == "precedencegroup" {
         stmt = try parseDeclaration()
       } else {
@@ -103,17 +102,13 @@ extension Parser {
         stmt = try parseExpression()
       }
     }
-    if !_lexer.match([.semicolon, .lineFeed, .eof]) &&
-      _lexer.look().kind != .rightBrace
-    {
+    if !_lexer.match([.semicolon, .lineFeed, .eof]) && _lexer.look().kind != .rightBrace {
       try _raiseError(.statementSameLineWithoutSemicolon)
     }
     return stmt
   }
 
-  func parseThrowStatement(
-    startLocation: SourceLocation
-  ) throws -> ThrowStatement {
+  func parseThrowStatement(startLocation: SourceLocation) throws -> ThrowStatement {
     let expr = try parseExpression()
     let throwStmt = ThrowStatement(expression: expr)
     throwStmt.setSourceRange(startLocation, expr.sourceRange.end)
@@ -149,8 +144,7 @@ extension Parser {
           .extension, .subscript, .operator, .protocol, .at:
           return try returnStmt()
         default:
-          return nextToken.kind.isModifier ?
-            try returnStmt() : try returnStmt(willParseExpression: true)
+          return nextToken.kind.isModifier ? try returnStmt() : try returnStmt(willParseExpression: true)
         }
       }
       return try returnStmt()
@@ -159,9 +153,7 @@ extension Parser {
     }
   }
 
-  func parseDeferStatement(
-    startLocation: SourceLocation
-  ) throws -> DeferStatement {
+  func parseDeferStatement(startLocation: SourceLocation) throws -> DeferStatement {
     let codeBlock = try parseCodeBlock()
     let deferStmt = DeferStatement(codeBlock: codeBlock)
     deferStmt.setSourceRange(startLocation, codeBlock.sourceRange.end)
@@ -170,9 +162,7 @@ extension Parser {
 
   func parseContinueStatement(startRange: SourceRange) -> ContinueStatement {
     let endLocation = getEndLocation()
-    if !_lexer.lookLineFeed(),
-      case .identifier(let name) = _lexer.read(.dummyIdentifier)
-    {
+    if !_lexer.lookLineFeed(), case .identifier(let name) = _lexer.read(.dummyIdentifier) {
       let continueStmt = ContinueStatement(labelName: name)
       continueStmt.setSourceRange(startRange.start, endLocation)
       return continueStmt
@@ -185,9 +175,7 @@ extension Parser {
 
   func parseBreakStatement(startRange: SourceRange) -> BreakStatement {
     let endLocation = getEndLocation()
-    if !_lexer.lookLineFeed(),
-      case .identifier(let name) = _lexer.read(.dummyIdentifier)
-    {
+    if !_lexer.lookLineFeed(), case .identifier(let name) = _lexer.read(.dummyIdentifier) {
       let breakStmt = BreakStatement(labelName: name)
       breakStmt.setSourceRange(startRange.start, endLocation)
       return breakStmt
@@ -221,9 +209,7 @@ extension Parser {
       case "endif":
         kind = .endif
       case "sourceLocation":
-        guard _lexer.match(.leftParen) else {
-          throw _raiseFatal(.expectedOpenParenSourceLocation)
-        }
+        try match(.leftParen, orFatal: .expectedOpenParenSourceLocation)
         if _lexer.match(.rightParen) {
           _lexer.readUntilEOL()
           kind = .sourceLocation(nil, nil)
@@ -284,9 +270,7 @@ extension Parser {
     return labeledStmt
   }
 
-  private func parseDoStatement(
-    startLocation: SourceLocation
-  ) throws -> DoStatement {
+  private func parseDoStatement(startLocation: SourceLocation) throws -> DoStatement {
     let codeBlock = try parseCodeBlock()
     var endLocation = codeBlock.sourceRange.end
 
@@ -296,8 +280,7 @@ extension Parser {
       var catchWhere: Expression?
       if _lexer.look().kind != .leftBrace {
         if _lexer.look().kind != .where {
-          catchPattern = try parsePattern(
-            config: ParserPatternConfig(forPatternMatching: true))
+          catchPattern = try parsePattern(config: ParserPatternConfig(forPatternMatching: true))
         }
         if _lexer.match(.where) {
           catchWhere = try parseExpression(config: noTrailingConfig)
@@ -323,9 +306,7 @@ extension Parser {
     startLocation: SourceLocation
   ) throws -> SwitchStatement {
     let expr = try parseExpression(config: noTrailingConfig)
-    guard _lexer.match(.leftBrace) else {
-      throw _raiseFatal(.leftBraceExpected("switch statement"))
-    }
+    try match(.leftBrace, orFatal: .leftBraceExpected("switch statement"))
     var cases: [SwitchStatement.Case] = []
     var examined = _lexer.examine([.case, .default])
     while examined.0 {
@@ -338,26 +319,17 @@ extension Parser {
           if _lexer.match(.where) {
             whereExpr = try parseExpression(config: noTrailingConfig)
           }
-          let item = SwitchStatement.Case.Item(
-            pattern: pattern, whereExpression: whereExpr)
+          let item = SwitchStatement.Case.Item(pattern: pattern, whereExpression: whereExpr)
           itemList.append(item)
         } while _lexer.match(.comma)
-        guard _lexer.match(.colon) else {
-          throw _raiseFatal(.expectedCaseColon)
-        }
+        try match(.colon, orFatal: .expectedCaseColon)
         let stmts = try parseStatements()
-        guard !stmts.isEmpty else {
-          throw _raiseFatal(.caseStmtWithoutBody("case"))
-        }
+        try assert(!stmts.isEmpty, orFatal: .caseStmtWithoutBody("case"))
         cases.append(.case(itemList, stmts))
       case .default:
-        guard _lexer.match(.colon) else {
-          throw _raiseFatal(.expectedDefaultColon)
-        }
+        try match(.colon, orFatal: .expectedDefaultColon)
         let stmts = try parseStatements()
-        guard !stmts.isEmpty else {
-          throw _raiseFatal(.caseStmtWithoutBody("default"))
-        }
+        try assert(!stmts.isEmpty, orFatal: .caseStmtWithoutBody("default"))
         cases.append(.default(stmts))
       default:
         break
@@ -365,9 +337,7 @@ extension Parser {
       examined = _lexer.examine([.case, .default])
     }
     let endLocation = getEndLocation()
-    guard _lexer.match(.rightBrace) else {
-      throw _raiseFatal(.rightBraceExpected("switch statement"))
-    }
+    try match(.rightBrace, orFatal: .rightBraceExpected("switch statement"))
     let switchStmt = SwitchStatement(expression: expr, cases: cases)
     switchStmt.setSourceRange(startLocation, endLocation)
     return switchStmt
@@ -377,12 +347,9 @@ extension Parser {
     startLocation: SourceLocation
   ) throws -> GuardStatement {
     let conditionList = try parseConditionList()
-    guard _lexer.match(.else) else {
-      throw _raiseFatal(.expectedElseAfterGuard)
-    }
+    try match(.else, orFatal: .expectedElseAfterGuard)
     let codeBlock = try parseCodeBlock()
-    let guardStmt =
-      GuardStatement(conditionList: conditionList, codeBlock: codeBlock)
+    let guardStmt = GuardStatement(conditionList: conditionList, codeBlock: codeBlock)
     guardStmt.setSourceRange(startLocation, codeBlock.sourceRange.end)
     return guardStmt
   }
@@ -393,8 +360,7 @@ extension Parser {
     let conditionList = try parseConditionList()
     let codeBlock = try parseCodeBlock()
     guard _lexer.match(.else) else {
-      let ifStmt = IfStatement(
-        conditionList: conditionList, codeBlock: codeBlock)
+      let ifStmt = IfStatement(conditionList: conditionList, codeBlock: codeBlock)
       ifStmt.setSourceRange(startLocation, codeBlock.sourceRange.end) // Note: this line is crafted by Renko 😂
       return ifStmt
     }
@@ -419,27 +385,19 @@ extension Parser {
     return ifStmt
   }
 
-  private func parseRepeatWhileStatement(
-    startLocation: SourceLocation
-  ) throws -> RepeatWhileStatement {
+  private func parseRepeatWhileStatement(startLocation: SourceLocation) throws -> RepeatWhileStatement {
     let codeBlock = try parseCodeBlock()
-    guard _lexer.match(.while) else {
-      throw _raiseFatal(.expectedWhileAfterRepeatBody)
-    }
+    try match(.while, orFatal: .expectedWhileAfterRepeatBody)
     let expr = try parseExpression()
-    let repeatStmt = RepeatWhileStatement(
-      conditionExpression: expr, codeBlock: codeBlock)
+    let repeatStmt = RepeatWhileStatement(conditionExpression: expr, codeBlock: codeBlock)
     repeatStmt.setSourceRange(startLocation, expr.sourceRange.end)
     return repeatStmt
   }
 
-  private func parseWhileStatement(
-    startLocation: SourceLocation
-  ) throws -> WhileStatement {
+  private func parseWhileStatement(startLocation: SourceLocation) throws -> WhileStatement {
     let conditionList = try parseConditionList()
     let codeBlock = try parseCodeBlock()
-    let whileStmt =
-      WhileStatement(conditionList: conditionList, codeBlock: codeBlock)
+    let whileStmt = WhileStatement(conditionList: conditionList, codeBlock: codeBlock)
     whileStmt.setSourceRange(startLocation, codeBlock.sourceRange.end)
     return whileStmt
   }
@@ -482,14 +440,11 @@ extension Parser {
       let exprPattern = pattern as? ExpressionPattern,
       let assignOpExpr = exprPattern.expression as? AssignmentOperatorExpression
     {
-      let lhsPattern = ExpressionPattern(
-        expression: assignOpExpr.leftExpression)
+      let lhsPattern = ExpressionPattern(expression: assignOpExpr.leftExpression)
       let rhsExpr = assignOpExpr.rightExpression
       return (lhsPattern, rhsExpr)
     }
-    guard _lexer.match(.assignmentOperator) else {
-      throw _raiseFatal(.expectedEqualInConditionalBinding)
-    }
+    try match(.assignmentOperator, orFatal: .expectedEqualInConditionalBinding)
     let expr = try parseExpression(config: noTrailingConfig)
     return (pattern, expr)
   }
@@ -499,9 +454,7 @@ extension Parser {
       throw _raiseFatal(.expectedAvailableKeyword)
     }
     _lexer.advance()
-    guard _lexer.match(.leftParen) else {
-      throw _raiseFatal(.expectedOpenParenAvailabilityCondition)
-    }
+    try match(.leftParen, orFatal: .expectedOpenParenAvailabilityCondition)
     let supportedPlatforms = [
       "iOS", "iOSApplicationExtension",
       "macOS", "macOSApplicationExtension",
@@ -528,8 +481,7 @@ extension Parser {
             throw _raiseFatal(.expectedMinorVersionAvailability)
           }
           if _lexer.match(.dot),
-            case let .integerLiteral(patch, raw) =
-              _lexer.read(.dummyIntegerLiteral),
+            case let .integerLiteral(patch, raw) = _lexer.read(.dummyIntegerLiteral),
             raw.containOnlyPositiveDecimals
           {
             arguments.append(.patch(platformName, major, minor, Int(patch)))
@@ -543,20 +495,14 @@ extension Parser {
         throw _raiseFatal(.attributeAvailabilityPlatform)
       }
     } while _lexer.match(.comma)
-    guard _lexer.match(.rightParen) else {
-      throw _raiseFatal(.expectedCloseParenAvailabilityCondition)
-    }
+    try match(.rightParen, orFatal: .expectedCloseParenAvailabilityCondition)
     return .availability(AvailabilityCondition(arguments: arguments))
   }
 
-  private func parseForInStatement(
-    startLocation: SourceLocation
-  ) throws -> ForInStatement {
+  private func parseForInStatement(startLocation: SourceLocation) throws -> ForInStatement {
     let isCaseMatching = _lexer.match(.case)
     let matchingPattern = try parsePattern()
-    if !_lexer.match(.in) {
-      throw _raiseFatal(.expectedForEachIn)
-    }
+    try match(.in, orFatal: .expectedForEachIn)
     let collectionExpr = try parseExpression(config: noTrailingConfig)
     var whereClause: Expression?
     if _lexer.match(.where) {

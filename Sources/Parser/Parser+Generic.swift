@@ -28,15 +28,11 @@ extension Parser {
       let param = try parseGenericParameter()
       parameters.append(param)
     } while _lexer.match(.comma)
-    if !_matchRightChevron() {
-      try _raiseError(.expectedRightChevron("generic parameter list"))
-    }
+    try assert(_matchRightChevron(), orError: .expectedRightChevron("generic parameter list"))
     return GenericParameterClause(parameterList: parameters)
   }
 
-  private func parseGenericParameter()
-    throws -> GenericParameterClause.GenericParameter
-  {
+  private func parseGenericParameter() throws -> GenericParameterClause.GenericParameter {
     guard case let .identifier(name) = _lexer.read(.dummyIdentifier) else {
       throw _raiseFatal(.expectedGenericsParameterName)
     }

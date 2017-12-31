@@ -71,9 +71,7 @@ fileprivate extension Char {
 }
 
 fileprivate extension String {
-  fileprivate func toOperator(
-    following head: Role, followed tail: Role
-  ) -> Token.Kind {
+  fileprivate func toOperator(following head: Role, followed tail: Role) -> Token.Kind {
     let headSeparated = head.isHeadSeparator
     let tailSeparated = tail.isTailSeparator
     if tail == .eof && !headSeparated {

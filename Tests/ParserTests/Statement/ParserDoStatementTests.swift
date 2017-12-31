@@ -191,6 +191,26 @@ class ParserDoStatementTests: XCTestCase {
     statements
     }
     """)
+
+    // test cases for issue #75: https://github.com/yanagiba/swift-ast/issues/75
+    parseStatementAndTest("""
+    do {
+      try expression
+    } catch someErr.woops {
+      statements
+    } catch is someErr {
+      statements
+    }
+    """,
+    """
+    do {
+    try expression
+    } catch someErr.woops {
+    statements
+    } catch is someErr {
+    statements
+    }
+    """)
   }
 
   func testSourceRange() {

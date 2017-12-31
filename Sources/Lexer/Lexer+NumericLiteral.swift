@@ -47,8 +47,7 @@ extension Lexer /* numeric literal */ {
       rawRepresentation += char.string
       let prt = Part.exponent
       switch char.unicodeScalar {
-      case "0"..."9" where
-        appendUnicodeScalar(char.unicodeScalar, to: prt, withRadix: rdx):
+      case "0"..."9" where appendUnicodeScalar(char.unicodeScalar, to: prt, withRadix: rdx):
         radix = rdx
         part = prt
       case "+":
@@ -67,10 +66,8 @@ extension Lexer /* numeric literal */ {
       rawRepresentation += char.string
       switch char.string.lowercased() {
       case
-        "0"..."9" where
-          appendUnicodeScalar(char.unicodeScalar, to: prt, withRadix: rdx),
-        "a"..."f" where
-          appendUnicodeScalar(char.unicodeScalar, to: prt, withRadix: rdx):
+        "0"..."9" where appendUnicodeScalar(char.unicodeScalar, to: prt, withRadix: rdx),
+        "a"..."f" where appendUnicodeScalar(char.unicodeScalar, to: prt, withRadix: rdx):
         radix = rdx
         part = prt
         return true
@@ -79,9 +76,7 @@ extension Lexer /* numeric literal */ {
       }
     }
 
-    func appendUnicodeScalar(
-      _ scalar: UnicodeScalar, to part: Part, withRadix rdx: Int
-    ) -> Bool {
+    func appendUnicodeScalar(_ scalar: UnicodeScalar, to part: Part, withRadix rdx: Int) -> Bool {
       if rdx == 16, let v = scalar.hex {
         appendValue(v, to: part, withRadix: rdx)
         return true
@@ -93,9 +88,7 @@ extension Lexer /* numeric literal */ {
       }
     }
 
-    func appendValue(
-      _ value: Int, to part: Part, withRadix rdx: Int
-    ) {
+    func appendValue(_ value: Int, to part: Part, withRadix rdx: Int) {
       switch part {
       case .integer:
         integerPart = integerPart * rdx + value
@@ -129,14 +122,8 @@ extension Lexer /* numeric literal */ {
     case 0:
       _consume(char.role)
 
-      guard char.role == .digit ||
-        char.role == .identifierHead ||
-        char.role == .period
-      else {
-        return .integerLiteral(
-          integerPart,
-          rawRepresentation: rawRepresentation
-        )
+      guard char.role == .digit || char.role == .identifierHead || char.role == .period else {
+        return .integerLiteral(integerPart, rawRepresentation: rawRepresentation)
       }
 
       rawRepresentation += char.string
@@ -175,15 +162,12 @@ extension Lexer /* numeric literal */ {
 
       switch (char.role, char.string.lowercased()) {
       case
-        (.digit, "0"..."9")
-          where appendUnicodeScalar(scalar, to: part, withRadix: radix),
+        (.digit, "0"..."9") where appendUnicodeScalar(scalar, to: part, withRadix: radix),
         (.identifierHead, "_"),
         (.identifierHead, "a"..."d")
-          where part != .exponent &&
-            appendUnicodeScalar(scalar, to: part, withRadix: radix),
+          where part != .exponent && appendUnicodeScalar(scalar, to: part, withRadix: radix),
         (.identifierHead, "f")
-          where part != .exponent &&
-            appendUnicodeScalar(scalar, to: part, withRadix: radix):
+          where part != .exponent && appendUnicodeScalar(scalar, to: part, withRadix: radix):
         rawRepresentation += char.string
       case (.identifierHead, "e") where part != .exponent && radix == 10:
         rawRepresentation += char.string
@@ -209,9 +193,7 @@ extension Lexer /* numeric literal */ {
         intRawRepresentation = currentRawRepresentation
         dotCheckpoint = checkpoint
       case (_, "a"..."z"), (_, "_"):
-        if let intRawRepresentation = intRawRepresentation,
-          let dotCheckpoint = dotCheckpoint
-        {
+        if let intRawRepresentation = intRawRepresentation, let dotCheckpoint = dotCheckpoint {
           rawRepresentation = intRawRepresentation
           restore(fromCheckpoint: dotCheckpoint)
           breakFromBadCharInDecimal = true
@@ -226,9 +208,7 @@ extension Lexer /* numeric literal */ {
     }
 
     // construct token if success
-    if radix == 16 && fractionalPart != nil &&
-      exponentPart == nil && !breakFromBadCharInDecimal
-    {
+    if radix == 16 && fractionalPart != nil && exponentPart == nil && !breakFromBadCharInDecimal {
       return .invalid(.badNumber)
     }
 
@@ -236,8 +216,7 @@ extension Lexer /* numeric literal */ {
     if (fractionalPart == nil && exponentPart == nil) || breakFromBadCharInDecimal {
       return .integerLiteral(
         negativeNumber ? -integerPart : integerPart,
-        rawRepresentation: rawRepresentation
-      )
+        rawRepresentation: rawRepresentation)
     }
 
     // construct a floating-point literal

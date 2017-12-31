@@ -18,8 +18,7 @@ import Diagnostic
 
 extension Parser {
   func _raiseFatal(_ kind: ParserErrorKind) -> Error {
-    return _diagnosticPool.appendFatal(
-      kind: kind, sourceLocatable: _lexer.look())
+    return _diagnosticPool.appendFatal(kind: kind, sourceLocatable: _lexer.look())
   }
 
   func _raiseError(_ kind: ParserErrorKind) throws {
