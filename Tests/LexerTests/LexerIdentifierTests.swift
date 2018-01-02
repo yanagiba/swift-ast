@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -56,6 +56,15 @@ class LexerIdentifierTests: XCTestCase {
     }
   }
 
+  func testDollarSignCanBeUsedAsIdentifierBody() {
+    lexAndTest("foo$") { t in
+      XCTAssertEqual(t, .identifier("foo$"))
+    }
+    lexAndTest("foo_$_bar") { t in
+      XCTAssertEqual(t, .identifier("foo_$_bar"))
+    }
+  }
+
   func testStructName() {
     lexAndTest("foo") { t in
       XCTAssertEqual(t.structName, "foo")
@@ -76,6 +85,7 @@ class LexerIdentifierTests: XCTestCase {
     ("testBacktickIdentifiers", testBacktickIdentifiers),
     ("testBacktickIdentifierMissingClosingBacktick", testBacktickIdentifierMissingClosingBacktick),
     ("testImplicitParameterName", testImplicitParameterName),
+    ("testDollarSignCanBeUsedAsIdentifierBody", testDollarSignCanBeUsedAsIdentifierBody),
     ("testStructName", testStructName),
   ]
 }
