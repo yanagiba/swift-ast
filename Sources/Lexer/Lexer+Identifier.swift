@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ extension Lexer /* identifier */ {
 fileprivate extension Role {
   fileprivate var isIdentifierCharacter: Bool {
     switch self {
-      case .identifierHead, .identifierBody, .digit, .underscore:
+    case .identifierHead, .identifierBody, .digit, .underscore, .dollar:
         return true
       default:
         return false
