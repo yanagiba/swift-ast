@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -37,8 +37,7 @@ public struct Token {
     case assignmentOperator
     case prefixOperator(String), binaryOperator(String), postfixOperator(String)
     // value references
-    case identifier(String) // TODO: identifier may need to contains raw representation as well,
-                            // just for restoring the original string, maybe for refactoring
+    case identifier(String, Bool)
     case implicitParameterName(Int)
     // literals
     case integerLiteral(Int, rawRepresentation: String)

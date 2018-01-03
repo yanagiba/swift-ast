@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -122,7 +122,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a code block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
       XCTAssertTrue(codeBlock.statements.isEmpty)
     })
@@ -141,7 +141,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a code block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
       XCTAssertEqual(codeBlock.statements.count, 1)
       XCTAssertTrue(codeBlock.statements[0] is ReturnStatement)
@@ -171,7 +171,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertTrue(getterSetterBlock.getter.attributes.isEmpty)
@@ -206,7 +206,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertEqual(getterSetterBlock.getter.attributes.count, 3)
@@ -240,7 +240,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertTrue(getterSetterBlock.getter.attributes.isEmpty)
@@ -273,7 +273,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertEqual(getterSetterBlock.getter.attributes.count, 3)
@@ -319,7 +319,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertEqual(getterSetterBlock.getter.textDescription, "get {\nreturn _foo\n}")
@@ -361,7 +361,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertEqual(getterSetterBlock.getter.textDescription, "get {\nreturn _foo\n}")
@@ -404,7 +404,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertEqual(getterSetterBlock.getter.textDescription, "get {\nreturn _foo\n}")
@@ -446,7 +446,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertEqual(getterSetterBlock.getter.textDescription, "get {\nreturn _foo\n}")
@@ -534,7 +534,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertEqual(getterSetterBlock.getter.textDescription, "get {\nreturn _foo\n}")
@@ -546,7 +546,7 @@ class ParserVariableDeclarationTests: XCTestCase {
 
       XCTAssertTrue(setter.attributes.isEmpty)
       XCTAssertNil(setter.mutationModifier)
-      XCTAssertEqual(setter.name, "aValue")
+      XCTAssertEqual(setter.name?.textDescription, "aValue")
       XCTAssertEqual(setter.codeBlock.textDescription, "{\n_foo = aValue\n}")
     })
   }
@@ -609,7 +609,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter-keyword block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertEqual(getterSetterKeywordBlock.getter.attributes.count, 3)
@@ -666,7 +666,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter-keyword block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertEqual(getterSetterKeywordBlock.getter.attributes.count, 3)
@@ -704,7 +704,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a getter-setter-keyword block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation.textDescription, ": Foo")
 
       XCTAssertEqual(getterSetterKeywordBlock.getter.attributes.count, 3)
@@ -744,7 +744,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -786,7 +786,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -829,7 +829,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -840,7 +840,7 @@ class ParserVariableDeclarationTests: XCTestCase {
       }
 
       XCTAssertTrue(willSetClause.attributes.isEmpty)
-      XCTAssertEqual(willSetClause.name, "newValue")
+      XCTAssertEqual(willSetClause.name?.textDescription, "newValue")
       XCTAssertEqual(willSetClause.codeBlock.statements.count, 1)
       XCTAssertTrue(willSetClause.codeBlock.statements[0] is FunctionCallExpression)
       XCTAssertEqual(willSetClause.codeBlock.statements[0].textDescription, "print(newValue)")
@@ -871,7 +871,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -883,7 +883,7 @@ class ParserVariableDeclarationTests: XCTestCase {
 
       XCTAssertEqual(willSetClause.attributes.count, 3)
       XCTAssertEqual(willSetClause.attributes.textDescription, "@a @b @c")
-      XCTAssertEqual(willSetClause.name, "newValue")
+      XCTAssertEqual(willSetClause.name?.textDescription, "newValue")
       XCTAssertEqual(willSetClause.codeBlock.statements.count, 1)
       XCTAssertTrue(willSetClause.codeBlock.statements[0] is FunctionCallExpression)
       XCTAssertEqual(willSetClause.codeBlock.statements[0].textDescription, "print(newValue)")
@@ -914,7 +914,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -956,7 +956,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -999,7 +999,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -1012,7 +1012,7 @@ class ParserVariableDeclarationTests: XCTestCase {
       }
 
       XCTAssertTrue(didSetClause.attributes.isEmpty)
-      XCTAssertEqual(didSetClause.name, "newValue")
+      XCTAssertEqual(didSetClause.name?.textDescription, "newValue")
       XCTAssertEqual(didSetClause.codeBlock.statements.count, 1)
       XCTAssertTrue(didSetClause.codeBlock.statements[0] is FunctionCallExpression)
       XCTAssertEqual(didSetClause.codeBlock.statements[0].textDescription, "print(newValue)")
@@ -1041,7 +1041,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -1055,7 +1055,7 @@ class ParserVariableDeclarationTests: XCTestCase {
 
       XCTAssertEqual(didSetClause.attributes.count, 3)
       XCTAssertEqual(didSetClause.attributes.textDescription, "@x @y @z")
-      XCTAssertEqual(didSetClause.name, "newValue")
+      XCTAssertEqual(didSetClause.name?.textDescription, "newValue")
       XCTAssertEqual(didSetClause.codeBlock.statements.count, 1)
       XCTAssertTrue(didSetClause.codeBlock.statements[0] is FunctionCallExpression)
       XCTAssertEqual(didSetClause.codeBlock.statements[0].textDescription, "print(newValue)")
@@ -1087,7 +1087,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -1138,7 +1138,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -1152,14 +1152,14 @@ class ParserVariableDeclarationTests: XCTestCase {
 
       XCTAssertEqual(willSetClause.attributes.count, 1)
       XCTAssertEqual(willSetClause.attributes.textDescription, "@a")
-      XCTAssertEqual(willSetClause.name, "newValue")
+      XCTAssertEqual(willSetClause.name?.textDescription, "newValue")
       XCTAssertEqual(willSetClause.codeBlock.statements.count, 1)
       XCTAssertTrue(willSetClause.codeBlock.statements[0] is FunctionCallExpression)
       XCTAssertEqual(willSetClause.codeBlock.statements[0].textDescription, "print(newValue)")
 
       XCTAssertEqual(didSetClause.attributes.count, 1)
       XCTAssertEqual(didSetClause.attributes.textDescription, "@x")
-      XCTAssertEqual(didSetClause.name, "aValue")
+      XCTAssertEqual(didSetClause.name?.textDescription, "aValue")
       XCTAssertEqual(didSetClause.codeBlock.statements.count, 1)
       XCTAssertTrue(didSetClause.codeBlock.statements[0] is FunctionCallExpression)
       XCTAssertEqual(didSetClause.codeBlock.statements[0].textDescription, "print(aValue)")
@@ -1191,7 +1191,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -1242,7 +1242,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertNil(typeAnnotation)
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -1256,14 +1256,14 @@ class ParserVariableDeclarationTests: XCTestCase {
 
       XCTAssertEqual(willSetClause.attributes.count, 1)
       XCTAssertEqual(willSetClause.attributes.textDescription, "@a")
-      XCTAssertEqual(willSetClause.name, "newValue")
+      XCTAssertEqual(willSetClause.name?.textDescription, "newValue")
       XCTAssertEqual(willSetClause.codeBlock.statements.count, 1)
       XCTAssertTrue(willSetClause.codeBlock.statements[0] is FunctionCallExpression)
       XCTAssertEqual(willSetClause.codeBlock.statements[0].textDescription, "print(newValue)")
 
       XCTAssertEqual(didSetClause.attributes.count, 1)
       XCTAssertEqual(didSetClause.attributes.textDescription, "@x")
-      XCTAssertEqual(didSetClause.name, "aValue")
+      XCTAssertEqual(didSetClause.name?.textDescription, "aValue")
       XCTAssertEqual(didSetClause.codeBlock.statements.count, 1)
       XCTAssertTrue(didSetClause.codeBlock.statements[0] is FunctionCallExpression)
       XCTAssertEqual(didSetClause.codeBlock.statements[0].textDescription, "print(aValue)")
@@ -1295,7 +1295,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation?.textDescription, ": Foo")
       XCTAssertNil(initExpr)
 
@@ -1345,7 +1345,7 @@ class ParserVariableDeclarationTests: XCTestCase {
         XCTFail("Failed in getting a will-set-did-set block for variable declaration.")
         return
       }
-      XCTAssertEqual(varName, "foo")
+      XCTAssertEqual(varName.textDescription, "foo")
       XCTAssertEqual(typeAnnotation?.textDescription, ": Foo")
       XCTAssertTrue(initExpr is IdentifierExpression)
       XCTAssertEqual(initExpr?.textDescription, "_foo")
@@ -1379,7 +1379,7 @@ class ParserVariableDeclarationTests: XCTestCase {
       }
 
       XCTAssertEqual(varDecl.attributes.count, 1)
-      XCTAssertEqual(varDecl.attributes[0].name, "a")
+      XCTAssertEqual(varDecl.attributes[0].name.textDescription, "a")
       XCTAssertTrue(varDecl.modifiers.isEmpty)
       guard case .initializerList(let initializerList) = varDecl.body else {
         XCTFail("Failed in getting an initializer list for variable declaration.")
@@ -1427,7 +1427,7 @@ class ParserVariableDeclarationTests: XCTestCase {
       }
 
       XCTAssertEqual(varDecl.attributes.count, 1)
-      XCTAssertEqual(varDecl.attributes[0].name, "a")
+      XCTAssertEqual(varDecl.attributes[0].name.textDescription, "a")
       XCTAssertEqual(varDecl.modifiers.count, 1)
       XCTAssertEqual(varDecl.modifiers[0], .accessLevel(.fileprivate))
       guard case .initializerList(let initializerList) = varDecl.body else {

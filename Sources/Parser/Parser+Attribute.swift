@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -28,9 +28,10 @@ extension Parser {
   }
 
   private func parseAttribute() throws -> Attribute {
-    guard case let .identifier(name) = _lexer.read(.dummyIdentifier) else {
+    guard case let .identifier(id, backticked) = _lexer.read(.dummyIdentifier) else {
       throw _raiseFatal(.missingAttributeName)
     }
+    let name: Identifier = backticked ? .backtickedName(id) : .name(id)
     let leftParenCp = _lexer.checkPoint()
     guard _lexer.matchUnicodeScalar("(", immediateFollow: true) else {
       return Attribute(name: name)

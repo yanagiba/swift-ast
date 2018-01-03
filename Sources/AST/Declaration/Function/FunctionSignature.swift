@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ public struct FunctionSignature {
 extension FunctionSignature.Parameter : ASTTextRepresentable {
   public var textDescription: String {
     let externalNameText = externalName.map({ [$0.textDescription] }) ?? []
-    let localNameText = localName.isEmpty ? [] : [localName]
+    let localNameText = localName.textDescription.isEmpty ? [] : [localName.textDescription]
     let nameText = (externalNameText + localNameText).joined(separator: " ")
     let typeAnnoText = typeAnnotation.textDescription
     let defaultText =

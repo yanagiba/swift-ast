@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -137,7 +137,7 @@ extension ClosureExpression.Signature.CaptureItem : ASTTextRepresentable {
 
 extension ClosureExpression.Signature.ParameterClause.Parameter : ASTTextRepresentable {
   public var textDescription: String {
-    var paramText = name
+    var paramText = name.textDescription
     if let typeAnnotation = typeAnnotation {
       paramText += typeAnnotation.textDescription
       if isVarargs {

@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class ParserKeyPathExpressionTests: XCTestCase {
       }
       XCTAssertNil(keyPathExpr.type)
       XCTAssertEqual(keyPathExpr.components.count, 1)
-      XCTAssertEqual(keyPathExpr.components[0].0, "foo")
+      ASTTextEqual(keyPathExpr.components[0].0, "foo")
       XCTAssertTrue(keyPathExpr.components[0].1.isEmpty)
     })
   }
@@ -40,15 +40,15 @@ class ParserKeyPathExpressionTests: XCTestCase {
       }
       XCTAssertNil(keyPathExpr.type)
       XCTAssertEqual(keyPathExpr.components.count, 5)
-      XCTAssertEqual(keyPathExpr.components[0].0, "foo")
+      ASTTextEqual(keyPathExpr.components[0].0, "foo")
       XCTAssertTrue(keyPathExpr.components[0].1.isEmpty)
-      XCTAssertEqual(keyPathExpr.components[1].0, "bar")
+      ASTTextEqual(keyPathExpr.components[1].0, "bar")
       XCTAssertTrue(keyPathExpr.components[1].1.isEmpty)
-      XCTAssertEqual(keyPathExpr.components[2].0, "a")
+      ASTTextEqual(keyPathExpr.components[2].0, "a")
       XCTAssertTrue(keyPathExpr.components[2].1.isEmpty)
-      XCTAssertEqual(keyPathExpr.components[3].0, "b")
+      ASTTextEqual(keyPathExpr.components[3].0, "b")
       XCTAssertTrue(keyPathExpr.components[3].1.isEmpty)
-      XCTAssertEqual(keyPathExpr.components[4].0, "c")
+      ASTTextEqual(keyPathExpr.components[4].0, "c")
       XCTAssertTrue(keyPathExpr.components[4].1.isEmpty)
     })
   }
@@ -90,7 +90,7 @@ class ParserKeyPathExpressionTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(keyPathExpr.components[3].0, "a")
+      ASTTextEqual(keyPathExpr.components[3].0, "a")
       let postfixes3 = keyPathExpr.components[3].1
       XCTAssertEqual(postfixes3.count, 1)
       guard case .question = postfixes3[0] else {
@@ -98,7 +98,7 @@ class ParserKeyPathExpressionTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(keyPathExpr.components[4].0, "b")
+      ASTTextEqual(keyPathExpr.components[4].0, "b")
       let postfixes4 = keyPathExpr.components[4].1
       XCTAssertEqual(postfixes4.count, 1)
       guard case .exclaim = postfixes4[0] else {
@@ -106,7 +106,7 @@ class ParserKeyPathExpressionTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(keyPathExpr.components[5].0, "c")
+      ASTTextEqual(keyPathExpr.components[5].0, "c")
       let postfixes5 = keyPathExpr.components[5].1
       XCTAssertEqual(postfixes5.count, 1)
       guard case .subscript(let arg5) = postfixes5[0], arg5.count == 2 else {
@@ -154,10 +154,10 @@ class ParserKeyPathExpressionTests: XCTestCase {
       }
 
       XCTAssertEqual(typeIdentifier.names.count, 1)
-      XCTAssertEqual(typeIdentifier.names[0].name, "foo")
+      ASTTextEqual(typeIdentifier.names[0].name, "foo")
       XCTAssertNil(typeIdentifier.names[0].genericArgumentClause)
       XCTAssertEqual(keyPathExpr.components.count, 1)
-      XCTAssertEqual(keyPathExpr.components[0].0, "bar")
+      ASTTextEqual(keyPathExpr.components[0].0, "bar")
       XCTAssertTrue(keyPathExpr.components[0].1.isEmpty)
     })
     parseExpressionAndTest("\\foo.bar.a.b.c", "\\foo.bar.a.b.c", testClosure: { expr in
@@ -168,16 +168,16 @@ class ParserKeyPathExpressionTests: XCTestCase {
       }
 
       XCTAssertEqual(typeIdentifier.names.count, 1)
-      XCTAssertEqual(typeIdentifier.names[0].name, "foo")
+      ASTTextEqual(typeIdentifier.names[0].name, "foo")
       XCTAssertNil(typeIdentifier.names[0].genericArgumentClause)
       XCTAssertEqual(keyPathExpr.components.count, 4)
-      XCTAssertEqual(keyPathExpr.components[0].0, "bar")
+      ASTTextEqual(keyPathExpr.components[0].0, "bar")
       XCTAssertTrue(keyPathExpr.components[0].1.isEmpty)
-      XCTAssertEqual(keyPathExpr.components[1].0, "a")
+      ASTTextEqual(keyPathExpr.components[1].0, "a")
       XCTAssertTrue(keyPathExpr.components[1].1.isEmpty)
-      XCTAssertEqual(keyPathExpr.components[2].0, "b")
+      ASTTextEqual(keyPathExpr.components[2].0, "b")
       XCTAssertTrue(keyPathExpr.components[2].1.isEmpty)
-      XCTAssertEqual(keyPathExpr.components[3].0, "c")
+      ASTTextEqual(keyPathExpr.components[3].0, "c")
       XCTAssertTrue(keyPathExpr.components[3].1.isEmpty)
     })
   }

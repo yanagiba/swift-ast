@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ extension Parser {
       selfType.setSourceRange(lookedRange)
       return selfType
     default:
-      if let idHead = _lexer.readNamedIdentifier() {
+      if let idHead = readNamedIdentifier() {
         return try parseIdentifierType(idHead, lookedRange)
       } else {
         throw _raiseFatal(.expectedType)
@@ -79,23 +79,25 @@ extension Parser {
     }
   }
 
-  func parseIdentifierType(_ headName: String, _ startRange: SourceRange) throws -> TypeIdentifier {
+  func parseIdentifierType(_ headId: Identifier, _ startRange: SourceRange) throws -> TypeIdentifier {
     var endLocation = startRange.end
     let headGenericArgumentClause = parseGenericArgumentClause()
     if let headGenericArg = headGenericArgumentClause {
       endLocation = headGenericArg.sourceRange.end
     }
     var names = [
-      TypeIdentifier.TypeName(name: headName, genericArgumentClause: headGenericArgumentClause)
+      TypeIdentifier.TypeName(name: headId, genericArgumentClause: headGenericArgumentClause)
     ]
 
-    while _lexer.look().kind == .dot, case let .identifier(name) = _lexer.readNext(.dummyIdentifier) {
+    while _lexer.look().kind == .dot, case let .identifier(name, backticked) = _lexer.readNext(.dummyIdentifier) {
       endLocation = getStartLocation()
       let genericArgumentClause = parseGenericArgumentClause()
       if let genericArg = genericArgumentClause {
         endLocation = genericArg.sourceRange.end
       }
-      let typeIdentifierName = TypeIdentifier.TypeName(name: name, genericArgumentClause: genericArgumentClause)
+      let typeIdentifierName = TypeIdentifier.TypeName(
+        name: backticked ? .backtickedName(name) : .name(name),
+        genericArgumentClause: genericArgumentClause)
       names.append(typeIdentifierName)
     }
 
@@ -151,8 +153,8 @@ extension Parser {
   }
 
   private func parseParenthesizedTypeElement() throws -> ParenthesizedType.Element {
-    var externalName: String?
-    var localName: String?
+    var externalName: Identifier?
+    var localName: Identifier?
     let type: Type
     var attributes: [Attribute] = []
     var isInOutParameter = false
@@ -168,7 +170,7 @@ extension Parser {
       _lexer.advance()
       type = try parseType()
     default:
-      if let name = looked.kind.namedIdentifierOrWildcard {
+      if let name = looked.kind.namedIdentifierOrWildcard?.id {
         let elementBody = try parseParenthesizedTypeElementBody(name)
         type = elementBody.type
         externalName = elementBody.externalName
@@ -195,10 +197,10 @@ extension Parser {
       isVariadic: isVariadic)
   }
 
-  private func parseParenthesizedTypeElementBody(_ name: String) throws -> ParenthesizedType.Element {
-    var externalName: String?
-    var internalName: String?
-    if let secondName = _lexer.look(ahead: 1).kind.namedIdentifier, _lexer.look(ahead: 2).kind == .colon {
+  private func parseParenthesizedTypeElementBody(_ name: Identifier) throws -> ParenthesizedType.Element {
+    var externalName: Identifier?
+    var internalName: Identifier?
+    if let secondName = _lexer.look(ahead: 1).kind.namedIdentifier?.id, _lexer.look(ahead: 2).kind == .colon {
       externalName = name
       internalName = secondName
       _lexer.advance(by: 2)
@@ -226,7 +228,7 @@ extension Parser {
 
     repeat {
       let idTypeRange = getLookedRange()
-      guard case let .identifier(idHead) = _lexer.read(.dummyIdentifier) else {
+      guard let idHead = readNamedIdentifier() else {
         throw _raiseFatal(.expectedIdentifierTypeForProtocolComposition)
       }
       let idType = try parseIdentifierType(idHead, idTypeRange)
@@ -249,7 +251,7 @@ extension Parser {
     var protocolTypes: [Type] = []
     repeat {
       let nestedRange = getLookedRange()
-      guard case let .identifier(idHead) = _lexer.read(.dummyIdentifier) else {
+      guard let idHead = readNamedIdentifier() else {
         throw _raiseFatal(.expectedIdentifierTypeForProtocolComposition)
       }
       protocolTypes.append(try parseIdentifierType(idHead, nestedRange))
@@ -376,7 +378,7 @@ extension Parser {
       let typeSourceRange = getLookedRange()
       if _lexer.match(.class) {
         throw _raiseFatal(.lateClassRequirement)
-      } else if let idHead = _lexer.readNamedIdentifier() {
+      } else if let idHead = readNamedIdentifier() {
         let type = try parseIdentifierType(idHead, typeSourceRange)
         types.append(type)
       } else {
@@ -394,16 +396,16 @@ fileprivate class ParenthesizedType : Type {
   }
 
   fileprivate class Element {
-    fileprivate let externalName: String?
-    fileprivate let localName: String?
+    fileprivate let externalName: Identifier?
+    fileprivate let localName: Identifier?
     fileprivate let type: Type
     fileprivate let attributes: Attributes
     fileprivate let isInOutParameter: Bool
     fileprivate let isVariadic: Bool
 
     fileprivate init(type: Type,
-      externalName: String? = nil,
-      localName: String? = nil,
+      externalName: Identifier? = nil,
+      localName: Identifier? = nil,
       attributes: Attributes = [],
       isInOutParameter: Bool = false,
       isVariadic: Bool = false)

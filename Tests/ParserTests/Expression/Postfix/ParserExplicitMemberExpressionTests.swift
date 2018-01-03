@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
       }
 
       XCTAssertTrue(postfixExpr is IdentifierExpression)
-      XCTAssertEqual(identifier, "someProperty")
+      ASTTextEqual(identifier, "someProperty")
     })
   }
 
@@ -57,7 +57,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
       }
 
       XCTAssertTrue(postfixExpr is IdentifierExpression)
-      XCTAssertEqual(identifier, "bar")
+      ASTTextEqual(identifier, "bar")
       XCTAssertEqual(genericArgumentClause.textDescription, "<a, b, c>")
     })
   }
@@ -71,8 +71,8 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
       }
 
       XCTAssertTrue(postfixExpr is IdentifierExpression)
-      XCTAssertEqual(identifier, "bar")
-      XCTAssertEqual(argumentNames, ["a", "b", "c"])
+      ASTTextEqual(identifier, "bar")
+      ASTTextEqual(argumentNames, ["a", "b", "c"])
     })
   }
 
@@ -85,8 +85,8 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
       }
 
       XCTAssertTrue(postfixExpr is IdentifierExpression)
-      XCTAssertEqual(identifier, "bar")
-      XCTAssertEqual(argumentNames, ["_"])
+      ASTTextEqual(identifier, "bar")
+      ASTTextEqual(argumentNames, ["_"])
     })
   }
 
@@ -98,8 +98,8 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(identifierB, "b")
-      XCTAssertEqual(argumentNamesB, ["y"])
+      ASTTextEqual(identifierB, "b")
+      ASTTextEqual(argumentNamesB, ["y"])
 
       guard let exprHundred = postfixExprB as? ExplicitMemberExpression,
         case let .tuple(postfixExprHundred, indexHundred) = exprHundred.kind else {
@@ -115,7 +115,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(identifierA, "a")
+      ASTTextEqual(identifierA, "a")
       XCTAssertEqual(genericA.textDescription, "<x>")
 
       guard let exprBar = postfixExprA as? ExplicitMemberExpression,
@@ -124,7 +124,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(identifierBar, "bar")
+      ASTTextEqual(identifierBar, "bar")
 
       XCTAssertTrue(postfixExprBar is IdentifierExpression)
     })
@@ -156,7 +156,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
         }
 
         XCTAssertTrue(postfixExpr is LiteralExpression)
-        XCTAssertEqual(identifier, member)
+        ASTTextEqual(identifier, member)
       })
     }
     for member in ["float", "z", "zyx", "abcxyz"] {
@@ -169,7 +169,7 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
         }
 
         XCTAssertTrue(postfixExpr is LiteralExpression)
-        XCTAssertEqual(identifier, member)
+        ASTTextEqual(identifier, member)
       })
     }
   }

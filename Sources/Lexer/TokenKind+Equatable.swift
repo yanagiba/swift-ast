@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -141,7 +141,7 @@ extension Token.Kind: Equatable {
     }
   }
 
-  public func isEqual(to kind: Token.Kind) -> Bool { // swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=17)
+  public func isEqual(to kind: Token.Kind) -> Bool { // swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=18)
     guard isEqual(toKindOf: kind) else {
       return false
     }
@@ -155,8 +155,8 @@ extension Token.Kind: Equatable {
       return lhs == rhs
     case let (.postfixOperator(lhs), .postfixOperator(rhs)):
       return lhs == rhs
-    case let (.identifier(lhs), .identifier(rhs)):
-      return lhs == rhs
+    case let (.identifier(lhsName, lhsBacktick), .identifier(rhsName, rhsBacktick)):
+      return lhsName == rhsName && lhsBacktick == rhsBacktick
     case let (.implicitParameterName(lhs), .implicitParameterName(rhs)):
       return lhs == rhs
     case let (.integerLiteral(lhi, lhr), .integerLiteral(rhi, rhr)):

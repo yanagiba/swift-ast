@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -204,7 +204,7 @@ class ParserClosureExpressionTests: XCTestCase {
         return
       }
       XCTAssertEqual(params.count, 1)
-      XCTAssertEqual(params[0].name, "foo")
+      XCTAssertEqual(params[0].name.textDescription, "foo")
       XCTAssertNil(params[0].typeAnnotation)
       XCTAssertFalse(params[0].isVarargs)
 
@@ -230,7 +230,7 @@ class ParserClosureExpressionTests: XCTestCase {
         return
       }
       XCTAssertEqual(params.count, 1)
-      XCTAssertEqual(params[0].name, "foo")
+      XCTAssertEqual(params[0].name.textDescription, "foo")
       XCTAssertEqual(params[0].typeAnnotation?.textDescription, ": Foo")
       XCTAssertFalse(params[0].isVarargs)
 
@@ -256,7 +256,7 @@ class ParserClosureExpressionTests: XCTestCase {
         return
       }
       XCTAssertEqual(params.count, 1)
-      XCTAssertEqual(params[0].name, "foo")
+      XCTAssertEqual(params[0].name.textDescription, "foo")
       XCTAssertEqual(params[0].typeAnnotation?.textDescription, ": Foo")
       XCTAssertTrue(params[0].isVarargs)
 
@@ -342,8 +342,7 @@ class ParserClosureExpressionTests: XCTestCase {
         XCTFail("Failed in getting a closure signature.")
         return
       }
-      XCTAssertEqual(ids.count, 1)
-      XCTAssertEqual(ids[0], "foo")
+      ASTTextEqual(ids, ["foo"])
 
       XCTAssertNil(signature.captureList)
       XCTAssertFalse(signature.canThrow)
@@ -366,10 +365,7 @@ class ParserClosureExpressionTests: XCTestCase {
         XCTFail("Failed in getting a closure signature.")
         return
       }
-      XCTAssertEqual(ids.count, 3)
-      XCTAssertEqual(ids[0], "foo")
-      XCTAssertEqual(ids[1], "_")
-      XCTAssertEqual(ids[2], "bar")
+      ASTTextEqual(ids, ["foo", "_", "bar"])
 
       XCTAssertNil(signature.captureList)
       XCTAssertFalse(signature.canThrow)
@@ -488,9 +484,9 @@ class ParserClosureExpressionTests: XCTestCase {
         return
       }
       XCTAssertEqual(funcResult.attributes.count, 3)
-      XCTAssertEqual(funcResult.attributes[0].name, "a")
-      XCTAssertEqual(funcResult.attributes[1].name, "b")
-      XCTAssertEqual(funcResult.attributes[2].name, "c")
+      XCTAssertEqual(funcResult.attributes[0].name.textDescription, "a")
+      XCTAssertEqual(funcResult.attributes[1].name.textDescription, "b")
+      XCTAssertEqual(funcResult.attributes[2].name.textDescription, "c")
       XCTAssertTrue(funcResult.type is TypeIdentifier)
       XCTAssertEqual(funcResult.type.textDescription, "Foo")
 
@@ -524,7 +520,7 @@ class ParserClosureExpressionTests: XCTestCase {
         return
       }
       XCTAssertEqual(funcResult.attributes.count, 1)
-      XCTAssertEqual(funcResult.attributes[0].name, "foo")
+      XCTAssertEqual(funcResult.attributes[0].name.textDescription, "foo")
       XCTAssertTrue(funcResult.type is TypeIdentifier)
       XCTAssertEqual(funcResult.type.textDescription, "Bar")
 
@@ -561,9 +557,9 @@ class ParserClosureExpressionTests: XCTestCase {
       XCTAssertTrue(signature.canThrow)
 
       XCTAssertEqual(funcResult.attributes.count, 3)
-      XCTAssertEqual(funcResult.attributes[0].name, "x")
-      XCTAssertEqual(funcResult.attributes[1].name, "y")
-      XCTAssertEqual(funcResult.attributes[2].name, "z")
+      XCTAssertEqual(funcResult.attributes[0].name.textDescription, "x")
+      XCTAssertEqual(funcResult.attributes[1].name.textDescription, "y")
+      XCTAssertEqual(funcResult.attributes[2].name.textDescription, "z")
       XCTAssertTrue(funcResult.type is TypeIdentifier)
       XCTAssertEqual(funcResult.type.textDescription, "Bar")
 

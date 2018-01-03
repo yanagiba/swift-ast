@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -104,7 +104,7 @@ class LexerStringLiteralTests: XCTestCase {
       XCTAssertEqual(r, "\"   \"")
     }
     lexAndTest(content, index: 1, expectedColumn: 6) {
-      XCTAssertEqual($0, .identifier("xyz"))
+      XCTAssertEqual($0, .identifier("xyz", false))
     }
     lexAndTest(content, index: 2, expectedColumn: 9) { t in
       guard case let .staticStringLiteral(s, rawRepresentation: r) = t else {
@@ -294,7 +294,7 @@ class LexerStringLiteralTests: XCTestCase {
       XCTAssertEqual($0, .rightParen)
     }
     lexAndTest(content, index: 3, expectedColumn: 17) {
-      XCTAssertEqual($0, .identifier("foo"))
+      XCTAssertEqual($0, .identifier("foo", false))
     }
     lexAndTest(content, index: 4, expectedColumn: 20) {
       XCTAssertEqual($0, .backslash)

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,9 +21,11 @@ import XCTest
 class ParserSuperclassExpressionTests: XCTestCase {
   func testSuperclassMethodExpression() {
     parseExpressionAndTest("super.foo", "super.foo", testClosure: { expr in
-      guard let superExpr = expr as? SuperclassExpression,
+      guard
+        let superExpr = expr as? SuperclassExpression,
         case .method(let name) = superExpr.kind,
-        name == "foo" else {
+        name.isSyntacticallyEqual(to: .name("foo"))
+      else {
         XCTFail("Failed in getting a superclass expression")
         return
       }

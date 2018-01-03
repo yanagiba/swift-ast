@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,14 +18,13 @@ public class ImportDeclaration : ASTNode, Declaration {
   public enum Kind : String {
     case `typealias`, `struct`, `class`, `enum`, `protocol`, `let`, `var`, `func`
   }
-  public typealias PathIdentifier = String
 
   public let attributes: Attributes
   public let kind: Kind?
-  public let path: [PathIdentifier]
+  public let path: IdentifierList
 
   public init(
-    attributes: Attributes = [], kind: Kind? = nil, path: [PathIdentifier]
+    attributes: Attributes = [], kind: Kind? = nil, path: IdentifierList
   ) {
     self.attributes = attributes
     self.kind = kind
@@ -37,7 +36,7 @@ public class ImportDeclaration : ASTNode, Declaration {
   override public var textDescription: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let kindText = kind.map({ " \($0.rawValue)" }) ?? ""
-    let pathText = path.joined(separator: ".")
+    let pathText = path.map({ $0.textDescription }).joined(separator: ".")
     return "\(attrsText)import\(kindText) \(pathText)"
   }
 }

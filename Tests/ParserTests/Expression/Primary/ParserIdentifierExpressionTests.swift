@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -26,15 +26,16 @@ class ParserIdentifierExpressionTests: XCTestCase {
         XCTFail("Failed in getting an identifier expression")
         return
       }
-      XCTAssertEqual(id, identifier)
+      ASTTextEqual(id, identifier)
       XCTAssertNil(generic)
     }
     ["foo", "bar", "backtick"].forEach { identifier in
       parseExpressionAndTest(identifier, identifier, testClosure: { expr in
         testClosure(identifier, expr)
       })
-      parseExpressionAndTest("`\(identifier)`", identifier, testClosure: { expr in
-        testClosure(identifier, expr)
+      let backtickedIdentifier = "`\(identifier)`"
+      parseExpressionAndTest(backtickedIdentifier, backtickedIdentifier, testClosure: { expr in
+        testClosure(backtickedIdentifier, expr)
       })
     }
   }
@@ -46,18 +47,19 @@ class ParserIdentifierExpressionTests: XCTestCase {
         XCTFail("Failed in getting an identifier expression")
         return
       }
-      XCTAssertEqual(id, identifier)
+      ASTTextEqual(id, identifier)
       XCTAssertEqual(generic?.textDescription, "<\(gnrc)>")
     }
     ["foo", "bar", "backtick"].forEach { identifier in
       ["A", "A, B, C"].forEach { generic in
         let idExpr = "\(identifier)<\(generic)>"
-        let backtickIdExpr = "`\(identifier)`<\(generic)>"
         parseExpressionAndTest(idExpr, idExpr, testClosure: { expr in
           testClosure(identifier, generic, expr)
         })
-        parseExpressionAndTest(backtickIdExpr, idExpr, testClosure: { expr in
-          testClosure(identifier, generic, expr)
+        let backtickedIdentifier = "`\(identifier)`"
+        let backtickIdExpr = "\(backtickedIdentifier)<\(generic)>"
+        parseExpressionAndTest(backtickIdExpr, backtickIdExpr, testClosure: { expr in
+          testClosure(backtickedIdentifier, generic, expr)
         })
       }
     }
@@ -103,8 +105,8 @@ class ParserIdentifierExpressionTests: XCTestCase {
     let testExprs: [(testString: String, expectedString: String, expectedEndColumn: Int)] = [
       ("foo", "foo", 4),
       ("foo<T>", "foo<T>", 7),
-      ("`class`", "class", 8),
-      ("`class`<P>", "class<P>", 11),
+      ("`class`", "`class`", 8),
+      ("`class`<P>", "`class`<P>", 11),
       ("$0", "$0", 3),
       ("$0<A>", "$0<A>", 6),
     ]

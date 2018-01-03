@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ class ParserStructDeclarationTests: XCTestCase {
 
       XCTAssertTrue(structDecl.attributes.isEmpty)
       XCTAssertNil(structDecl.accessLevelModifier)
-      XCTAssertEqual(structDecl.name, "Foo")
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
       XCTAssertNil(structDecl.genericParameterClause)
       XCTAssertNil(structDecl.typeInheritanceClause)
       XCTAssertNil(structDecl.genericWhereClause)
@@ -47,7 +47,7 @@ class ParserStructDeclarationTests: XCTestCase {
       XCTAssertEqual(structDecl.attributes.count, 3)
       XCTAssertEqual(structDecl.attributes.textDescription, "@a @b @c")
       XCTAssertNil(structDecl.accessLevelModifier)
-      XCTAssertEqual(structDecl.name, "Foo")
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
       XCTAssertNil(structDecl.genericParameterClause)
       XCTAssertNil(structDecl.typeInheritanceClause)
       XCTAssertNil(structDecl.genericWhereClause)
@@ -68,7 +68,7 @@ class ParserStructDeclarationTests: XCTestCase {
 
         XCTAssertTrue(structDecl.attributes.isEmpty)
         XCTAssertEqual(structDecl.accessLevelModifier, modifier)
-        XCTAssertEqual(structDecl.name, "Foo")
+        XCTAssertEqual(structDecl.name.textDescription, "Foo")
         XCTAssertNil(structDecl.genericParameterClause)
         XCTAssertNil(structDecl.typeInheritanceClause)
         XCTAssertNil(structDecl.genericWhereClause)
@@ -90,7 +90,7 @@ class ParserStructDeclarationTests: XCTestCase {
       XCTAssertEqual(structDecl.attributes.count, 1)
       XCTAssertEqual(structDecl.attributes.textDescription, "@a")
       XCTAssertEqual(structDecl.accessLevelModifier, .public)
-      XCTAssertEqual(structDecl.name, "Foo")
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
       XCTAssertNil(structDecl.genericParameterClause)
       XCTAssertNil(structDecl.typeInheritanceClause)
       XCTAssertNil(structDecl.genericWhereClause)
@@ -110,7 +110,7 @@ class ParserStructDeclarationTests: XCTestCase {
 
       XCTAssertTrue(structDecl.attributes.isEmpty)
       XCTAssertNil(structDecl.accessLevelModifier)
-      XCTAssertEqual(structDecl.name, "Foo")
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
       XCTAssertEqual(structDecl.genericParameterClause?.textDescription, "<A, B: C, D: E, F, G>")
       XCTAssertNil(structDecl.typeInheritanceClause)
       XCTAssertNil(structDecl.genericWhereClause)
@@ -127,7 +127,7 @@ class ParserStructDeclarationTests: XCTestCase {
 
       XCTAssertTrue(structDecl.attributes.isEmpty)
       XCTAssertNil(structDecl.accessLevelModifier)
-      XCTAssertEqual(structDecl.name, "Foo")
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
       XCTAssertNil(structDecl.genericParameterClause)
       XCTAssertEqual(structDecl.typeInheritanceClause?.textDescription, ": String")
       XCTAssertNil(structDecl.genericWhereClause)
@@ -147,7 +147,7 @@ class ParserStructDeclarationTests: XCTestCase {
 
       XCTAssertTrue(structDecl.attributes.isEmpty)
       XCTAssertNil(structDecl.accessLevelModifier)
-      XCTAssertEqual(structDecl.name, "Foo")
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
       XCTAssertNil(structDecl.genericParameterClause)
       XCTAssertNil(structDecl.typeInheritanceClause)
       XCTAssertEqual(structDecl.genericWhereClause?.textDescription, "where Foo == Bar")
@@ -167,7 +167,7 @@ class ParserStructDeclarationTests: XCTestCase {
 
       XCTAssertTrue(structDecl.attributes.isEmpty)
       XCTAssertNil(structDecl.accessLevelModifier)
-      XCTAssertEqual(structDecl.name, "Foo")
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
       XCTAssertEqual(structDecl.genericParameterClause?.textDescription, "<T>")
       XCTAssertEqual(structDecl.typeInheritanceClause?.textDescription, ": Array<T>")
       XCTAssertEqual(structDecl.genericWhereClause?.textDescription, "where T: protocol<Int, Double>")
@@ -187,7 +187,7 @@ class ParserStructDeclarationTests: XCTestCase {
 
       XCTAssertTrue(structDecl.attributes.isEmpty)
       XCTAssertNil(structDecl.accessLevelModifier)
-      XCTAssertEqual(structDecl.name, "Foo")
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
       XCTAssertNil(structDecl.genericParameterClause)
       XCTAssertNil(structDecl.typeInheritanceClause)
       XCTAssertNil(structDecl.genericWhereClause)
@@ -218,7 +218,7 @@ class ParserStructDeclarationTests: XCTestCase {
 
       XCTAssertTrue(structDecl.attributes.isEmpty)
       XCTAssertNil(structDecl.accessLevelModifier)
-      XCTAssertEqual(structDecl.name, "Foo")
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
       XCTAssertNil(structDecl.genericParameterClause)
       XCTAssertNil(structDecl.typeInheritanceClause)
       XCTAssertNil(structDecl.genericWhereClause)
@@ -246,7 +246,7 @@ class ParserStructDeclarationTests: XCTestCase {
 
       XCTAssertTrue(structDecl.attributes.isEmpty)
       XCTAssertNil(structDecl.accessLevelModifier)
-      XCTAssertEqual(structDecl.name, "Foo")
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
       XCTAssertNil(structDecl.genericParameterClause)
       XCTAssertNil(structDecl.typeInheritanceClause)
       XCTAssertNil(structDecl.genericWhereClause)
@@ -295,7 +295,7 @@ class ParserStructDeclarationTests: XCTestCase {
 
       XCTAssertTrue(structDecl.attributes.isEmpty)
       XCTAssertNil(structDecl.accessLevelModifier)
-      XCTAssertEqual(structDecl.name, "Foo")
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
       XCTAssertNil(structDecl.genericParameterClause)
       XCTAssertNil(structDecl.typeInheritanceClause)
       XCTAssertNil(structDecl.genericWhereClause)

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -64,10 +64,10 @@ class ParserTupleExpressionTests: XCTestCase {
         return
       }
       let element1 = elements[0]
-      XCTAssertEqual(element1.identifier, "a")
+      ASTTextEqual(element1.identifier, "a")
       XCTAssertTrue(element1.expression is LiteralExpression)
       let element2 = elements[1]
-      XCTAssertEqual(element2.identifier, "b")
+      ASTTextEqual(element2.identifier, "b")
       XCTAssertTrue(element2.expression is IdentifierExpression)
       let element3 = elements[2]
       XCTAssertNil(element3.identifier)
@@ -87,7 +87,7 @@ class ParserTupleExpressionTests: XCTestCase {
         return
       }
       let element1 = elements[0]
-      XCTAssertEqual(element1.identifier, "a")
+      ASTTextEqual(element1.identifier, "a")
       XCTAssertTrue(element1.expression is LiteralExpression)
     })
   }

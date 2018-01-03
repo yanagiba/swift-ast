@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ class ParserEnumCasePatternTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(casePattern.name, "foo")
+      ASTTextEqual(casePattern.name, "foo")
       XCTAssertNil(casePattern.typeIdentifier)
       XCTAssertNil(casePattern.tuplePattern)
     })
@@ -39,7 +39,7 @@ class ParserEnumCasePatternTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(casePattern.name, "foo")
+      ASTTextEqual(casePattern.name, "foo")
       XCTAssertNil(casePattern.typeIdentifier)
       XCTAssertTrue(tuple.elementList.isEmpty)
     })
@@ -52,7 +52,7 @@ class ParserEnumCasePatternTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(casePattern.name, "foo")
+      ASTTextEqual(casePattern.name, "foo")
       XCTAssertNil(casePattern.typeIdentifier)
       XCTAssertEqual(tuple.elementList.count, 3)
     })
@@ -80,7 +80,7 @@ class ParserEnumCasePatternTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(casePattern.name, "bar")
+      ASTTextEqual(casePattern.name, "bar")
       XCTAssertEqual(typeId.textDescription, "Foo")
       XCTAssertNil(casePattern.tuplePattern)
     })
@@ -93,7 +93,7 @@ class ParserEnumCasePatternTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(casePattern.name, "bar")
+      ASTTextEqual(casePattern.name, "bar")
       XCTAssertEqual(typeId.textDescription, "Foo<String>")
       XCTAssertNil(casePattern.tuplePattern)
     })
@@ -108,7 +108,7 @@ class ParserEnumCasePatternTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(casePattern.name, "bar")
+      ASTTextEqual(casePattern.name, "bar")
       XCTAssertEqual(typeId.textDescription, "YNGA.Foo<String>")
       XCTAssertEqual(tuple.textDescription, "(i)")
     })

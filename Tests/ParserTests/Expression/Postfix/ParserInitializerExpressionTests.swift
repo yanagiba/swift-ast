@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ class ParserInitializerExpressionTests: XCTestCase {
       }
 
       XCTAssertTrue(initExpr.postfixExpression is IdentifierExpression)
-      XCTAssertEqual(initExpr.argumentNames, ["bar"])
+      ASTTextEqual(initExpr.argumentNames, ["bar"])
     })
   }
 
@@ -51,7 +51,7 @@ class ParserInitializerExpressionTests: XCTestCase {
       }
 
       XCTAssertTrue(initExpr.postfixExpression is IdentifierExpression)
-      XCTAssertEqual(initExpr.argumentNames, ["_"])
+      ASTTextEqual(initExpr.argumentNames, ["_"])
     })
   }
 
@@ -63,7 +63,7 @@ class ParserInitializerExpressionTests: XCTestCase {
       }
 
       XCTAssertTrue(initExpr.postfixExpression is IdentifierExpression)
-      XCTAssertEqual(initExpr.argumentNames, ["a", "b", "c"])
+      ASTTextEqual(initExpr.argumentNames, ["a", "b", "c"])
     })
   }
 
@@ -79,8 +79,8 @@ class ParserInitializerExpressionTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(outterExpr.argumentNames, ["y"])
-      XCTAssertEqual(innerExpr.argumentNames, ["x"])
+      ASTTextEqual(outterExpr.argumentNames, ["y"])
+      ASTTextEqual(innerExpr.argumentNames, ["x"])
     })
   }
 

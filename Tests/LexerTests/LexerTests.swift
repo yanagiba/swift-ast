@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ class LexerTests: XCTestCase {
       XCTAssertEqual($0, .underscore)
     }
     lexAndTest("_a") {
-      XCTAssertEqual($0, .identifier("_a"))
+      XCTAssertEqual($0, .identifier("_a", false))
     }
   }
 
@@ -226,10 +226,10 @@ class LexerTests: XCTestCase {
     XCTAssertTrue(Token.Kind.postfixOperator("😈").isEqual(to: .postfixOperator("😈")))
     XCTAssertFalse(Token.Kind.postfixOperator("🍙").isEqual(to: .postfixOperator("🍘")))
 
-    XCTAssertTrue(Token.Kind.identifier("😄").isEqual(toKindOf: .identifier("😄")))
-    XCTAssertTrue(Token.Kind.identifier("😄").isEqual(toKindOf: .identifier("😃")))
-    XCTAssertTrue(Token.Kind.identifier("😈").isEqual(to: .identifier("😈")))
-    XCTAssertFalse(Token.Kind.identifier("🍙").isEqual(to: .identifier("🍘")))
+    XCTAssertTrue(Token.Kind.identifier("😄", false).isEqual(toKindOf: .identifier("😄", false)))
+    XCTAssertTrue(Token.Kind.identifier("😄", true).isEqual(toKindOf: .identifier("😃", true)))
+    XCTAssertTrue(Token.Kind.identifier("😈", false).isEqual(to: .identifier("😈", false)))
+    XCTAssertFalse(Token.Kind.identifier("🍙", false).isEqual(to: .identifier("🍘", false)))
 
     XCTAssertTrue(Token.Kind.implicitParameterName(1).isEqual(toKindOf: .implicitParameterName(1)))
     XCTAssertTrue(Token.Kind.implicitParameterName(2).isEqual(toKindOf: .implicitParameterName(3)))
