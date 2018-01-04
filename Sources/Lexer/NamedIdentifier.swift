@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,10 +14,8 @@
    limitations under the License.
 */
 
-public typealias IdentifierList = [Identifier]
-
-extension Collection where Iterator.Element == Identifier {
-  public var textDescription: String {
-    return map({ $0.textDescription }).joined(separator: ", ")
-  }
+public enum NamedIdentifier {
+  case name(String)
+  case backtickedName(String)
+  case wildcard
 }

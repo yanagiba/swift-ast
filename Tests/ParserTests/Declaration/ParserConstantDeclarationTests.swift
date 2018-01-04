@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ class ParserConstantDeclarationTests: XCTestCase {
       }
 
       XCTAssertEqual(constDecl.attributes.count, 1)
-      XCTAssertEqual(constDecl.attributes[0].name, "a")
+      ASTTextEqual(constDecl.attributes[0].name, "a")
       XCTAssertTrue(constDecl.modifiers.isEmpty)
       XCTAssertEqual(constDecl.initializerList.count, 1)
       XCTAssertEqual(constDecl.initializerList[0].textDescription, "foo")
@@ -140,7 +140,7 @@ class ParserConstantDeclarationTests: XCTestCase {
       }
 
       XCTAssertEqual(constDecl.attributes.count, 1)
-      XCTAssertEqual(constDecl.attributes[0].name, "a")
+      ASTTextEqual(constDecl.attributes[0].name, "a")
       XCTAssertEqual(constDecl.modifiers.count, 1)
       XCTAssertEqual(constDecl.modifiers[0], .accessLevel(.fileprivate))
       XCTAssertEqual(constDecl.initializerList.count, 1)

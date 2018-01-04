@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -186,7 +186,7 @@ class ParserInitializerDeclarationTests: XCTestCase {
       XCTAssertEqual(initDecl.parameterList.count, 1)
       let param = initDecl.parameterList[0]
       XCTAssertNil(param.externalName)
-      XCTAssertEqual(param.localName, "bar")
+      ASTTextEqual(param.localName, "bar")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": Bar")
       XCTAssertNil(param.defaultArgumentClause)
       XCTAssertFalse(param.isVarargs)
@@ -215,7 +215,7 @@ class ParserInitializerDeclarationTests: XCTestCase {
       XCTAssertEqual(initDecl.parameterList.count, 1)
       let param = initDecl.parameterList[0]
       XCTAssertNil(param.externalName)
-      XCTAssertEqual(param.localName, "bar")
+      ASTTextEqual(param.localName, "bar")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": inout Bar")
       XCTAssertNil(param.defaultArgumentClause)
       XCTAssertFalse(param.isVarargs)
@@ -243,8 +243,8 @@ class ParserInitializerDeclarationTests: XCTestCase {
 
       XCTAssertEqual(initDecl.parameterList.count, 1)
       let param = initDecl.parameterList[0]
-      XCTAssertEqual(param.externalName, "_b")
-      XCTAssertEqual(param.localName, "bar")
+      ASTTextEqual(param.externalName, "_b")
+      ASTTextEqual(param.localName, "bar")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": Bar")
       XCTAssertNil(param.defaultArgumentClause)
       XCTAssertFalse(param.isVarargs)
@@ -272,8 +272,8 @@ class ParserInitializerDeclarationTests: XCTestCase {
 
       XCTAssertEqual(initDecl.parameterList.count, 1)
       let param = initDecl.parameterList[0]
-      XCTAssertEqual(param.externalName, "_")
-      XCTAssertEqual(param.localName, "bar")
+      ASTTextEqual(param.externalName, "_")
+      ASTTextEqual(param.localName, "bar")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": Bar")
       XCTAssertNil(param.defaultArgumentClause)
       XCTAssertFalse(param.isVarargs)
@@ -302,7 +302,7 @@ class ParserInitializerDeclarationTests: XCTestCase {
       XCTAssertEqual(initDecl.parameterList.count, 1)
       let param = initDecl.parameterList[0]
       XCTAssertNil(param.externalName)
-      XCTAssertEqual(param.localName, "parameterWithDefault")
+      ASTTextEqual(param.localName, "parameterWithDefault")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": Int")
       XCTAssertEqual(param.defaultArgumentClause?.textDescription, "12")
       XCTAssertFalse(param.isVarargs)
@@ -331,7 +331,7 @@ class ParserInitializerDeclarationTests: XCTestCase {
       XCTAssertEqual(initDecl.parameterList.count, 1)
       let param = initDecl.parameterList[0]
       XCTAssertNil(param.externalName)
-      XCTAssertEqual(param.localName, "bar")
+      ASTTextEqual(param.localName, "bar")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": Bar")
       XCTAssertNil(param.defaultArgumentClause)
       XCTAssertTrue(param.isVarargs)

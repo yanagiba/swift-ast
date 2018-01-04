@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   // Declarations
 
   func testVisitClassDeclaration() {
-    let node = ClassDeclaration(name: "test")
+    let node = ClassDeclaration(name: .name("test"))
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
@@ -77,7 +77,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   }
 
   func testVisitEnumDeclaration() {
-    let node = EnumDeclaration(name: "test")
+    let node = EnumDeclaration(name: .name("test"))
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
@@ -98,7 +98,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   }
 
   func testVisitFunctionDeclaration() {
-    let node = FunctionDeclaration(name: "test", signature: FunctionSignature())
+    let node = FunctionDeclaration(name: .name("test"), signature: FunctionSignature())
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
@@ -138,7 +138,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   }
 
   func testVisitPrecedenceGroupDeclaration() {
-    let node = PrecedenceGroupDeclaration(name: "test")
+    let node = PrecedenceGroupDeclaration(name: .name("test"))
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
@@ -148,7 +148,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   }
 
   func testVisitProtocolDeclaration() {
-    let node = ProtocolDeclaration(name: "test")
+    let node = ProtocolDeclaration(name: .name("test"))
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
@@ -158,7 +158,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   }
 
   func testVisitStructDeclaration() {
-    let node = StructDeclaration(name: "test")
+    let node = StructDeclaration(name: .name("test"))
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
@@ -179,7 +179,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   }
 
   func testVisitTypealiasDeclaration() {
-    let node = TypealiasDeclaration(name: "test", assignment: AnyType())
+    let node = TypealiasDeclaration(name: .name("test"), assignment: AnyType())
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
@@ -295,7 +295,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   }
 
   func testVisitLabeledStatement() {
-    let node = LabeledStatement(labelName: "test", statement: ReturnStatement())
+    let node = LabeledStatement(labelName: .name("test"), statement: ReturnStatement())
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
@@ -430,7 +430,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   }
 
   func testVisitIdentifierExpression() {
-    let node = IdentifierExpression(kind: .identifier("test", nil))
+    let node = IdentifierExpression(kind: .identifier(.name("test"), nil))
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
@@ -440,7 +440,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   }
 
   func testVisitImplicitMemberExpression() {
-    let node = ImplicitMemberExpression(identifier: "test")
+    let node = ImplicitMemberExpression(identifier: .name("test"))
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
@@ -450,7 +450,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   }
 
   func testVisitInOutExpression() {
-    let node = InOutExpression(identifier: "test")
+    let node = InOutExpression(identifier: .name("test"))
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)
@@ -579,7 +579,7 @@ class DefaultVisitImplementationTests : XCTestCase {
   }
 
   func testVisitSuperclassExpression() {
-    let node = SuperclassExpression(kind: .method("test"))
+    let node = SuperclassExpression(kind: .method(.name("test")))
     do {
       let result = try defaultVisitor.visit(node)
       XCTAssertTrue(result)

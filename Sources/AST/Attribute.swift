@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@
 public struct Attribute {
   public struct ArgumentClause {
     public enum BalancedToken {
-      case token(String)
+      public typealias AnyString = String // Note: explicitly allow this to be any string
+
+      case token(AnyString)
       case parenthesis([BalancedToken])
       case square([BalancedToken])
       case brace([BalancedToken])
@@ -30,10 +32,10 @@ public struct Attribute {
     }
   }
 
-  public let name: String
+  public let name: Identifier
   public let argumentClause: ArgumentClause?
 
-  public init(name: String, argumentClause: ArgumentClause? = nil) {
+  public init(name: Identifier, argumentClause: ArgumentClause? = nil) {
     self.name = name
     self.argumentClause = argumentClause
   }

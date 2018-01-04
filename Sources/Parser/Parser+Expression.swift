@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -259,7 +259,7 @@ extension Parser {
       return prefixOpExpr
     case .prefixAmp:
       let endLocation = getEndLocation()
-      guard case let .identifier(name) = _lexer.read(.dummyIdentifier) else {
+      guard let name = readNamedIdentifier() else {
         throw _raiseFatal(.expectedIdentifierForInOutExpr)
       }
       let inoutExpr = InOutExpression(identifier: name)
@@ -394,7 +394,7 @@ extension Parser {
 
       repeat {
         if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare {
-          guard let id = _lexer.readNamedIdentifier() else {
+          guard let id = readNamedIdentifier() else {
             throw _raiseFatal(.expectedParameterNameFuncCall)
           }
           _lexer.advance()
@@ -489,7 +489,7 @@ extension Parser {
     }
   }
 
-  private func parseArgumentNames() throws -> ([String], SourceRange)? {
+  private func parseArgumentNames() throws -> ([Identifier], SourceRange)? {
     guard isArgumentNames() else {
       return nil
     }
@@ -498,9 +498,9 @@ extension Parser {
       return nil
     }
     var endLocation: SourceLocation
-    var argumentNames = [String]()
+    var argumentNames = [Identifier]()
     repeat {
-      guard let argumentName = _lexer.readNamedIdentifierOrWildcard() else {
+      guard let argumentName = readNamedIdentifierOrWildcard() else {
         throw _raiseFatal(.expectedArgumentLabel)
       }
       try match(.colon, orFatal: .expectedColonAfterArgumentLabel)
@@ -558,7 +558,7 @@ extension Parser {
       .dummyFloatingPointLiteral,
     ]) {
     case .init:
-      var argumentNames: [String] = []
+      var argumentNames: [Identifier] = []
       if let (argNames, argSrcRange) = try parseArgumentNames() {
         argumentNames = argNames
         endLocation = argSrcRange.end
@@ -582,7 +582,7 @@ extension Parser {
       return postfixSelfExpr
     default:
       endLocation = getEndLocation()
-      guard let id = _lexer.readNamedIdentifier() else {
+      guard let id = readNamedIdentifier() else {
         throw _raiseFatal(.expectedMemberNameExplicitMemberExpr)
       }
 
@@ -658,7 +658,7 @@ extension Parser {
     ////// implicit member expression
     case .dot:
       let endLocation = getEndLocation()
-      guard let id = _lexer.readNamedIdentifier() else {
+      guard let id = readNamedIdentifier() else {
         throw _raiseFatal(.expectedIdentifierAfterDot)
       }
       let implicitNameExpr = ImplicitMemberExpression(identifier: id)
@@ -683,7 +683,7 @@ extension Parser {
       return idExpr
     default:
       // keyword used as identifier
-      if let id = matched.namedIdentifier {
+      if let id = matched.namedIdentifier?.id {
         _lexer.advance()
         let generic = parseGenericArgumentClause()
         let idExpr = IdentifierExpression(kind: .identifier(id, generic))
@@ -715,7 +715,7 @@ extension Parser {
     var elements: [TupleExpression.Element] = []
     repeat {
       if _lexer.look(ahead: 1).kind == .colon {
-        guard let name = _lexer.readNamedIdentifierOrWildcard() else {
+        guard let name = readNamedIdentifierOrWildcard() else {
           throw _raiseFatal(.expectedTupleArgumentLabel)
         }
         _lexer.advance()
@@ -751,7 +751,7 @@ extension Parser {
     repeat {
       var identifier: Identifier?
       if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare {
-        guard let id = _lexer.readNamedIdentifier() else {
+        guard let id = readNamedIdentifier() else {
           throw _raiseFatal(.expectedParameterNameFuncCall)
         }
         _lexer.advance()
@@ -778,7 +778,7 @@ extension Parser {
       endLocation = getEndLocation()
       if _lexer.match(.init) {
         kind = .initializer
-      } else if let id = _lexer.readNamedIdentifier() {
+      } else if let id = readNamedIdentifier() {
         kind = .method(id)
       } else {
         throw _raiseFatal(.expectedIdentifierAfterSuperDotExpr)
@@ -809,7 +809,7 @@ extension Parser {
       endLocation = getEndLocation()
       if _lexer.match(.init) {
         kind = .initializer
-      } else if let id = _lexer.readNamedIdentifier() {
+      } else if let id = readNamedIdentifier() {
         kind = .method(id)
       } else {
         throw _raiseFatal(.expectedIdentifierAfterSelfDotExpr)
@@ -863,7 +863,7 @@ extension Parser {
     var endLocation = getEndLocation()
 
     var type: Type?
-    if case let .identifier(typeName) = _lexer.read(.dummyIdentifier) {
+    if let typeName = readNamedIdentifier() {
       type = TypeIdentifier(names: [TypeIdentifier.TypeName(name: typeName)])
     }
 
@@ -871,10 +871,7 @@ extension Parser {
     while _lexer.match(.dot) {
       endLocation = getEndLocation()
 
-      var componentIdentifier: Identifier?
-      if case let .identifier(componentId) = _lexer.read(.dummyIdentifier) {
-        componentIdentifier = componentId
-      }
+      let componentIdentifier = readNamedIdentifier()
       let postfixes = try parsePostfixes()
 
       try assert(
@@ -892,7 +889,7 @@ extension Parser {
 
   private func parseHashExpression(startLocation: SourceLocation) throws -> PrimaryExpression {
     let endLocation = getEndLocation()
-    guard case let .identifier(magicWord) = _lexer.read(.dummyIdentifier) else {
+    guard case let .identifier(magicWord, false) = _lexer.read(.dummyIdentifier) else {
       throw _raiseFatal(.expectedObjectLiteralIdentifier)
     }
 
@@ -975,7 +972,7 @@ extension Parser {
     */
     startLocation: SourceLocation
   ) throws -> SelectorExpression {
-    func parseArgumentNamesAndRightParen() -> ([String], SourceLocation)? {
+    func parseArgumentNamesAndRightParen() -> ([Identifier], SourceLocation)? {
       do {
         if let (argNames, _) = try parseArgumentNames(), !argNames.isEmpty {
           let endLocation = getEndLocation()
@@ -993,7 +990,7 @@ extension Parser {
     try match(.leftParen, orFatal: .expectedOpenParenSelectorExpr)
 
     var key = ""
-    if case let .identifier(keyword) = _lexer.look().kind, (keyword == "getter" || keyword == "setter") {
+    if case let .identifier(keyword, false) = _lexer.look().kind, (keyword == "getter" || keyword == "setter") {
       key = keyword
       _lexer.advance()
       try match(.colon, orFatal: .expectedColonAfterPropertyKeywordSelectorExpr(keyword))
@@ -1002,9 +999,9 @@ extension Parser {
     let memberIdCp = _lexer.checkPoint()
     let memberIdDiagnosticCp = _diagnosticPool.checkPoint()
     switch _lexer.read([.dummyIdentifier, .self]) {
-    case .identifier(let selfMemberId):
+    case .identifier(let selfMemberId, false):
       if let (argNames, endLocation) = parseArgumentNamesAndRightParen() {
-        let selExpr = SelectorExpression(kind: .selfMember(selfMemberId, argNames))
+        let selExpr = SelectorExpression(kind: .selfMember(.name(selfMemberId), argNames))
         selExpr.setSourceRange(startLocation, endLocation)
         return selExpr
       }
@@ -1017,7 +1014,7 @@ extension Parser {
         if case .method(let methodName) = selfExpr.kind,
           let (argNames, endLocation) = parseArgumentNamesAndRightParen()
         {
-          let selExpr = SelectorExpression(kind: .selfMember("self.\(methodName)", argNames))
+          let selExpr = SelectorExpression(kind: .selfMember(.name("self.\(methodName)"), argNames))
           selExpr.setSourceRange(startLocation, endLocation)
           return selExpr
         }
@@ -1276,7 +1273,7 @@ extension Parser {
 
       var params: [ClosureExpression.Signature.ParameterClause.Parameter] = []
       repeat {
-        guard let name = _lexer.readNamedIdentifierOrWildcard() else {
+        guard let name = readNamedIdentifierOrWildcard() else {
           return nil
         }
         guard let typeAnnotation = try? parseTypeAnnotation() else {
@@ -1297,8 +1294,12 @@ extension Parser {
       return params
     }
 
-    func parseParameterName() -> String? {
-      guard let id = _lexer.look().kind.namedIdentifierOrWildcard, id != "in", id != "throws" else {
+    func parseParameterName() -> Identifier? {
+      guard
+        let id = _lexer.look().kind.namedIdentifierOrWildcard?.id,
+        id.textDescription != "in",
+        id.textDescription != "throws"
+      else {
         return nil
       }
       return id

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -31,9 +31,11 @@ class ParserSelfExpressionTests: XCTestCase {
 
   func testSelfMethodExpression() {
     parseExpressionAndTest("self.foo", "self.foo", testClosure: { expr in
-      guard let selfExpr = expr as? SelfExpression,
+      guard
+        let selfExpr = expr as? SelfExpression,
         case .method(let name) = selfExpr.kind,
-        name == "foo" else {
+        name.isSyntacticallyEqual(to: .name("foo"))
+      else {
         XCTFail("Failed in getting a self expression")
         return
       }

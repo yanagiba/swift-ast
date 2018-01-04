@@ -191,7 +191,7 @@ class ParserLiteralExpressionTests: XCTestCase {
         "\"1 2 \\(x)\"",
         [
           LiteralExpression(kind: .staticString("1 2 ", "")),
-          IdentifierExpression(kind: .identifier("x", nil)),
+          IdentifierExpression(kind: .identifier(.name("x"), nil)),
         ]
       ),
       (
@@ -202,7 +202,7 @@ class ParserLiteralExpressionTests: XCTestCase {
           LiteralExpression(kind: .staticString(" ", "")),
           LiteralExpression(kind: .staticString("1 + 2", "\"1 + 2\"")),
           LiteralExpression(kind: .staticString(" ", "")),
-          IdentifierExpression(kind: .identifier("x", nil)),
+          IdentifierExpression(kind: .identifier(.name("x"), nil)),
           LiteralExpression(kind: .staticString(" 456", "")),
         ]
       ),
@@ -445,8 +445,11 @@ class ParserLiteralExpressionTests: XCTestCase {
         } else if let identifierExpr = expectedExpr as? IdentifierExpression {
           switch identifierExpr.kind {
           case let .identifier(name, nil):
-            guard let ee = e as? IdentifierExpression,
-              case let .identifier(en, nil) = ee.kind, name == en else {
+            guard
+              let ee = e as? IdentifierExpression,
+              case let .identifier(en, nil) = ee.kind,
+              name.isSyntacticallyEqual(to: en)
+            else {
               XCTFail("Failed in parsing a correct identifier expression, expected: \(name)")
               return
             }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -46,9 +46,9 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitClassDeclaration() {
     let node = ClassDeclaration(
-      name: "test",
+      name: .name("test"),
       members: [
-        .declaration(StructDeclaration(name: "test")),
+        .declaration(StructDeclaration(name: .name("test"))),
         .compilerControl(CompilerControlStatement(kind: .endif)),
       ]
     )
@@ -86,9 +86,9 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitEnumDeclaration() {
     let node = EnumDeclaration(
-      name: "test",
+      name: .name("test"),
       members: [
-        .declaration(StructDeclaration(name: "test")),
+        .declaration(StructDeclaration(name: .name("test"))),
         .compilerControl(CompilerControlStatement(kind: .endif)),
         .rawValue(EnumDeclaration.RawValueStyleEnumCase(cases: [])),
       ]
@@ -106,7 +106,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       type: TypeIdentifier(),
       typeInheritanceClause: nil,
       members: [
-        .declaration(StructDeclaration(name: "test")),
+        .declaration(StructDeclaration(name: .name("test"))),
         .compilerControl(CompilerControlStatement(kind: .endif)),
       ]
     )
@@ -120,15 +120,15 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitFunctionDeclaration() {
     let node = FunctionDeclaration(
-      name: "test",
+      name: .name("test"),
       signature: FunctionSignature(
         parameterList: [
           FunctionSignature.Parameter(
-            localName: "test",
+            localName: .name("test"),
             typeAnnotation: TypeAnnotation(type: AnyType())
           ),
           FunctionSignature.Parameter(
-            localName: "test",
+            localName: .name("test"),
             typeAnnotation: TypeAnnotation(type: AnyType()),
             defaultArgumentClause: WildcardExpression()
           ),
@@ -158,11 +158,11 @@ class DefaultTraverseImplementationTests : XCTestCase {
     let node = InitializerDeclaration(
       parameterList: [
         FunctionSignature.Parameter(
-          localName: "test",
+          localName: .name("test"),
           typeAnnotation: TypeAnnotation(type: AnyType())
         ),
         FunctionSignature.Parameter(
-          localName: "test",
+          localName: .name("test"),
           typeAnnotation: TypeAnnotation(type: AnyType()),
           defaultArgumentClause: WildcardExpression()
         ),
@@ -188,7 +188,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitPrecedenceGroupDeclaration() {
-    let node = PrecedenceGroupDeclaration(name: "test")
+    let node = PrecedenceGroupDeclaration(name: .name("test"))
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
@@ -199,19 +199,19 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitProtocolDeclaration() {
     let node = ProtocolDeclaration(
-      name: "test",
+      name: .name("test"),
       members: [
-        .associatedType(ProtocolDeclaration.AssociativityTypeMember(name: "test")),
+        .associatedType(ProtocolDeclaration.AssociativityTypeMember(name: .name("test"))),
         .method(ProtocolDeclaration.MethodMember(
-          name: "test",
+          name: .name("test"),
           signature: FunctionSignature(
             parameterList: [
               FunctionSignature.Parameter(
-                localName: "test",
+                localName: .name("test"),
                 typeAnnotation: TypeAnnotation(type: AnyType())
               ),
               FunctionSignature.Parameter(
-                localName: "test",
+                localName: .name("test"),
                 typeAnnotation: TypeAnnotation(type: AnyType()),
                 defaultArgumentClause: WildcardExpression()
               ),
@@ -221,11 +221,11 @@ class DefaultTraverseImplementationTests : XCTestCase {
         .initializer(ProtocolDeclaration.InitializerMember(
           parameterList: [
             FunctionSignature.Parameter(
-              localName: "test",
+              localName: .name("test"),
               typeAnnotation: TypeAnnotation(type: AnyType())
             ),
             FunctionSignature.Parameter(
-              localName: "test",
+              localName: .name("test"),
               typeAnnotation: TypeAnnotation(type: AnyType()),
               defaultArgumentClause: WildcardExpression()
             ),
@@ -234,11 +234,11 @@ class DefaultTraverseImplementationTests : XCTestCase {
         .subscript(ProtocolDeclaration.SubscriptMember(
           parameterList: [
             FunctionSignature.Parameter(
-              localName: "test",
+              localName: .name("test"),
               typeAnnotation: TypeAnnotation(type: AnyType())
             ),
             FunctionSignature.Parameter(
-              localName: "test",
+              localName: .name("test"),
               typeAnnotation: TypeAnnotation(type: AnyType()),
               defaultArgumentClause: WildcardExpression()
             ),
@@ -261,9 +261,9 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitStructDeclaration() {
     let node = StructDeclaration(
-      name: "test",
+      name: .name("test"),
       members: [
-        .declaration(StructDeclaration(name: "test")),
+        .declaration(StructDeclaration(name: .name("test"))),
         .compilerControl(CompilerControlStatement(kind: .endif)),
       ]
     )
@@ -279,11 +279,11 @@ class DefaultTraverseImplementationTests : XCTestCase {
     let node = SubscriptDeclaration(
       parameterList: [
         FunctionSignature.Parameter(
-          localName: "test",
+          localName: .name("test"),
           typeAnnotation: TypeAnnotation(type: AnyType())
         ),
         FunctionSignature.Parameter(
-          localName: "test",
+          localName: .name("test"),
           typeAnnotation: TypeAnnotation(type: AnyType()),
           defaultArgumentClause: WildcardExpression()
         ),
@@ -331,7 +331,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitTypealiasDeclaration() {
-    let node = TypealiasDeclaration(name: "test", assignment: AnyType())
+    let node = TypealiasDeclaration(name: .name("test"), assignment: AnyType())
     do {
       let result = try defaultVisitor.traverse(node as Declaration)
       XCTAssertTrue(result)
@@ -356,7 +356,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitVariableDeclarationWithCodeBlock() {
     let node = VariableDeclaration(
-      variableName: "test",
+      variableName: .name("test"),
       typeAnnotation: TypeAnnotation(type: AnyType()),
       codeBlock: CodeBlock()
     )
@@ -370,7 +370,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitVariableDeclarationWithGetterSetterBlock() {
     let node = VariableDeclaration(
-      variableName: "test",
+      variableName: .name("test"),
       typeAnnotation: TypeAnnotation(type: AnyType()),
       getterSetterBlock: GetterSetterBlock(
         getter: GetterSetterBlock.GetterClause(codeBlock: CodeBlock()),
@@ -387,7 +387,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitVariableDeclarationWithWillSetDidSetBlock() {
     let node = VariableDeclaration(
-      variableName: "test",
+      variableName: .name("test"),
       initializer: WildcardExpression(),
       willSetDidSetBlock: WillSetDidSetBlock(
         willSetClause: WillSetDidSetBlock.WillSetClause(codeBlock: CodeBlock()),
@@ -404,7 +404,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
 
   func testVisitVariableDeclarationWithGetterSetterKeywordBlock() {
     let node = VariableDeclaration(
-      variableName: "test",
+      variableName: .name("test"),
       typeAnnotation: TypeAnnotation(type: AnyType()),
       getterSetterKeywordBlock: GetterSetterKeywordBlock(
         getter: GetterSetterKeywordBlock.GetterKeywordClause()
@@ -541,7 +541,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitLabeledStatement() {
-    let node = LabeledStatement(labelName: "test", statement: ReturnStatement())
+    let node = LabeledStatement(labelName: .name("test"), statement: ReturnStatement())
     do {
       let result = try defaultVisitor.traverse(node as Statement)
       XCTAssertTrue(result)
@@ -661,9 +661,10 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitExplicitMemberExpression() {
     let nodes = [
       ExplicitMemberExpression(kind: .tuple(WildcardExpression(), 0)),
-      ExplicitMemberExpression(kind: .namedType(WildcardExpression(), "test")),
-      ExplicitMemberExpression(kind: .generic(WildcardExpression(), "test", GenericArgumentClause(argumentList: []))),
-      ExplicitMemberExpression(kind: .argument(WildcardExpression(), "test", [])),
+      ExplicitMemberExpression(kind: .namedType(WildcardExpression(), .name("test"))),
+      ExplicitMemberExpression(kind:
+        .generic(WildcardExpression(), .name("test"), GenericArgumentClause(argumentList: []))),
+      ExplicitMemberExpression(kind: .argument(WildcardExpression(), .name("test"), [])),
     ]
     do {
       for node in nodes {
@@ -690,11 +691,11 @@ class DefaultTraverseImplementationTests : XCTestCase {
       postfixExpression: WildcardExpression(),
       argumentClause: [
         .expression(WildcardExpression()),
-        .namedExpression("test", WildcardExpression()),
+        .namedExpression(.name("test"), WildcardExpression()),
         .memoryReference(WildcardExpression()),
-        .namedMemoryReference("test", WildcardExpression()),
+        .namedMemoryReference(.name("test"), WildcardExpression()),
         .operator("test"),
-        .namedOperator("test", "test"),
+        .namedOperator(.name("test"), "test"),
       ],
       trailingClosure: ClosureExpression()
     )
@@ -707,7 +708,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitIdentifierExpression() {
-    let node = IdentifierExpression(kind: .identifier("test", nil))
+    let node = IdentifierExpression(kind: .identifier(.name("test"), nil))
     do {
       let result = try defaultVisitor.traverse(node as Expression)
       XCTAssertTrue(result)
@@ -717,7 +718,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitImplicitMemberExpression() {
-    let node = ImplicitMemberExpression(identifier: "test")
+    let node = ImplicitMemberExpression(identifier: .name("test"))
     do {
       let result = try defaultVisitor.traverse(node as Expression)
       XCTAssertTrue(result)
@@ -727,7 +728,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   }
 
   func testVisitInOutExpression() {
-    let node = InOutExpression(identifier: "test")
+    let node = InOutExpression(identifier: .name("test"))
     do {
       let result = try defaultVisitor.traverse(node as Expression)
       XCTAssertTrue(result)
@@ -836,7 +837,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       SelectorExpression(kind: .selector(WildcardExpression())),
       SelectorExpression(kind: .getter(WildcardExpression())),
       SelectorExpression(kind: .setter(WildcardExpression())),
-      SelectorExpression(kind: .selfMember("test", [])),
+      SelectorExpression(kind: .selfMember(.name("test"), [])),
     ]
     do {
       for node in nodes {
@@ -924,7 +925,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitTupleExpression() {
     let node = TupleExpression(elementList: [
       TupleExpression.Element(expression: WildcardExpression()),
-      TupleExpression.Element(identifier: "test", expression: WildcardExpression()),
+      TupleExpression.Element(identifier: .name("test"), expression: WildcardExpression()),
     ])
     do {
       let result = try defaultVisitor.traverse(node as Expression)

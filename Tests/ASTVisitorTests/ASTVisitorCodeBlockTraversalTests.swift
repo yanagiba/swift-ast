@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ class ASTVisitorCodeBlockTraversalTests : XCTestCase {
   private let codeBlock = CodeBlock(statements: [
     OperatorDeclaration(kind: .prefix("😋")),
     DeferStatement(codeBlock: CodeBlock()),
-    IdentifierExpression(kind: .identifier("🍱", nil)),
+    IdentifierExpression(kind: .identifier(.name("🍱"), nil)),
   ])
 
   class DefaultVisitor : ASTVisitor {

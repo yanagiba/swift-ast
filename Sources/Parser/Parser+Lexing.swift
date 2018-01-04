@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -36,6 +36,43 @@ extension Parser {
   }
 
   func readIdentifier(_ id: String, orFatal fatalError: ParserErrorKind) throws {
-    try assert(_lexer.read(.dummyIdentifier) == .identifier(id), orFatal: fatalError)
+    try assert(_lexer.read(.dummyIdentifier) == .identifier(id, false), orFatal: fatalError)
+  }
+
+  func readNamedIdentifier() -> Identifier? {
+    guard let s = _lexer.look().kind.namedIdentifier else {
+      return nil
+    }
+    _lexer.advance()
+    return s.id
+  }
+
+  func readNamedIdentifierOrWildcard() -> Identifier? {
+    guard let s = _lexer.look().kind.namedIdentifierOrWildcard else {
+      return nil
+    }
+    _lexer.advance()
+    return s.id
+  }
+
+  @discardableResult func readUntilEOL() -> String {
+    var str = ""
+    while let scalar = _lexer.lookUnicodeScalar() {
+      guard scalar != "\n" else { return str }
+
+      _lexer.advanceChar()
+      str += String(scalar)
+    }
+    return str
+  }
+}
+
+extension NamedIdentifier {
+  var id: Identifier {
+    switch self {
+    case .name(let n): return .name(n)
+    case .backtickedName(let n): return .backtickedName(n)
+    case .wildcard: return .wildcard
+    }
   }
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ class ParserSubscriptDeclarationTests: XCTestCase {
       }
 
       XCTAssertEqual(subscriptDecl.attributes.count, 1)
-      XCTAssertEqual(subscriptDecl.attributes[0].name, "a")
+      XCTAssertEqual(subscriptDecl.attributes[0].name.textDescription, "a")
       XCTAssertTrue(subscriptDecl.modifiers.isEmpty)
       XCTAssertTrue(subscriptDecl.parameterList.isEmpty)
       XCTAssertTrue(subscriptDecl.resultAttributes.isEmpty)
@@ -101,7 +101,7 @@ class ParserSubscriptDeclarationTests: XCTestCase {
       }
 
       XCTAssertEqual(subscriptDecl.attributes.count, 1)
-      XCTAssertEqual(subscriptDecl.attributes[0].name, "a")
+      XCTAssertEqual(subscriptDecl.attributes[0].name.textDescription, "a")
       XCTAssertEqual(subscriptDecl.modifiers.count, 1)
       XCTAssertEqual(subscriptDecl.modifiers[0], .accessLevel(.fileprivate))
       XCTAssertTrue(subscriptDecl.parameterList.isEmpty)

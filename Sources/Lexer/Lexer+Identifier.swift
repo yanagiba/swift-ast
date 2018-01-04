@@ -45,7 +45,7 @@ extension Lexer /* identifier */ {
     }
     _consume(.backtick)
 
-    return .identifier(idString)
+    return .identifier(idString, true)
   }
 
   func lexIdentifierOrKeyword() -> Token.Kind {
@@ -60,7 +60,7 @@ extension Lexer /* identifier */ {
     if let keywordKind = keywordMapping[idString] {
       return keywordKind
     }
-    return .identifier(idString)
+    return .identifier(idString, false)
   }
 }
 

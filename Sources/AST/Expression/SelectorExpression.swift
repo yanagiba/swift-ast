@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -43,9 +43,9 @@ public class SelectorExpression : ASTNode, PrimaryExpression {
     case .setter(let expr):
       return "#selector(setter: \(expr.textDescription))"
     case let .selfMember(identifier, argumentNames):
-      var textDesc = identifier
+      var textDesc = identifier.textDescription
       if !argumentNames.isEmpty {
-        let argumentNamesDesc = argumentNames.map({ "\($0):" }).joined()
+        let argumentNamesDesc = argumentNames.map({ "\($0.textDescription):" }).joined()
         textDesc += "(\(argumentNamesDesc))"
       }
       return "#selector(\(textDesc))"

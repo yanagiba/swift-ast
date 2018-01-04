@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -122,10 +122,8 @@ extension Parser {
       return typeCastingPttrn
     case .underscore:
       return try parseUnderscoreHeadedPattern(config: config, startRange: lookedRange)
-    case .identifier(let id):
-      return try parseIdentifierHeadedPattern(id, config: config, startRange: lookedRange)
-    case .Any, .Self, .get, .set, .left, .right, .open, .prefix, .postfix:
-      guard let idHead = patternHead.namedIdentifier else {
+    case .identifier, .Any, .Self, .get, .set, .left, .right, .open, .prefix, .postfix:
+      guard let idHead = patternHead.namedIdentifier?.id else {
         throw _raiseFatal(.expectedPattern)
       }
       return try parseIdentifierHeadedPattern(idHead, config: config, startRange: lookedRange)
@@ -191,7 +189,7 @@ extension Parser {
     config: ParserPatternConfig, startLocation: SourceLocation
   ) throws -> EnumCasePattern {
     let endLocation = getEndLocation()
-    guard let name = _lexer.readNamedIdentifier() else {
+    guard let name = readNamedIdentifier() else {
       throw _raiseFatal(.expectedCaseNamePattern)
     }
 
@@ -276,7 +274,7 @@ extension Parser {
       var fromTupleConfig = config
       fromTupleConfig.fromTuplePattern = true
       if _lexer.look(ahead: 1).kind == .colon {
-        guard let id = _lexer.readNamedIdentifierOrWildcard() else {
+        guard let id = readNamedIdentifierOrWildcard() else {
           throw _raiseFatal(.expectedIdentifierTuplePattern)
         }
         _lexer.advance()

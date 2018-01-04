@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ class ParserTypealiasDeclarationTests: XCTestCase {
 
       XCTAssertTrue(typealiasDecl.attributes.isEmpty)
       XCTAssertNil(typealiasDecl.accessLevelModifier)
-      XCTAssertEqual(typealiasDecl.name, "Foo")
+      XCTAssertEqual(typealiasDecl.name.textDescription, "Foo")
       XCTAssertNil(typealiasDecl.generic)
       XCTAssertTrue(typealiasDecl.assignment is TypeIdentifier)
       XCTAssertEqual(typealiasDecl.assignment.textDescription, "Bar")
@@ -46,7 +46,7 @@ class ParserTypealiasDeclarationTests: XCTestCase {
       XCTAssertEqual(typealiasDecl.attributes.count, 3)
       XCTAssertEqual(typealiasDecl.attributes.textDescription, "@a @b @c")
       XCTAssertNil(typealiasDecl.accessLevelModifier)
-      XCTAssertEqual(typealiasDecl.name, "Foo")
+      XCTAssertEqual(typealiasDecl.name.textDescription, "Foo")
       XCTAssertNil(typealiasDecl.generic)
       XCTAssertTrue(typealiasDecl.assignment is TypeIdentifier)
       XCTAssertEqual(typealiasDecl.assignment.textDescription, "Bar")
@@ -66,7 +66,7 @@ class ParserTypealiasDeclarationTests: XCTestCase {
 
         XCTAssertTrue(typealiasDecl.attributes.isEmpty)
         XCTAssertEqual(typealiasDecl.accessLevelModifier, modifier)
-        XCTAssertEqual(typealiasDecl.name, "Foo")
+        XCTAssertEqual(typealiasDecl.name.textDescription, "Foo")
         XCTAssertNil(typealiasDecl.generic)
         XCTAssertTrue(typealiasDecl.assignment is TypeIdentifier)
         XCTAssertEqual(typealiasDecl.assignment.textDescription, "Bar")
@@ -87,7 +87,7 @@ class ParserTypealiasDeclarationTests: XCTestCase {
       XCTAssertEqual(typealiasDecl.attributes.count, 1)
       XCTAssertEqual(typealiasDecl.attributes.textDescription, "@a")
       XCTAssertEqual(typealiasDecl.accessLevelModifier, .public)
-      XCTAssertEqual(typealiasDecl.name, "Foo")
+      XCTAssertEqual(typealiasDecl.name.textDescription, "Foo")
       XCTAssertNil(typealiasDecl.generic)
       XCTAssertTrue(typealiasDecl.assignment is TypeIdentifier)
       XCTAssertEqual(typealiasDecl.assignment.textDescription, "Bar")
@@ -106,7 +106,7 @@ class ParserTypealiasDeclarationTests: XCTestCase {
 
       XCTAssertTrue(typealiasDecl.attributes.isEmpty)
       XCTAssertNil(typealiasDecl.accessLevelModifier)
-      XCTAssertEqual(typealiasDecl.name, "Foo")
+      XCTAssertEqual(typealiasDecl.name.textDescription, "Foo")
       XCTAssertEqual(typealiasDecl.generic?.textDescription, "<A, B: C, D: E, F, G>")
       XCTAssertTrue(typealiasDecl.assignment is FunctionType)
       XCTAssertEqual(typealiasDecl.assignment.textDescription, "(a, b, c) throws -> Bar<A, B, C>")
@@ -126,7 +126,7 @@ class ParserTypealiasDeclarationTests: XCTestCase {
       XCTAssertEqual(typealiasDecl.attributes.count, 1)
       XCTAssertEqual(typealiasDecl.attributes.textDescription, "@a")
       XCTAssertEqual(typealiasDecl.accessLevelModifier, .public)
-      XCTAssertEqual(typealiasDecl.name, "Foo")
+      XCTAssertEqual(typealiasDecl.name.textDescription, "Foo")
       XCTAssertEqual(typealiasDecl.generic?.textDescription, "<A>")
       XCTAssertTrue(typealiasDecl.assignment is TypeIdentifier)
       XCTAssertEqual(typealiasDecl.assignment.textDescription, "Bar")

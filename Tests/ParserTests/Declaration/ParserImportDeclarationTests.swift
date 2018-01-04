@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -29,8 +29,7 @@ class ParserImportDeclarationTests: XCTestCase {
 
       XCTAssertTrue(importDecl.attributes.isEmpty)
       XCTAssertNil(importDecl.kind)
-      XCTAssertEqual(importDecl.path.count, 1)
-      XCTAssertEqual(importDecl.path[0], "foo")
+      ASTTextEqual(importDecl.path, ["foo"])
     })
   }
 
@@ -43,8 +42,7 @@ class ParserImportDeclarationTests: XCTestCase {
 
       XCTAssertTrue(importDecl.attributes.isEmpty)
       XCTAssertNil(importDecl.kind)
-      XCTAssertEqual(importDecl.path.count, 1)
-      XCTAssertEqual(importDecl.path[0], ">>")
+      ASTTextEqual(importDecl.path, [">>"])
     })
   }
 
@@ -57,11 +55,7 @@ class ParserImportDeclarationTests: XCTestCase {
 
       XCTAssertTrue(importDecl.attributes.isEmpty)
       XCTAssertNil(importDecl.kind)
-      XCTAssertEqual(importDecl.path.count, 4)
-      XCTAssertEqual(importDecl.path[0], "A")
-      XCTAssertEqual(importDecl.path[1], "B")
-      XCTAssertEqual(importDecl.path[2], "C")
-      XCTAssertEqual(importDecl.path[3], "<<=")
+      ASTTextEqual(importDecl.path, ["A", "B", "C", "<<="])
     })
   }
 
@@ -73,10 +67,9 @@ class ParserImportDeclarationTests: XCTestCase {
       }
 
       XCTAssertEqual(importDecl.attributes.count, 1)
-      XCTAssertEqual(importDecl.attributes[0].name, "exported")
+      ASTTextEqual(importDecl.attributes[0].name, "exported")
       XCTAssertNil(importDecl.kind)
-      XCTAssertEqual(importDecl.path.count, 1)
-      XCTAssertEqual(importDecl.path[0], "foo")
+      ASTTextEqual(importDecl.path, ["foo"])
     })
   }
 
@@ -90,8 +83,7 @@ class ParserImportDeclarationTests: XCTestCase {
 
         XCTAssertTrue(importDecl.attributes.isEmpty)
         XCTAssertEqual(importDecl.kind, kind)
-        XCTAssertEqual(importDecl.path.count, 1)
-        XCTAssertEqual(importDecl.path[0], "foo")
+        ASTTextEqual(importDecl.path, ["foo"])
       })
     }
 

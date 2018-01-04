@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ class ParserLabeledStatementTests: XCTestCase {
         XCTFail("Failed in parsing a labeled statement.")
         return
       }
-      XCTAssertEqual(labeledStmt.labelName, "foo")
+      XCTAssertEqual(labeledStmt.labelName.textDescription, "foo")
       XCTAssertTrue(labeledStmt.statement is ForInStatement)
     })
   }
@@ -37,7 +37,7 @@ class ParserLabeledStatementTests: XCTestCase {
         XCTFail("Failed in parsing a labeled statement.")
         return
       }
-      XCTAssertEqual(labeledStmt.labelName, "foo")
+      XCTAssertEqual(labeledStmt.labelName.textDescription, "foo")
       XCTAssertTrue(labeledStmt.statement is WhileStatement)
     })
   }
@@ -48,7 +48,7 @@ class ParserLabeledStatementTests: XCTestCase {
         XCTFail("Failed in parsing a labeled statement.")
         return
       }
-      XCTAssertEqual(labeledStmt.labelName, "foo")
+      XCTAssertEqual(labeledStmt.labelName.textDescription, "foo")
       XCTAssertTrue(labeledStmt.statement is RepeatWhileStatement)
     })
   }
@@ -59,7 +59,7 @@ class ParserLabeledStatementTests: XCTestCase {
         XCTFail("Failed in parsing a labeled statement.")
         return
       }
-      XCTAssertEqual(labeledStmt.labelName, "foo")
+      XCTAssertEqual(labeledStmt.labelName.textDescription, "foo")
       XCTAssertTrue(labeledStmt.statement is IfStatement)
     })
   }
@@ -70,7 +70,7 @@ class ParserLabeledStatementTests: XCTestCase {
         XCTFail("Failed in parsing a labeled statement.")
         return
       }
-      XCTAssertEqual(labeledStmt.labelName, "foo")
+      XCTAssertEqual(labeledStmt.labelName.textDescription, "foo")
       XCTAssertTrue(labeledStmt.statement is SwitchStatement)
     })
   }
@@ -81,7 +81,7 @@ class ParserLabeledStatementTests: XCTestCase {
         XCTFail("Failed in parsing a labeled statement.")
         return
       }
-      XCTAssertEqual(labeledStmt.labelName, "foo")
+      XCTAssertEqual(labeledStmt.labelName.textDescription, "foo")
       XCTAssertTrue(labeledStmt.statement is DoStatement)
     })
   }

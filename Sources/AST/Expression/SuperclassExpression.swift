@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 public class SuperclassExpression : ASTNode, PrimaryExpression {
   public enum Kind {
-    case method(String) // NOTE: even though this includes functions and properties,
-                        // but Swift PL reference calls it `self-method-expression`
+    case method(Identifier) // NOTE: even though this includes functions and properties,
+                            // but Swift PL reference calls it `self-method-expression`
     case `subscript`([SubscriptArgument])
     case initializer
   }

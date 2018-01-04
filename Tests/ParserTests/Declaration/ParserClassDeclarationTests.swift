@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ class ParserClassDeclarationTests: XCTestCase {
 
       XCTAssertTrue(classDecl.attributes.isEmpty)
       XCTAssertNil(classDecl.accessLevelModifier)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertNil(classDecl.genericWhereClause)
@@ -47,7 +47,7 @@ class ParserClassDeclarationTests: XCTestCase {
       XCTAssertEqual(classDecl.attributes.count, 3)
       XCTAssertEqual(classDecl.attributes.textDescription, "@a @b @c")
       XCTAssertNil(classDecl.accessLevelModifier)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertNil(classDecl.genericWhereClause)
@@ -68,7 +68,7 @@ class ParserClassDeclarationTests: XCTestCase {
 
         XCTAssertTrue(classDecl.attributes.isEmpty)
         XCTAssertEqual(classDecl.accessLevelModifier, modifier)
-        XCTAssertEqual(classDecl.name, "Foo")
+        ASTTextEqual(classDecl.name, "Foo")
         XCTAssertNil(classDecl.genericParameterClause)
         XCTAssertNil(classDecl.typeInheritanceClause)
         XCTAssertNil(classDecl.genericWhereClause)
@@ -90,7 +90,7 @@ class ParserClassDeclarationTests: XCTestCase {
       XCTAssertEqual(classDecl.attributes.count, 1)
       XCTAssertEqual(classDecl.attributes.textDescription, "@a")
       XCTAssertEqual(classDecl.accessLevelModifier, .public)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertNil(classDecl.genericWhereClause)
@@ -111,7 +111,7 @@ class ParserClassDeclarationTests: XCTestCase {
       XCTAssertTrue(classDecl.attributes.isEmpty)
       XCTAssertNil(classDecl.accessLevelModifier)
       XCTAssertTrue(classDecl.isFinal)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertNil(classDecl.genericWhereClause)
@@ -133,7 +133,7 @@ class ParserClassDeclarationTests: XCTestCase {
       XCTAssertEqual(classDecl.attributes.textDescription, "@a")
       XCTAssertEqual(classDecl.accessLevelModifier, .public)
       XCTAssertTrue(classDecl.isFinal)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertNil(classDecl.genericWhereClause)
@@ -155,7 +155,7 @@ class ParserClassDeclarationTests: XCTestCase {
       XCTAssertEqual(classDecl.attributes.textDescription, "@a")
       XCTAssertEqual(classDecl.accessLevelModifier, .public)
       XCTAssertTrue(classDecl.isFinal)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertNil(classDecl.genericWhereClause)
@@ -175,7 +175,7 @@ class ParserClassDeclarationTests: XCTestCase {
 
       XCTAssertTrue(classDecl.attributes.isEmpty)
       XCTAssertNil(classDecl.accessLevelModifier)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertEqual(classDecl.genericParameterClause?.textDescription, "<A, B: C, D: E, F, G>")
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertNil(classDecl.genericWhereClause)
@@ -192,7 +192,7 @@ class ParserClassDeclarationTests: XCTestCase {
 
       XCTAssertTrue(classDecl.attributes.isEmpty)
       XCTAssertNil(classDecl.accessLevelModifier)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertEqual(classDecl.typeInheritanceClause?.textDescription, ": String")
       XCTAssertNil(classDecl.genericWhereClause)
@@ -212,7 +212,7 @@ class ParserClassDeclarationTests: XCTestCase {
 
       XCTAssertTrue(classDecl.attributes.isEmpty)
       XCTAssertNil(classDecl.accessLevelModifier)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertEqual(classDecl.genericWhereClause?.textDescription, "where Foo == Bar")
@@ -232,7 +232,7 @@ class ParserClassDeclarationTests: XCTestCase {
 
       XCTAssertTrue(classDecl.attributes.isEmpty)
       XCTAssertNil(classDecl.accessLevelModifier)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertEqual(classDecl.genericParameterClause?.textDescription, "<T>")
       XCTAssertEqual(classDecl.typeInheritanceClause?.textDescription, ": Array<T>")
       XCTAssertEqual(classDecl.genericWhereClause?.textDescription, "where T: protocol<Int, Double>")
@@ -256,7 +256,7 @@ class ParserClassDeclarationTests: XCTestCase {
 
       XCTAssertTrue(classDecl.attributes.isEmpty)
       XCTAssertNil(classDecl.accessLevelModifier)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertNil(classDecl.genericWhereClause)
@@ -287,7 +287,7 @@ class ParserClassDeclarationTests: XCTestCase {
 
       XCTAssertTrue(classDecl.attributes.isEmpty)
       XCTAssertNil(classDecl.accessLevelModifier)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertNil(classDecl.genericWhereClause)
@@ -315,7 +315,7 @@ class ParserClassDeclarationTests: XCTestCase {
 
       XCTAssertTrue(classDecl.attributes.isEmpty)
       XCTAssertNil(classDecl.accessLevelModifier)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertNil(classDecl.genericWhereClause)
@@ -364,7 +364,7 @@ class ParserClassDeclarationTests: XCTestCase {
 
       XCTAssertTrue(classDecl.attributes.isEmpty)
       XCTAssertNil(classDecl.accessLevelModifier)
-      XCTAssertEqual(classDecl.name, "Foo")
+      ASTTextEqual(classDecl.name, "Foo")
       XCTAssertNil(classDecl.genericParameterClause)
       XCTAssertNil(classDecl.typeInheritanceClause)
       XCTAssertNil(classDecl.genericWhereClause)

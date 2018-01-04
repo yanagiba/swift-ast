@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -150,33 +150,6 @@ public class Lexer {
 
   public func readNext(_ kind: Token.Kind, exactMatch: Bool = false) -> Token.Kind {
     return readNext([kind], exactMatch: exactMatch)
-  }
-
-  public func readNamedIdentifier() -> String? {
-    guard let s = look().kind.namedIdentifier else {
-      return nil
-    }
-    advance()
-    return s
-  }
-
-  public func readNamedIdentifierOrWildcard() -> String? {
-    guard let s = look().kind.namedIdentifierOrWildcard else {
-      return nil
-    }
-    advance()
-    return s
-  }
-
-  @discardableResult public func readUntilEOL() -> String {
-    var str = ""
-    while let scalar = lookUnicodeScalar() {
-      guard scalar != "\n" else { return str }
-
-      advanceChar()
-      str += scalar.string
-    }
-    return str
   }
 
   public func examine(

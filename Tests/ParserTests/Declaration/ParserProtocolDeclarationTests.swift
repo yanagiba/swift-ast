@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
       XCTAssertTrue(protocolDecl.attributes.isEmpty)
       XCTAssertNil(protocolDecl.accessLevelModifier)
-      XCTAssertEqual(protocolDecl.name, "Foo")
+      XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
       XCTAssertNil(protocolDecl.typeInheritanceClause)
       XCTAssertTrue(protocolDecl.members.isEmpty)
     })
@@ -45,7 +45,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
       XCTAssertEqual(protocolDecl.attributes.count, 3)
       XCTAssertEqual(protocolDecl.attributes.textDescription, "@a @b @c")
       XCTAssertNil(protocolDecl.accessLevelModifier)
-      XCTAssertEqual(protocolDecl.name, "Foo")
+      XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
       XCTAssertNil(protocolDecl.typeInheritanceClause)
       XCTAssertTrue(protocolDecl.members.isEmpty)
     })
@@ -64,7 +64,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
         XCTAssertTrue(protocolDecl.attributes.isEmpty)
         XCTAssertEqual(protocolDecl.accessLevelModifier, modifier)
-        XCTAssertEqual(protocolDecl.name, "Foo")
+        XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
         XCTAssertNil(protocolDecl.typeInheritanceClause)
         XCTAssertTrue(protocolDecl.members.isEmpty)
       })
@@ -84,7 +84,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
       XCTAssertEqual(protocolDecl.attributes.count, 1)
       XCTAssertEqual(protocolDecl.attributes.textDescription, "@a")
       XCTAssertEqual(protocolDecl.accessLevelModifier, .public)
-      XCTAssertEqual(protocolDecl.name, "Foo")
+      XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
       XCTAssertNil(protocolDecl.typeInheritanceClause)
       XCTAssertTrue(protocolDecl.members.isEmpty)
     })
@@ -102,7 +102,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
       XCTAssertTrue(protocolDecl.attributes.isEmpty)
       XCTAssertNil(protocolDecl.accessLevelModifier)
-      XCTAssertEqual(protocolDecl.name, "Foo")
+      XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
       XCTAssertEqual(protocolDecl.typeInheritanceClause?.textDescription, ": String")
       XCTAssertTrue(protocolDecl.members.isEmpty)
     })
@@ -126,7 +126,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
       XCTAssertTrue(protocolDecl.attributes.isEmpty)
       XCTAssertNil(protocolDecl.accessLevelModifier)
-      XCTAssertEqual(protocolDecl.name, "Foo")
+      XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
       XCTAssertNil(protocolDecl.typeInheritanceClause)
       XCTAssertEqual(protocolDecl.members.count, 1)
       guard case .property(let member) = protocolDecl.members[0] else {
@@ -135,7 +135,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
       }
       XCTAssertTrue(member.attributes.isEmpty)
       XCTAssertTrue(member.modifiers.isEmpty)
-      XCTAssertEqual(member.name, "bar")
+      XCTAssertEqual(member.name.textDescription, "bar")
       XCTAssertEqual(member.typeAnnotation.textDescription, ": Bar")
       XCTAssertEqual(member.getterSetterKeywordBlock.textDescription, "{\nget\n}")
     })
@@ -189,7 +189,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
       XCTAssertTrue(protocolDecl.attributes.isEmpty)
       XCTAssertNil(protocolDecl.accessLevelModifier)
-      XCTAssertEqual(protocolDecl.name, "Foo")
+      XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
       XCTAssertNil(protocolDecl.typeInheritanceClause)
       XCTAssertEqual(protocolDecl.members.count, 1)
       guard case .method(let member) = protocolDecl.members[0] else {
@@ -198,7 +198,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
       }
       XCTAssertEqual(member.attributes.textDescription, "@discardableResult")
       XCTAssertEqual(member.modifiers.textDescription, "public")
-      XCTAssertEqual(member.name, "foo")
+      XCTAssertEqual(member.name.textDescription, "foo")
       XCTAssertEqual(member.genericParameter?.textDescription, "<String>")
       XCTAssertEqual(member.signature.textDescription, "(a: A, b: B, c: C)")
       XCTAssertEqual(member.genericWhere?.textDescription, "where A: String")
@@ -217,7 +217,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
       XCTAssertTrue(protocolDecl.attributes.isEmpty)
       XCTAssertNil(protocolDecl.accessLevelModifier)
-      XCTAssertEqual(protocolDecl.name, "Foo")
+      XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
       XCTAssertNil(protocolDecl.typeInheritanceClause)
       XCTAssertEqual(protocolDecl.members.count, 1)
       guard case .initializer(let member) = protocolDecl.members[0] else {
@@ -256,7 +256,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
       XCTAssertTrue(protocolDecl.attributes.isEmpty)
       XCTAssertNil(protocolDecl.accessLevelModifier)
-      XCTAssertEqual(protocolDecl.name, "Foo")
+      XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
       XCTAssertNil(protocolDecl.typeInheritanceClause)
       XCTAssertEqual(protocolDecl.members.count, 1)
       guard case .subscript(let member) = protocolDecl.members[0] else {
@@ -288,7 +288,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
       XCTAssertTrue(protocolDecl.attributes.isEmpty)
       XCTAssertNil(protocolDecl.accessLevelModifier)
-      XCTAssertEqual(protocolDecl.name, "Foo")
+      XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
       XCTAssertNil(protocolDecl.typeInheritanceClause)
       XCTAssertEqual(protocolDecl.members.count, 1)
       guard case .associatedType(let member) = protocolDecl.members[0] else {
@@ -297,7 +297,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
       }
       XCTAssertEqual(member.attributes.textDescription, "@a")
       XCTAssertEqual(member.accessLevelModifier?.textDescription, "fileprivate")
-      XCTAssertEqual(member.name, "foo")
+      XCTAssertEqual(member.name.textDescription, "foo")
       XCTAssertEqual(member.typeInheritance?.textDescription, ": Bar")
       XCTAssertEqual(member.assignmentType?.textDescription, "bar")
       XCTAssertEqual(member.genericWhere?.textDescription, "where Foo: Bar")
@@ -330,7 +330,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
       XCTAssertTrue(protocolDecl.attributes.isEmpty)
       XCTAssertNil(protocolDecl.accessLevelModifier)
-      XCTAssertEqual(protocolDecl.name, "Foo")
+      XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
       XCTAssertNil(protocolDecl.typeInheritanceClause)
       XCTAssertEqual(protocolDecl.members.count, 3)
       guard case .compilerControl(_) = protocolDecl.members[0] else {
@@ -377,7 +377,7 @@ class ParserProtocolDeclarationTests: XCTestCase {
 
       XCTAssertTrue(protocolDecl.attributes.isEmpty)
       XCTAssertNil(protocolDecl.accessLevelModifier)
-      XCTAssertEqual(protocolDecl.name, "Foo")
+      XCTAssertEqual(protocolDecl.name.textDescription, "Foo")
       XCTAssertNil(protocolDecl.typeInheritanceClause)
       XCTAssertEqual(protocolDecl.members.count, 5)
       XCTAssertEqual(protocolDecl.members[0].textDescription, "var a: A {\nget\n}")

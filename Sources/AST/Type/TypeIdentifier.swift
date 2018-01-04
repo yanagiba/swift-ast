@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 public class TypeIdentifier : TypeBase {
   public struct TypeName {
-    public let name: String
+    public let name: Identifier
     public let genericArgumentClause: GenericArgumentClause?
 
     public init(
-      name: String, genericArgumentClause: GenericArgumentClause? = nil
+      name: Identifier, genericArgumentClause: GenericArgumentClause? = nil
     ) {
       self.name = name
       self.genericArgumentClause = genericArgumentClause

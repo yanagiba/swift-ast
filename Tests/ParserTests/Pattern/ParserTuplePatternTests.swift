@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -76,19 +76,19 @@ class ParserTuplePatternTests: XCTestCase {
         XCTFail("Failed in getting a pattern `foo`.")
         return
       }
-      XCTAssertEqual(name1, "a")
+      ASTTextEqual(name1, "a")
       XCTAssertTrue(element1 is IdentifierPattern)
       guard case let .namedPattern(name2, element2) = elements[1] else {
         XCTFail("Failed in getting a pattern `_`.")
         return
       }
-      XCTAssertEqual(name2, "b")
+      ASTTextEqual(name2, "b")
       XCTAssertTrue(element2 is WildcardPattern)
       guard case let .namedPattern(name3, element3) = elements[2] else {
         XCTFail("Failed in getting a pattern `bar`.")
         return
       }
-      XCTAssertEqual(name3, "c")
+      ASTTextEqual(name3, "c")
       XCTAssertTrue(element3 is IdentifierPattern)
     })
   }

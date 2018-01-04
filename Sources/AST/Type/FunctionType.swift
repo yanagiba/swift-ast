@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 public class FunctionType : TypeBase {
   public struct Argument {
-    public let externalName: String?
-    public let localName: String?
+    public let externalName: Identifier?
+    public let localName: Identifier?
     public let type: Type
     public let attributes: Attributes
     public let isInOutParameter: Bool
@@ -25,8 +25,8 @@ public class FunctionType : TypeBase {
 
     public init(
       type: Type,
-      externalName: String? = nil,
-      localName: String? = nil,
+      externalName: Identifier? = nil,
+      localName: Identifier? = nil,
       attributes: Attributes = [],
       isInOutParameter: Bool = false,
       isVariadic: Bool = false
