@@ -446,8 +446,6 @@ class ParserFunctionCallExpressionTests: XCTestCase {
         return
       }
 
-      print(funcCallExpr.postfixExpression)
-
       guard let explicitMemberExpr = funcCallExpr.postfixExpression as? ExplicitMemberExpression,
         case let .namedType(postfixExpr, identifier) = explicitMemberExpr.kind else {
         XCTFail("Failed in getting an explicit member expression")
