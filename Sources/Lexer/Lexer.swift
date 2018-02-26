@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -48,9 +48,7 @@ public class Lexer {
     _checkpoints = [:]
   }
 
-  func _consume(
-    _ consumed: Role? = nil, andAdvanceScannerBy numerOfUnicodeScalar: Int = 1
-  ) {
+  func _consume(_ consumed: Role? = nil, andAdvanceScannerBy numerOfUnicodeScalar: Int = 1) {
     if let consumed = consumed {
       _consumedRoles.append(consumed)
     }
@@ -58,8 +56,7 @@ public class Lexer {
   }
 
   public func _getCurrentLocation() -> SourceLocation {
-    return SourceLocation(identifier: _source.identifier,
-      line: _scanner.line, column: _scanner.column)
+    return SourceLocation(identifier: _source.identifier, line: _scanner.line, column: _scanner.column)
   }
 
   public func matchUnicodeScalar( /*
@@ -78,9 +75,7 @@ public class Lexer {
       return true
     }
 
-    func consumeOperatorToken(
-      _ p: String, newToken: (String) -> Token.Kind
-    ) -> Bool {
+    func consumeOperatorToken(_ p: String, newToken: (String) -> Token.Kind) -> Bool {
       if p == startStr {
         return consumeTokenAndAdvance()
       } else if p.hasPrefix(startStr) && splitOperator {
@@ -97,9 +92,7 @@ public class Lexer {
       }
     }
 
-    if immediateFollow &&
-      !looked.roles.filter({ $0 == .space || $0 == .lineFeed }).isEmpty
-    {
+    if immediateFollow && !looked.roles.filter({ $0 == .space || $0 == .lineFeed }).isEmpty {
       return false
     }
 
@@ -143,9 +136,7 @@ public class Lexer {
     return match([kind], exactMatch: exactMatch)
   }
 
-  public func read(
-    _ kinds: [Token.Kind], exactMatch: Bool = false
-  ) -> Token.Kind {
+  public func read(_ kinds: [Token.Kind], exactMatch: Bool = false) -> Token.Kind {
     return examine(kinds, exactMatch: exactMatch).1
   }
 
@@ -153,43 +144,12 @@ public class Lexer {
     return read([kind], exactMatch: exactMatch)
   }
 
-  public func readNext(
-    _ kinds: [Token.Kind], exactMatch: Bool = false
-  ) -> Token.Kind {
+  public func readNext(_ kinds: [Token.Kind], exactMatch: Bool = false) -> Token.Kind {
     return examine(kinds, next: true, exactMatch: exactMatch).1
   }
 
-  public func readNext(
-    _ kind: Token.Kind, exactMatch: Bool = false
-  ) -> Token.Kind {
+  public func readNext(_ kind: Token.Kind, exactMatch: Bool = false) -> Token.Kind {
     return readNext([kind], exactMatch: exactMatch)
-  }
-
-  public func readNamedIdentifier() -> String? {
-    guard let s = look().kind.namedIdentifier else {
-      return nil
-    }
-    advance()
-    return s
-  }
-
-  public func readNamedIdentifierOrWildcard() -> String? {
-    guard let s = look().kind.namedIdentifierOrWildcard else {
-      return nil
-    }
-    advance()
-    return s
-  }
-
-  @discardableResult public func readUntilEOL() -> String {
-    var str = ""
-    while let scalar = lookUnicodeScalar() {
-      guard scalar != "\n" else { return str }
-
-      advanceChar()
-      str += scalar.string
-    }
-    return str
   }
 
   public func examine(

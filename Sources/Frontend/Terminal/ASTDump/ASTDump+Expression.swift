@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -210,7 +210,8 @@ extension KeyPathExpression : TTYASTDumpRepresentable {
       body += "\n" + "type: `\(type.textDescription)`".indented
     }
     for (offset, element) in components.enumerated() {
-      body += "\n" + "\(offset): component: `\(element)`".indented
+      let component = (element.0?.textDescription ?? "") + element.1.map({ $0.textDescription }).joined()
+      body += "\n" + "\(offset): component: `\(component)`".indented
     }
     return "\(head)\(body)"
   }
@@ -261,6 +262,8 @@ extension LiteralExpression : TTYASTDumpRepresentable {
           .joined(separator: "\n")
           .indented
       }
+    case .playground(let playgroundLiteral):
+      body += "kind: `playground`, literal: `\(playgroundLiteral.textDescription)`"
     }
     return "\(head)\n\(body)"
   }
@@ -320,7 +323,7 @@ extension SelectorExpression : TTYASTDumpRepresentable {
     case .setter(let expr):
       body = "setter: " + expr.ttyDump
     case let .selfMember(identifier, argumentNames):
-      var textDesc = identifier
+      var textDesc = identifier.textDescription
       if !argumentNames.isEmpty {
         let argumentNamesDesc = argumentNames.map({ "\($0):" }).joined()
         textDesc += "(\(argumentNamesDesc))"

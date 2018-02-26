@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -28,16 +28,12 @@ extension Parser {
       let param = try parseGenericParameter()
       parameters.append(param)
     } while _lexer.match(.comma)
-    if !_matchRightChevron() {
-      try _raiseError(.expectedRightChevron("generic parameter list"))
-    }
+    try assert(_matchRightChevron(), orError: .expectedRightChevron("generic parameter list"))
     return GenericParameterClause(parameterList: parameters)
   }
 
-  private func parseGenericParameter()
-    throws -> GenericParameterClause.GenericParameter
-  {
-    guard case let .identifier(name) = _lexer.read(.dummyIdentifier) else {
+  private func parseGenericParameter() throws -> GenericParameterClause.GenericParameter {
+    guard let name = readNamedIdentifier() else {
       throw _raiseFatal(.expectedGenericsParameterName)
     }
     guard _lexer.match(.colon) else {
@@ -45,8 +41,8 @@ extension Parser {
     }
     let typeTokenRange = getLookedRange()
     switch _lexer.read([.dummyIdentifier, .protocol, .Any]) {
-    case .identifier(let idTypeName):
-      let firstType = try parseIdentifierType(idTypeName, typeTokenRange)
+    case .identifier(let idTypeName, false):
+      let firstType = try parseIdentifierType(.name(idTypeName), typeTokenRange)
       if testAmp() {
         let type = try parseProtocolCompositionType(firstType)
         return .protocolConformance(name, type)
@@ -59,11 +55,11 @@ extension Parser {
     case .Any:
       // TODO: should we do it this way,
       // or allow .typeConformance to take any `Type` type
-      let typeName = TypeIdentifier.TypeName(name: "Any")
+      let typeName = TypeIdentifier.TypeName(name: .name("Any"))
       let typeIdentifierForAny = TypeIdentifier(names: [typeName])
       return .typeConformance(name, typeIdentifierForAny)
     default:
-      throw _raiseFatal(.expectedGenericTypeRestriction(name))
+      throw _raiseFatal(.expectedGenericTypeRestriction(name.textDescription))
     }
   }
 
@@ -81,12 +77,12 @@ extension Parser {
 
   private func parseRequirement() throws -> GenericWhereClause.Requirement {
     let idTypeRange = getLookedRange()
-    let idTypeName: String
+    let idTypeName: Identifier
     switch _lexer.read([.dummyIdentifier, .Self]) {
-    case .identifier(let id):
-      idTypeName = id
+    case .identifier(let id, _):
+      idTypeName = .name(id)
     case .Self:
-      idTypeName = "Self"
+      idTypeName = .name("Self")
     default:
       throw _raiseFatal(.expectedGenericRequirementName)
     }
@@ -95,7 +91,7 @@ extension Parser {
     switch _lexer.read([.colon, .dummyBinaryOperator]) {
     case .colon:
       let typeStartLocation = getStartLocation()
-      if case let .identifier(name) = _lexer.read(.dummyIdentifier) {
+      if let name = readNamedIdentifier() {
         let firstType = try parseIdentifierType(name, idTypeRange)
         if testAmp() {
           let type = try parseProtocolCompositionType(firstType)

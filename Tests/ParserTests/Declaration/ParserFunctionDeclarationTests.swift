@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
       XCTAssertEqual(funcDecl.signature.textDescription, "()")
       XCTAssertNil(funcDecl.genericWhereClause)
@@ -46,7 +46,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "<!>")
+      XCTAssertEqual(funcDecl.name.textDescription, "<!>")
       XCTAssertNil(funcDecl.genericParameterClause)
       XCTAssertEqual(funcDecl.signature.textDescription, "()")
       XCTAssertNil(funcDecl.genericWhereClause)
@@ -117,7 +117,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
       XCTAssertEqual(funcDecl.attributes.count, 3)
       XCTAssertEqual(funcDecl.attributes.textDescription, "@a @b @c")
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
       XCTAssertEqual(funcDecl.signature.textDescription, "()")
       XCTAssertNil(funcDecl.genericWhereClause)
@@ -138,7 +138,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertEqual(funcDecl.modifiers.count, 4)
       XCTAssertEqual(funcDecl.modifiers.textDescription, "fileprivate static final override")
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
       XCTAssertEqual(funcDecl.signature.textDescription, "()")
       XCTAssertNil(funcDecl.genericWhereClause)
@@ -160,7 +160,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
       XCTAssertEqual(funcDecl.attributes.textDescription, "@a @b @c")
       XCTAssertEqual(funcDecl.modifiers.count, 2)
       XCTAssertEqual(funcDecl.modifiers.textDescription, "private prefix")
-      XCTAssertEqual(funcDecl.name, "√")
+      XCTAssertEqual(funcDecl.name.textDescription, "√")
       XCTAssertNil(funcDecl.genericParameterClause)
       XCTAssertEqual(funcDecl.signature.textDescription, "()")
       XCTAssertNil(funcDecl.genericWhereClause)
@@ -180,7 +180,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertEqual(funcDecl.genericParameterClause?.textDescription, "<A, B: C, D: protocol<E, F, G>>")
       XCTAssertEqual(funcDecl.signature.textDescription, "()")
       XCTAssertNil(funcDecl.genericWhereClause)
@@ -197,13 +197,13 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
       let param = funcDecl.signature.parameterList[0]
       XCTAssertNil(param.externalName)
-      XCTAssertEqual(param.localName, "bar")
+      XCTAssertEqual(param.localName.textDescription, "bar")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": Bar")
       XCTAssertNil(param.defaultArgumentClause)
       XCTAssertFalse(param.isVarargs)
@@ -228,13 +228,13 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
       let param = funcDecl.signature.parameterList[0]
       XCTAssertNil(param.externalName)
-      XCTAssertEqual(param.localName, "bar")
+      XCTAssertEqual(param.localName.textDescription, "bar")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": inout Bar")
       XCTAssertNil(param.defaultArgumentClause)
       XCTAssertFalse(param.isVarargs)
@@ -259,13 +259,13 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
       let param = funcDecl.signature.parameterList[0]
-      XCTAssertEqual(param.externalName, "_b")
-      XCTAssertEqual(param.localName, "bar")
+      XCTAssertEqual(param.externalName?.textDescription, "_b")
+      XCTAssertEqual(param.localName.textDescription, "bar")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": Bar")
       XCTAssertNil(param.defaultArgumentClause)
       XCTAssertFalse(param.isVarargs)
@@ -290,13 +290,13 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
       let param = funcDecl.signature.parameterList[0]
-      XCTAssertEqual(param.externalName, "_")
-      XCTAssertEqual(param.localName, "bar")
+      XCTAssertEqual(param.externalName?.textDescription, "_")
+      XCTAssertEqual(param.localName.textDescription, "bar")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": Bar")
       XCTAssertNil(param.defaultArgumentClause)
       XCTAssertFalse(param.isVarargs)
@@ -321,13 +321,13 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
       let param = funcDecl.signature.parameterList[0]
       XCTAssertNil(param.externalName)
-      XCTAssertEqual(param.localName, "parameterWithDefault")
+      XCTAssertEqual(param.localName.textDescription, "parameterWithDefault")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": Int")
       XCTAssertEqual(param.defaultArgumentClause?.textDescription, "12")
       XCTAssertFalse(param.isVarargs)
@@ -349,13 +349,13 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
       let param = funcDecl.signature.parameterList[0]
       XCTAssertNil(param.externalName)
-      XCTAssertEqual(param.localName, "bar")
+      XCTAssertEqual(param.localName.textDescription, "bar")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": Bar")
       XCTAssertNil(param.defaultArgumentClause)
       XCTAssertTrue(param.isVarargs)
@@ -379,13 +379,13 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "beginConcert")
+      XCTAssertEqual(funcDecl.name.textDescription, "beginConcert")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
       let param = funcDecl.signature.parameterList[0]
-      XCTAssertEqual(param.externalName, "in")
-      XCTAssertEqual(param.localName, "loc")
+      XCTAssertEqual(param.externalName?.textDescription, "in")
+      XCTAssertEqual(param.localName.textDescription, "loc")
       XCTAssertEqual(param.typeAnnotation.textDescription, ": protocol<Location, Named>")
       XCTAssertNil(param.defaultArgumentClause)
       XCTAssertFalse(param.isVarargs)
@@ -410,7 +410,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 5)
@@ -440,7 +440,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
@@ -466,7 +466,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
@@ -492,7 +492,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
@@ -518,7 +518,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
@@ -544,7 +544,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
@@ -570,7 +570,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertEqual(funcDecl.genericParameterClause?.textDescription, "<A>")
       XCTAssertEqual(funcDecl.signature.textDescription, "()")
       XCTAssertEqual(funcDecl.genericWhereClause?.textDescription, "where A == Foo")
@@ -587,7 +587,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
       XCTAssertEqual(funcDecl.signature.textDescription, "()")
       XCTAssertNil(funcDecl.genericWhereClause)
@@ -607,7 +607,7 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertEqual(funcDecl.genericParameterClause?.textDescription, "<A>")
       XCTAssertEqual(funcDecl.signature.textDescription, "()")
       XCTAssertEqual(funcDecl.genericWhereClause?.textDescription, "where A == Foo")
@@ -627,19 +627,19 @@ class ParserFunctionDeclarationTests: XCTestCase {
 
       XCTAssertTrue(funcDecl.attributes.isEmpty)
       XCTAssertTrue(funcDecl.modifiers.isEmpty)
-      XCTAssertEqual(funcDecl.name, "foo")
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
       XCTAssertNil(funcDecl.genericParameterClause)
 
       XCTAssertEqual(funcDecl.signature.parameterList.count, 2)
       let param1 = funcDecl.signature.parameterList[0]
-      XCTAssertEqual(param1.externalName, "_")
-      XCTAssertEqual(param1.localName, "")
+      XCTAssertEqual(param1.externalName?.textDescription, "_")
+      XCTAssertEqual(param1.localName.textDescription, "")
       XCTAssertEqual(param1.typeAnnotation.textDescription, ": Bar")
       XCTAssertNil(param1.defaultArgumentClause)
       XCTAssertFalse(param1.isVarargs)
       let param2 = funcDecl.signature.parameterList[1]
-      XCTAssertEqual(param2.externalName, "and")
-      XCTAssertEqual(param2.localName, "_")
+      XCTAssertEqual(param2.externalName?.textDescription, "and")
+      XCTAssertEqual(param2.localName.textDescription, "_")
       XCTAssertEqual(param2.typeAnnotation.textDescription, ": Bar")
       XCTAssertNil(param2.defaultArgumentClause)
       XCTAssertFalse(param2.isVarargs)

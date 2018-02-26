@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ class ParserFunctionCallExpressionTests: XCTestCase {
         XCTFail("Failed in getting a named expression argument.")
         return
       }
-      XCTAssertEqual(name, "a")
+      XCTAssertEqual(name.textDescription, "a")
       XCTAssertTrue(argExpr is LiteralExpression)
 
       XCTAssertNil(funcCallExpr.trailingClosure)
@@ -129,7 +129,7 @@ class ParserFunctionCallExpressionTests: XCTestCase {
         XCTFail("Failed in getting an operator argument.")
         return
       }
-      XCTAssertEqual(name, "op")
+      XCTAssertEqual(name.textDescription, "op")
       XCTAssertEqual(op, "+")
 
       XCTAssertNil(funcCallExpr.trailingClosure)
@@ -158,7 +158,7 @@ class ParserFunctionCallExpressionTests: XCTestCase {
         return
       }
       guard case let .namedOperator(name1, op1) = arguments[1],
-        name1 == "op", op1 == "-" else
+        name1.textDescription == "op", op1 == "-" else
       {
         XCTFail("Failed in getting a named operator argument `op: -`.")
         return
@@ -169,7 +169,7 @@ class ParserFunctionCallExpressionTests: XCTestCase {
         XCTFail("Failed in getting an expression argument `-bar`.")
         return
       }
-      guard case let .namedExpression(name3, expr3) = arguments[3], name3 == "expr",
+      guard case let .namedExpression(name3, expr3) = arguments[3], name3.textDescription == "expr",
         expr3 is PrefixOperatorExpression, expr3.textDescription == "-bar" else
       {
         XCTFail("Failed in getting an operator argument `expr: -bar`.")
@@ -270,6 +270,10 @@ class ParserFunctionCallExpressionTests: XCTestCase {
     })
   }
 
+  func testTrailingClosureSameLine() {
+    parseExpressionAndTest("foo\n{ self.foo = $0 }", "foo")
+  }
+
   func testDistinguishFromExplicitMemberExpr() {
     // with argument names
     parseExpressionAndTest("foo.bar(x)", "foo.bar(x)", testClosure: { expr in
@@ -352,7 +356,7 @@ class ParserFunctionCallExpressionTests: XCTestCase {
         XCTFail("Failed in getting a named memory reference argument.")
         return
       }
-      XCTAssertEqual(name, "a")
+      XCTAssertEqual(name.textDescription, "a")
       XCTAssertTrue(argExpr is ExplicitMemberExpression)
       XCTAssertEqual(argExpr.textDescription, "A.b")
 
@@ -442,15 +446,13 @@ class ParserFunctionCallExpressionTests: XCTestCase {
         return
       }
 
-      print(funcCallExpr.postfixExpression)
-
       guard let explicitMemberExpr = funcCallExpr.postfixExpression as? ExplicitMemberExpression,
         case let .namedType(postfixExpr, identifier) = explicitMemberExpr.kind else {
         XCTFail("Failed in getting an explicit member expression")
         return
       }
       XCTAssertTrue(postfixExpr is LiteralExpression)
-      XCTAssertEqual(identifier, "power")
+      XCTAssertEqual(identifier.textDescription, "power")
 
       guard let arguments = funcCallExpr.argumentClause else {
         XCTFail("Failed in getting an argument clause.")
@@ -491,6 +493,7 @@ class ParserFunctionCallExpressionTests: XCTestCase {
     ("testTrailingClosureOneArgument", testTrailingClosureOneArgument),
     ("testTrailingClosureZeroArgument", testTrailingClosureZeroArgument),
     ("testTrailingClosureNoArgumentClause", testTrailingClosureNoArgumentClause),
+    ("testTrailingClosureSameLine", testTrailingClosureSameLine),
     ("testDistinguishFromExplicitMemberExpr", testDistinguishFromExplicitMemberExpr),
     ("testMemoryReference", testMemoryReference),
     ("testNamedMemoryReference", testNamedMemoryReference),

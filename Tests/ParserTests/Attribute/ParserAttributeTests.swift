@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ class ParserAttributeTests: XCTestCase {
   func testAttributeName() {
     parseAttributesAndTest("@foo", "@foo", testClosure: { attrs in
       XCTAssertEqual(attrs.count, 1)
-      XCTAssertEqual(attrs[0].name, "foo")
+      ASTTextEqual(attrs[0].name, "foo")
       XCTAssertNil(attrs[0].argumentClause)
     })
   }
@@ -31,7 +31,7 @@ class ParserAttributeTests: XCTestCase {
   func testEmptyArgumentClause() {
     parseAttributesAndTest("@foo()", "@foo()", testClosure: { attrs in
       XCTAssertEqual(attrs.count, 1)
-      XCTAssertEqual(attrs[0].name, "foo")
+      ASTTextEqual(attrs[0].name, "foo")
       guard let arg = attrs[0].argumentClause else {
         XCTFail("Failed in getting an argument clause.")
         return
@@ -47,7 +47,7 @@ class ParserAttributeTests: XCTestCase {
       "@available(*, unavailable, renamed: \"MyRenamedProtocol\")",
       testClosure: { attrs in
       XCTAssertEqual(attrs.count, 1)
-      XCTAssertEqual(attrs[0].name, "available")
+      ASTTextEqual(attrs[0].name, "available")
       guard let arg = attrs[0].argumentClause else {
         XCTFail("Failed in getting an argument clause.")
         return
@@ -67,7 +67,7 @@ class ParserAttributeTests: XCTestCase {
       "@foo(()(xyz()))",
       testClosure: { attrs in
       XCTAssertEqual(attrs.count, 1)
-      XCTAssertEqual(attrs[0].name, "foo")
+      ASTTextEqual(attrs[0].name, "foo")
       guard let arg = attrs[0].argumentClause else {
         XCTFail("Failed in getting an argument clause.")
         return
@@ -89,7 +89,7 @@ class ParserAttributeTests: XCTestCase {
       "@foo([][xyz[]])",
       testClosure: { attrs in
       XCTAssertEqual(attrs.count, 1)
-      XCTAssertEqual(attrs[0].name, "foo")
+      ASTTextEqual(attrs[0].name, "foo")
       guard let arg = attrs[0].argumentClause else {
         XCTFail("Failed in getting an argument clause.")
         return
@@ -111,7 +111,7 @@ class ParserAttributeTests: XCTestCase {
       "@foo({}{xyz{}})",
       testClosure: { attrs in
       XCTAssertEqual(attrs.count, 1)
-      XCTAssertEqual(attrs[0].name, "foo")
+      ASTTextEqual(attrs[0].name, "foo")
       guard let arg = attrs[0].argumentClause else {
         XCTFail("Failed in getting an argument clause.")
         return

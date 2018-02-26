@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -73,9 +73,8 @@ class ParserSelectorExpressionTests: XCTestCase {
         XCTFail("Failed in getting a selector self-member")
         return
       }
-      XCTAssertEqual(id, "pillTapped")
-      XCTAssertEqual(names.count, 1)
-      XCTAssertEqual(names[0], "_")
+      ASTTextEqual(id, "pillTapped")
+      ASTTextEqual(names, ["_"])
     })
     parseExpressionAndTest(
       "#selector(self.pillTapped(_:))",
@@ -86,9 +85,8 @@ class ParserSelectorExpressionTests: XCTestCase {
         XCTFail("Failed in getting a selector self-member")
         return
       }
-      XCTAssertEqual(id, "self.pillTapped")
-      XCTAssertEqual(names.count, 1)
-      XCTAssertEqual(names[0], "_")
+      ASTTextEqual(id, "self.pillTapped")
+      ASTTextEqual(names, ["_"])
     })
     parseExpressionAndTest(
       "#selector(SomeClass.doSomething(_:))",

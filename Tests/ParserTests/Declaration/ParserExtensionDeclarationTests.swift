@@ -309,6 +309,7 @@ class ParserExtensionDeclarationTests: XCTestCase {
     ("testGenericWhereClause", testGenericWhereClause),
     ("testDeclarationMember", testDeclarationMember),
     ("testMultipleDeclarationMembers", testMultipleDeclarationMembers),
+    ("testMembersWithSemicolons", testMembersWithSemicolons),
     ("testCompilerControlMember", testCompilerControlMember),
     ("testSourceRange", testSourceRange),
   ]

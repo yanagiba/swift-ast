@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,10 +15,18 @@
 */
 
 public class KeyPathExpression : ASTNode, PrimaryExpression {
-  public let type: Type?
-  public let components: [Identifier]
+  public enum Postfix {
+    case question
+    case exclaim
+    case `subscript`([SubscriptArgument])
+  }
 
-  public init(type: Type? = nil, components: [Identifier]) {
+  public typealias Component = (Identifier?, [Postfix])
+
+  public let type: Type?
+  public let components: [Component]
+
+  public init(type: Type? = nil, components: [Component]) {
     self.type = type
     self.components = components
   }
@@ -27,7 +35,22 @@ public class KeyPathExpression : ASTNode, PrimaryExpression {
 
   override public var textDescription: String {
     let typeDescription = type?.textDescription ?? ""
-    let componentsDescription = components.joined(separator: ".")
+    let componentsDescription = components
+      .map { ($0.0?.textDescription ?? "") + $0.1.map({ $0.textDescription }).joined() }
+      .joined(separator: ".")
     return "\\\(typeDescription).\(componentsDescription)"
+  }
+}
+
+extension KeyPathExpression.Postfix : ASTTextRepresentable {
+  public var textDescription: String {
+    switch self {
+    case .question:
+      return "?"
+    case .exclaim:
+      return "!"
+    case .subscript(let args):
+      return "[\(args.textDescription)]"
+    }
   }
 }

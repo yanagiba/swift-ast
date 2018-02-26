@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,18 +14,8 @@
    limitations under the License.
 */
 
-_ = \.foo
-_ = \.foo.bar
-_ = \A.foo.bar
-_ = \.!
-_ = \.?
-_ = \.[foo, bar]
-_ = \.b!
-_ = \.b?
-_ = \.b[foo, bar]
-_ = \a.b!
-_ = \a.b?
-_ = \a.b[foo, bar]
-_ = \.?!?!
-_ = \.![x]!?[y][z]!
-_ = \.?.!.[foo, bar].a?.b!.c[foo, bar].?!?!.![x]!?[y][z]!
+public enum NamedIdentifier {
+  case name(String)
+  case backtickedName(String)
+  case wildcard
+}

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,11 +14,32 @@
    limitations under the License.
 */
 
-public typealias Identifier = String
-// TODO: identifier will have its own dedicated class when it becomes more complicated
+public enum Identifier {
+  case name(String)
+  case backtickedName(String)
+  case wildcard
+}
 
 extension Identifier : ASTTextRepresentable {
   public var textDescription: String {
-    return self
+    switch self {
+    case .name(let n):
+      return n
+    case .backtickedName(let n):
+      return "`\(n)`"
+    case .wildcard:
+      return "_"
+    }
+  }
+}
+
+extension Identifier {
+  public func isSyntacticallyEqual(to id: Identifier) -> Bool {
+    switch (self, id) {
+    case let (.name(lhs), .name(rhs)): return lhs == rhs
+    case let (.backtickedName(lhs), .backtickedName(rhs)): return lhs == rhs
+    case (.wildcard, .wildcard): return true
+    default: return false
+    }
   }
 }

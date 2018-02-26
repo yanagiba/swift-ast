@@ -158,8 +158,8 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("self._", .fatal, .expectedIdentifierAfterSelfDotExpr)
     parseProblematic("self[a, b, c", .fatal, .expectedCloseSquareExprList)
     parseProblematic("_ = \\foo", .fatal, .expectedKeyPathComponent)
-    parseProblematic("_ = \\foo.", .fatal, .expectedKeyPathComponentIdentifier)
-    parseProblematic("_ = \\foo.bar.", .fatal, .expectedKeyPathComponentIdentifier)
+    parseProblematic("_ = \\foo.", .fatal, .expectedKeyPathComponentIdentifierOrPostfix)
+    parseProblematic("_ = \\foo.bar.", .fatal, .expectedKeyPathComponentIdentifierOrPostfix)
     parseProblematic("_ = #func", .fatal, .expectedObjectLiteralIdentifier)
     parseProblematic("_ = #abc", .fatal, .expectedObjectLiteralIdentifier)
     parseProblematic("_ = #keyPath", .fatal, .expectedOpenParenKeyPathStringExpr)
@@ -194,6 +194,114 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("foo { _, in }", .fatal, .expectedClosureParameterName)
     parseProblematic("foo { _ in print()", .fatal, .rightBraceExpected("closure expression"))
     parseProblematic("_ = ._", .fatal, .expectedIdentifierAfterDot)
+  }
+
+  func testPlaygroundLiterals() {
+    parseProblematic("_ = #colorLiteral", .fatal, .expectedOpenParenPlaygroundLiteral("colorLiteral"))
+    parseProblematic("_ = #fileLiteral", .fatal, .expectedOpenParenPlaygroundLiteral("fileLiteral"))
+    parseProblematic("_ = #imageLiteral", .fatal, .expectedOpenParenPlaygroundLiteral("imageLiteral"))
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1",
+      .fatal,
+      .expectedCloseParenPlaygroundLiteral("colorLiteral"))
+    parseProblematic(
+      "_ = #fileLiteral(resourceName: \"foo\"",
+      .fatal,
+      .expectedCloseParenPlaygroundLiteral("fileLiteral"))
+    parseProblematic(
+      "_ = #imageLiteral(resourceName: \"foo\"",
+      .fatal,
+      .expectedCloseParenPlaygroundLiteral("imageLiteral"))
+    parseProblematic(
+      "_ = #colorLiteral(",
+      .fatal,
+      .expectedKeywordPlaygroundLiteral("colorLiteral", "red"))
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, ",
+      .fatal,
+      .expectedKeywordPlaygroundLiteral("colorLiteral", "green"))
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, green: 0, ",
+      .fatal,
+      .expectedKeywordPlaygroundLiteral("colorLiteral", "blue"))
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, green: 0, blue: 0, ",
+      .fatal,
+      .expectedKeywordPlaygroundLiteral("colorLiteral", "alpha"))
+    parseProblematic(
+      "_ = #fileLiteral(",
+      .fatal,
+      .expectedKeywordPlaygroundLiteral("fileLiteral", "resourceName"))
+    parseProblematic(
+      "_ = #imageLiteral(",
+      .fatal,
+      .expectedKeywordPlaygroundLiteral("imageLiteral", "resourceName"))
+    parseProblematic(
+      "_ = #colorLiteral(red:",
+      .fatal,
+      .expectedExpressionPlaygroundLiteral("colorLiteral", "red"),
+      { ds in ds.count == 2 ? ds[1] : ds[0] })
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, green:",
+      .fatal,
+      .expectedExpressionPlaygroundLiteral("colorLiteral", "green"),
+      { ds in ds.count == 2 ? ds[1] : ds[0] })
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, green: 0, blue:",
+      .fatal,
+      .expectedExpressionPlaygroundLiteral("colorLiteral", "blue"),
+      { ds in ds.count == 2 ? ds[1] : ds[0] })
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, green: 0, blue: 0, alpha:",
+      .fatal,
+      .expectedExpressionPlaygroundLiteral("colorLiteral", "alpha"),
+      { ds in ds.count == 2 ? ds[1] : ds[0] })
+    parseProblematic(
+      "_ = #fileLiteral(resourceName:",
+      .fatal,
+      .expectedExpressionPlaygroundLiteral("fileLiteral", "resourceName"),
+      { ds in ds.count == 2 ? ds[1] : ds[0] })
+    parseProblematic(
+      "_ = #imageLiteral(resourceName:",
+      .fatal,
+      .expectedExpressionPlaygroundLiteral("imageLiteral", "resourceName"),
+      { ds in ds.count == 2 ? ds[1] : ds[0] })
+    parseProblematic(
+      "_ = #colorLiteral(red",
+      .fatal,
+      .expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "red"))
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, green",
+      .fatal,
+      .expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "green"))
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, green: 0, blue",
+      .fatal,
+      .expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "blue"))
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, green: 0, blue: 0, alpha",
+      .fatal,
+      .expectedColonAfterKeywordPlaygroundLiteral("colorLiteral", "alpha"))
+    parseProblematic(
+      "_ = #fileLiteral(resourceName",
+      .fatal,
+      .expectedColonAfterKeywordPlaygroundLiteral("fileLiteral", "resourceName"))
+    parseProblematic(
+      "_ = #imageLiteral(resourceName",
+      .fatal,
+      .expectedColonAfterKeywordPlaygroundLiteral("imageLiteral", "resourceName"))
+    parseProblematic(
+      "_ = #colorLiteral(red: 0",
+      .fatal,
+      .expectedCommaBeforeKeywordPlaygroundLiteral("colorLiteral", "green"))
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, green: 0",
+      .fatal,
+      .expectedCommaBeforeKeywordPlaygroundLiteral("colorLiteral", "blue"))
+    parseProblematic(
+      "_ = #colorLiteral(red: 0, green: 0, blue: 0",
+      .fatal,
+      .expectedCommaBeforeKeywordPlaygroundLiteral("colorLiteral", "alpha"))
   }
 
   func testGenerics() {
@@ -263,6 +371,7 @@ class ParserErrorKindTests : XCTestCase {
     ("testCodeBlock", testCodeBlock),
     ("testDeclarations", testDeclarations),
     ("testExpressions", testExpressions),
+    ("testPlaygroundLiterals", testPlaygroundLiterals),
     ("testGenerics", testGenerics),
     ("testPatterns", testPatterns),
     ("testStatements", testStatements),

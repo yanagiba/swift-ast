@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(precedenceGroupDecl.name, "foo")
+      ASTTextEqual(precedenceGroupDecl.name, "foo")
       XCTAssertTrue(precedenceGroupDecl.attributes.isEmpty)
     })
   }
@@ -45,14 +45,14 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(precedenceGroupDecl.name, "foo")
+      ASTTextEqual(precedenceGroupDecl.name, "foo")
       XCTAssertEqual(precedenceGroupDecl.attributes.count, 1)
       guard case .higherThan(let ids) = precedenceGroupDecl.attributes[0] else {
         XCTFail("Failed in getting a precedence-group-relation.")
         return
       }
       XCTAssertEqual(ids.count, 1)
-      XCTAssertEqual(ids[0], "bar")
+      ASTTextEqual(ids[0], "bar")
     })
   }
 
@@ -66,16 +66,16 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(precedenceGroupDecl.name, "foo")
+      ASTTextEqual(precedenceGroupDecl.name, "foo")
       XCTAssertEqual(precedenceGroupDecl.attributes.count, 1)
       guard case .higherThan(let ids) = precedenceGroupDecl.attributes[0] else {
         XCTFail("Failed in getting a precedence-group-relation.")
         return
       }
       XCTAssertEqual(ids.count, 3)
-      XCTAssertEqual(ids[0], "a")
-      XCTAssertEqual(ids[1], "b")
-      XCTAssertEqual(ids[2], "c")
+      ASTTextEqual(ids[0], "a")
+      ASTTextEqual(ids[1], "b")
+      ASTTextEqual(ids[2], "c")
     })
   }
 
@@ -89,14 +89,14 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(precedenceGroupDecl.name, "foo")
+      ASTTextEqual(precedenceGroupDecl.name, "foo")
       XCTAssertEqual(precedenceGroupDecl.attributes.count, 1)
       guard case .lowerThan(let ids) = precedenceGroupDecl.attributes[0] else {
         XCTFail("Failed in getting a precedence-group-relation.")
         return
       }
       XCTAssertEqual(ids.count, 1)
-      XCTAssertEqual(ids[0], "bar")
+      ASTTextEqual(ids[0], "bar")
     })
   }
 
@@ -110,16 +110,16 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(precedenceGroupDecl.name, "foo")
+      ASTTextEqual(precedenceGroupDecl.name, "foo")
       XCTAssertEqual(precedenceGroupDecl.attributes.count, 1)
       guard case .lowerThan(let ids) = precedenceGroupDecl.attributes[0] else {
         XCTFail("Failed in getting a precedence-group-relation.")
         return
       }
       XCTAssertEqual(ids.count, 3)
-      XCTAssertEqual(ids[0], "a")
-      XCTAssertEqual(ids[1], "b")
-      XCTAssertEqual(ids[2], "c")
+      ASTTextEqual(ids[0], "a")
+      ASTTextEqual(ids[1], "b")
+      ASTTextEqual(ids[2], "c")
     })
   }
 
@@ -133,7 +133,7 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(precedenceGroupDecl.name, "foo")
+      ASTTextEqual(precedenceGroupDecl.name, "foo")
       XCTAssertEqual(precedenceGroupDecl.attributes.count, 1)
       guard case .assignment(let b) = precedenceGroupDecl.attributes[0] else {
         XCTFail("Failed in getting a precedence-group-assignment.")
@@ -153,7 +153,7 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(precedenceGroupDecl.name, "foo")
+      ASTTextEqual(precedenceGroupDecl.name, "foo")
       XCTAssertEqual(precedenceGroupDecl.attributes.count, 1)
       guard case .assignment(let b) = precedenceGroupDecl.attributes[0] else {
         XCTFail("Failed in getting a precedence-group-assignment.")
@@ -173,7 +173,7 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(precedenceGroupDecl.name, "foo")
+      ASTTextEqual(precedenceGroupDecl.name, "foo")
       XCTAssertEqual(precedenceGroupDecl.attributes.count, 1)
       guard case .associativityLeft = precedenceGroupDecl.attributes[0] else {
         XCTFail("Failed in getting a precedence-group-associativity.")
@@ -192,7 +192,7 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(precedenceGroupDecl.name, "foo")
+      ASTTextEqual(precedenceGroupDecl.name, "foo")
       XCTAssertEqual(precedenceGroupDecl.attributes.count, 1)
       guard case .associativityRight = precedenceGroupDecl.attributes[0] else {
         XCTFail("Failed in getting a precedence-group-associativity.")
@@ -211,7 +211,7 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(precedenceGroupDecl.name, "foo")
+      ASTTextEqual(precedenceGroupDecl.name, "foo")
       XCTAssertEqual(precedenceGroupDecl.attributes.count, 1)
       guard case .associativityNone = precedenceGroupDecl.attributes[0] else {
         XCTFail("Failed in getting a precedence-group-associativity.")
@@ -254,7 +254,7 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(precedenceGroupDecl.name, "foo")
+      ASTTextEqual(precedenceGroupDecl.name, "foo")
       XCTAssertEqual(precedenceGroupDecl.attributes.count, 9)
     })
   }

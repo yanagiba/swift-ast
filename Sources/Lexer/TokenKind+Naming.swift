@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,186 +15,186 @@
 */
 
 public extension Token.Kind /* named identifier */ {
-  var structName: String? { // TODO: the entire thing requires additional cleaning-up and refactorings
+  var structName: NamedIdentifier? {
     switch self {
-    case .identifier(let id):
-      return id
+    case let .identifier(id, backticked):
+      return backticked ? .backtickedName(id) : .name(id)
     case .Type:
-      return "Type"
+      return .name("Type")
     case .Protocol:
-      return "Protocol"
+      return .name("Protocol")
     default:
       return nil
     }
   }
 
-  var namedIdentifierOrWildcard: String? {
+  var namedIdentifierOrWildcard: NamedIdentifier? {
     if self == .underscore {
-      return "_"
+      return .wildcard
     }
     return namedIdentifier
   }
 
-  var namedIdentifier: String? {
+  var namedIdentifier: NamedIdentifier? {
     switch self {
-    case .identifier(let name):
-      return name
+    case let .identifier(id, backticked):
+      return backticked ? .backtickedName(id) : .name(id)
     case .as:
-      return "as"
+      return .name("as")
     case .associativity:
-      return "associativity"
+      return .name("associativity")
     case .break:
-      return "break"
+      return .name("break")
     case .catch:
-      return "catch"
+      return .name("catch")
     case .case:
-      return "case"
+      return .name("case")
     case .class:
-      return "class"
+      return .name("class")
     case .continue:
-      return "continue"
+      return .name("continue")
     case .convenience:
-      return "convenience"
+      return .name("convenience")
     case .default:
-      return "default"
+      return .name("default")
     case .defer:
-      return "defer"
+      return .name("defer")
     case .deinit:
-      return "deinit"
+      return .name("deinit")
     case .didSet:
-      return "didSet"
+      return .name("didSet")
     case .do:
-      return "do"
+      return .name("do")
     case .dynamic:
-      return "dynamic"
+      return .name("dynamic")
     case .enum:
-      return "enum"
+      return .name("enum")
     case .extension:
-      return "extension"
+      return .name("extension")
     case .else:
-      return "else"
+      return .name("else")
     case .fallthrough:
-      return "fallthrough"
+      return .name("fallthrough")
     case .fileprivate:
-      return "fileprivate"
+      return .name("fileprivate")
     case .final:
-      return "final"
+      return .name("final")
     case .for:
-      return "for"
+      return .name("for")
     case .func:
-      return "func"
+      return .name("func")
     case .get:
-      return "get"
+      return .name("get")
     case .guard:
-      return "guard"
+      return .name("guard")
     case .if:
-      return "if"
+      return .name("if")
     case .import:
-      return "import"
+      return .name("import")
     case .in:
-      return "in"
+      return .name("in")
     case .indirect:
-      return "indirect"
+      return .name("indirect")
     case .infix:
-      return "infix"
+      return .name("infix")
     case .init:
-      return "init"
+      return .name("init")
     case .inout:
-      return "inout"
+      return .name("inout")
     case .internal:
-      return "internal"
+      return .name("internal")
     case .is:
-      return "is"
+      return .name("is")
     case .lazy:
-      return "lazy"
+      return .name("lazy")
     case .let:
-      return "let"
+      return .name("let")
     case .left:
-      return "left"
+      return .name("left")
     case .mutating:
-      return "mutating"
+      return .name("mutating")
     case .nil:
-      return "nil"
+      return .name("nil")
     case .none:
-      return "none"
+      return .name("none")
     case .nonmutating:
-      return "nonmutating"
+      return .name("nonmutating")
     case .open:
-      return "open"
+      return .name("open")
     case .operator:
-      return "operator"
+      return .name("operator")
     case .optional:
-      return "optional"
+      return .name("optional")
     case .override:
-      return "override"
+      return .name("override")
     case .postfix:
-      return "postfix"
+      return .name("postfix")
     case .prefix:
-      return "prefix"
+      return .name("prefix")
     case .private:
-      return "private"
+      return .name("private")
     case .protocol:
-      return "protocol"
+      return .name("protocol")
     case .precedence:
-      return "precedence"
+      return .name("precedence")
     case .public:
-      return "public"
+      return .name("public")
     case .repeat:
-      return "repeat"
+      return .name("repeat")
     case .required:
-      return "required"
+      return .name("required")
     case .rethrows:
-      return "rethrows"
+      return .name("rethrows")
     case .return:
-      return "return"
+      return .name("return")
     case .right:
-      return "right"
+      return .name("right")
     case .safe:
-      return "safe"
+      return .name("safe")
     case .self:
-      return "self"
+      return .name("self")
     case .set:
-      return "set"
+      return .name("set")
     case .static:
-      return "static"
+      return .name("static")
     case .struct:
-      return "struct"
+      return .name("struct")
     case .subscript:
-      return "subscript"
+      return .name("subscript")
     case .super:
-      return "super"
+      return .name("super")
     case .switch:
-      return "switch"
+      return .name("switch")
     case .throw:
-      return "throw"
+      return .name("throw")
     case .throws:
-      return "throws"
+      return .name("throws")
     case .try:
-      return "try"
+      return .name("try")
     case .typealias:
-      return "typealias"
+      return .name("typealias")
     case .unowned:
-      return "unowned"
+      return .name("unowned")
     case .unsafe:
-      return "unsafe"
+      return .name("unsafe")
     case .var:
-      return "var"
+      return .name("var")
     case .weak:
-      return "weak"
+      return .name("weak")
     case .where:
-      return "where"
+      return .name("where")
     case .while:
-      return "while"
+      return .name("while")
     case .willSet:
-      return "willSet"
+      return .name("willSet")
     case .Any:
-      return "Any"
+      return .name("Any")
     case .Protocol:
-      return "Protocol"
+      return .name("Protocol")
     case .Self:
-      return "Self"
+      return .name("Self")
     case .Type:
-      return "Type"
+      return .name("Type")
     default:
       return nil
     }

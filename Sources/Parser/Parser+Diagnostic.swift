@@ -18,8 +18,7 @@ import Diagnostic
 
 extension Parser {
   func _raiseFatal(_ kind: ParserErrorKind) -> Error {
-    return _diagnosticPool.appendFatal(
-      kind: kind, sourceLocatable: _lexer.look())
+    return _diagnosticPool.appendFatal(kind: kind, sourceLocatable: _lexer.look())
   }
 
   func _raiseError(_ kind: ParserErrorKind) throws {
@@ -122,7 +121,7 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedIdentifierAfterSelfDotExpr
   case expectedObjectLiteralIdentifier
   case expectedKeyPathComponent
-  case expectedKeyPathComponentIdentifier
+  case expectedKeyPathComponentIdentifierOrPostfix
   case expectedOpenParenKeyPathStringExpr
   case expectedCloseParenKeyPathStringExpr
   case expectedOpenParenSelectorExpr
@@ -131,6 +130,12 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedCloseSquareDictionaryLiteral
   case expectedColonDictionaryLiteral
   case expectedCloseSquareArrayLiteral
+  case expectedOpenParenPlaygroundLiteral(String)
+  case expectedCloseParenPlaygroundLiteral(String)
+  case expectedKeywordPlaygroundLiteral(String, String)
+  case expectedExpressionPlaygroundLiteral(String, String)
+  case expectedColonAfterKeywordPlaygroundLiteral(String, String)
+  case expectedCommaBeforeKeywordPlaygroundLiteral(String, String)
   case extraTokenStringInterpolation
   case expectedStringInterpolation
   case newLineExpectedAtTheClosingOfMultilineStringLiteral
@@ -325,8 +330,8 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected a valid identifier after '#' in object literal expression"
     case .expectedKeyPathComponent:
       return "expected keypath component"
-    case .expectedKeyPathComponentIdentifier:
-      return "expected keypath component identifier following '.'"
+    case .expectedKeyPathComponentIdentifierOrPostfix:
+      return "expected keypath component identifier or postfix following '.'"
     case .expectedOpenParenKeyPathStringExpr:
       return "expected '(' following '#keyPath'"
     case .expectedCloseParenKeyPathStringExpr:
@@ -343,6 +348,18 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected ':' in dictionary literal"
     case .expectedCloseSquareArrayLiteral:
       return "expected ']' in array literal expression"
+    case .expectedOpenParenPlaygroundLiteral(let magicWord):
+      return "expected '(' following '#\(magicWord)'"
+    case .expectedCloseParenPlaygroundLiteral(let magicWord):
+      return "expected ')' to complete '#\(magicWord)' playground literal"
+    case let .expectedKeywordPlaygroundLiteral(magicWord, keyword):
+      return "expected keyword '\(keyword)' for '#\(magicWord)' playground literal"
+    case let .expectedExpressionPlaygroundLiteral(magicWord, keyword):
+      return "expected an expression of '\(keyword)' for '#\(magicWord)' playground literal"
+    case let .expectedColonAfterKeywordPlaygroundLiteral(magicWord, keyword):
+      return "expected ':' following '\(keyword)' for '#\(magicWord)' playground literal"
+    case let .expectedCommaBeforeKeywordPlaygroundLiteral(magicWord, keyword):
+      return "expected ',' before '\(keyword)' for '#\(magicWord)' playground literal"
     case .extraTokenStringInterpolation:
       return "extra tokens after interpolated string expression"
     case .expectedStringInterpolation:

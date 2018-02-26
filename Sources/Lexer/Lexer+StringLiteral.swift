@@ -95,8 +95,7 @@ extension Lexer /* string literal */ {
         caliberatedLines.append(String(caliberatedLine))
       }
       let caliberatedLiteral = caliberatedLines.joined(separator: "\n")
-      return .staticStringLiteral(caliberatedLiteral,
-        rawRepresentation: rawRepresentation)
+      return .staticStringLiteral(caliberatedLiteral, rawRepresentation: rawRepresentation)
     }
 
     if isMultiline && !postponeCaliberation {
@@ -132,8 +131,7 @@ extension Lexer /* string literal */ {
               consumeChar() // consume the third double quote
 
               if postponeCaliberation {
-                return .staticStringLiteral(
-                  literal, rawRepresentation: rawRepresentation)
+                return .staticStringLiteral(literal, rawRepresentation: rawRepresentation)
               }
 
               return caliberateMultlineStringLiteral()
@@ -146,8 +144,7 @@ extension Lexer /* string literal */ {
           }
         } else {
           consumeChar()
-          return .staticStringLiteral(
-            literal, rawRepresentation: rawRepresentation)
+          return .staticStringLiteral(literal, rawRepresentation: rawRepresentation)
         }
       case .backslash: // escaping
         consumeChar()
@@ -156,8 +153,7 @@ extension Lexer /* string literal */ {
         switch char.unicodeScalar {
         case "(": // head of an interpolated string literal
           consumeChar()
-          return .interpolatedStringLiteralHead(
-            literal, rawRepresentation: rawRepresentation)
+          return .interpolatedStringLiteralHead(literal, rawRepresentation: rawRepresentation)
         case "0":
           literal.append("\0" as Character)
         case "\\":

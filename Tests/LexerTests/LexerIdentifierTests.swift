@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ class LexerIdentifierTests: XCTestCase {
   func testIdentifiers() {
     identifiers.forEach { i in
       lexAndTest(i) { t in
-        XCTAssertEqual(t, .identifier(i))
+        XCTAssertEqual(t, .identifier(i, false))
       }
     }
   }
@@ -35,7 +35,7 @@ class LexerIdentifierTests: XCTestCase {
     backtickIdentifiers.forEach { i in
       let backtickIdentifier = "`\(i)`"
       lexAndTest(backtickIdentifier) { t in
-        XCTAssertEqual(t, .identifier(i))
+        XCTAssertEqual(t, .identifier(i, true))
       }
     }
   }
@@ -56,15 +56,30 @@ class LexerIdentifierTests: XCTestCase {
     }
   }
 
+  func testDollarSignCanBeUsedAsIdentifierBody() {
+    lexAndTest("foo$") { t in
+      XCTAssertEqual(t, .identifier("foo$", false))
+    }
+    lexAndTest("foo_$_bar") { t in
+      XCTAssertEqual(t, .identifier("foo_$_bar", false))
+    }
+  }
+
   func testStructName() {
     lexAndTest("foo") { t in
-      XCTAssertEqual(t.structName, "foo")
+      guard case .name(let name)? = t.structName, name == "foo" else {
+        XCTFail("Failed in lexing `foo`."); return
+      }
     }
     lexAndTest("Type") { t in
-      XCTAssertEqual(t.structName, "Type")
+      guard case .name(let name)? = t.structName, name == "Type" else {
+        XCTFail("Failed in lexing `Type`."); return
+      }
     }
     lexAndTest("Protocol") { t in
-      XCTAssertEqual(t.structName, "Protocol")
+      guard case .name(let name)? = t.structName, name == "Protocol" else {
+        XCTFail("Failed in lexing `Protocol`."); return
+      }
     }
     lexAndTest("class") { t in
       XCTAssertNil(t.structName)
@@ -76,6 +91,7 @@ class LexerIdentifierTests: XCTestCase {
     ("testBacktickIdentifiers", testBacktickIdentifiers),
     ("testBacktickIdentifierMissingClosingBacktick", testBacktickIdentifierMissingClosingBacktick),
     ("testImplicitParameterName", testImplicitParameterName),
+    ("testDollarSignCanBeUsedAsIdentifierBody", testDollarSignCanBeUsedAsIdentifierBody),
     ("testStructName", testStructName),
   ]
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -28,9 +28,7 @@ public struct ParserExpressionConfig {
 }
 
 extension Parser {
-  private func parseExpressionList(
-    config: ParserExpressionConfig = ParserExpressionConfig()
-  ) throws -> ExpressionList {
+  private func parseExpressionList(config: ParserExpressionConfig = ParserExpressionConfig()) throws -> ExpressionList {
     var exprs: [Expression] = []
     repeat {
       let expr = try parseExpression(config: config)
@@ -39,13 +37,10 @@ extension Parser {
     return exprs
   }
 
-  func parseExpression(
-    config: ParserExpressionConfig = ParserExpressionConfig()
-  ) throws -> Expression {
+  func parseExpression(config: ParserExpressionConfig = ParserExpressionConfig()) throws -> Expression {
     let tryKind = parseTryKind()
     let prefixExpr = try parsePrefixExpression(config: config)
-    let expr = try parseBinaryExpressions(
-      leftExpression: prefixExpr, config: config)
+    let expr = try parseBinaryExpressions(leftExpression: prefixExpr, config: config)
     return tryKind.wrap(expr: expr)
   }
 
@@ -197,25 +192,21 @@ extension Parser {
       switch examined.1 {
       case .binaryOperator(let op):
         let rhs = try parsePrefixExpression(config: config)
-        let biOpExpr = BinaryOperatorExpression(
-          binaryOperator: op, leftExpression: resultExpr, rightExpression: rhs)
+        let biOpExpr = BinaryOperatorExpression(binaryOperator: op, leftExpression: resultExpr, rightExpression: rhs)
         biOpExpr.setSourceRange(resultExpr.sourceRange.start, rhs.sourceRange.end)
         append(biOpExpr)
       case .assignmentOperator:
         let tryKind = parseTryKind()
         let prefixExpr = try parsePrefixExpression(config: config)
         let rhs = tryKind.wrap(expr: prefixExpr)
-        let assignOpExpr = AssignmentOperatorExpression(
-          leftExpression: resultExpr, rightExpression: rhs)
+        let assignOpExpr = AssignmentOperatorExpression(leftExpression: resultExpr, rightExpression: rhs)
         assignOpExpr.setSourceRange(resultExpr.sourceRange.start, prefixExpr.sourceRange.end)
         append(assignOpExpr)
       case .binaryQuestion:
         let trueTryKind = parseTryKind()
         var trueExpr = try parseExpression(config: config)
         trueExpr = trueTryKind.wrap(expr: trueExpr)
-        guard _lexer.match(.colon) else {
-          throw _raiseFatal(.expectedColonAfterTrueExpr)
-        }
+        try match(.colon, orFatal: .expectedColonAfterTrueExpr)
         let falseTryKind = parseTryKind()
         var falseExpr: Expression = try parsePrefixExpression(config: config)
         falseExpr = falseTryKind.wrap(expr: falseExpr)
@@ -227,28 +218,24 @@ extension Parser {
         append(ternaryOpExpr)
       case .is:
         let type = try parseType()
-        let typeCastingOpExpr =
-          TypeCastingOperatorExpression(kind: .check(resultExpr, type))
+        let typeCastingOpExpr = TypeCastingOperatorExpression(kind: .check(resultExpr, type))
         typeCastingOpExpr.setSourceRange(resultExpr.sourceRange.start, type.sourceRange.end)
         append(typeCastingOpExpr)
       case .as:
         switch _lexer.read([.postfixQuestion, .postfixExclaim]) {
         case .postfixQuestion:
           let type = try parseType()
-          let typeCastingOpExpr = TypeCastingOperatorExpression(
-            kind: .conditionalCast(resultExpr, type))
+          let typeCastingOpExpr = TypeCastingOperatorExpression(kind: .conditionalCast(resultExpr, type))
           typeCastingOpExpr.setSourceRange(resultExpr.sourceRange.start, type.sourceRange.end)
           append(typeCastingOpExpr)
         case .postfixExclaim:
           let type = try parseType()
-          let typeCastingOpExpr =
-            TypeCastingOperatorExpression(kind: .forcedCast(resultExpr, type))
+          let typeCastingOpExpr = TypeCastingOperatorExpression(kind: .forcedCast(resultExpr, type))
           typeCastingOpExpr.setSourceRange(resultExpr.sourceRange.start, type.sourceRange.end)
           append(typeCastingOpExpr)
         default:
           let type = try parseType()
-          let typeCastingOpExpr =
-            TypeCastingOperatorExpression(kind: .cast(resultExpr, type))
+          let typeCastingOpExpr = TypeCastingOperatorExpression(kind: .cast(resultExpr, type))
           typeCastingOpExpr.setSourceRange(resultExpr.sourceRange.start, type.sourceRange.end)
           append(typeCastingOpExpr)
         }
@@ -262,20 +249,17 @@ extension Parser {
     return resultExpr
   }
 
-  private func parsePrefixExpression(
-    config: ParserExpressionConfig
-  ) throws -> Expression {
+  private func parsePrefixExpression(config: ParserExpressionConfig) throws -> Expression {
     let startLocation = getStartLocation()
     switch _lexer.read([.dummyPrefixOperator, .prefixAmp]) {
     case let .prefixOperator(op):
       let postfixExpr = try parsePostfixExpression(config: config)
-      let prefixOpExpr = PrefixOperatorExpression(
-        prefixOperator: op, postfixExpression: postfixExpr)
+      let prefixOpExpr = PrefixOperatorExpression(prefixOperator: op, postfixExpression: postfixExpr)
       prefixOpExpr.setSourceRange(startLocation, postfixExpr.sourceRange.end)
       return prefixOpExpr
     case .prefixAmp:
       let endLocation = getEndLocation()
-      guard case let .identifier(name) = _lexer.read(.dummyIdentifier) else {
+      guard let name = readNamedIdentifier() else {
         throw _raiseFatal(.expectedIdentifierForInOutExpr)
       }
       let inoutExpr = InOutExpression(identifier: name)
@@ -292,21 +276,16 @@ extension Parser {
     var resultExpr: PostfixExpression = try parsePrimaryExpression()
 
     let examine: () -> (Bool, Token.Kind) = {
-      let allQnE = self.splitTrailingExlaimsAndQuestions()
+      let allQnE = self.splitTrailingExclaimsAndQuestions()
       if !allQnE.isEmpty {
         for p in allQnE {
           if p == "!" {
             let vlExpr = ForcedValueExpression(postfixExpression: resultExpr)
-            vlExpr.setSourceRange(
-              resultExpr.sourceRange.start,
-              resultExpr.sourceRange.end.nextColumn)
+            vlExpr.setSourceRange(resultExpr.sourceRange.start, resultExpr.sourceRange.end.nextColumn)
             resultExpr = vlExpr
           } else if p == "?" {
-            let optExpr =
-              OptionalChainingExpression(postfixExpression: resultExpr)
-            optExpr.setSourceRange(
-              resultExpr.sourceRange.start,
-              resultExpr.sourceRange.end.nextColumn)
+            let optExpr = OptionalChainingExpression(postfixExpression: resultExpr)
+            optExpr.setSourceRange(resultExpr.sourceRange.start, resultExpr.sourceRange.end.nextColumn)
             resultExpr = optExpr
           }
         }
@@ -316,12 +295,18 @@ extension Parser {
         .dummyPostfixOperator,
         .leftParen,
         .dot,
-        .leftSquare,
         .postfixExclaim,
         .postfixQuestion,
       ]
 
-      if self._lexer.look().kind == .leftBrace &&
+      let hasNewLineInBetween = self._lexer.lookLineFeed()
+
+      if !hasNewLineInBetween {
+        tokens.append(.leftSquare)
+      }
+
+      if !hasNewLineInBetween &&
+        self._lexer.look().kind == .leftBrace &&
         config.parseTrailingClosure &&
         self.isPotentialTrailingClosure()
       {
@@ -336,22 +321,17 @@ extension Parser {
     while examined.0 {
       switch examined.1 {
       case .postfixOperator(let op):
-        let postfixOpExpr = PostfixOperatorExpression(
-          postfixOperator: op, postfixExpression: resultExpr)
+        let postfixOpExpr = PostfixOperatorExpression(postfixOperator: op, postfixExpression: resultExpr)
         postfixOpExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
         resultExpr = postfixOpExpr
       case .leftParen:
-        resultExpr = try parseFunctionCallExpression(
-          postfixExpression: resultExpr, config: config)
+        resultExpr = try parseFunctionCallExpression(postfixExpression: resultExpr, config: config)
       case .dot:
-        resultExpr =
-          try parsePostfixMemberExpression(postfixExpression: resultExpr)
+        resultExpr = try parsePostfixMemberExpression(postfixExpression: resultExpr)
       case .leftSquare:
         let subscriptArguments = try parseSubscriptArguments()
         let endLocation = getEndLocation()
-        if !_lexer.match(.rightSquare) {
-            throw _raiseFatal(.expectedCloseSquareExprList)
-        }
+        try match(.rightSquare, orFatal: .expectedCloseSquareExprList)
         let subscriptExpr = SubscriptExpression(
         postfixExpression: resultExpr, arguments: subscriptArguments)
         subscriptExpr.setSourceRange(resultExpr.sourceRange.start, endLocation)
@@ -361,16 +341,13 @@ extension Parser {
         vlExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
         resultExpr = vlExpr
       case .postfixQuestion:
-        let optExpr =
-          OptionalChainingExpression(postfixExpression: resultExpr)
+        let optExpr = OptionalChainingExpression(postfixExpression: resultExpr)
         optExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
         resultExpr = optExpr
       case .leftBrace:
         let trailingClosure = try parseClosureExpression(startLocation: tokenRange.start)
-        let funcCallExpr = FunctionCallExpression(
-          postfixExpression: resultExpr, trailingClosure: trailingClosure)
-        funcCallExpr.setSourceRange(
-          resultExpr.sourceRange.start, trailingClosure.sourceRange.end)
+        let funcCallExpr = FunctionCallExpression(postfixExpression: resultExpr, trailingClosure: trailingClosure)
+        funcCallExpr.setSourceRange(resultExpr.sourceRange.start, trailingClosure.sourceRange.end)
         resultExpr = funcCallExpr
       default:
         break
@@ -417,36 +394,29 @@ extension Parser {
 
       repeat {
         if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare {
-          guard let id = _lexer.readNamedIdentifier() else {
+          guard let id = readNamedIdentifier() else {
             throw _raiseFatal(.expectedParameterNameFuncCall)
           }
           _lexer.advance()
           switch _lexer.read(.prefixAmp) {
           case .prefixAmp:
             let argExpr = try parseExpression(config: config)
-            let argument: FunctionCallExpression.Argument =
-              .namedMemoryReference(id, argExpr)
+            let argument: FunctionCallExpression.Argument = .namedMemoryReference(id, argExpr)
             arguments.append(argument)
-          case .prefixOperator(let op),
-            .binaryOperator(let op),
-            .postfixOperator(let op):
+          case .prefixOperator(let op), .binaryOperator(let op), .postfixOperator(let op):
             appendArgument(op, id)
           default:
             let argExpr = try parseExpression()
-            let argument: FunctionCallExpression.Argument =
-              .namedExpression(id, argExpr)
+            let argument: FunctionCallExpression.Argument = .namedExpression(id, argExpr)
             arguments.append(argument)
           }
         } else {
           switch _lexer.read(.prefixAmp) {
           case .prefixAmp:
             let argExpr = try parseExpression(config: config)
-            let argument: FunctionCallExpression.Argument =
-              .memoryReference(argExpr)
+            let argument: FunctionCallExpression.Argument = .memoryReference(argExpr)
             arguments.append(argument)
-          case .prefixOperator(let op),
-            .binaryOperator(let op),
-            .postfixOperator(let op):
+          case .prefixOperator(let op), .binaryOperator(let op), .postfixOperator(let op):
             appendArgument(op, nil)
           default:
             let argExpr = try parseExpression()
@@ -461,22 +431,17 @@ extension Parser {
     var endLocation = getEndLocation()
     if _lexer.match(.rightParen) {
       let funcCallExpr: FunctionCallExpression
-      if config.parseTrailingClosure &&
-        _lexer.look().kind == .leftBrace &&
-        isPotentialTrailingClosure()
-      {
+      if config.parseTrailingClosure && _lexer.look().kind == .leftBrace && isPotentialTrailingClosure() {
         let closureStartLocation = getStartLocation()
         _lexer.advance()
-        let trailingClosure =
-          try parseClosureExpression(startLocation: closureStartLocation)
+        let trailingClosure = try parseClosureExpression(startLocation: closureStartLocation)
         endLocation = trailingClosure.sourceRange.end
         funcCallExpr = FunctionCallExpression(
           postfixExpression: expr,
           argumentClause: [],
           trailingClosure: trailingClosure)
       } else {
-        funcCallExpr = FunctionCallExpression(
-          postfixExpression: expr, argumentClause: [])
+        funcCallExpr = FunctionCallExpression(postfixExpression: expr, argumentClause: [])
       }
       funcCallExpr.setSourceRange(expr.sourceRange.start, endLocation)
       return funcCallExpr
@@ -485,27 +450,20 @@ extension Parser {
     let argumentList = try parseArgumentList()
 
     endLocation = getEndLocation()
-    if !_lexer.match(.rightParen) {
-        throw _raiseFatal(.expectedCloseParenFuncCall)
-    }
+    try match(.rightParen, orFatal: .expectedCloseParenFuncCall)
 
     let funcCallExpr: FunctionCallExpression
-    if config.parseTrailingClosure &&
-      _lexer.look().kind == .leftBrace &&
-      isPotentialTrailingClosure()
-    {
+    if config.parseTrailingClosure && _lexer.look().kind == .leftBrace && isPotentialTrailingClosure() {
       let closureStartLocation = getStartLocation()
       _lexer.advance()
-      let trailingClosure =
-        try parseClosureExpression(startLocation: closureStartLocation)
+      let trailingClosure = try parseClosureExpression(startLocation: closureStartLocation)
       endLocation = trailingClosure.sourceRange.end
       funcCallExpr = FunctionCallExpression(
         postfixExpression: expr,
         argumentClause: argumentList,
         trailingClosure: trailingClosure)
     } else {
-      funcCallExpr = FunctionCallExpression(
-        postfixExpression: expr, argumentClause: argumentList)
+      funcCallExpr = FunctionCallExpression(postfixExpression: expr, argumentClause: argumentList)
     }
     funcCallExpr.setSourceRange(expr.sourceRange.start, endLocation)
     return funcCallExpr
@@ -523,9 +481,7 @@ extension Parser {
       let aheadToken = _lexer.look(ahead: lookAhead).kind
       if aheadToken == .rightParen {
         return true
-      } else if aheadToken.namedIdentifierOrWildcard != nil &&
-        _lexer.look(ahead: lookAhead + 1).kind == .colon
-      {
+      } else if aheadToken.namedIdentifierOrWildcard != nil && _lexer.look(ahead: lookAhead + 1).kind == .colon {
         lookAhead += 2
       } else {
         return false
@@ -533,7 +489,7 @@ extension Parser {
     }
   }
 
-  private func parseArgumentNames() throws -> ([String], SourceRange)? {
+  private func parseArgumentNames() throws -> ([Identifier], SourceRange)? {
     guard isArgumentNames() else {
       return nil
     }
@@ -542,14 +498,12 @@ extension Parser {
       return nil
     }
     var endLocation: SourceLocation
-    var argumentNames = [String]()
+    var argumentNames = [Identifier]()
     repeat {
-      guard let argumentName = _lexer.readNamedIdentifierOrWildcard() else {
+      guard let argumentName = readNamedIdentifierOrWildcard() else {
         throw _raiseFatal(.expectedArgumentLabel)
       }
-      guard _lexer.match(.colon) else {
-        throw _raiseFatal(.expectedColonAfterArgumentLabel)
-      }
+      try match(.colon, orFatal: .expectedColonAfterArgumentLabel)
       argumentNames.append(argumentName)
       endLocation = getEndLocation()
     } while !_lexer.match(.rightParen)
@@ -604,13 +558,12 @@ extension Parser {
       .dummyFloatingPointLiteral,
     ]) {
     case .init:
-      var argumentNames: [String] = []
+      var argumentNames: [Identifier] = []
       if let (argNames, argSrcRange) = try parseArgumentNames() {
         argumentNames = argNames
         endLocation = argSrcRange.end
       }
-      let initExpr = InitializerExpression(
-        postfixExpression: expr, argumentNames: argumentNames)
+      let initExpr = InitializerExpression(postfixExpression: expr, argumentNames: argumentNames)
       initExpr.setSourceRange(expr.sourceRange.start, endLocation)
       return initExpr
     case let .integerLiteral(index, raw) where raw.containOnlyPositiveDecimals:
@@ -621,29 +574,25 @@ extension Parser {
       guard let (first, second) = splitDoubleRawToTwoIntegers(raw) else {
         throw _raiseFatal(.expectedTupleIndexExplicitMemberExpr)
       }
-      let firstExplitMemberExpr =
-        ExplicitMemberExpression(kind: .tuple(expr, first))
-      return ExplicitMemberExpression(
-        kind: .tuple(firstExplitMemberExpr, second))
+      let firstExplitMemberExpr = ExplicitMemberExpression(kind: .tuple(expr, first))
+      return ExplicitMemberExpression(kind: .tuple(firstExplitMemberExpr, second))
     case .self:
       let postfixSelfExpr = PostfixSelfExpression(postfixExpression: expr)
       postfixSelfExpr.setSourceRange(expr.sourceRange.start, endLocation)
       return postfixSelfExpr
     default:
       endLocation = getEndLocation()
-      guard let id = _lexer.readNamedIdentifier() else {
+      guard let id = readNamedIdentifier() else {
         throw _raiseFatal(.expectedMemberNameExplicitMemberExpr)
       }
 
       let memberExpr: ExplicitMemberExpression
       if let genericArgumentClause = parseGenericArgumentClause() {
         endLocation = genericArgumentClause.sourceRange.end
-        memberExpr = ExplicitMemberExpression(
-          kind: .generic(expr, id, genericArgumentClause))
+        memberExpr = ExplicitMemberExpression(kind: .generic(expr, id, genericArgumentClause))
       } else if let (argumentNames, argRange) = try parseArgumentNames() {
         endLocation = argRange.end
-        memberExpr = ExplicitMemberExpression(
-          kind: .argument(expr, id, argumentNames))
+        memberExpr = ExplicitMemberExpression(kind: .argument(expr, id, argumentNames))
       } else {
         memberExpr = ExplicitMemberExpression(kind: .namedType(expr, id))
       }
@@ -690,8 +639,7 @@ extension Parser {
       strExpr.setSourceRange(lookedRange)
       return strExpr
     case let .interpolatedStringLiteralHead(s, r):
-      return try parseInterpolatedStringLiteral(
-        head: s, raw: r, startLocation: lookedRange.start)
+      return try parseInterpolatedStringLiteral(head: s, raw: r, startLocation: lookedRange.start)
     case .leftSquare:
       return try parseCollectionLiteral(startLocation: lookedRange.start)
     case .hash:
@@ -710,8 +658,8 @@ extension Parser {
     ////// implicit member expression
     case .dot:
       let endLocation = getEndLocation()
-      guard let id = _lexer.readNamedIdentifier() else {
-          throw _raiseFatal(.expectedIdentifierAfterDot)
+      guard let id = readNamedIdentifier() else {
+        throw _raiseFatal(.expectedIdentifierAfterDot)
       }
       let implicitNameExpr = ImplicitMemberExpression(identifier: id)
       implicitNameExpr.setSourceRange(lookedRange.start, endLocation)
@@ -727,8 +675,7 @@ extension Parser {
     ////// identifier expression
     case let .implicitParameterName(implicitName):
       let generic = parseGenericArgumentClause()
-      let idExpr = IdentifierExpression(
-        kind: .implicitParameterName(implicitName, generic))
+      let idExpr = IdentifierExpression(kind: .implicitParameterName(implicitName, generic))
       idExpr.setSourceRange(lookedRange)
       if let gnrc = generic {
         idExpr.setSourceRange(lookedRange.start, gnrc.sourceRange.end)
@@ -736,7 +683,7 @@ extension Parser {
       return idExpr
     default:
       // keyword used as identifier
-      if let id = matched.namedIdentifier {
+      if let id = matched.namedIdentifier?.id {
         _lexer.advance()
         let generic = parseGenericArgumentClause()
         let idExpr = IdentifierExpression(kind: .identifier(id, generic))
@@ -757,9 +704,7 @@ extension Parser {
    So when the condition meets,
    this returns a `ParenthesizedExpression` accordingly.
    */
-  private func parseParenthesizedExpression(
-    startLocation: SourceLocation
-  ) throws -> PrimaryExpression {
+  private func parseParenthesizedExpression(startLocation: SourceLocation) throws -> PrimaryExpression {
     var endLocation = getEndLocation()
     if _lexer.match(.rightParen) {
       let tupleExpr = TupleExpression()
@@ -770,13 +715,12 @@ extension Parser {
     var elements: [TupleExpression.Element] = []
     repeat {
       if _lexer.look(ahead: 1).kind == .colon {
-        guard let name = _lexer.readNamedIdentifierOrWildcard() else {
+        guard let name = readNamedIdentifierOrWildcard() else {
           throw _raiseFatal(.expectedTupleArgumentLabel)
         }
         _lexer.advance()
         let expr = try parseExpression()
-        elements.append(
-          TupleExpression.Element(identifier: name, expression: expr))
+        elements.append(TupleExpression.Element(identifier: name, expression: expr))
       } else {
         let expr = try parseExpression()
         elements.append(TupleExpression.Element(expression: expr))
@@ -784,9 +728,7 @@ extension Parser {
     } while _lexer.match(.comma)
 
     endLocation = getEndLocation()
-    if !_lexer.match(.rightParen) {
-        throw _raiseFatal(.expectedCloseParenTuple)
-    }
+    try match(.rightParen, orFatal: .expectedCloseParenTuple)
 
     // handle parenthesized expression
     if elements.count == 1 {
@@ -809,7 +751,7 @@ extension Parser {
     repeat {
       var identifier: Identifier?
       if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare {
-        guard let id = _lexer.readNamedIdentifier() else {
+        guard let id = readNamedIdentifier() else {
           throw _raiseFatal(.expectedParameterNameFuncCall)
         }
         _lexer.advance()
@@ -828,23 +770,24 @@ extension Parser {
     startRange: SourceRange
   ) throws -> SuperclassExpression {
     var endLocation = startRange.end
+    let hasNewLineInBetween = _lexer.lookLineFeed()
     let kind: SuperclassExpression.Kind
-    switch _lexer.read([.dot, .leftSquare]) {
+    switch _lexer.look().kind {
     case .dot:
+      _lexer.advance()
       endLocation = getEndLocation()
       if _lexer.match(.init) {
         kind = .initializer
-      } else if let id = _lexer.readNamedIdentifier() {
+      } else if let id = readNamedIdentifier() {
         kind = .method(id)
       } else {
         throw _raiseFatal(.expectedIdentifierAfterSuperDotExpr)
       }
-    case .leftSquare:
+    case .leftSquare where !hasNewLineInBetween:
+      _lexer.advance()
       let subscriptArguments = try parseSubscriptArguments()
       endLocation = getEndLocation()
-      if !_lexer.match(.rightSquare) {
-        throw _raiseFatal(.expectedCloseSquareExprList)
-      }
+      try match(.rightSquare, orFatal: .expectedCloseSquareExprList)
       kind = .subscript(subscriptArguments)
     default:
       throw _raiseFatal(.expectedDotOrSubscriptAfterSuper)
@@ -858,23 +801,24 @@ extension Parser {
     startRange: SourceRange
   ) throws -> SelfExpression {
     var endLocation = startRange.end
+    let hasNewLineInBetween = _lexer.lookLineFeed()
     let kind: SelfExpression.Kind
-    switch _lexer.read([.dot, .leftSquare]) {
+    switch _lexer.look().kind {
     case .dot:
+      _lexer.advance()
       endLocation = getEndLocation()
       if _lexer.match(.init) {
         kind = .initializer
-      } else if let id = _lexer.readNamedIdentifier() {
+      } else if let id = readNamedIdentifier() {
         kind = .method(id)
       } else {
         throw _raiseFatal(.expectedIdentifierAfterSelfDotExpr)
       }
-    case .leftSquare:
+    case .leftSquare where !hasNewLineInBetween:
+      _lexer.advance()
       let subscriptArguments = try parseSubscriptArguments()
       endLocation = getEndLocation()
-      if !_lexer.match(.rightSquare) {
-          throw _raiseFatal(.expectedCloseSquareExprList)
-      }
+      try match(.rightSquare, orFatal: .expectedCloseSquareExprList)
       kind = .subscript(subscriptArguments)
     default:
       kind = .self
@@ -884,72 +828,140 @@ extension Parser {
     return selfExpr
   }
 
-  private func parseKeyPathExpression(
-    startLocation: SourceLocation
-  ) throws -> KeyPathExpression {
+  private func parseKeyPathExpression(startLocation: SourceLocation) throws -> KeyPathExpression {
+    func parsePostfixes() throws -> [KeyPathExpression.Postfix] {
+      var postfixes: [KeyPathExpression.Postfix] = []
+
+      let allQnE = self.splitNextExclaimsAndQuestions()
+      for p in allQnE {
+        if p == "!" {
+          postfixes.append(.exclaim)
+        } else if p == "?" {
+          postfixes.append(.question)
+        }
+      }
+      switch _lexer.read([.postfixQuestion, .postfixExclaim, .leftSquare]) {
+      case .postfixQuestion:
+        postfixes.append(.question)
+      case .postfixExclaim:
+        postfixes.append(.exclaim)
+      case .leftSquare:
+        let subscriptArguments = try parseSubscriptArguments()
+        try match(.rightSquare, orFatal: .expectedCloseSquareExprList)
+        postfixes.append(.subscript(subscriptArguments))
+      default:
+        break
+      }
+
+      if postfixes.isEmpty {
+        return postfixes
+      }
+      let nextPostfixes = try parsePostfixes()
+      return postfixes + nextPostfixes
+    }
+
     var endLocation = getEndLocation()
 
     var type: Type?
-    if case let .identifier(typeName) = _lexer.read(.dummyIdentifier) {
+    if let typeName = readNamedIdentifier() {
       type = TypeIdentifier(names: [TypeIdentifier.TypeName(name: typeName)])
     }
 
-    var components: [String] = []
+    var components: [KeyPathExpression.Component] = []
     while _lexer.match(.dot) {
       endLocation = getEndLocation()
-      guard case let .identifier(component) = _lexer.read(.dummyIdentifier) else {
-        throw _raiseFatal(.expectedKeyPathComponentIdentifier)
-      }
-      components.append(component)
+
+      let componentIdentifier = readNamedIdentifier()
+      let postfixes = try parsePostfixes()
+
+      try assert(
+        componentIdentifier != nil || !postfixes.isEmpty,
+        orFatal: .expectedKeyPathComponentIdentifierOrPostfix)
+      components.append((componentIdentifier, postfixes))
     }
 
-    if components.isEmpty {
-      throw _raiseFatal(.expectedKeyPathComponent)
-    }
+    try assert(!components.isEmpty, orFatal: .expectedKeyPathComponent)
 
     let keyPathExpr = KeyPathExpression(type: type, components: components)
     keyPathExpr.setSourceRange(startLocation, endLocation)
     return keyPathExpr
   }
 
-  private func parseHashExpression(
-    startLocation: SourceLocation
-  ) throws -> PrimaryExpression {
-    var endLocation = getEndLocation()
-    guard case let .identifier(magicWord) = _lexer.read(.dummyIdentifier) else {
+  private func parseHashExpression(startLocation: SourceLocation) throws -> PrimaryExpression {
+    let endLocation = getEndLocation()
+    guard case let .identifier(magicWord, false) = _lexer.read(.dummyIdentifier) else {
       throw _raiseFatal(.expectedObjectLiteralIdentifier)
     }
+
+    func buildLiteralExpression(with kind: LiteralExpression.Kind) -> LiteralExpression {
+      let magicExpr = LiteralExpression(kind: kind)
+      magicExpr.setSourceRange(startLocation, endLocation)
+      return magicExpr
+    }
+
     switch magicWord {
     case "file":
-      let magicExpr = LiteralExpression(kind: .staticString(startLocation.identifier, "#file"))
-      magicExpr.setSourceRange(startLocation, endLocation)
-      return magicExpr
+      return buildLiteralExpression(with: .staticString(startLocation.identifier, "#file"))
     case "line":
-      let magicExpr = LiteralExpression(kind: .integer(startLocation.line, "#line"))
-      magicExpr.setSourceRange(startLocation, endLocation)
-      return magicExpr
+      return buildLiteralExpression(with: .integer(startLocation.line, "#line"))
     case "column":
-      let magicExpr = LiteralExpression(kind: .integer(startLocation.column, "#column"))
-      magicExpr.setSourceRange(startLocation, endLocation)
-      return magicExpr
+      return buildLiteralExpression(with: .integer(startLocation.column, "#column"))
     case "function":
-      let magicExpr = LiteralExpression(kind: .staticString("TODO", "#function")) // TODO: assign correct value
-      magicExpr.setSourceRange(startLocation, endLocation)
-      return magicExpr
+      return buildLiteralExpression(with: .staticString("TODO", "#function")) // TODO: assign correct value
     case "selector":
       return try parseSelectorExpression(startLocation: startLocation)
     case "keyPath":
-      guard _lexer.match(.leftParen) else {
-        throw _raiseFatal(.expectedOpenParenKeyPathStringExpr)
+      return try parseKeyPathStringExpression(startLocation: startLocation)
+    case "colorLiteral", "fileLiteral", "imageLiteral":
+      return try parsePlaygroundLiteral(magicWord, startLocation)
+    default:
+      throw _raiseFatal(.expectedObjectLiteralIdentifier)
+    }
+  }
+
+  private func parseKeyPathStringExpression(startLocation: SourceLocation) throws -> KeyPathStringExpression {
+    try match(.leftParen, orFatal: .expectedOpenParenKeyPathStringExpr)
+    let expr = try parseExpression() // TODO: can wrap this in a do-catch, and throw a better diagnostic message
+    let endLocation = getEndLocation()
+    try match(.rightParen, orFatal: .expectedCloseParenKeyPathStringExpr)
+    let keyPathStringExpression = KeyPathStringExpression(expression: expr)
+    keyPathStringExpression.setSourceRange(startLocation, endLocation)
+    return keyPathStringExpression
+  }
+
+  private func parsePlaygroundLiteral(
+    _ magicWord: String, _ startLocation: SourceLocation
+  ) throws -> LiteralExpression {
+    func getMagicExpression(for key: String, needsParsingComma: Bool = false) throws -> Expression {
+      if needsParsingComma {
+        try match(.comma, orFatal: .expectedCommaBeforeKeywordPlaygroundLiteral(magicWord, key))
       }
-      let expr = try parseExpression() // TODO: can wrap this in a do-catch, and throw a better diagnostic message
-      endLocation = getEndLocation()
-      guard _lexer.match(.rightParen) else {
-        throw _raiseFatal(.expectedCloseParenKeyPathStringExpr)
+      try readIdentifier(key, orFatal: .expectedKeywordPlaygroundLiteral(magicWord, key))
+      try match(.colon, orFatal: .expectedColonAfterKeywordPlaygroundLiteral(magicWord, key))
+      guard let expr = try? parseExpression() else {
+        throw _raiseFatal(.expectedExpressionPlaygroundLiteral(magicWord, key))
       }
-      let keyPathStringExpression = KeyPathStringExpression(expression: expr)
-      keyPathStringExpression.setSourceRange(startLocation, endLocation)
-      return keyPathStringExpression
+      return expr
+    }
+    func buildLiteralExpression(for playground: PlaygroundLiteral) throws -> LiteralExpression {
+      let endLocation = getEndLocation()
+      try match(.rightParen, orFatal: .expectedCloseParenPlaygroundLiteral(magicWord))
+      let literalExpr = LiteralExpression(kind: .playground(playground))
+      literalExpr.setSourceRange(startLocation, endLocation)
+      return literalExpr
+    }
+
+    try assert(_lexer.match(.leftParen), orFatal: .expectedOpenParenPlaygroundLiteral(magicWord))
+    switch magicWord {
+    case "colorLiteral":
+      let red = try getMagicExpression(for: "red")
+      let green = try getMagicExpression(for: "green", needsParsingComma: true)
+      let blue = try getMagicExpression(for: "blue", needsParsingComma: true)
+      let alpha = try getMagicExpression(for: "alpha", needsParsingComma: true)
+      return try buildLiteralExpression(for: .color(red, green, blue, alpha))
+    case "fileLiteral", "imageLiteral":
+      let expr = try getMagicExpression(for: "resourceName")
+      return try buildLiteralExpression(for: magicWord == "fileLiteral" ? .file(expr) : .image(expr))
     default:
       throw _raiseFatal(.expectedObjectLiteralIdentifier)
     }
@@ -960,7 +972,7 @@ extension Parser {
     */
     startLocation: SourceLocation
   ) throws -> SelectorExpression {
-    func parseArgumentNamesAndRightParen() -> ([String], SourceLocation)? {
+    func parseArgumentNamesAndRightParen() -> ([Identifier], SourceLocation)? {
       do {
         if let (argNames, _) = try parseArgumentNames(), !argNames.isEmpty {
           let endLocation = getEndLocation()
@@ -975,28 +987,21 @@ extension Parser {
       }
     }
 
-    guard _lexer.match(.leftParen) else {
-      throw _raiseFatal(.expectedOpenParenSelectorExpr)
-    }
+    try match(.leftParen, orFatal: .expectedOpenParenSelectorExpr)
 
     var key = ""
-    if case let .identifier(keyword) = _lexer.look().kind,
-      (keyword == "getter" || keyword == "setter")
-    {
+    if case let .identifier(keyword, false) = _lexer.look().kind, (keyword == "getter" || keyword == "setter") {
       key = keyword
       _lexer.advance()
-      guard _lexer.match(.colon) else {
-        throw _raiseFatal(.expectedColonAfterPropertyKeywordSelectorExpr(keyword))
-      }
+      try match(.colon, orFatal: .expectedColonAfterPropertyKeywordSelectorExpr(keyword))
     }
 
     let memberIdCp = _lexer.checkPoint()
     let memberIdDiagnosticCp = _diagnosticPool.checkPoint()
     switch _lexer.read([.dummyIdentifier, .self]) {
-    case .identifier(let selfMemberId):
+    case .identifier(let selfMemberId, false):
       if let (argNames, endLocation) = parseArgumentNamesAndRightParen() {
-        let selExpr = SelectorExpression(
-          kind: .selfMember(selfMemberId, argNames))
+        let selExpr = SelectorExpression(kind: .selfMember(.name(selfMemberId), argNames))
         selExpr.setSourceRange(startLocation, endLocation)
         return selExpr
       }
@@ -1009,8 +1014,7 @@ extension Parser {
         if case .method(let methodName) = selfExpr.kind,
           let (argNames, endLocation) = parseArgumentNamesAndRightParen()
         {
-          let selExpr = SelectorExpression(
-            kind: .selfMember("self.\(methodName)", argNames))
+          let selExpr = SelectorExpression(kind: .selfMember(.name("self.\(methodName)"), argNames))
           selExpr.setSourceRange(startLocation, endLocation)
           return selExpr
         }
@@ -1028,9 +1032,7 @@ extension Parser {
     let expr = try parseExpression()
 
     let endLocation = getEndLocation()
-    guard _lexer.match(.rightParen) else {
-      throw _raiseFatal(.expectedCloseParenSelectorExpr)
-    }
+    try match(.rightParen, orFatal: .expectedCloseParenSelectorExpr)
 
     let kind: SelectorExpression.Kind
     switch key {
@@ -1047,9 +1049,7 @@ extension Parser {
     return selExpr
   }
 
-  private func parseCollectionLiteral(
-    startLocation: SourceLocation
-  ) throws -> LiteralExpression {
+  private func parseCollectionLiteral(startLocation: SourceLocation) throws -> LiteralExpression {
     // empty array
     var endLocation = getEndLocation()
     if _lexer.match(.rightSquare) {
@@ -1060,25 +1060,20 @@ extension Parser {
     // empty dictionary
     if _lexer.match(.colon) {
       endLocation = getEndLocation()
-      if !_lexer.match(.rightSquare) {
-        throw _raiseFatal(.expectedCloseSquareDictionaryLiteral)
-      }
+      try match(.rightSquare, orFatal: .expectedCloseSquareDictionaryLiteral)
       let dictExpr = LiteralExpression(kind: .dictionary([]))
       dictExpr.setSourceRange(startLocation, endLocation)
       return dictExpr
     }
     let headExpr = try parseExpression()
     if _lexer.match(.colon) {
-      return try parseDictionaryLiteral(
-        head: headExpr, startLocation: startLocation)
+      return try parseDictionaryLiteral(head: headExpr, startLocation: startLocation)
     } else {
       return try parseArrayLiteral(head: headExpr, startLocation: startLocation)
     }
   }
 
-  private func parseDictionaryLiteral(
-    head: Expression, startLocation: SourceLocation
-  ) throws -> LiteralExpression {
+  private func parseDictionaryLiteral(head: Expression, startLocation: SourceLocation) throws -> LiteralExpression {
     var entries: [DictionaryEntry] = []
     // complete first entry
     let headValueExpr = try parseExpression()
@@ -1086,16 +1081,12 @@ extension Parser {
     // parse the rest of the dict
     while _lexer.match(.comma) && _lexer.look().kind != .rightSquare {
       let key = try parseExpression()
-      if !_lexer.match(.colon) {
-        throw _raiseFatal(.expectedColonDictionaryLiteral)
-      }
+      try match(.colon, orFatal: .expectedColonDictionaryLiteral)
       let value = try parseExpression()
       entries.append(DictionaryEntry(key: key, value: value))
     }
     let endLocation = getEndLocation()
-    if !_lexer.match(.rightSquare) {
-      throw _raiseFatal(.expectedCloseSquareDictionaryLiteral)
-    }
+    try match(.rightSquare, orFatal: .expectedCloseSquareDictionaryLiteral)
     let dictExpr = LiteralExpression(kind: .dictionary(entries))
     dictExpr.setSourceRange(startLocation, endLocation)
     return dictExpr
@@ -1111,9 +1102,7 @@ extension Parser {
       exprs.append(expr)
     }
     let endLocation = getEndLocation()
-    if !_lexer.match(.rightSquare) {
-      throw _raiseFatal(.expectedCloseSquareArrayLiteral)
-    }
+    try match(.rightSquare, orFatal: .expectedCloseSquareArrayLiteral)
     let arrayExpr = LiteralExpression(kind: .array(exprs))
     arrayExpr.setSourceRange(startLocation, endLocation)
     return arrayExpr
@@ -1135,9 +1124,9 @@ extension Parser {
           var blockLines = blockStr.components(separatedBy: .newlines)
           if offset == 0 { // let's first of all figure out the indentation prefix
             indentationPrefix = blockLines.removeLast()
-            guard indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty else {
-              throw _raiseFatal(.newLineExpectedAtTheClosingOfMultilineStringLiteral)
-            }
+            try assert(
+              indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty,
+              orFatal: .newLineExpectedAtTheClosingOfMultilineStringLiteral)
           }
 
           let identationLength = indentationPrefix.count
@@ -1148,9 +1137,9 @@ extension Parser {
             } else if origLine.isEmpty {
               caliberatedLines.append(origLine)
             } else {
-              guard origLine.hasPrefix(indentationPrefix) else {
-                throw _raiseFatal(.insufficientIndentationOfLineInMultilineStringLiteral)
-              }
+              try assert(
+                origLine.hasPrefix(indentationPrefix),
+                orFatal: .insufficientIndentationOfLineInMultilineStringLiteral)
               let startIndex = origLine.index(origLine.startIndex, offsetBy: identationLength)
               let caliberatedLine = String(origLine[startIndex...])
               caliberatedLines.append(caliberatedLine)
@@ -1158,8 +1147,7 @@ extension Parser {
           }
           let caliberatedLiteral = caliberatedLines.joined(separator: "\n")
           if !caliberatedLiteral.isEmpty {
-            let caliberatedLiteralExpr =
-              LiteralExpression(kind: .staticString(caliberatedLiteral, blockRawText))
+            let caliberatedLiteralExpr = LiteralExpression(kind: .staticString(caliberatedLiteral, blockRawText))
             caliberatedExprs.append(caliberatedLiteralExpr)
           }
         } else {
@@ -1201,8 +1189,7 @@ extension Parser {
     }
 
     var endLocation: SourceLocation
-    let tailString = _lexer.lexStringLiteral(
-      isMultiline: isMultiline, postponeCaliberation: true)
+    let tailString = _lexer.lexStringLiteral(isMultiline: isMultiline, postponeCaliberation: true)
     switch tailString {
     case let .staticStringLiteral(str, raw):
       if !str.isEmpty {
@@ -1213,8 +1200,7 @@ extension Parser {
       }
       endLocation = _lexer._getCurrentLocation() // TODO: need to find a better to do it
     case let .interpolatedStringLiteralHead(headStr, rawStr):
-      let nested = try parseInterpolatedStringLiteral(
-        head: headStr, raw: rawStr, startLocation: .DUMMY)
+      let nested = try parseInterpolatedStringLiteral(head: headStr, raw: rawStr, startLocation: .DUMMY)
       guard case let .interpolatedString(es, ir) = nested.kind else {
         throw _raiseFatal(.expectedStringInterpolation)
       }
@@ -1271,8 +1257,7 @@ extension Parser {
         guard let expr = try? parseExpression() else {
           return nil
         }
-        let item = ClosureExpression.Signature.CaptureItem(
-          specifier: specifier, expression: expr)
+        let item = ClosureExpression.Signature.CaptureItem(specifier: specifier, expression: expr)
         captureList.append(item)
       } while _lexer.match(.comma)
       guard _lexer.match(.rightSquare) else {
@@ -1281,25 +1266,21 @@ extension Parser {
       return captureList
     }
 
-    func parseParameterList()
-      -> [ClosureExpression.Signature.ParameterClause.Parameter]?
-    {
+    func parseParameterList() -> [ClosureExpression.Signature.ParameterClause.Parameter]? {
       if _lexer.match(.rightParen) {
         return []
       }
 
       var params: [ClosureExpression.Signature.ParameterClause.Parameter] = []
       repeat {
-        guard let name = _lexer.readNamedIdentifierOrWildcard() else {
+        guard let name = readNamedIdentifierOrWildcard() else {
           return nil
         }
         guard let typeAnnotation = try? parseTypeAnnotation() else {
           return nil
         }
         var isVarargs = false
-        if typeAnnotation != nil,
-          case .postfixOperator("...") = _lexer.look().kind
-        {
+        if typeAnnotation != nil, case .postfixOperator("...") = _lexer.look().kind {
           _lexer.advance()
           isVarargs = true
         }
@@ -1313,10 +1294,11 @@ extension Parser {
       return params
     }
 
-    func parseParameterName() -> String? {
-      guard let id = _lexer.look().kind.namedIdentifierOrWildcard,
-        id != "in",
-        id != "throws"
+    func parseParameterName() -> Identifier? {
+      guard
+        let id = _lexer.look().kind.namedIdentifierOrWildcard?.id,
+        id.textDescription != "in",
+        id.textDescription != "throws"
       else {
         return nil
       }
@@ -1346,8 +1328,7 @@ extension Parser {
     var parameterClause: ClosureExpression.Signature.ParameterClause?
     if _lexer.match(.leftParen) {
       if let params = parseParameterList() {
-        parameterClause =
-          ClosureExpression.Signature.ParameterClause.parameterList(params)
+        parameterClause = ClosureExpression.Signature.ParameterClause.parameterList(params)
       } else {
         _lexer.restore(fromCheckpoint: signatureOpeningCp)
         _diagnosticPool.restore(fromCheckpoint: signatureOpeningDiagnosticCp)
@@ -1366,8 +1347,7 @@ extension Parser {
         _lexer.advance()
         ids.append(id)
       }
-      parameterClause =
-        ClosureExpression.Signature.ParameterClause.identifierList(ids)
+      parameterClause = ClosureExpression.Signature.ParameterClause.identifierList(ids)
     }
 
     if let parameterClause = parameterClause {
@@ -1398,9 +1378,7 @@ extension Parser {
     let stmts = try parseStatements()
 
     endLocation = getEndLocation()
-    guard _lexer.match(.rightBrace) else {
-      throw _raiseFatal(.rightBraceExpected("closure expression"))
-    }
+    try match(.rightBrace, orFatal: .rightBraceExpected("closure expression"))
     let closureExpr = ClosureExpression(signature: signature, statements: stmts)
     closureExpr.setSourceRange(startLocation, endLocation)
     return closureExpr

@@ -171,6 +171,48 @@ class ParserDoStatementTests: XCTestCase {
     """)
   }
 
+  func testCatchPatternMatching() {
+    // test cases for issue #69: https://github.com/yanagiba/swift-ast/issues/69
+    parseStatementAndTest("""
+    do {
+      try expression
+    } catch VendingMachineError.insufficientFunds(3) {
+      statements
+    } catch VendingMachineError.insufficientFunds(let coinsNeeded) {
+      statements
+    }
+    """,
+    """
+    do {
+    try expression
+    } catch VendingMachineError.insufficientFunds(3) {
+    statements
+    } catch VendingMachineError.insufficientFunds(let coinsNeeded) {
+    statements
+    }
+    """)
+
+    // test cases for issue #75: https://github.com/yanagiba/swift-ast/issues/75
+    parseStatementAndTest("""
+    do {
+      try expression
+    } catch someErr.woops {
+      statements
+    } catch is someErr {
+      statements
+    }
+    """,
+    """
+    do {
+    try expression
+    } catch someErr.woops {
+    statements
+    } catch is someErr {
+    statements
+    }
+    """)
+  }
+
   func testSourceRange() {
     parseStatementAndTest("do { try foo() }", "do {\ntry foo()\n}", testClosure: { stmt in
       XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 17))
@@ -197,6 +239,7 @@ class ParserDoStatementTests: XCTestCase {
     ("testCatchWhere", testCatchWhere),
     ("testCatchPatternAndWhere", testCatchPatternAndWhere),
     ("testMultipleCatches", testMultipleCatches),
+    ("testCatchPatternMatching", testCatchPatternMatching),
     ("testSourceRange", testSourceRange),
   ]
 }

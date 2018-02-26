@@ -40,7 +40,7 @@ class LexerOperatorTests: XCTestCase {
         }
       }
       lexAndTest(asPrefix, index: 1, expectedColumn: 2) { t in
-        XCTAssertEqual(t, .identifier("foo"))
+        XCTAssertEqual(t, .identifier("foo", false))
       }
     }
   }
@@ -65,7 +65,7 @@ class LexerOperatorTests: XCTestCase {
     for (p, s) in combinations {
       let asBinary = "foo\(s.0)\(p)\(s.0)bar"
       lexAndTest(asBinary) { t in
-        XCTAssertEqual(t, .identifier("foo"))
+        XCTAssertEqual(t, .identifier("foo", false))
       }
       lexAndTest(asBinary, index: 1, expectedColumn: s.1) { t in
         switch p {
@@ -78,7 +78,7 @@ class LexerOperatorTests: XCTestCase {
         }
       }
       lexAndTest(asBinary, index: 2, expectedColumn: s.2) { t in
-        XCTAssertEqual(t, .identifier("bar"))
+        XCTAssertEqual(t, .identifier("bar", false))
       }
     }
   }
@@ -87,7 +87,7 @@ class LexerOperatorTests: XCTestCase {
     punctuators.forEach { p in
       let asPostfix = "bar\(p)"
       lexAndTest(asPostfix) { t in
-        XCTAssertEqual(t, .identifier("bar"))
+        XCTAssertEqual(t, .identifier("bar", false))
       }
       lexAndTest(asPostfix, index: 1, expectedColumn: 4) { t in
         switch p {
@@ -143,34 +143,34 @@ class LexerOperatorTests: XCTestCase {
         XCTAssertEqual(t, .prefixOperator(pp))
       }
       lexAndTest(asPrefix, index: 1, expectedColumn: 3 + count) { t in
-        XCTAssertEqual(t, .identifier("foo"))
+        XCTAssertEqual(t, .identifier("foo", false))
       }
 
       let asBinary = "foo\(pp)bar"
       lexAndTest(asBinary) { t in
-        XCTAssertEqual(t, .identifier("foo"))
+        XCTAssertEqual(t, .identifier("foo", false))
       }
       lexAndTest(asBinary, index: 1, expectedColumn: 4) { t in
         XCTAssertEqual(t, .binaryOperator(pp))
       }
       lexAndTest(asBinary, index: 2, expectedColumn: 6 + count) { t in
-        XCTAssertEqual(t, .identifier("bar"))
+        XCTAssertEqual(t, .identifier("bar", false))
       }
 
       let asBinaryWithSpace = "foo \(pp) bar"
       lexAndTest(asBinaryWithSpace) { t in
-        XCTAssertEqual(t, .identifier("foo"))
+        XCTAssertEqual(t, .identifier("foo", false))
       }
       lexAndTest(asBinaryWithSpace, index: 1, expectedColumn: 5) { t in
         XCTAssertEqual(t, .binaryOperator(pp))
       }
       lexAndTest(asBinaryWithSpace, index: 2, expectedColumn: 8 + count) { t in
-        XCTAssertEqual(t, .identifier("bar"))
+        XCTAssertEqual(t, .identifier("bar", false))
       }
 
       let asPostfix = "bar\(pp)"
       lexAndTest(asPostfix) { t in
-        XCTAssertEqual(t, .identifier("bar"))
+        XCTAssertEqual(t, .identifier("bar", false))
       }
       lexAndTest(asPostfix, index: 1, expectedColumn: 4) { t in
         XCTAssertEqual(t, .postfixOperator(pp))
