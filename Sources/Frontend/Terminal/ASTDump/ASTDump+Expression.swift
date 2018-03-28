@@ -22,7 +22,7 @@ extension AssignmentOperatorExpression : TTYASTDumpRepresentable {
     let head = dump("assign_expr", sourceRange)
     let leftExprDump = leftExpression.ttyDump.indented
     let rightExprDump = rightExpression.ttyDump.indented
-    return "\(head)\n\(leftExprDump)\n\(rightExprDump)"
+    return "<AssignmentOperatorExpression>\(head)\n\(leftExprDump)\n\(rightExprDump)</AssignmentOperatorExpression>"
   }
 }
 
@@ -32,7 +32,7 @@ extension BinaryOperatorExpression : TTYASTDumpRepresentable {
     let opDump = "operator: `\(binaryOperator)`".indented
     let leftExprDump = leftExpression.ttyDump.indented
     let rightExprDump = rightExpression.ttyDump.indented
-    return "\(head)\n\(opDump)\n\(leftExprDump)\n\(rightExprDump)"
+    return "<BinaryOperatorExpression>\(head)\n\(opDump)\n\(leftExprDump)\n\(rightExprDump)</BinaryOperatorExpression>"
   }
 }
 
@@ -67,7 +67,7 @@ extension ClosureExpression : TTYASTDumpRepresentable {
         .joined(separator: "\n")
         .indented
     }
-    return "\(head)\(body)"
+    return "<ClosureExpression>\(head)\(body)</ClosureExpression>"
   }
 }
 
@@ -95,13 +95,13 @@ extension ExplicitMemberExpression : TTYASTDumpRepresentable {
       body += "identifier: `\(identifier)`".indented
       body += "\n" + "arguments:".indented
       if argumentNames.isEmpty {
-        body += " <empty>"
+        body += " &lt;empty&gt;"
       }
       for (index, arg) in argumentNames.enumerated() {
         body += "\n" + "\(index): name: `\(arg)`".indented
       }
     }
-    return "\(head)\n\(body)"
+    return "<ExplicitMemberExpression>\(head)\n\(body)</ExplicitMemberExpression>"
   }
 }
 
@@ -109,7 +109,7 @@ extension ForcedValueExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("forced_value_expr", sourceRange)
     let exprDump = postfixExpression.ttyDump.indented
-    return "\(head)\n\(exprDump)"
+    return "<ForcedValueExpression>\(head)\n\(exprDump)</ForcedValueExpression>"
   }
 }
 
@@ -120,7 +120,7 @@ extension FunctionCallExpression : TTYASTDumpRepresentable {
     if let argumentClause = argumentClause {
       body += "\n" + "arguments:".indented
       if argumentClause.isEmpty {
-        body += " <empty>"
+        body += " &lt;empty&gt;"
       }
       for (index, arg) in argumentClause.enumerated() {
         body += "\n" + "\(index): ".indented
@@ -147,7 +147,7 @@ extension FunctionCallExpression : TTYASTDumpRepresentable {
     if let trailingClosure = trailingClosure {
       body += "\n" + "trailing_\(trailingClosure.ttyDump)".indented
     }
-    return "\(head)\n\(body)"
+    return "<FunctionCallExpression>\(head)\n\(body)</FunctionCallExpression>"
   }
 }
 
@@ -167,7 +167,7 @@ extension IdentifierExpression : TTYASTDumpRepresentable {
         body += ", generic_argument: `\(gnrc.textDescription)`"
       }
     }
-    return "\(head)\n\(body)"
+    return "<IdentifierExpression>\(head)\n\(body)</IdentifierExpression>"
   }
 }
 
@@ -175,7 +175,7 @@ extension ImplicitMemberExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("implicit_member_expr", sourceRange)
     let body = String.indent + "identifier: `identifier`"
-    return "\(head)\n\(body)"
+    return "<ImplicitMemberExpression>\(head)\n\(body)</ImplicitMemberExpression>"
   }
 }
 
@@ -183,7 +183,7 @@ extension InOutExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("in_out_expr", sourceRange)
     let body = "identifier: `\(identifier)`".indented
-    return "\(head)\n\(body)"
+    return "<InOutExpression>\(head)\n\(body)</InOutExpression>"
   }
 }
 
@@ -193,12 +193,12 @@ extension InitializerExpression : TTYASTDumpRepresentable {
     var body = postfixExpression.ttyDump.indented
     body += "\n" + "arguments:".indented
     if argumentNames.isEmpty {
-      body += " <empty>"
+      body += " &lt;empty&gt;"
     }
     for (index, arg) in argumentNames.enumerated() {
       body += "\n" + "\(index): name: `\(arg)`".indented
     }
-    return "\(head)\n\(body)"
+    return "<InitializerExpression>\(head)\n\(body)</InitializerExpression>"
   }
 }
 
@@ -213,13 +213,14 @@ extension KeyPathExpression : TTYASTDumpRepresentable {
       let component = (element.0?.textDescription ?? "") + element.1.map({ $0.textDescription }).joined()
       body += "\n" + "\(offset): component: `\(component)`".indented
     }
-    return "\(head)\(body)"
+    return "<KeyPathExpression>\(head)\(body)</KeyPathExpression>"
   }
 }
 
 extension KeyPathStringExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("key_path_string_expr", sourceRange) + "\n" + expression.ttyDump.indented
+    let result = dump("key_path_string_expr", sourceRange) + "\n" + expression.ttyDump.indented
+    return "<KeyPathStringExpression>\(result)</KeyPathStringExpression>"
   }
 }
 
@@ -243,7 +244,7 @@ extension LiteralExpression : TTYASTDumpRepresentable {
     case .array(let exprs):
       body += "kind: `array`"
       if exprs.isEmpty {
-        body += ", elements: <empty>"
+        body += ", elements: &lt;empty&gt;"
       } else {
         body += "\n"
         body += dump(exprs).indented
@@ -251,7 +252,7 @@ extension LiteralExpression : TTYASTDumpRepresentable {
     case .dictionary(let entries):
       body += "kind: `dict`"
       if entries.isEmpty {
-        body += ", entries: <empty>"
+        body += ", entries: &lt;empty&gt;"
       } else {
         body += "\n"
         body += entries.enumerated()
@@ -265,7 +266,7 @@ extension LiteralExpression : TTYASTDumpRepresentable {
     case .playground(let playgroundLiteral):
       body += "kind: `playground`, literal: `\(playgroundLiteral.textDescription)`"
     }
-    return "\(head)\n\(body)"
+    return "<LiteralExpression>\(head)\n\(body)</LiteralExpression>"
   }
 }
 
@@ -273,7 +274,7 @@ extension OptionalChainingExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("optional_chaining_expr", sourceRange)
     let exprDump = postfixExpression.ttyDump.indented
-    return "\(head)\n\(exprDump)"
+    return "<OptionalChainingExpression>\(head)\n\(exprDump)</OptionalChainingExpression>"
   }
 }
 
@@ -281,7 +282,7 @@ extension ParenthesizedExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("paren_expr", sourceRange)
     let exprDump = expression.ttyDump.indented
-    return "\(head)\n\(exprDump)"
+    return "<ParenthesizedExpression>\(head)\n\(exprDump)</ParenthesizedExpression>"
   }
 }
 
@@ -290,7 +291,7 @@ extension PostfixOperatorExpression : TTYASTDumpRepresentable {
     let head = dump("postfix_op_expr", sourceRange)
     let opDump = "operator: `\(postfixOperator)`".indented
     let exprDump = postfixExpression.ttyDump.indented
-    return "\(head)\n\(opDump)\n\(exprDump)"
+    return "<PostfixOperatorExpression>\(head)\n\(opDump)\n\(exprDump)</PostfixOperatorExpression>"
   }
 }
 
@@ -298,7 +299,7 @@ extension PostfixSelfExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("postfix_self_expr", sourceRange)
     let exprDump = postfixExpression.ttyDump.indented
-    return "\(head)\n\(exprDump)"
+    return "<PostfixSelfExpression>\(head)\n\(exprDump)</PostfixSelfExpression>"
   }
 }
 
@@ -307,7 +308,7 @@ extension PrefixOperatorExpression : TTYASTDumpRepresentable {
     let head = dump("prefix_op_expr", sourceRange)
     let opDump = "operator: `\(prefixOperator)`".indented
     let exprDump = postfixExpression.ttyDump.indented
-    return "\(head)\n\(opDump)\n\(exprDump)"
+    return "<PrefixOperatorExpression>\(head)\n\(opDump)\n\(exprDump)</PrefixOperatorExpression>"
   }
 }
 
@@ -330,7 +331,7 @@ extension SelectorExpression : TTYASTDumpRepresentable {
       }
       body = "self_member: `\(textDesc)`"
     }
-    return "\(head)\n\(body.indented)"
+    return "<SelectorExpression>\(head)\n\(body.indented)</SelectorExpression>"
   }
 }
 
@@ -350,7 +351,7 @@ extension SelfExpression : TTYASTDumpRepresentable {
     case .initializer:
       body += "kind: `initializer`"
     }
-    return "\(head)\n\(body)"
+    return "<SelfExpression>\(head)\n\(body)</SelfExpression>"
   }
 }
 
@@ -381,7 +382,7 @@ extension SequenceExpression : TTYASTDumpRepresentable {
       return "\($0.offset): \(elemDump)"
     }.joined(separator: "\n").indented
 
-    return "\(head)\n\(body)"
+    return "<SequenceExpression>\(head)\n\(body)</SequenceExpression>"
   }
 }
 
@@ -391,7 +392,7 @@ extension SubscriptExpression : TTYASTDumpRepresentable {
     let exprDump = postfixExpression.ttyDump.indented
     let indexHead = "index:".indented
     let argsDump = dump(arguments).indented
-    return "\(head)\n\(exprDump)\n\(indexHead)\n\(argsDump)"
+    return "<SubscriptExpression>\(head)\n\(exprDump)\n\(indexHead)\n\(argsDump)</SubscriptExpression>"
   }
 }
 
@@ -409,7 +410,7 @@ extension SuperclassExpression : TTYASTDumpRepresentable {
     case .initializer:
       body += "kind: `initializer`"
     }
-    return "\(head)\n\(body)"
+    return "<SuperclassExpression>\(head)\n\(body)</SuperclassExpression>"
   }
 }
 
@@ -419,7 +420,7 @@ extension TernaryConditionalOperatorExpression : TTYASTDumpRepresentable {
     let condExprDump = conditionExpression.ttyDump.indented
     let trueExprDump = trueExpression.ttyDump.indented
     let falseExprDump = falseExpression.ttyDump.indented
-    return "\(head)\n\(condExprDump)\n\(trueExprDump)\n\(falseExprDump)"
+    return "<TernaryConditionalOperatorExpression>\(head)\n\(condExprDump)\n\(trueExprDump)\n\(falseExprDump)</TernaryConditionalOperatorExpression>"
   }
 }
 
@@ -439,7 +440,7 @@ extension TryOperatorExpression : TTYASTDumpRepresentable {
       tryText = "optional_try"
       exprDump = expr.ttyDump
     }
-    return "\(head)\n" + "kind: `\(tryText)`\n\(exprDump)".indented
+    return "<TryOperatorExpression>\(head)\n" + "kind: `\(tryText)`\n\(exprDump)</TryOperatorExpression>".indented
   }
 }
 
@@ -448,7 +449,7 @@ extension TupleExpression : TTYASTDumpRepresentable {
     let head = dump("tuple_expr", sourceRange)
     let body: String
     if elementList.isEmpty {
-      body = String.indent + "elements: <empty>"
+      body = String.indent + "elements: &lt;empty&gt;"
     } else {
       body = elementList.enumerated().map {
         var idText = "\($0.offset): "
@@ -458,7 +459,7 @@ extension TupleExpression : TTYASTDumpRepresentable {
         return "\(idText)\($0.element.expression.ttyDump)"
       }.joined(separator: "\n").indented
     }
-    return "\(head)\n\(body)"
+    return "<TupleExpression>\(head)\n\(body)</TupleExpression>"
   }
 }
 
@@ -486,13 +487,14 @@ extension TypeCastingOperatorExpression : TTYASTDumpRepresentable {
       operatorText = "forced_cast"
       typeText = type.textDescription
     }
-    return "\(head)\n" +
-      "kind: `\(operatorText)`, type: `\(typeText)`\n\(exprText)".indented
+    return "<TypeCastingOperatorExpression>\(head)\n" +
+      "kind: `\(operatorText)`, type: `\(typeText)`\n\(exprText)</TypeCastingOperatorExpression>".indented
   }
 }
 
 extension WildcardExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
-    return dump("wildcard_expr", sourceRange)
+    let result = dump("wildcard_expr", sourceRange)
+    return "<WildcardExpression>\(result)</WildcardExpression>"
   }
 }

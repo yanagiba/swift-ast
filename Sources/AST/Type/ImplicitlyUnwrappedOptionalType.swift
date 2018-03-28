@@ -24,6 +24,6 @@ public class ImplicitlyUnwrappedOptionalType : TypeBase {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    return "ImplicitlyUnwrappedOptional<\(wrappedType.textDescription)>"
+    return "ImplicitlyUnwrappedOptional &lt;\(wrappedType.textDescription)&gt;"
   }
 }

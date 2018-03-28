@@ -23,11 +23,11 @@ extension Statement {
     case let ttyAstDumpRepresentable as TTYASTDumpRepresentable:
       return ttyAstDumpRepresentable.ttyDump
     default:
-      return "(".colored(with: .blue) +
-        "unknown".colored(with: .red) +
-        ")".colored(with: .blue) +
+      return "(" +
+        "unknown" +
+        ")" +
         " " +
-        "<range: \(sourceRange.ttyDescription)>".colored(with: .yellow)
+        "<range>\(sourceRange.ttyDescription)</range>"
     }
   }
 }
@@ -85,7 +85,7 @@ extension DoStatement : TTYASTDumpRepresentable {
     let body = codeBlock.ttyDump.indented
     var catches = "catches:".indented
     if catchClauses.isEmpty {
-      catches += " <empty>"
+      catches += " &lt;empty&gt;"
     }
     for (index, catchClause) in catchClauses.enumerated() {
       catches += "\n"
@@ -199,7 +199,7 @@ extension SwitchStatement : TTYASTDumpRepresentable {
     body += "\n"
     body += "cases:".indented
     if cases.isEmpty {
-      body += " <empty>"
+      body += " &lt;empty&gt;"
     }
     for (index, eachCase) in cases.enumerated() {
       body += "\n"
@@ -210,7 +210,7 @@ extension SwitchStatement : TTYASTDumpRepresentable {
         body += "\n"
         body += "items:".indented.indented
         if items.isEmpty {
-          body += " <empty>" // TODO: can this really happen?
+          body += " &lt;empty&gt;" // TODO: can this really happen?
         }
         for (itemIndex, item) in items.enumerated() {
           body += "\n"

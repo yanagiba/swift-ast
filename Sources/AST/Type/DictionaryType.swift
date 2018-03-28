@@ -26,6 +26,6 @@ public class DictionaryType : TypeBase {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    return "Dictionary<\(keyType.textDescription), \(valueType.textDescription)>"
+    return "Dictionary&lt;\(keyType.textDescription), \(valueType.textDescription)&gt;"
   }
 }

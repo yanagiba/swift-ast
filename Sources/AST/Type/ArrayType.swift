@@ -24,6 +24,6 @@ public class ArrayType : TypeBase {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    return "Array<\(elementType.textDescription)>"
+    return "Array&lt;\(elementType.textDescription)&gt;"
   }
 }

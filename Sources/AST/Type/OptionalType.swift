@@ -24,6 +24,6 @@ public class OptionalType : TypeBase {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    return "Optional<\(wrappedType.textDescription)>"
+    return "Optional&lt;\(wrappedType.textDescription)&gt;"
   }
 }

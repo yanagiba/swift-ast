@@ -26,16 +26,18 @@ extension TopLevelDeclaration : TTYASTDumpRepresentable {
     let head = dump("top_level_decl", sourceRange)
     let body = statements.map { $0.ttyDump.indented }
     let tail = ""
-    return (firstLine + [head] + body + [tail]).joined(separator: "\n")
+    let result = (firstLine + [head] + body + [tail]).joined(separator: "\n")
+    return ("<TopLevelDeclaration>\(result)</TopLevelDeclaration>")
   }
 }
 
 extension CodeBlock : TTYASTDumpRepresentable {
   var ttyDump: String {
     if statements.isEmpty {
-      return "<empty_code_block>"
+      return "<CodeBlock></CodeBlock>"
     }
-    return statements.map { $0.ttyDump }.joined(separator: "\n")
+    let result = statements.map { $0.ttyDump }.joined(separator: "\n")
+    return "<CodeBlock>\(result)</CodeBlock>"
   }
 }
 
@@ -81,7 +83,7 @@ extension ClassDeclaration : TTYASTDumpRepresentable {
       }.joined(separator: "\n").indented
     }
 
-    return "\(head)\(neck)\n\(body)"
+    return "<ClassDeclaration>\(head)\(neck)\n\(body)</ClassDeclaration>"
   }
 }
 
@@ -98,7 +100,7 @@ extension ConstantDeclaration : TTYASTDumpRepresentable {
       neck += "modifiers: \(modifiers.textDescription)".indented
     }
     let body = dump(initializerList).indented
-    return "\(head)\(neck)\n\(body)"
+    return "<ConstantDeclaration>\(head)\(neck)\n\(body)</ConstantDeclaration>"
   }
 }
 
@@ -111,7 +113,7 @@ extension DeinitializerDeclaration : TTYASTDumpRepresentable {
       neck += "attributes: `\(attributes.textDescription)`".indented
     }
     let bodyTTYDump = body.ttyDump.indented
-    return "\(head)\(neck)\n\(bodyTTYDump)"
+    return "<DeinitializerDeclaration>\(head)\(neck)\n\(bodyTTYDump)</DeinitializerDeclaration>"
   }
 }
 
@@ -207,7 +209,7 @@ extension EnumDeclaration : TTYASTDumpRepresentable {
       }.joined(separator: "\n").indented
     }
 
-    return "\(head)\(neck)\n\(body)"
+    return "<EnumDeclaration>\(head)\(neck)\n\(body)</EnumDeclaration>"
   }
 }
 
@@ -245,7 +247,7 @@ extension ExtensionDeclaration : TTYASTDumpRepresentable {
       }.joined(separator: "\n").indented
     }
 
-    return "\(head)\(neck)\n\(body)"
+    return "<ExtensionDeclaration>\(head)\(neck)\n\(body)</ExtensionDeclaration>"
   }
 }
 
@@ -274,7 +276,7 @@ extension FunctionDeclaration : TTYASTDumpRepresentable {
       neck += "\n" + signatureDump.indented
     }
     let bodyTTYDump = body?.ttyDump ?? "<func_def_only>"
-    return "\(head)\(neck)\n\(bodyTTYDump.indented)"
+    return "<FunctionDeclaration>\(head)\(neck)\n\(bodyTTYDump.indented)</FunctionDeclaration>"
   }
 }
 
@@ -291,7 +293,7 @@ extension ImportDeclaration : TTYASTDumpRepresentable {
       neck += "kind: `\(kind)`".indented
     }
     let body = "path:\n" + path.enumerated().map { "\($0.0): `\($0.1)`" }.joined(separator: "\n")
-    return "\(head)\(neck)\n\(body.indented)"
+    return "<ImportDeclaration>\(head)\(neck)\n\(body.indented)</ImportDeclaration>"
   }
 }
 
@@ -328,7 +330,7 @@ extension InitializerDeclaration : TTYASTDumpRepresentable {
       neck += "\n" + dump(parameterList).indented
     }
     let bodyTTYDump = body.ttyDump.indented
-    return "\(head)\(neck)\n\(bodyTTYDump)"
+    return "<InitializerDeclaration>\(head)\(neck)\n\(bodyTTYDump)</InitializerDeclaration>"
   }
 }
 
@@ -346,7 +348,7 @@ extension OperatorDeclaration : TTYASTDumpRepresentable {
     case .infix(let op, let id?):
       body = "kind: `infix`, operator: `\(op)`, precedence_group_name: `\(id)`"
     }
-    return "\(head)\n\(body.indented)"
+    return "<OperatorDeclaration>\(head)\n\(body.indented)</OperatorDeclaration>"
   }
 }
 
@@ -383,7 +385,7 @@ extension PrecedenceGroupDeclaration : TTYASTDumpRepresentable {
         .map { "\($0.offset): \(dumpAttr($0.element))" }
         .joined(separator: "\n")
     }
-    return "\(head)\n\(neck)\n\(body.indented)"
+    return "<PrecedenceGroupDeclaration>\(head)\n\(neck)\n\(body.indented)</PrecedenceGroupDeclaration>"
   }
 }
 
@@ -539,7 +541,7 @@ extension ProtocolDeclaration : TTYASTDumpRepresentable {
         }
         .joined(separator: "\n")
     }
-    return "\(head)\(neck)\n\(body.indented)"
+    return "<ProtocolDeclaration>\(head)\(neck)\n\(body.indented)</ProtocolDeclaration>"
   }
 }
 
@@ -581,7 +583,7 @@ extension StructDeclaration : TTYASTDumpRepresentable {
       }.joined(separator: "\n").indented
     }
 
-    return "\(head)\(neck)\n\(body)"
+    return "<StructDeclaration>\(head)\(neck)\n\(body)</StructDeclaration>"
   }
 }
 
@@ -623,7 +625,7 @@ extension SubscriptDeclaration : TTYASTDumpRepresentable {
     case .getterSetterKeywordBlock(let block):
       bodyTTYDump = dump(block)
     }
-    return "\(head)\(neck)\n\(bodyTTYDump.indented)"
+    return "<SubscriptDeclaration>\(head)\(neck)\n\(bodyTTYDump.indented)</SubscriptDeclaration>"
   }
 }
 
@@ -645,7 +647,7 @@ extension TypealiasDeclaration : TTYASTDumpRepresentable {
     }
     neck += "\n"
     neck += "type: \(assignment.textDescription)".indented
-    return "\(head)\(neck)"
+    return "<TypealiasDeclaration>\(head)\(neck)</TypealiasDeclaration>"
   }
 }
 
@@ -705,6 +707,6 @@ extension VariableDeclaration : TTYASTDumpRepresentable {
       }
       bodyTTYDump = blockDump
     }
-    return "\(head)\(neck)\n\(bodyTTYDump.indented)"
+    return "<VariableDeclaration>\(head)\(neck)\n\(bodyTTYDump.indented)</VariableDeclaration>"
   }
 }

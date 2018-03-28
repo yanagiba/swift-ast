@@ -64,20 +64,16 @@ public func terminalMain(
   }
 
   for astUnit in result.astUnitCollection {
-    if let sourceFile = astUnit.sourceFile {
-      printHeader(for: sourceFile.identifier)
-
-      let topLevelDecl = astUnit.translationUnit
-      switch ttyType {
-      case .astDump:
+    let topLevelDecl = astUnit.translationUnit
+    switch ttyType {
+    case .astDump:
         print(topLevelDecl.ttyDump)
-      case .astPrint:
+    case .astPrint:
         print(topLevelDecl.ttyPrint)
-      case .astText:
+    case .astText:
         print(topLevelDecl.textDescription)
-      case .diagnosticsOnly:
+    case .diagnosticsOnly:
         print()
-      }
     }
   }
 

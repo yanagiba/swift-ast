@@ -37,8 +37,8 @@ protocol TTYASTDumpRepresentable {
 
 extension TTYASTDumpRepresentable {
   func dump(_ nodeType: String, _ sourceRange: SourceRange) -> String {
-    return nodeType.colored(with: .magenta) + " " +
-      "<range: \(sourceRange.ttyDescription)>".colored(with: .yellow)
+    return nodeType + " " +
+      "<range> \(sourceRange.ttyDescription)</range>"
   }
 
   func dump(_ exprs: ExpressionList) -> String {
@@ -123,9 +123,9 @@ extension TTYASTDumpRepresentable {
   }
 
   func dump(_ patternInit: PatternInitializer) -> String {
-    let patternDump = "pattern: \(patternInit.pattern.textDescription)"
+    let patternDump = "pattern: \(patternInit.pattern.textDescription.replacingOccurrences(of: "<", with: "&lt;").replacingOccurrences(of: ">", with: "&gt;"))"
     guard let initExpr = patternInit.initializerExpression else {
-      return patternDump
+      return "\(patternDump)"
     }
     return "\(patternDump)\n\(initExpr.ttyDump.indented)"
   }
