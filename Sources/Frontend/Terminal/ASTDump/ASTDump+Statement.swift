@@ -92,7 +92,7 @@ extension DoStatement : TTYASTDumpRepresentable {
       catches += "\(index): ".indented
       switch (catchClause.pattern, catchClause.whereExpression) {
       case (nil, nil):
-        catches += "<catch_all>"
+        catches += "&lt;catch_all&gt;"
       case (let pattern?, nil):
         catches += "pattern: `\(pattern.textDescription)`"
       case (nil, let expr?):

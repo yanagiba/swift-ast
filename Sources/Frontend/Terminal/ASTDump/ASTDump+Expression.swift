@@ -32,7 +32,7 @@ extension BinaryOperatorExpression : TTYASTDumpRepresentable {
     let opDump = "operator: `\(binaryOperator)`".indented
     let leftExprDump = leftExpression.ttyDump.indented
     let rightExprDump = rightExpression.ttyDump.indented
-    return "<BinaryOperatorExpression>\(head)\n\(opDump)\n\(leftExprDump)\n\(rightExprDump)</BinaryOperatorExpression>"
+    return "<BinaryOperatorExpression>\(head)\n\(opDump.replacingOccurrences(of: "<", with: "&lt;").replacingOccurrences(of: ">", with: "&gt;"))\n\(leftExprDump)\n\(rightExprDump)</BinaryOperatorExpression>"
   }
 }
 
@@ -159,12 +159,12 @@ extension IdentifierExpression : TTYASTDumpRepresentable {
     case let .identifier(id, generic):
       body += "kind: `identifier`, identifier: `\(id)`"
       if let gnrc = generic {
-        body += ", generic_argument: `\(gnrc.textDescription)`"
+        body += ", generic_argument: `\(gnrc.textDescription.replacingOccurrences(of: "<", with: "&lt;").replacingOccurrences(of: ">", with: "&gt;"))`"
       }
     case let .implicitParameterName(i, generic):
       body += "kind: `implicit_param_name`, index: `\(i)`"
       if let gnrc = generic {
-        body += ", generic_argument: `\(gnrc.textDescription)`"
+        body += ", generic_argument: `\(gnrc.textDescription.replacingOccurrences(of: "<", with: "&lt;").replacingOccurrences(of: ">", with: "&gt;"))`"
       }
     }
     return "<IdentifierExpression>\(head)\n\(body)</IdentifierExpression>"
@@ -477,7 +477,7 @@ extension TypeCastingOperatorExpression : TTYASTDumpRepresentable {
     case let .cast(expr, type):
       exprText = expr.ttyDump
       operatorText = "cast"
-      typeText = type.textDescription
+      typeText = type.textDescription.replacingOccurrences(of: "<", with: "&lt;").replacingOccurrences(of: ">", with: "&gt;")
     case let .conditionalCast(expr, type):
       exprText = expr.ttyDump
       operatorText = "conditional_cast"
