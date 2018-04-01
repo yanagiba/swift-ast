@@ -845,9 +845,9 @@ extension Parser {
       let rawValueCases = caseComponents.map {
           EnumDeclaration.RawValueStyleEnumCase.Case(name: $0.0, assignment: $0.2)
         }
-      guard rawValueCases.flatMap({ $0.assignment }).isEmpty else {
+      guard rawValueCases.compactMap({ $0.assignment }).isEmpty else {
         try assert(!isIndirect, orFatal: .indirectWithRawValueStyle)
-        try assert(unionCases.flatMap({ $0.tuple }).isEmpty, orFatal: .unionStyleMixWithRawValueStyle)
+        try assert(unionCases.compactMap({ $0.tuple }).isEmpty, orFatal: .unionStyleMixWithRawValueStyle)
         let rawValueCaseMember = EnumDeclaration.RawValueStyleEnumCase(attributes: attributes, cases: rawValueCases)
         return .rawValue(rawValueCaseMember)
       }
