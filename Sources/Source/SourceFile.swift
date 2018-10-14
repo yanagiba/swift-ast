@@ -19,7 +19,7 @@
 import Foundation
 
 public struct SourceFile {
-  public enum Origin {
+    public enum Origin: Equatable, Hashable {
     case file(String)
     case memory(UUID)
   }
@@ -49,29 +49,5 @@ public struct SourceFile {
   public init(uuid: UUID = UUID(), content: String) {
     self.origin = .memory(uuid)
     self.content = content
-  }
-}
-
-extension SourceFile.Origin : Equatable {
-  static public func ==(lhs: SourceFile.Origin, rhs: SourceFile.Origin) -> Bool {
-    switch (lhs, rhs) {
-    case let (.file(lhsPath), .file(rhsPath)):
-      return lhsPath == rhsPath
-    case let (.memory(lhsUuid), .memory(rhsUuid)):
-      return lhsUuid == rhsUuid
-    default:
-      return false
-    }
-  }
-}
-
-extension SourceFile.Origin : Hashable {
-  public var hashValue: Int {
-    switch self {
-    case .file(let path):
-      return path.hashValue
-    case .memory(let uuid):
-      return uuid.hashValue
-    }
   }
 }

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct SourceRange {
+public struct SourceRange: Equatable, Hashable {
   // Note: range := [start..<end)
   public let start: SourceLocation
   public let end: SourceLocation
@@ -22,18 +22,6 @@ public struct SourceRange {
   public init(start: SourceLocation, end: SourceLocation) {
     self.start = start
     self.end = end
-  }
-}
-
-extension SourceRange : Equatable {
-  static public func ==(lhs: SourceRange, rhs: SourceRange) -> Bool {
-    return lhs.start == rhs.start && lhs.end == rhs.end
-  }
-}
-
-extension SourceRange : Hashable {
-  public var hashValue: Int {
-    return start.hashValue ^ end.hashValue
   }
 }
 

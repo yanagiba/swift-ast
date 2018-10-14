@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct Char {
+struct Char: Equatable {
   let unicodeScalar: UnicodeScalar
   let role: Role
 }
@@ -28,12 +28,6 @@ extension Char {
 
   var int: Int? {
     return unicodeScalar.int
-  }
-}
-
-extension Char : Equatable {
-  static func ==(lhs: Char, rhs: Char) -> Bool {
-    return lhs.unicodeScalar == rhs.unicodeScalar && lhs.role == rhs.role
   }
 }
 

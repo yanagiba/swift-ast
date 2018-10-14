@@ -14,10 +14,7 @@
    limitations under the License.
 */
 
-extension Token.Kind: Equatable {
-  public static func ==(lhs: Token.Kind, rhs: Token.Kind) -> Bool {
-    return lhs.isEqual(to: rhs)
-  }
+extension Token.Kind {
 
   public func isEqual(toKindOf kind: Token.Kind) -> Bool {
     switch (self, kind) {
@@ -141,36 +138,7 @@ extension Token.Kind: Equatable {
     }
   }
 
-  public func isEqual(to kind: Token.Kind) -> Bool { // swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=18)
-    guard isEqual(toKindOf: kind) else {
-      return false
-    }
-
-    switch (self, kind) {
-    case let (.invalid(lhs), .invalid(rhs)):
-      return lhs.diagnosticMessage == rhs.diagnosticMessage
-    case let (.prefixOperator(lhs), .prefixOperator(rhs)):
-      return lhs == rhs
-    case let (.binaryOperator(lhs), .binaryOperator(rhs)):
-      return lhs == rhs
-    case let (.postfixOperator(lhs), .postfixOperator(rhs)):
-      return lhs == rhs
-    case let (.identifier(lhsName, lhsBacktick), .identifier(rhsName, rhsBacktick)):
-      return lhsName == rhsName && lhsBacktick == rhsBacktick
-    case let (.implicitParameterName(lhs), .implicitParameterName(rhs)):
-      return lhs == rhs
-    case let (.integerLiteral(lhi, lhr), .integerLiteral(rhi, rhr)):
-      return lhi == rhi && lhr == rhr
-    case let (.floatingPointLiteral(lhd, lhr), .floatingPointLiteral(rhd, rhr)):
-      return lhd == rhd && lhr == rhr
-    case let (.staticStringLiteral(lhs, lhr), .staticStringLiteral(rhs, rhr)):
-      return lhs == rhs && lhr == rhr
-    case let (.interpolatedStringLiteralHead(lhs, lhr), .interpolatedStringLiteralHead(rhs, rhr)):
-      return lhs == rhs && lhr == rhr
-    case let (.booleanLiteral(lhs), .booleanLiteral(rhs)):
-      return lhs == rhs
-    default:
-      return true
-    }
+  public func isEqual(to: Token.Kind) -> Bool { // swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=18)
+    return self == to
   }
 }
