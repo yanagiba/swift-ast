@@ -14,7 +14,7 @@ top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:23:1-23:11>
     kind: `double`, literal: `100.0003`, raw_text: `10_0.000_3`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:24:1-24:15>
-    kind: `double`, literal: `-0.00494122505187988`, raw_text: `-0xa_1.eaP-1_5`
+    kind: `double`, literal: `-0.004941225051879883`, raw_text: `-0xa_1.eaP-1_5`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:25:1-25:3>
     kind: `string`, raw_text: `""`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:26:1-26:46>
