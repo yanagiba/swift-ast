@@ -16,6 +16,6 @@ install:
 script:
 - make test
 - ./dogFooding.sh -diagnostics-only
-- ./lint.sh
 after_success:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./runXcodeTest.sh; bash <(curl -s https://codecov.io/bash); fi
+- ./lint.sh

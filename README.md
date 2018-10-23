@@ -97,19 +97,19 @@ calling `swift ast` in your terminal directly.
 Add the swift-ast dependency to `Package.swift`:
 
 ```swift
-// swift-tools-version:4.0
+// swift-tools-version:4.2
 
 import PackageDescription
 
 let package = Package(
   name: "MyPackage",
   dependencies: [
-    .package(url: "https://github.com/yanagiba/swift-ast.git", from: "0.4.2")
+    .package(url: "https://github.com/yanagiba/swift-ast.git", from: "0.18.10")
   ],
   targets: [
     .target(name: "MyTarget", dependencies: ["SwiftAST"]),
   ],
-  swiftLanguageVersions: [4]
+  swiftLanguageVersions: [.v4_2]
 )
 ```
 
