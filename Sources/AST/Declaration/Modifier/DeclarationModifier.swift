@@ -14,59 +14,12 @@
    limitations under the License.
 */
 
-public enum DeclarationModifier {
+public enum DeclarationModifier: Equatable {
   case `class`, convenience, dynamic, final, infix, lazy
   case optional, override, postfix, prefix, required, `static`
   case unowned, unownedSafe, unownedUnsafe, weak
   case accessLevel(AccessLevelModifier)
   case mutation(MutationModifier)
-}
-
-extension DeclarationModifier : Equatable {
-  static public func ==( // swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=19)
-    lhs: DeclarationModifier, rhs: DeclarationModifier
-  ) -> Bool {
-    switch (lhs, rhs) {
-    case (.class, .class):
-      return true
-    case (.convenience, .convenience):
-      return true
-    case (.dynamic, .dynamic):
-      return true
-    case (.final, .final):
-      return true
-    case (.infix, .infix):
-      return true
-    case (.lazy, .lazy):
-      return true
-    case (.optional, .optional):
-      return true
-    case (.override, .override):
-      return true
-    case (.postfix, .postfix):
-      return true
-    case (.prefix, .prefix):
-      return true
-    case (.required, .required):
-      return true
-    case (.static, .static):
-      return true
-    case (.unowned, .unowned):
-      return true
-    case (.unownedSafe, .unownedSafe):
-      return true
-    case (.unownedUnsafe, .unownedUnsafe):
-      return true
-    case (.weak, .weak):
-      return true
-    case let (.accessLevel(lhsAccess), .accessLevel(rhsAccess)):
-      return lhsAccess == rhsAccess
-    case let (.mutation(lhsMutation), .mutation(rhsMutation)):
-      return lhsMutation == rhsMutation
-    default:
-      return false
-    }
-  }
 }
 
 extension DeclarationModifier : ASTTextRepresentable {
