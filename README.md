@@ -6,7 +6,7 @@
 
 [![Travis CI Status](https://api.travis-ci.org/yanagiba/swift-ast.svg?branch=master)](https://travis-ci.org/yanagiba/swift-ast)
 [![codecov](https://codecov.io/gh/yanagiba/swift-ast/branch/master/graph/badge.svg)](https://codecov.io/gh/yanagiba/swift-ast)
-![Swift 4.1.1](https://img.shields.io/badge/swift-4.1.1-brightgreen.svg)
+![Swift 4.2](https://img.shields.io/badge/swift-4.2-brightgreen.svg)
 ![Swift Package Manager](https://img.shields.io/badge/SPM-ready-orange.svg)
 ![Platforms](https://img.shields.io/badge/platform-%20Linux%20|%20macOS%20-red.svg)
 ![License](https://img.shields.io/github/license/yanagiba/swift-ast.svg)
@@ -52,7 +52,7 @@ catch up as Swift evolves.
 
 ## Requirements
 
-- [Swift 4.1.1](https://swift.org/download/)
+- [Swift 4.2](https://swift.org/download/)
 
 ## Installation
 
@@ -97,19 +97,19 @@ calling `swift ast` in your terminal directly.
 Add the swift-ast dependency to `Package.swift`:
 
 ```swift
-// swift-tools-version:4.0
+// swift-tools-version:4.2
 
 import PackageDescription
 
 let package = Package(
   name: "MyPackage",
   dependencies: [
-    .package(url: "https://github.com/yanagiba/swift-ast.git", from: "0.4.2")
+    .package(url: "https://github.com/yanagiba/swift-ast.git", from: "0.18.10")
   ],
   targets: [
     .target(name: "MyTarget", dependencies: ["SwiftAST"]),
   ],
-  swiftLanguageVersions: [4]
+  swiftLanguageVersions: [.v4_2]
 )
 ```
 

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct SourceLocation {
+public struct SourceLocation: Equatable, Hashable {
   public let identifier: String
   public let line: Int
   public let column: Int
@@ -38,17 +38,6 @@ public struct SourceLocation {
   }
 }
 
-extension SourceLocation : Equatable {
-  static public func ==(lhs: SourceLocation, rhs: SourceLocation) -> Bool {
-    return lhs.identifier == rhs.identifier && lhs.line == rhs.line && lhs.column == rhs.column
-  }
-}
-
-extension SourceLocation : Hashable {
-  public var hashValue: Int {
-    return identifier.hashValue ^ line.hashValue ^ column.hashValue
-  }
-}
 
 extension SourceLocation {
   public static let DUMMY = SourceLocation(identifier: "dummy", line: 0, column: 0)

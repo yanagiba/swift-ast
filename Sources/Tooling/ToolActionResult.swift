@@ -19,19 +19,19 @@ import AST
 
 open class ToolActionResult {
   // system (0 ~ -9)
-  open static let success: Int32 = 0
-  open static let undefined: Int32 = -1
+  public static let success: Int32 = 0
+  public static let undefined: Int32 = -1
   // parse (-10 ~ -29)
-  open static let parsingFailed: Int32 = -10
+  public static let parsingFailed: Int32 = -10
   // sema (-30 ~ ∞)
-  open static let operatorPrecedenceSortingFailed: Int32 = -30
-  open static let sequenceExpressionFoldingFailed: Int32 = -31
+  public static let operatorPrecedenceSortingFailed: Int32 = -30
+  public static let sequenceExpressionFoldingFailed: Int32 = -31
 
   open var exitCode: Int32 = undefined
   open var astUnitCollection: ASTUnitCollection = []
   open var unparsedSourceFiles: [SourceFile] = []
 
-  open static func success(
+  public static func success(
     withUnitCollection collection: ASTUnitCollection
   ) -> ToolActionResult {
     let result = ToolActionResult()
@@ -40,7 +40,7 @@ open class ToolActionResult {
     return result
   }
 
-  open static func failedParsing(
+  public static func failedParsing(
     withSuccessUnitCollection collection: ASTUnitCollection,
     andUnparsedSourceFiles files: [SourceFile]
   ) -> ToolActionResult {

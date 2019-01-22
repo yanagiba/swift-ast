@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct Comment {
+public struct Comment: Equatable, Hashable {
   public let content: String
   public let location: SourceLocation
 
@@ -24,14 +24,3 @@ public struct Comment {
   }
 }
 
-extension Comment : Equatable {
-  public static func ==(lhs: Comment, rhs: Comment) -> Bool {
-    return lhs.content == rhs.content && lhs.location == rhs.location
-  }
-}
-
-extension Comment : Hashable {
-  public var hashValue: Int {
-    return location.hashValue ^ content.hashValue
-  }
-}
