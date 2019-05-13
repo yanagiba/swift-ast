@@ -53,6 +53,10 @@ class Scanner {
   }
 
   func peek() -> UnicodeScalar? {
+    guard _currentPointer < _content.endIndex else {
+      return nil
+    }
+
     return _scan(_nextPointer)
   }
 

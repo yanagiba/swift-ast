@@ -1,4 +1,4 @@
-// swift-tools-version:4.2
+// swift-tools-version:5.0
 
 /*
    Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
