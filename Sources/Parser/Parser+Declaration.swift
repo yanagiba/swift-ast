@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ extension Parser {
 
     let declHeadTokens: [Token.Kind] = [
       .import, .let, .var, .typealias, .func, .enum, .indirect, .struct,
-      .init, .deinit, .extension, .subscript, .operator, .protocol
+      .`init`, .deinit, .extension, .subscript, .operator, .protocol
     ]
     switch _lexer.read(declHeadTokens) {
     case .import:
@@ -91,7 +91,7 @@ extension Parser {
         withAttributes: attrs,
         modifiers: modifiers,
         startLocation: startLocation)
-    case .init:
+    case .`init`:
       return try parseInitializerDeclaration(
         withAttributes: attrs,
         modifiers: modifiers,
@@ -268,12 +268,12 @@ extension Parser {
       let attrs = try parseAttributes()
       let modifiers = parseModifiers()
       let startLocation = getStartLocation()
-      switch _lexer.read([.var, .func, .init, .subscript, .hash]) {
+      switch _lexer.read([.var, .func, .`init`, .subscript, .hash]) {
       case .var:
         return try parsePropertyMember(withAttributes: attrs, modifiers: modifiers)
       case .func:
         return try parseMethodMember(withAttributes: attrs, modifiers: modifiers)
-      case .init:
+      case .`init`:
         return try parseInitializerMember(withAttributes: attrs, modifiers: modifiers)
       case .subscript:
         return try parseSubscriptMember(withAttributes: attrs, modifiers: modifiers)

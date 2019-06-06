@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,6 +17,11 @@
 import XCTest
 
 import CanaryTests
+
+import SwiftExtensionsTests
+import DotYanagibaTests
+import CommandLineTests
+
 import SourceTests
 import ASTTests
 import ASTVisitorTests
@@ -28,6 +33,11 @@ import IntegrationTests
 
 var tests = [XCTestCaseEntry]()
 tests += CanaryTests.allTests()
+
+tests += SwiftExtensionsTests.allTests()
+tests += DotYanagibaTests.allTests()
+tests += CommandLineTests.allTests()
+
 tests += SourceTests.allTests()
 tests += ASTTests.allTests()
 tests += ASTVisitorTests.allTests()
@@ -36,4 +46,5 @@ tests += LexerTests.allTests()
 tests += ParserTests.allTests()
 tests += SemaTests.allTests()
 tests += IntegrationTests.allTests()
+
 XCTMain(tests)

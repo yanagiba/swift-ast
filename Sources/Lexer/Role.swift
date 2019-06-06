@@ -1,5 +1,6 @@
 /*
-   Copyright 2016-2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2017, 2019 Ryuichi Intellectual Property
+                             and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -70,7 +71,7 @@ extension Role {
 }
 
 fileprivate extension UnicodeScalar {
-  fileprivate func getRole( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
+  func getRole( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     followedBy peek: UnicodeScalar? = nil
   ) -> Role {
     switch self {

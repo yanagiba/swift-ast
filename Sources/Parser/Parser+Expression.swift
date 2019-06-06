@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -552,12 +552,12 @@ extension Parser {
 
     endLocation = getEndLocation()
     switch _lexer.read([
-      .init,
+      .`init`,
       .self,
       .dummyIntegerLiteral,
       .dummyFloatingPointLiteral,
     ]) {
-    case .init:
+    case .`init`:
       var argumentNames: [Identifier] = []
       if let (argNames, argSrcRange) = try parseArgumentNames() {
         argumentNames = argNames
@@ -776,7 +776,7 @@ extension Parser {
     case .dot:
       _lexer.advance()
       endLocation = getEndLocation()
-      if _lexer.match(.init) {
+      if _lexer.match(.`init`) {
         kind = .initializer
       } else if let id = readNamedIdentifier() {
         kind = .method(id)
@@ -807,7 +807,7 @@ extension Parser {
     case .dot:
       _lexer.advance()
       endLocation = getEndLocation()
-      if _lexer.match(.init) {
+      if _lexer.match(.`init`) {
         kind = .initializer
       } else if let id = readNamedIdentifier() {
         kind = .method(id)
@@ -1276,7 +1276,10 @@ extension Parser {
         guard let name = readNamedIdentifierOrWildcard() else {
           return nil
         }
-        guard let typeAnnotation = try? parseTypeAnnotation() else {
+        let typeAnnotation: TypeAnnotation?
+        do {
+          typeAnnotation = try parseTypeAnnotation()
+        } catch _ {
           return nil
         }
         var isVarargs = false

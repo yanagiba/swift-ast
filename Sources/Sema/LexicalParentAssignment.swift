@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -523,7 +523,7 @@ private class AssignmentVisitor : ASTVisitor {
 }
 
 fileprivate extension Statement {
-  fileprivate func setLexicalParent(_ parentNode: ASTNode) {
+  func setLexicalParent(_ parentNode: ASTNode) {
     if let node = self as? ASTNode {
       node.setLexicalParent(parentNode)
     }

@@ -1,5 +1,6 @@
 /*
-   Copyright 2015-2016 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2016, 2019 Ryuichi Intellectual Property
+                             and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -50,7 +51,7 @@ class LexerKeywordTests: XCTestCase {
     ("in", .in),
     ("indirect", .indirect),
     ("infix", .infix),
-    ("init", .init),
+    ("init", .`init`),
     ("inout", .inout),
     ("internal", .internal),
     ("is", .is),
