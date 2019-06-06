@@ -1,5 +1,6 @@
 /*
-   Copyright 2015-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2017, 2019 Ryuichi Intellectual Property
+                             and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,13 +16,13 @@
 */
 
 public extension String {
-  public init(indentation: Int) {
+  init(indentation: Int) {
     self.init(repeating: "  ", count: indentation)
   }
 
-  public static let indent = String(indentation: 1)
+  static let indent = String(indentation: 1)
 
-  public var indented: String {
+  var indented: String {
     return components(separatedBy: .newlines)
       .map { String.indent + $0 }
       .joined(separator: "\n")

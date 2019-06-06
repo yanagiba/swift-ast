@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ extension Lexer /* identifier */ {
 }
 
 fileprivate extension Role {
-  fileprivate var isIdentifierCharacter: Bool {
+  var isIdentifierCharacter: Bool {
     switch self {
     case .identifierHead, .identifierBody, .digit, .underscore, .dollar:
         return true
@@ -106,7 +106,7 @@ fileprivate let keywordMapping: [String: Token.Kind] = [
   "in": .in,
   "indirect": .indirect,
   "infix": .infix,
-  "init": .init,
+  "init": .`init`,
   "inout": .inout,
   "internal": .internal,
   "is": .is,

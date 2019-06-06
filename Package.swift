@@ -193,5 +193,5 @@ let package = Package(
       ]
     ),
   ],
-  swiftLanguageVersions: [.v4_2]
+  swiftLanguageVersions: [.v5]
 )

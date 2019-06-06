@@ -17,7 +17,7 @@
 import Foundation
 
 public extension String {
-  public var fileHandle: FileHandle {
+  var fileHandle: FileHandle {
     let outputPath = absolutePath
     let fileManager = FileManager.default
     if fileManager.fileExists(atPath: outputPath) {

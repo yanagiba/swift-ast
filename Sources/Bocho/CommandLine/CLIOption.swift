@@ -1,5 +1,6 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2019 Ryuichi Intellectual Property 
+                        and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -26,7 +27,7 @@ public class CLIOption {
   }
 
   public func readAsString(_ option: String) -> String? {
-    guard let argIndex = arguments.index(of: "-\(option)") else {
+    guard let argIndex = arguments.firstIndex(of: "-\(option)") else {
       return nil
     }
 

@@ -93,7 +93,7 @@ class KeywordUsedAsIdentifierTests: XCTestCase {
       case .in: break
       case .indirect: break
       case .infix: break
-      case .init: break
+      case .`init`: break
       case .inout: break
       case .internal: break
       case .is: break

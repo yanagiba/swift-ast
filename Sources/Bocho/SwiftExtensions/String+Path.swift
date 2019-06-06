@@ -1,5 +1,6 @@
 /*
-   Copyright 2015-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2017, 2019 Ryuichi Intellectual Property
+                             and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,11 +18,11 @@
 import Foundation
 
 public extension String {
-  public var truncatedPath: String {
+  var truncatedPath: String {
     return truncatedPath()
   }
 
-  public func truncatedPath(
+  func truncatedPath(
     currentDirectoryPath currentDirectory: String = FileManager.default.currentDirectoryPath
   ) -> String {
     // Note: one extra character is truncated after the prefix
@@ -32,11 +33,11 @@ public extension String {
     return String(self[index(startIndex, offsetBy: currentDirectory.count+1)...])
   }
 
-  public var absolutePath: String {
+  var absolutePath: String {
     return absolutePath()
   }
 
-  public func absolutePath(
+  func absolutePath(
     currentDirectoryPath currentDirectory: String = FileManager.default.currentDirectoryPath
   ) -> String {
     if self.hasPrefix("/") {
@@ -67,11 +68,11 @@ public extension String {
     return String(absolutePath[absolutePath.index(after: absolutePath.startIndex)...])
   }
 
-  public var parentPath: String {
+  var parentPath: String {
     return parentPath()
   }
 
-  public func parentPath(
+  func parentPath(
     currentDirectoryPath currentDirectory: String = FileManager.default.currentDirectoryPath
   ) -> String {
     var components = absolutePath(currentDirectoryPath: currentDirectory).split(separator: "/")
@@ -81,7 +82,7 @@ public extension String {
 }
 
 public extension Collection where Iterator.Element == String {
-  public var commonPathPrefix: String {
+  var commonPathPrefix: String {
     var shortestPath: String?
     var length = Int.max
 

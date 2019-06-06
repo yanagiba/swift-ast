@@ -1,5 +1,6 @@
 /*
-   Copyright 2015-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2017, 2019 Ryuichi Intellectual Property
+                             and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -53,7 +54,7 @@ extension Lexer /* operator */ {
 }
 
 fileprivate extension Char {
-  fileprivate func shouldContinue(enableDotOperator: Bool) -> Bool {
+  func shouldContinue(enableDotOperator: Bool) -> Bool {
     if self == .eof {
       return false
     }
@@ -71,7 +72,7 @@ fileprivate extension Char {
 }
 
 fileprivate extension String {
-  fileprivate func toOperator(following head: Role, followed tail: Role) -> Token.Kind {
+  func toOperator(following head: Role, followed tail: Role) -> Token.Kind {
     let headSeparated = head.isHeadSeparator
     let tailSeparated = tail.isTailSeparator
     if tail == .eof && !headSeparated {

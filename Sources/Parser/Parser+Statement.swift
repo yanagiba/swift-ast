@@ -91,7 +91,7 @@ extension Parser {
     case .hash:
       stmt = try parseCompilerControlStatement(startLocation: lookedRange.start)
     case .import, .let, .var, .typealias, .func, .enum, .indirect,
-      .struct, .init, .deinit, .extension, .subscript, .operator, .protocol:
+      .struct, .`init`, .deinit, .extension, .subscript, .operator, .protocol:
       stmt = try parseDeclaration()
     case .at:
       stmt = try parseDeclaration()
@@ -140,7 +140,7 @@ extension Parser {
         switch nextToken.kind {
         case .for, .while, .repeat, .if, .guard, .switch, .defer, .do, .break,
           .continue, .fallthrough, .return, .throw, .hash, .import, .let, .var,
-          .typealias, .func, .enum, .indirect, .struct, .init, .deinit,
+          .typealias, .func, .enum, .indirect, .struct, .`init`, .deinit,
           .extension, .subscript, .operator, .protocol, .at:
           return try returnStmt()
         default:

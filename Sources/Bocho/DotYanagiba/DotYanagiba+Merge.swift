@@ -1,5 +1,6 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2019 Ryuichi Intellectual Property
+                        and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +16,7 @@
 */
 
 public extension DotYanagiba {
-  public static func merge(_ one: DotYanagiba, with other: DotYanagiba) -> DotYanagiba {
+  static func merge(_ one: DotYanagiba, with other: DotYanagiba) -> DotYanagiba {
     var modules = one.modules
     for (moduleName, module) in other.modules {
       if modules[moduleName] == nil {
