@@ -17,6 +17,11 @@
 import XCTest
 
 import CanaryTests
+
+import SwiftExtensionsTests
+import DotYanagibaTests
+import CommandLineTests
+
 import SourceTests
 import ASTTests
 import ASTVisitorTests
@@ -28,6 +33,11 @@ import IntegrationTests
 
 var tests = [XCTestCaseEntry]()
 tests += CanaryTests.allTests()
+
+tests += SwiftExtensionsTests.allTests()
+tests += DotYanagibaTests.allTests()
+tests += CommandLineTests.allTests()
+
 tests += SourceTests.allTests()
 tests += ASTTests.allTests()
 tests += ASTVisitorTests.allTests()
@@ -36,4 +46,5 @@ tests += LexerTests.allTests()
 tests += ParserTests.allTests()
 tests += SemaTests.allTests()
 tests += IntegrationTests.allTests()
+
 XCTMain(tests)

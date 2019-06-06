@@ -30,6 +30,7 @@ let package = Package(
     .library(
       name: "SwiftAST",
       targets: [
+        "Bocho",
         "Source",
         "Diagnostic",
         "AST",
@@ -41,6 +42,7 @@ let package = Package(
     .library(
       name: "SwiftAST+Tooling",
       targets: [
+        "Bocho",
         "Source",
         "Diagnostic",
         "AST",
@@ -51,13 +53,11 @@ let package = Package(
       ]
     ),
   ],
-  dependencies: [
-    .package(
-      url: "https://github.com/yanagiba/bocho",
-      .exact("0.18.10")
-    ),
-  ],
+  dependencies: [],
   targets: [
+    .target(
+      name: "Bocho"
+    ),
     .target(
       name: "Source",
       dependencies: [
@@ -127,6 +127,24 @@ let package = Package(
       name: "CanaryTests"
     ),
     .testTarget(
+      name: "SwiftExtensionsTests",
+      dependencies: [
+        "Bocho",
+      ]
+    ),
+    .testTarget(
+      name: "DotYanagibaTests",
+      dependencies: [
+        "Bocho",
+      ]
+    ),
+    .testTarget(
+      name: "CommandLineTests",
+      dependencies: [
+        "Bocho",
+      ]
+    ),
+    .testTarget(
       name: "SourceTests",
       dependencies: [
         "Source",
@@ -175,5 +193,5 @@ let package = Package(
       ]
     ),
   ],
-  swiftLanguageVersions: [.v5]
+  swiftLanguageVersions: [.v4_2]
 )
