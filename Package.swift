@@ -1,7 +1,7 @@
 // swift-tools-version:5.0
 
 /*
-   Copyright 2015-2018 Ryuichi Laboratories and the Yanagiba project contributors
+   Copyright 2015-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -175,5 +175,5 @@ let package = Package(
       ]
     ),
   ],
-  swiftLanguageVersions: [.v4_2]
+  swiftLanguageVersions: [.v5]
 )
