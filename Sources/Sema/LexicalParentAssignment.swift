@@ -523,7 +523,7 @@ private class AssignmentVisitor : ASTVisitor {
 }
 
 fileprivate extension Statement {
-  fileprivate func setLexicalParent(_ parentNode: ASTNode) {
+  func setLexicalParent(_ parentNode: ASTNode) {
     if let node = self as? ASTNode {
       node.setLexicalParent(parentNode)
     }
