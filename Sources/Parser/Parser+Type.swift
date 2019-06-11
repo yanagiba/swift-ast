@@ -42,8 +42,19 @@ extension Parser {
 
   func parseType() throws -> Type {
     let attrs = try parseAttributes()
+
+    let isOpaqueType = isOpaqueTypeHead()
     let atomicType = try parseAtomicType()
-    return try parseContainerType(atomicType, attributes: attrs)
+    let containerType = try parseContainerType(atomicType, attributes: attrs)
+
+    return isOpaqueType ? OpaqueType(wrappedType: containerType) : containerType
+  }
+
+  func isOpaqueTypeHead() -> Bool {
+    guard case .name("some") = _lexer.look().kind.namedIdentifier else { return false }
+
+    _lexer.advance()
+    return true
   }
 
   private func parseAtomicType() throws -> Type {
