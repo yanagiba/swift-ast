@@ -1,5 +1,6 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2019 Ryuichi Intellectual Property
+                        and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -36,6 +37,7 @@ func foo(bar: Bar) rethrows
 func foo(bar: Bar) -> @a @b @c Foo
 func foo(bar: Bar) throws -> Foo
 func foo(bar: Bar) rethrows -> Foo
+func foo() -> some Foo
 func foo<A>() where A == Foo
 func foo() {}
 func foo() {
