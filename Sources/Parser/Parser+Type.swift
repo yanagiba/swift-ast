@@ -51,7 +51,7 @@ extension Parser {
   }
 
   func isOpaqueTypeHead() -> Bool {
-    guard case .name("some") = _lexer.look().kind.namedIdentifier else { return false }
+    guard case .name("some")? = _lexer.look().kind.namedIdentifier else { return false }
 
     _lexer.advance()
     return true
