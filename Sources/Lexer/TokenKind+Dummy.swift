@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ extension Token.Kind {
   public static let dummyInterpolatedStringLiteralHead: Token.Kind =
     .interpolatedStringLiteralHead("", rawRepresentation: "")
   public static let dummyImplicitParameterName: Token.Kind = .implicitParameterName(0)
+  public static let dummyBindingReference: Token.Kind = .bindingReference("")
   public static let dummyPrefixOperator: Token.Kind = .prefixOperator("")
   public static let dummyBinaryOperator: Token.Kind = .binaryOperator("")
   public static let dummyPostfixOperator: Token.Kind = .postfixOperator("")

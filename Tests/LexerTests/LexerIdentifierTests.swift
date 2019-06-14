@@ -56,6 +56,14 @@ class LexerIdentifierTests: XCTestCase {
     }
   }
 
+  func testBindingReferences() {
+    identifiers.forEach { i in
+      lexAndTest("$\(i)") { t in
+        XCTAssertEqual(t, .bindingReference(i))
+      }
+    }
+  }
+
   func testDollarSignCanBeUsedAsIdentifierBody() {
     lexAndTest("foo$") { t in
       XCTAssertEqual(t, .identifier("foo$", false))
@@ -91,6 +99,7 @@ class LexerIdentifierTests: XCTestCase {
     ("testBacktickIdentifiers", testBacktickIdentifiers),
     ("testBacktickIdentifierMissingClosingBacktick", testBacktickIdentifierMissingClosingBacktick),
     ("testImplicitParameterName", testImplicitParameterName),
+    ("testBindingReferences", testBindingReferences),
     ("testDollarSignCanBeUsedAsIdentifierBody", testDollarSignCanBeUsedAsIdentifierBody),
     ("testStructName", testStructName),
   ]
