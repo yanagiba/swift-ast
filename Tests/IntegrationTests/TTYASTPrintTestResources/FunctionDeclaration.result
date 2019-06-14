@@ -20,6 +20,7 @@ func foo(bar: Bar) rethrows
 func foo(bar: Bar) -> @a @b @c Foo
 func foo(bar: Bar) throws -> Foo
 func foo(bar: Bar) rethrows -> Foo
+func foo() -> Opaque<Foo>
 func foo<A>() where A == Foo
 func foo() {}
 func foo() {

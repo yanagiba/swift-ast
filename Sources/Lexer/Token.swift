@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ public struct Token {
     // value references
     case identifier(String, Bool)
     case implicitParameterName(Int)
+    case bindingReference(String)
     // literals
     case integerLiteral(Int, rawRepresentation: String)
     case floatingPointLiteral(Double, rawRepresentation: String)

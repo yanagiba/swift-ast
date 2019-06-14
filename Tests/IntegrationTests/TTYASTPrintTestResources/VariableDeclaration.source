@@ -1,5 +1,6 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2019 Ryuichi Intellectual Property
+                        and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -274,3 +275,4 @@ var foo = _foo { $0 = 0 } {
   }
 }
 var foo = bar {$0 == 0 }.joined()
+var foo: some Foo

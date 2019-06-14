@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2019 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 
 import XCTest
 
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase([("testSerinus", SerinusTests.testSerinus)]),
+class ParserOpaqueTypeTests: XCTestCase {
+  func testOpaqueType() {
+    parseTypeAndTest("some Thing", "Opaque<Thing>")
+  }
+
+  static var allTests = [
+    ("testOpaqueType", testOpaqueType),
   ]
 }
-#endif

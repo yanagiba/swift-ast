@@ -50,6 +50,7 @@ extension Token.Kind {
       (.postfixOperator, .postfixOperator),
       (.identifier, .identifier),
       (.implicitParameterName, .implicitParameterName),
+      (.bindingReference, .bindingReference),
       (.integerLiteral, .integerLiteral),
       (.floatingPointLiteral, .floatingPointLiteral),
       (.staticStringLiteral, .staticStringLiteral),

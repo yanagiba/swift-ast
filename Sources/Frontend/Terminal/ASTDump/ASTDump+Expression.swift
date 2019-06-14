@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -166,6 +166,8 @@ extension IdentifierExpression : TTYASTDumpRepresentable {
       if let gnrc = generic {
         body += ", generic_argument: `\(gnrc.textDescription)`"
       }
+    case let .bindingReference(refVar):
+      body += "kind: `binding_reference`, variable: `\(refVar)`"
     }
     return "\(head)\n\(body)"
   }

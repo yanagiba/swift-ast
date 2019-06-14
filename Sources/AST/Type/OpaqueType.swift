@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2019 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,10 +14,17 @@
    limitations under the License.
 */
 
-import XCTest
+public class OpaqueType : TypeBase {
+  public let wrappedType: Type
 
-class SerinusTests: XCTestCase {
-  func testSerinus() {
-    XCTAssertTrue(true)
+  public init(wrappedType: Type) {
+    self.wrappedType = wrappedType
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    // the concrete type is unknown at this point, so we just save it syntactically
+    return "Opaque<\(wrappedType.textDescription)>"
   }
 }

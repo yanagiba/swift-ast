@@ -33,6 +33,7 @@ public func allTests() -> [XCTestCaseEntry] {
     testCase(ParserTypeIdentifierTests.allTests),
     testCase(ParserAnyTypeTests.allTests),
     testCase(ParserSelfTypeTests.allTests),
+    testCase(ParserOpaqueTypeTests.allTests),
     testCase(ParserTypeInheritanceClauseTests.allTests),
     ///////// Generic
     testCase(ParserGenericArgumentClauseTests.allTests),

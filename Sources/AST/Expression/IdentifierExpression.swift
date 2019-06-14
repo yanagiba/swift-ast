@@ -1,5 +1,6 @@
 /*
-   Copyright 2016-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2017, 2019 Ryuichi Intellectual Property
+                             and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,6 +19,7 @@ public class IdentifierExpression : ASTNode, PrimaryExpression {
   public enum Kind {
     case identifier(Identifier, GenericArgumentClause?)
     case implicitParameterName(Int, GenericArgumentClause?)
+    case bindingReference(String)
   }
 
   public let kind: Kind
@@ -34,6 +36,8 @@ public class IdentifierExpression : ASTNode, PrimaryExpression {
       return "\(id)\(generic?.textDescription ?? "")"
     case let .implicitParameterName(i, generic):
       return "$\(i)\(generic?.textDescription ?? "")"
+    case let .bindingReference(refVar):
+      return "$\(refVar)"
     }
   }
 }

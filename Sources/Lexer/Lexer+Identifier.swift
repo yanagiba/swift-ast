@@ -62,6 +62,16 @@ extension Lexer /* identifier */ {
     }
     return .identifier(idString, false)
   }
+
+  func lexBindingReference() -> Token.Kind {
+    var refVariable = char.string
+    _consume(char.role)
+    while char.role.isIdentifierCharacter {
+      refVariable += char.string
+      _consume(char.role)
+    }
+    return .bindingReference(refVariable)
+  }
 }
 
 fileprivate extension Role {

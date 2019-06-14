@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -607,6 +607,7 @@ extension Parser {
     let lookedRange = getLookedRange()
     let matched = _lexer.read([
       .dummyImplicitParameterName,
+      .dummyBindingReference,
       .dummyIntegerLiteral,
       .dummyFloatingPointLiteral,
       .dummyStaticStringLiteral,
@@ -680,6 +681,10 @@ extension Parser {
       if let gnrc = generic {
         idExpr.setSourceRange(lookedRange.start, gnrc.sourceRange.end)
       }
+      return idExpr
+    case let .bindingReference(refVar):
+      let idExpr = IdentifierExpression(kind: .bindingReference(refVar))
+      idExpr.setSourceRange(lookedRange)
       return idExpr
     default:
       // keyword used as identifier

@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -259,7 +259,10 @@ public class Lexer {
       return produce(lexOperator(prev: _prevRole, enableDotOperator: true))
     case .dollar:
       _consume(.dollar)
-      return produce(lexImplicitParameterName())
+      if char.role == .digit {
+        return produce(lexImplicitParameterName())
+      }
+      return produce(lexBindingReference())
     case .backtick:
       _consume(.backtick)
       return produce(lexBacktickIdentifier())
