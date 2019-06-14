@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -101,6 +101,22 @@ class ParserIdentifierExpressionTests: XCTestCase {
     }
   }
 
+  func testBindingReference() {
+    let testClosure: (String, Expression) -> Void = { identifier, expr in
+      guard let idExpr = expr as? IdentifierExpression,
+        case let .bindingReference(refVar) = idExpr.kind else {
+        XCTFail("Failed in getting an identifier expression")
+        return
+      }
+      XCTAssertEqual(refVar, identifier)
+    }
+    ["foo", "bar", "backtick"].forEach { refVar in
+      parseExpressionAndTest("$\(refVar)", "$\(refVar)", testClosure: { expr in
+        testClosure(refVar, expr)
+      })
+    }
+  }
+
   func testSourceRange() {
     let testExprs: [(testString: String, expectedString: String, expectedEndColumn: Int)] = [
       ("foo", "foo", 4),
@@ -109,6 +125,7 @@ class ParserIdentifierExpressionTests: XCTestCase {
       ("`class`<P>", "`class`<P>", 11),
       ("$0", "$0", 3),
       ("$0<A>", "$0<A>", 6),
+      ("$a", "$a", 3),
     ]
     for t in testExprs {
       parseExpressionAndTest(t.testString, t.expectedString, testClosure: { expr in
@@ -122,6 +139,7 @@ class ParserIdentifierExpressionTests: XCTestCase {
     ("testNameWithGeneric", testNameWithGeneric),
     ("testImplicitParameter", testImplicitParameter),
     ("testImplicitParameterWithGeneric", testImplicitParameterWithGeneric),
+    ("testBindingReference", testBindingReference),
     ("testSourceRange", testSourceRange),
   ]
 }
