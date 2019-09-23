@@ -104,7 +104,7 @@ import PackageDescription
 let package = Package(
   name: "MyPackage",
   dependencies: [
-    .package(url: "https://github.com/yanagiba/swift-ast.git", from: "0.19.6")
+    .package(url: "https://github.com/yanagiba/swift-ast.git", from: "0.19.9")
   ],
   targets: [
     .target(name: "MyTarget", dependencies: ["SwiftAST+Tooling"]),
