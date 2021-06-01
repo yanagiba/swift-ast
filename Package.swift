@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.3
 
 /*
    Copyright 2015-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
@@ -20,6 +20,7 @@ import PackageDescription
 
 let package = Package(
   name: "swift-ast",
+  platforms: [.macOS(.v11), .iOS(.v14)],
   products: [
     .executable(
       name: "swift-ast",
