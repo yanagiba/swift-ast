@@ -24,7 +24,10 @@ extension Parser {
   }
 
   func assert(_ cond: Bool, orError error: ParserErrorKind) throws {
-    if !cond { try _raiseError(error) }
+    if !cond {
+        try _raiseError(error)
+        throw error
+    }
   }
 
   func match(_ kinds: [Token.Kind], exactMatch: Bool = false, orFatal fatalError: ParserErrorKind) throws {
@@ -33,6 +36,14 @@ extension Parser {
 
   func match(_ kind: Token.Kind, exactMatch: Bool = false, orFatal fatalError: ParserErrorKind) throws {
     try match([kind], exactMatch: exactMatch, orFatal: fatalError)
+  }
+
+  func match(_ kinds: [Token.Kind], exactMatch: Bool = false, orError error: ParserErrorKind) throws {
+    try assert(_lexer.match(kinds, exactMatch: exactMatch), orError: error)
+  }
+
+  func match(_ kind: Token.Kind, exactMatch: Bool = false, orError error: ParserErrorKind) throws {
+    try match([kind], exactMatch: exactMatch, orError: error)
   }
 
   func readIdentifier(_ id: String, orFatal fatalError: ParserErrorKind) throws {

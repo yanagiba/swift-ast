@@ -28,7 +28,7 @@ extension Parser {
 
   func parseCodeBlock() throws -> CodeBlock {
     let startLocation = getStartLocation()
-    try match(.leftBrace, orFatal: .leftBraceExpected("code block"))
+    try match(.leftBrace, orError: .leftBraceExpected("code block"))
     let stmts = try parseStatements()
     let endLocation = getEndLocation()
     try match(.rightBrace, orFatal: .rightBraceExpected("code block"))
@@ -593,8 +593,7 @@ extension Parser {
     let (params, _) = try parseParameterClause()
     let (throwsKind, _) = parseThrowsKind()
     let genericWhereClause = try parseGenericWhereClause()
-    let body = forProtocolMember ? CodeBlock() : try parseCodeBlock()
-
+    let body = forProtocolMember ? CodeBlock() : (try? parseCodeBlock()) ?? CodeBlock()
     let initDecl = InitializerDeclaration(
       attributes: attrs,
       modifiers: modifiers,

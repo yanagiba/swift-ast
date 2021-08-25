@@ -34,7 +34,7 @@ extension Parser {
   }
 }
 
-public enum ParserErrorKind : DiagnosticKind {
+public enum ParserErrorKind : DiagnosticKind, Error {
   case dummy
 
   case leftBraceExpected(String)
