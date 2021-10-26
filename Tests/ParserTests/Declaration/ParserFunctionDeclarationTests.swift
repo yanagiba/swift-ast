@@ -428,6 +428,32 @@ class ParserFunctionDeclarationTests: XCTestCase {
     })
   }
 
+  func testAsyncFunction() {
+    parseDeclarationAndTest(
+      "func foo(bar: Bar) async",
+      "func foo(bar: Bar) async",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+
+      XCTAssertTrue(funcDecl.attributes.isEmpty)
+      XCTAssertTrue(funcDecl.modifiers.isEmpty)
+      XCTAssertEqual(funcDecl.name.textDescription, "foo")
+      XCTAssertNil(funcDecl.genericParameterClause)
+
+      XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
+      XCTAssertEqual(funcDecl.signature.parameterList[0].textDescription, "bar: Bar")
+      XCTAssertEqual(funcDecl.signature.asyncKind, .async)
+      XCTAssertNil(funcDecl.signature.result)
+      XCTAssertEqual(funcDecl.signature.textDescription, "(bar: Bar) async")
+
+      XCTAssertNil(funcDecl.genericWhereClause)
+      XCTAssertNil(funcDecl.body)
+    })
+  }
+
   func testFunctionThatThrows() {
     parseDeclarationAndTest(
       "func foo(bar: Bar) throws",

@@ -54,7 +54,7 @@ public struct Token {
     case `internal`, `private`, `public`, `fileprivate`, `open`
     // keywords
     case `Any`, `Self`
-    case `as`, associativity, `break`, `catch`, `case`, `class`, `continue`
+    case `as`, associativity, `async`, `break`, `catch`, `case`, `class`, `continue`
     case `default`, `defer`, `deinit`, didSet, `do`, `enum`
     case `extension`, `else`, `fallthrough`, `for`, `func`, get, `guard`, `if`
     case `import`, `in`, indirect, infix, `init`, `inout`, `is`, `let`

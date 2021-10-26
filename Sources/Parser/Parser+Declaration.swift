@@ -1000,12 +1000,15 @@ extension Parser {
 
     func parseSignature() throws -> (FunctionSignature, SourceLocation) {
       let (params, paramsSrcRange) = try parseParameterClause()
+      let (asyncKind, asyncEndLocation) = parseAsyncKind()
       let (throwsKind, throwsEndLocation) = parseThrowsKind()
       let result = try parseFunctionResult()
 
-      let funcSign = FunctionSignature(parameterList: params, throwsKind: throwsKind, result: result)
+      let funcSign = FunctionSignature(parameterList: params, asyncKind: asyncKind, throwsKind: throwsKind, result: result)
       if let resultEndLocation = result?.type.sourceRange.end {
         return (funcSign, resultEndLocation)
+      } else if let asyncEndLocation = asyncEndLocation {
+          return (funcSign, asyncEndLocation)
       } else if let throwsEndLocation = throwsEndLocation {
         return (funcSign, throwsEndLocation)
       } else {

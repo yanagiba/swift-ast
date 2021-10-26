@@ -27,6 +27,16 @@ extension Parser {
     return FunctionResult(attributes: attrs, type: type)
   }
 
+  func parseAsyncKind() -> (AsyncKind, SourceLocation?) {
+    let endLocation = getEndLocation()
+    switch _lexer.read([.async]) {
+    case .async:
+      return (.async, endLocation)
+    default:
+      return (.notasync, nil)
+    }
+  }
+
   func parseThrowsKind() -> (ThrowsKind, SourceLocation?) {
     let endLocation = getEndLocation()
     switch _lexer.read([.throws, .rethrows]) {

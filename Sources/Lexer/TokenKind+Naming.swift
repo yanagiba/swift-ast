@@ -43,6 +43,8 @@ public extension Token.Kind /* named identifier */ {
       return .name("as")
     case .associativity:
       return .name("associativity")
+    case .async:
+      return .name("async")
     case .break:
       return .name("break")
     case .catch:

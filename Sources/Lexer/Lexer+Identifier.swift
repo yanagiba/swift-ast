@@ -88,6 +88,7 @@ fileprivate extension Role {
 fileprivate let keywordMapping: [String: Token.Kind] = [
   "as": .as,
   "associativity": .associativity,
+  "async": .async,
   "break": .break,
   "catch": .catch,
   "case": .case,

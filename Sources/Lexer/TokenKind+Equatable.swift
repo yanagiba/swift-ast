@@ -75,6 +75,7 @@ extension Token.Kind {
       (.open, .open),
       (.as, .as),
       (.associativity, .associativity),
+      (.async, .async),
       (.break, .break),
       (.catch, .catch),
       (.case, .case),
