@@ -568,7 +568,7 @@ extension Parser {
   private func parseDeinitializerDeclaration(
     withAttributes attrs: Attributes, startLocation: SourceLocation
   ) throws -> DeinitializerDeclaration {
-    let body = try parseCodeBlock()
+    let body = (try? parseCodeBlock()) ?? CodeBlock()
     let deinitDecl = DeinitializerDeclaration(attributes: attrs, body: body)
     deinitDecl.setSourceRange(startLocation, body.sourceRange.end)
     return deinitDecl
