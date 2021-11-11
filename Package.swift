@@ -20,7 +20,7 @@ import PackageDescription
 
 let package = Package(
   name: "swift-ast",
-  platforms: [.macOS(.v10_14), .iOS(.v14)],
+  platforms: [.macOS(.v10_15), .iOS(.v14)],
   products: [
     .executable(
       name: "swift-ast",

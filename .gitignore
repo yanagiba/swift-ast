@@ -4,3 +4,5 @@
 swift-ast.xcodeproj/
 build/
 swift-ast_github_issue_*.md
+.swiftpm/xcode/package.xcworkspace/xcuserdata/mafalda.xcuserdatad/UserInterfaceState.xcuserstate
+.swiftpm/xcode/xcuserdata/mafalda.xcuserdatad/xcschemes/xcschememanagement.plist
