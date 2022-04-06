@@ -34,7 +34,7 @@ extension Parser {
   func parseStatement() throws -> Statement { // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     let stmt: Statement
     let lookedRange = getLookedRange()
-    switch _lexer.read([
+    let value = _lexer.read([
       .for, .while, .repeat, // loop
       .if, .guard, .switch, // branch
       // identifier as labelel statement
@@ -45,7 +45,8 @@ extension Parser {
       .hash,
       // declaration statement
       // expression statement
-    ]) {
+    ])
+    switch value {
     case .for:
       stmt = try parseForInStatement(startLocation: lookedRange.start)
     case .while:

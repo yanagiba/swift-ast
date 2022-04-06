@@ -49,7 +49,8 @@ extension Parser {
       .import, .let, .var, .typealias, .func, .enum, .indirect, .struct,
       .`init`, .deinit, .extension, .subscript, .operator, .protocol
     ]
-    switch _lexer.read(declHeadTokens) {
+    let value = _lexer.read(declHeadTokens)
+    switch value {
     case .import:
       return try parseImportDeclaration(
         withAttributes: attrs, startLocation: startLocation)
