@@ -90,7 +90,7 @@ extension Parser {
     }
   }
 
-  func parseIdentifierType(_ headId: Identifier, _ startRange: SourceRange) throws -> TypeIdentifier {
+    func parseIdentifierType(_ headId: Identifier, _ startRange: SourceRange, attributes: Attributes? = nil) throws -> TypeIdentifier {
     var endLocation = startRange.end
     let headGenericArgumentClause = parseGenericArgumentClause()
     if let headGenericArg = headGenericArgumentClause {
@@ -112,7 +112,7 @@ extension Parser {
       names.append(typeIdentifierName)
     }
 
-    let idType = TypeIdentifier(names: names)
+        let idType = TypeIdentifier(names: names, attributes: attributes)
     idType.setSourceRange(startRange.start, endLocation)
     return idType
   }
@@ -386,11 +386,12 @@ extension Parser {
     }
     var types = [TypeIdentifier]()
     repeat {
+      let attrs = try? parseAttributes()
       let typeSourceRange = getLookedRange()
       if _lexer.match(.class) {
         throw _raiseFatal(.lateClassRequirement)
       } else if let idHead = readNamedIdentifier() {
-        let type = try parseIdentifierType(idHead, typeSourceRange)
+        let type = try parseIdentifierType(idHead, typeSourceRange, attributes: attrs)
         types.append(type)
       } else {
         throw _raiseFatal(.expectedTypeRestriction)

@@ -910,6 +910,8 @@ extension Parser {
           externalName = .wildcard
           internalName = .name("")
         }
+      } else if let attrs = try? parseAttributes() {
+          let test = "best"
       } else if let firstName = readNamedIdentifier() {
         if let secondName = readNamedIdentifierOrWildcard() {
           externalName = firstName

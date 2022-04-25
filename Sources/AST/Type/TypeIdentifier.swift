@@ -28,9 +28,11 @@ public class TypeIdentifier : TypeBase {
   }
 
   public let names: [TypeName]
+  public let attributes: Attributes?
 
-  public init(names: [TypeName] = []) {
+  public init(names: [TypeName] = [], attributes: Attributes? = nil) {
     self.names = names
+    self.attributes = attributes
   }
 
   // MARK: - ASTTextRepresentable
