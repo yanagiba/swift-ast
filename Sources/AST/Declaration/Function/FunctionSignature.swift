@@ -19,16 +19,19 @@ public struct FunctionSignature {
     public let externalName: Identifier?
     public let localName: Identifier
     public let typeAnnotation: TypeAnnotation
+    public let attributes: Attributes?
     public let defaultArgumentClause: Expression?
     public let isVarargs: Bool
 
     public init(
       externalName: Identifier? = nil,
       localName: Identifier,
+      attributes: Attributes?,
       typeAnnotation: TypeAnnotation
     ) {
       self.externalName = externalName
       self.localName = localName
+      self.attributes = attributes
       self.typeAnnotation = typeAnnotation
       self.defaultArgumentClause = nil
       self.isVarargs = false
@@ -37,11 +40,13 @@ public struct FunctionSignature {
     public init(
       externalName: Identifier? = nil,
       localName: Identifier,
+      attributes: Attributes?,
       typeAnnotation: TypeAnnotation,
       isVarargs: Bool = false
     ) {
       self.externalName = externalName
       self.localName = localName
+      self.attributes = attributes
       self.typeAnnotation = typeAnnotation
       self.defaultArgumentClause = nil
       self.isVarargs = isVarargs
@@ -50,11 +55,13 @@ public struct FunctionSignature {
     public init(
       externalName: Identifier? = nil,
       localName: Identifier,
+      attributes: Attributes?,
       typeAnnotation: TypeAnnotation,
       defaultArgumentClause: Expression? = nil
     ) {
       self.externalName = externalName
       self.localName = localName
+      self.attributes = attributes
       self.typeAnnotation = typeAnnotation
       self.defaultArgumentClause = defaultArgumentClause
       self.isVarargs = false

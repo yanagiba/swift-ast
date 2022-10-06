@@ -90,6 +90,7 @@ private class FoldingVisitor : ASTVisitor {
     return FunctionSignature.Parameter(
       externalName: p.externalName,
       localName: p.localName,
+      attributes: p.attributes,
       typeAnnotation: p.typeAnnotation,
       defaultArgumentClause: foldedExpr)
   }

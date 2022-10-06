@@ -902,6 +902,7 @@ extension Parser {
     func parseParameter() throws -> FunctionSignature.Parameter {
       var externalName: Identifier?
       var internalName: Identifier?
+      let attrs = try? parseAttributes()
       if _lexer.match(.underscore) {
         if let name = readNamedIdentifier() {
           externalName = .wildcard
@@ -910,8 +911,6 @@ extension Parser {
           externalName = .wildcard
           internalName = .name("")
         }
-      } else if let attrs = try? parseAttributes() {
-          let test = "best"
       } else if let firstName = readNamedIdentifier() {
         if let secondName = readNamedIdentifierOrWildcard() {
           externalName = firstName
@@ -935,6 +934,7 @@ extension Parser {
         return FunctionSignature.Parameter(
           externalName: externalName,
           localName: localName,
+          attributes: attrs,
           typeAnnotation: typeAnnotation,
           defaultArgumentClause: defaultExpr)
       case .postfixOperator("..."):
@@ -942,12 +942,14 @@ extension Parser {
         return FunctionSignature.Parameter(
           externalName: externalName,
           localName: localName,
+          attributes: attrs,
           typeAnnotation: typeAnnotation,
           isVarargs: true)
       default:
         return FunctionSignature.Parameter(
           externalName: externalName,
           localName: localName,
+          attributes: attrs,
           typeAnnotation: typeAnnotation)
       }
     }
