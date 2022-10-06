@@ -26,7 +26,7 @@ public struct FunctionSignature {
     public init(
       externalName: Identifier? = nil,
       localName: Identifier,
-      attributes: Attributes?,
+      attributes: Attributes? = nil,
       typeAnnotation: TypeAnnotation
     ) {
       self.externalName = externalName
@@ -55,7 +55,7 @@ public struct FunctionSignature {
     public init(
       externalName: Identifier? = nil,
       localName: Identifier,
-      attributes: Attributes?,
+      attributes: Attributes? = nil,
       typeAnnotation: TypeAnnotation,
       defaultArgumentClause: Expression? = nil
     ) {

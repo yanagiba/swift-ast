@@ -129,6 +129,8 @@ extension Parser {
       return try parseIdentifierHeadedPattern(idHead, config: config, startRange: lookedRange)
     case .leftParen:
       return try parseTuplePattern(config: config, startLocation: lookedRange.start)
+    case .self:
+      return try parseSelfPattern(startRange: lookedRange)
     default:
       if config.forPatternMatching {
         let updatedConfig = ParserExpressionConfig(parseTrailingClosure: config.parseTrailingClosure)
@@ -153,6 +155,14 @@ extension Parser {
     let wildcardPttrn = WildcardPattern(typeAnnotation: typeAnnotation)
     wildcardPttrn.setSourceRange(startRange.start, endLocation)
     return wildcardPttrn
+  }
+
+  private func parseSelfPattern(startRange: SourceRange) -> Pattern {
+    let endLocation = startRange.end
+    _lexer.advance()
+    let pattern = SelfPattern()
+    pattern.setSourceRange(startRange.start, endLocation)
+    return pattern
   }
 
   private func parseIdentifierHeadedPattern(
