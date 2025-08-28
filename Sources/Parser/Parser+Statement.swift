@@ -277,7 +277,7 @@ extension Parser {
     var catchClauses: [DoStatement.CatchClause] = []
     while _lexer.match(.catch) {
       var catchPattern: Pattern?
-      var catchWhere: Expression?
+      var catchWhere: ASTExpression?
       if _lexer.look().kind != .leftBrace {
         if _lexer.look().kind != .where {
           catchPattern = try parsePattern(config: ParserPatternConfig(forPatternMatching: true))
@@ -315,7 +315,7 @@ extension Parser {
         var itemList: [SwitchStatement.Case.Item] = []
         repeat {
           let pattern = try parsePattern(config: forPatternMatchingConfig)
-          var whereExpr: Expression?
+          var whereExpr: ASTExpression?
           if _lexer.match(.where) {
             whereExpr = try parseExpression(config: noTrailingConfig)
           }
@@ -432,7 +432,7 @@ extension Parser {
 
   private func parseCaseCondition(
     config: ParserPatternConfig = ParserPatternConfig()
-  ) throws -> (pattern: Pattern, expression: Expression) {
+  ) throws -> (pattern: Pattern, expression: ASTExpression) {
     var mutableConfig = config
     mutableConfig.parseTrailingClosure = false
     let pattern = try parsePattern(config: mutableConfig)
@@ -504,7 +504,7 @@ extension Parser {
     let matchingPattern = try parsePattern()
     try match(.in, orFatal: .expectedForEachIn)
     let collectionExpr = try parseExpression(config: noTrailingConfig)
-    var whereClause: Expression?
+    var whereClause: ASTExpression?
     if _lexer.match(.where) {
       whereClause = try parseExpression(config: noTrailingConfig)
     }

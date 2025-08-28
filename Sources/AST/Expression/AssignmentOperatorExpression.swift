@@ -15,10 +15,10 @@
 */
 
 public class AssignmentOperatorExpression : ASTNode, BinaryExpression {
-  public let leftExpression: Expression
-  public let rightExpression: Expression
+  public let leftExpression: ASTExpression
+  public let rightExpression: ASTExpression
 
-  public init(leftExpression: Expression, rightExpression: Expression) {
+  public init(leftExpression: ASTExpression, rightExpression: ASTExpression) {
     self.leftExpression = leftExpression
     self.rightExpression = rightExpression
   }

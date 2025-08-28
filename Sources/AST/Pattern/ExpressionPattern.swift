@@ -17,9 +17,9 @@
 import Source
 
 public class ExpressionPattern : PatternBase {
-  public let expression: Expression
+  public let expression: ASTExpression
 
-  public init(expression: Expression) {
+  public init(expression: ASTExpression) {
     self.expression = expression
   }
 

@@ -14,11 +14,11 @@
    limitations under the License.
 */
 
-public class TryOperatorExpression : ASTNode, Expression {
+public class TryOperatorExpression : ASTNode, ASTExpression {
   public enum Kind {
-    case `try`(Expression)
-    case forced(Expression)
-    case optional(Expression)
+    case `try`(ASTExpression)
+    case forced(ASTExpression)
+    case optional(ASTExpression)
   }
 
   public private(set) var kind: Kind

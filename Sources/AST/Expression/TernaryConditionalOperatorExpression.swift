@@ -15,14 +15,14 @@
 */
 
 public class TernaryConditionalOperatorExpression : ASTNode, BinaryExpression {
-  public let conditionExpression: Expression
-  public let trueExpression: Expression
-  public let falseExpression: Expression
+  public let conditionExpression: ASTExpression
+  public let trueExpression: ASTExpression
+  public let falseExpression: ASTExpression
 
   public init(
-    conditionExpression: Expression,
-    trueExpression: Expression,
-    falseExpression: Expression
+    conditionExpression: ASTExpression,
+    trueExpression: ASTExpression,
+    falseExpression: ASTExpression
   ) {
     self.conditionExpression = conditionExpression
     self.trueExpression = trueExpression

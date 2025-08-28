@@ -14,9 +14,9 @@
    limitations under the License.
 */
 
-public typealias ExpressionList = [Expression]
+public typealias ExpressionList = [ASTExpression]
 
-extension Collection where Iterator.Element == Expression {
+extension Collection where Iterator.Element == ASTExpression {
   public var textDescription: String {
     return self.map({ $0.textDescription }).joined(separator: ", ")
   }

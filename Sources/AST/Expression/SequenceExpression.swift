@@ -31,10 +31,10 @@ import Source
  */
 public class SequenceExpression : ASTNode, BinaryExpression {
   public enum Element {
-    case expression(Expression)
+    case expression(ASTExpression)
     case assignmentOperator
     case binaryOperator(Operator)
-    case ternaryConditionalOperator(Expression)
+    case ternaryConditionalOperator(ASTExpression)
     case typeCheck(Type)
     case typeCast(Type)
     case typeConditionalCast(Type)

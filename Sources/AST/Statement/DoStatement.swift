@@ -18,12 +18,12 @@
 public class DoStatement : ASTNode, Statement {
   public struct CatchClause {
     public let pattern: Pattern?
-    public let whereExpression: Expression?
+    public let whereExpression: ASTExpression?
     public let codeBlock: CodeBlock
 
     public init(
       pattern: Pattern? = nil,
-      whereExpression: Expression? = nil,
+      whereExpression: ASTExpression? = nil,
       codeBlock: CodeBlock
     ) {
       self.pattern = pattern

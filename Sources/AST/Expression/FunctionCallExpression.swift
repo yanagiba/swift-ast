@@ -16,10 +16,10 @@
 
 public class FunctionCallExpression : ASTNode, PostfixExpression {
   public enum Argument {
-    case expression(Expression)
-    case namedExpression(Identifier, Expression)
-    case memoryReference(Expression)
-    case namedMemoryReference(Identifier, Expression)
+    case expression(ASTExpression)
+    case namedExpression(Identifier, ASTExpression)
+    case memoryReference(ASTExpression)
+    case namedMemoryReference(Identifier, ASTExpression)
     case `operator`(Operator)
     case namedOperator(Identifier, Operator)
   }

@@ -15,11 +15,11 @@
 */
 
 public enum Condition {
-  case expression(Expression)
+  case expression(ASTExpression)
   case availability(AvailabilityCondition)
-  case `case`(Pattern, Expression) // case condition
-  case `let`(Pattern, Expression) // optional-binding condition
-  case `var`(Pattern, Expression) // optional-binding condition
+  case `case`(Pattern, ASTExpression) // case condition
+  case `let`(Pattern, ASTExpression) // optional-binding condition
+  case `var`(Pattern, ASTExpression) // optional-binding condition
 }
 
 extension Condition : ASTTextRepresentable {

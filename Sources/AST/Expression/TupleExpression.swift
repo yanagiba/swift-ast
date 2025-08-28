@@ -17,14 +17,14 @@
 public class TupleExpression : ASTNode, PrimaryExpression {
   public struct Element {
     public let identifier: Identifier?
-    public let expression: Expression
+    public let expression: ASTExpression
 
-    public init(identifier: Identifier?, expression: Expression) {
+    public init(identifier: Identifier?, expression: ASTExpression) {
       self.identifier = identifier
       self.expression = expression
     }
 
-    public init(expression: Expression) {
+    public init(expression: ASTExpression) {
       self.init(identifier: nil, expression: expression)
     }
   }
