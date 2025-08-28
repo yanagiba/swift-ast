@@ -390,7 +390,7 @@ class SequenceExpressionFoldingTests: XCTestCase {
   private func semaSeqExprFoldingAndTest(
     _ content: String,
     testFlat: (SequenceExpression) -> Void,
-    testFolded: (Expression) -> Void
+    testFolded: (ASTExpression) -> Void
   ) {
     let topLevelDecl = parse(content)
     XCTAssertFalse(topLevelDecl.sequenceExpressionFolded)
@@ -402,7 +402,7 @@ class SequenceExpressionFoldingTests: XCTestCase {
     let seqExprFolding = SequenceExpressionFolding()
     seqExprFolding.fold([topLevelDecl])
     XCTAssertTrue(topLevelDecl.sequenceExpressionFolded)
-    guard let foldedExpr = topLevelDecl.statements.first as? Expression else {
+    guard let foldedExpr = topLevelDecl.statements.first as? ASTExpression else {
       XCTFail("Failed in folding sequence expression.")
       return
     }

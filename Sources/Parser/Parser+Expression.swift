@@ -29,7 +29,7 @@ public struct ParserExpressionConfig {
 
 extension Parser {
   private func parseExpressionList(config: ParserExpressionConfig = ParserExpressionConfig()) throws -> ExpressionList {
-    var exprs: [Expression] = []
+    var exprs: [ASTExpression] = []
     repeat {
       let expr = try parseExpression(config: config)
       exprs.append(expr)
@@ -37,7 +37,7 @@ extension Parser {
     return exprs
   }
 
-  func parseExpression(config: ParserExpressionConfig = ParserExpressionConfig()) throws -> Expression {
+  func parseExpression(config: ParserExpressionConfig = ParserExpressionConfig()) throws -> ASTExpression {
     let tryKind = parseTryKind()
     let prefixExpr = try parsePrefixExpression(config: config)
     let expr = try parseBinaryExpressions(leftExpression: prefixExpr, config: config)
@@ -50,7 +50,7 @@ extension Parser {
     case optionalTry(SourceLocation)
     case noTry
 
-    fileprivate func wrap(expr: Expression) -> Expression {
+    fileprivate func wrap(expr: ASTExpression) -> ASTExpression {
       switch self {
       case .try(let startLocation):
         let tryOpExpr = TryOperatorExpression(kind: .try(expr))
@@ -85,9 +85,9 @@ extension Parser {
   }
 
   private func parseBinaryExpressions( // swift-lint:suppress(high_ncss,high_cyclomatic_complexity)
-    leftExpression: Expression, config: ParserExpressionConfig
-  ) throws -> Expression {
-    var resultExpr: Expression = leftExpression
+    leftExpression: ASTExpression, config: ParserExpressionConfig
+  ) throws -> ASTExpression {
+    var resultExpr: ASTExpression = leftExpression
 
     func examine() -> (Bool, Token.Kind) {
       let potentialBinaryTokens: [Token.Kind] = [
@@ -208,7 +208,7 @@ extension Parser {
         trueExpr = trueTryKind.wrap(expr: trueExpr)
         try match(.colon, orFatal: .expectedColonAfterTrueExpr)
         let falseTryKind = parseTryKind()
-        var falseExpr: Expression = try parsePrefixExpression(config: config)
+        var falseExpr: ASTExpression = try parsePrefixExpression(config: config)
         falseExpr = falseTryKind.wrap(expr: falseExpr)
         let ternaryOpExpr = TernaryConditionalOperatorExpression(
           conditionExpression: resultExpr,
@@ -249,7 +249,7 @@ extension Parser {
     return resultExpr
   }
 
-  private func parsePrefixExpression(config: ParserExpressionConfig) throws -> Expression {
+  private func parsePrefixExpression(config: ParserExpressionConfig) throws -> ASTExpression {
     let startLocation = getStartLocation()
     switch _lexer.read([.dummyPrefixOperator, .prefixAmp]) {
     case let .prefixOperator(op):
@@ -363,7 +363,7 @@ extension Parser {
   private func parseFunctionCallExpression( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     postfixExpression expr: PostfixExpression, config: ParserExpressionConfig
   ) throws -> PostfixExpression { // swift-lint:suppress(nested_code_block_depth)
-    func parseArgumentExpr(op: Operator) -> Expression? {
+    func parseArgumentExpr(op: Operator) -> ASTExpression? {
       let exprLexerCp = _lexer.checkPoint()
       let exprDiagnosticCp = _diagnosticPool.checkPoint()
       do {
@@ -937,7 +937,7 @@ extension Parser {
   private func parsePlaygroundLiteral(
     _ magicWord: String, _ startLocation: SourceLocation
   ) throws -> LiteralExpression {
-    func getMagicExpression(for key: String, needsParsingComma: Bool = false) throws -> Expression {
+    func getMagicExpression(for key: String, needsParsingComma: Bool = false) throws -> ASTExpression {
       if needsParsingComma {
         try match(.comma, orFatal: .expectedCommaBeforeKeywordPlaygroundLiteral(magicWord, key))
       }
@@ -1078,7 +1078,7 @@ extension Parser {
     }
   }
 
-  private func parseDictionaryLiteral(head: Expression, startLocation: SourceLocation) throws -> LiteralExpression {
+  private func parseDictionaryLiteral(head: ASTExpression, startLocation: SourceLocation) throws -> LiteralExpression {
     var entries: [DictionaryEntry] = []
     // complete first entry
     let headValueExpr = try parseExpression()
@@ -1098,9 +1098,9 @@ extension Parser {
   }
 
   private func parseArrayLiteral(
-    head: Expression, startLocation: SourceLocation
+    head: ASTExpression, startLocation: SourceLocation
   ) throws -> LiteralExpression {
-    var exprs: [Expression] = [head]
+    var exprs: [ASTExpression] = [head]
     // parse the rest of the array
     while _lexer.match(.comma) && _lexer.look().kind != .rightSquare {
       let expr = try parseExpression()
@@ -1116,10 +1116,10 @@ extension Parser {
   private func parseInterpolatedStringLiteral( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     head: String, raw: String, startLocation: SourceLocation
   ) throws -> LiteralExpression { // swift-lint:suppress(nested_code_block_depth)
-    func caliberateExpressions(_ exprs: [Expression]) throws -> [Expression] { // swift-lint:suppress(nested_code_block_depth,long_line)
+    func caliberateExpressions(_ exprs: [ASTExpression]) throws -> [ASTExpression] { // swift-lint:suppress(nested_code_block_depth,long_line)
       let exprCount = exprs.count
       var indentationPrefix = ""
-      var caliberatedExprs: [Expression] = []
+      var caliberatedExprs: [ASTExpression] = []
 
       for (offset, expr) in exprs.reversed().enumerated() {
         if let literalExpr = expr as? LiteralExpression,
@@ -1163,7 +1163,7 @@ extension Parser {
       return caliberatedExprs.reversed()
     }
 
-    var exprs: [Expression] = []
+    var exprs: [ASTExpression] = []
     var rawText = raw
     let multilineDelimiter = "\"\"\""
     let isMultiline = raw.hasPrefix(multilineDelimiter)
