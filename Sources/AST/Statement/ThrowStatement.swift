@@ -16,15 +16,15 @@
 
 
 public class ThrowStatement : ASTNode, Statement {
-  public private(set) var expression: Expression
+  public private(set) var expression: ASTExpression
 
-  public init(expression: Expression) {
+  public init(expression: ASTExpression) {
     self.expression = expression
   }
 
   // MARK: - Node Mutations
 
-  public func replaceExpression(with expr: Expression) {
+  public func replaceExpression(with expr: ASTExpression) {
     expression = expr
   }
 

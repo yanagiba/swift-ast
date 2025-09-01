@@ -620,7 +620,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       rightExpression: WildcardExpression()
     )
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting AssignmentOperatorExpression")
@@ -634,7 +634,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       rightExpression: WildcardExpression()
     )
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting BinaryOperatorExpression")
@@ -651,7 +651,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       ]
     )
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting ClosureExpression")
@@ -668,7 +668,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
     ]
     do {
       for node in nodes {
-        let result = try defaultVisitor.traverse(node as Expression)
+        let result = try defaultVisitor.traverse(node as ASTExpression)
         XCTAssertTrue(result)
       }
     } catch {
@@ -679,7 +679,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitForcedValueExpression() {
     let node = ForcedValueExpression(postfixExpression: WildcardExpression())
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting ForcedValueExpression")
@@ -700,7 +700,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       trailingClosure: ClosureExpression()
     )
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting FunctionCallExpression")
@@ -710,7 +710,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitIdentifierExpression() {
     let node = IdentifierExpression(kind: .identifier(.name("test"), nil))
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting IdentifierExpression")
@@ -720,7 +720,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitImplicitMemberExpression() {
     let node = ImplicitMemberExpression(identifier: .name("test"))
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting ImplicitMemberExpression")
@@ -730,7 +730,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitInOutExpression() {
     let node = InOutExpression(identifier: .name("test"))
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting InOutExpression")
@@ -740,7 +740,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitInitializerExpression() {
     let node = InitializerExpression(postfixExpression: WildcardExpression())
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting InitializerExpression")
@@ -750,7 +750,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitKeyPathStringExpression() {
     let node = KeyPathStringExpression(expression: WildcardExpression())
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting KeyPathStringExpression")
@@ -768,7 +768,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
     ]
     do {
       for node in nodes {
-        let result = try defaultVisitor.traverse(node as Expression)
+        let result = try defaultVisitor.traverse(node as ASTExpression)
         XCTAssertTrue(result)
       }
     } catch {
@@ -779,7 +779,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitOptionalChainingExpression() {
     let node = OptionalChainingExpression(postfixExpression: WildcardExpression())
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting OptionalChainingExpression")
@@ -789,7 +789,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitParenthesizedExpression() {
     let node = ParenthesizedExpression(expression: WildcardExpression())
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting ParenthesizedExpression")
@@ -802,7 +802,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       postfixExpression: WildcardExpression()
     )
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting PostfixOperatorExpression")
@@ -812,7 +812,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitPostfixSelfExpression() {
     let node = PostfixSelfExpression(postfixExpression: WildcardExpression())
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting PostfixSelfExpression")
@@ -825,7 +825,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       postfixExpression: WildcardExpression()
     )
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting PrefixOperatorExpression")
@@ -841,7 +841,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
     ]
     do {
       for node in nodes {
-        let result = try defaultVisitor.traverse(node as Expression)
+        let result = try defaultVisitor.traverse(node as ASTExpression)
         XCTAssertTrue(result)
       }
     } catch {
@@ -856,7 +856,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
     ]
     do {
       for node in nodes {
-        let result = try defaultVisitor.traverse(node as Expression)
+        let result = try defaultVisitor.traverse(node as ASTExpression)
         XCTAssertTrue(result)
       }
     } catch {
@@ -870,7 +870,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       arguments: []
     )
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting SubscriptExpression")
@@ -884,7 +884,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
     ]
     do {
       for node in nodes {
-        let result = try defaultVisitor.traverse(node as Expression)
+        let result = try defaultVisitor.traverse(node as ASTExpression)
         XCTAssertTrue(result)
       }
     } catch {
@@ -899,7 +899,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       falseExpression: WildcardExpression()
     )
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting TernaryConditionalOperatorExpression")
@@ -914,7 +914,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
     ]
     do {
       for node in nodes {
-        let result = try defaultVisitor.traverse(node as Expression)
+        let result = try defaultVisitor.traverse(node as ASTExpression)
         XCTAssertTrue(result)
       }
     } catch {
@@ -928,7 +928,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
       TupleExpression.Element(identifier: .name("test"), expression: WildcardExpression()),
     ])
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting TupleExpression")
@@ -948,7 +948,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
     ]
     do {
       for node in nodes {
-        let result = try defaultVisitor.traverse(node as Expression)
+        let result = try defaultVisitor.traverse(node as ASTExpression)
         XCTAssertTrue(result)
       }
     } catch {
@@ -959,7 +959,7 @@ class DefaultTraverseImplementationTests : XCTestCase {
   func testVisitWildcardExpression() {
     let node = WildcardExpression()
     do {
-      let result = try defaultVisitor.traverse(node as Expression)
+      let result = try defaultVisitor.traverse(node as ASTExpression)
       XCTAssertTrue(result)
     } catch {
       XCTFail("Failed in visiting WildcardExpression")

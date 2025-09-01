@@ -19,9 +19,9 @@ public class SwitchStatement : ASTNode, Statement {
   public enum Case {
     public struct Item {
       public let pattern: Pattern
-      public let whereExpression: Expression?
+      public let whereExpression: ASTExpression?
 
-      public init(pattern: Pattern, whereExpression: Expression? = nil) {
+      public init(pattern: Pattern, whereExpression: ASTExpression? = nil) {
         self.pattern = pattern
         self.whereExpression = whereExpression
       }
@@ -30,17 +30,17 @@ public class SwitchStatement : ASTNode, Statement {
     case `case`([Item], Statements)
     case `default`(Statements)
   }
-  public private(set) var expression: Expression
+  public private(set) var expression: ASTExpression
   public private(set) var cases: [Case]
 
-  public init(expression: Expression, cases: [Case] = []) {
+  public init(expression: ASTExpression, cases: [Case] = []) {
     self.expression = expression
     self.cases = cases
   }
 
   // MARK: - Node Mutations
 
-  public func replaceExpression(with expr: Expression) {
+  public func replaceExpression(with expr: ASTExpression) {
     expression = expr
   }
 

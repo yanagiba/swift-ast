@@ -18,9 +18,9 @@ import Source
 
 public struct PatternInitializer {
   public let pattern: Pattern
-  public let initializerExpression: Expression?
+  public let initializerExpression: ASTExpression?
 
-  public init(pattern: Pattern, initializerExpression: Expression? = nil) {
+  public init(pattern: Pattern, initializerExpression: ASTExpression? = nil) {
     self.pattern = pattern
     self.initializerExpression = initializerExpression
   }

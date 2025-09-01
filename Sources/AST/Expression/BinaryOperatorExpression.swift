@@ -16,13 +16,13 @@
 
 public class BinaryOperatorExpression : ASTNode, BinaryExpression {
   public let binaryOperator: Operator
-  public let leftExpression: Expression
-  public let rightExpression: Expression
+  public let leftExpression: ASTExpression
+  public let rightExpression: ASTExpression
 
   public init(
     binaryOperator: Operator,
-    leftExpression: Expression,
-    rightExpression: Expression
+    leftExpression: ASTExpression,
+    rightExpression: ASTExpression
   ) {
     self.binaryOperator = binaryOperator
     self.leftExpression = leftExpression

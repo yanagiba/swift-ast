@@ -16,9 +16,9 @@
 
 public struct SubscriptArgument {
   public let identifier: Identifier?
-  public let expression: Expression
+  public let expression: ASTExpression
 
-  public init(identifier: Identifier? = nil, expression: Expression) {
+  public init(identifier: Identifier? = nil, expression: ASTExpression) {
     self.identifier = identifier
     self.expression = expression
   }

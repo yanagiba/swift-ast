@@ -294,7 +294,7 @@ extension ASTVisitor {
     switch statement {
     case let decl as Declaration:
       return try traverse(decl)
-    case let expr as Expression:
+    case let expr as ASTExpression:
       return try traverse(expr)
     case let stmt as BreakStatement:
       return try traverse(stmt)
@@ -481,7 +481,7 @@ extension ASTVisitor {
 
   // Expressions
 
-  public func traverse(_ expression: Expression) throws -> Bool {/*
+  public func traverse(_ expression: ASTExpression) throws -> Bool {/*
     swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=28)
     swift-lint:suppress(high_ncss)
     */

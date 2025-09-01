@@ -15,15 +15,15 @@
 */
 
 public class ParenthesizedExpression : ASTNode, PrimaryExpression {
-  public private(set) var expression: Expression
+  public private(set) var expression: ASTExpression
 
-  public init(expression: Expression) {
+  public init(expression: ASTExpression) {
     self.expression = expression
   }
 
   // MARK: - Node Mutations
 
-  public func reset(with newExpression: Expression) {
+  public func reset(with newExpression: ASTExpression) {
     expression = newExpression
   }
 

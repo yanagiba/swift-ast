@@ -16,17 +16,17 @@
 
 
 public class RepeatWhileStatement : ASTNode, Statement {
-  public private(set) var conditionExpression: Expression
+  public private(set) var conditionExpression: ASTExpression
   public let codeBlock: CodeBlock
 
-  public init(conditionExpression: Expression, codeBlock: CodeBlock) {
+  public init(conditionExpression: ASTExpression, codeBlock: CodeBlock) {
     self.conditionExpression = conditionExpression
     self.codeBlock = codeBlock
   }
 
   // MARK: - Node Mutations
 
-  public func replaceCondition(with expr: Expression) {
+  public func replaceCondition(with expr: ASTExpression) {
     conditionExpression = expr
   }
 

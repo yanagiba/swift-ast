@@ -19,7 +19,7 @@ public struct FunctionSignature {
     public let externalName: Identifier?
     public let localName: Identifier
     public let typeAnnotation: TypeAnnotation
-    public let defaultArgumentClause: Expression?
+    public let defaultArgumentClause: ASTExpression?
     public let isVarargs: Bool
 
     public init(
@@ -51,7 +51,7 @@ public struct FunctionSignature {
       externalName: Identifier? = nil,
       localName: Identifier,
       typeAnnotation: TypeAnnotation,
-      defaultArgumentClause: Expression? = nil
+      defaultArgumentClause: ASTExpression? = nil
     ) {
       self.externalName = externalName
       self.localName = localName

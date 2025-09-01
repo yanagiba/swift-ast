@@ -192,7 +192,6 @@ class ParserClosureExpressionTests: XCTestCase {
 
   func testParamName() {
     parseExpressionAndTest("{ (foo) in }", "{ (foo) in }", testClosure: { expr in
-      print(expr)
       guard let closureExpr = expr as? ClosureExpression else {
         XCTFail("Failed in getting a closure expression.")
         return

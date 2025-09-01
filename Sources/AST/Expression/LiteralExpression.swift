@@ -15,10 +15,10 @@
 */
 
 public class DictionaryEntry {
-  public let key: Expression
-  public let value: Expression
+  public let key: ASTExpression
+  public let value: ASTExpression
 
-  public init(key: Expression, value: Expression) {
+  public init(key: ASTExpression, value: ASTExpression) {
     self.key = key
     self.value = value
   }
@@ -31,9 +31,9 @@ extension DictionaryEntry : ASTTextRepresentable {
 }
 
 public enum PlaygroundLiteral {
-  case color(Expression, Expression, Expression, Expression)
-  case file(Expression)
-  case image(Expression)
+  case color(ASTExpression, ASTExpression, ASTExpression, ASTExpression)
+  case file(ASTExpression)
+  case image(ASTExpression)
 }
 
 extension PlaygroundLiteral : ASTTextRepresentable {
@@ -60,8 +60,8 @@ public class LiteralExpression : ASTNode, PrimaryExpression {
     case integer(Int, String)
     case floatingPoint(Double, String)
     case staticString(String, String)
-    case interpolatedString([Expression], String)
-    case array([Expression])
+    case interpolatedString([ASTExpression], String)
+    case array([ASTExpression])
     case dictionary([DictionaryEntry])
     case playground(PlaygroundLiteral)
   }

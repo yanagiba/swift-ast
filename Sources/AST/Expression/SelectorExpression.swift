@@ -16,9 +16,9 @@
 
 public class SelectorExpression : ASTNode, PrimaryExpression {
   public enum Kind {
-    case selector(Expression)
-    case getter(Expression)
-    case setter(Expression)
+    case selector(ASTExpression)
+    case getter(ASTExpression)
+    case setter(ASTExpression)
 
     // Note: I don't see any defined expression that I can use,
     // so store this special type of expression inside selector-expression for now

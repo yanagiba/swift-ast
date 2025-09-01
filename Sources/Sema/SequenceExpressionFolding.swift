@@ -301,7 +301,7 @@ private class FoldingVisitor : ASTVisitor {
       switch eachCase {
       case let .case(items, statements):
         let foldedItems = items.map { i -> SwitchStatement.Case.Item in
-          var foldedWhereExpression: Expression? = i.whereExpression
+          var foldedWhereExpression: ASTExpression? = i.whereExpression
           if let whereSeqExpr = i.whereExpression as? SequenceExpression {
             foldedWhereExpression = foldSequenceExpression(whereSeqExpr)
           }
@@ -709,7 +709,7 @@ private func foldElementsContainSeqExpr(
   }
 }
 
-private func foldSequenceExpression(_ seqExpr: SequenceExpression) -> Expression {
+private func foldSequenceExpression(_ seqExpr: SequenceExpression) -> ASTExpression {
   // Start with brutal hardcoding approach
 
   var resultElements = foldElementsContainSeqExpr(seqExpr.elements)
@@ -741,7 +741,7 @@ private func foldSequenceExpression(_ seqExpr: SequenceExpression) -> Expression
   return resultExpr
 }
 
-private func foldExpression(_ expr: Expression) -> Expression {
+private func foldExpression(_ expr: ASTExpression) -> ASTExpression {
   guard let seqExpr = expr as? SequenceExpression else {
     return expr
   }

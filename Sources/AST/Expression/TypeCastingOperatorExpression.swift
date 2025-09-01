@@ -16,10 +16,10 @@
 
 public class TypeCastingOperatorExpression : ASTNode, BinaryExpression {
   public enum Kind {
-    case check(Expression, Type) // is
-    case cast(Expression, Type) // as
-    case conditionalCast(Expression, Type) // as?
-    case forcedCast(Expression, Type) // as!
+    case check(ASTExpression, Type) // is
+    case cast(ASTExpression, Type) // as
+    case conditionalCast(ASTExpression, Type) // as?
+    case forcedCast(ASTExpression, Type) // as!
   }
 
   public let kind: Kind

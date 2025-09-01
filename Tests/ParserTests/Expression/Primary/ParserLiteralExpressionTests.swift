@@ -129,7 +129,7 @@ class ParserLiteralExpressionTests: XCTestCase {
   func testInterpolatedStringLiteral() { /*
     swift-lint:suppress(high_cyclomatic_complexity,nested_code_block_depth)
     */
-    let testStrings: [(testString: String, expectedExpressions: [Expression])] = [
+    let testStrings: [(testString: String, expectedExpressions: [ASTExpression])] = [
       ( // integer literal
         "\"1 2 \\(3)\"",
         [
@@ -402,7 +402,7 @@ class ParserLiteralExpressionTests: XCTestCase {
       ),
     ]
 
-    func testInterpolatedStringExpressions(exprs: [Expression], expected: [Expression]) { /*
+    func testInterpolatedStringExpressions(exprs: [ASTExpression], expected: [ASTExpression]) { /*
       swift-lint:suppress(high_cyclomatic_complexity)
       */
       // keep this with the minimal code to make the tests pass, and add more handlings when needed

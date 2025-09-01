@@ -69,7 +69,7 @@ func parseTypeAndTest(_ content: String,
 func parseExpressionAndTest(_ content: String,
   _ expectedTextDescription: String,
   parseTrailingClosure: Bool = true,
-  testClosure: ((Expression) -> Void)? = nil,
+  testClosure: ((ASTExpression) -> Void)? = nil,
   errorClosure: ((Error) -> Void)? = nil) {
   let expressionParser = getParser(content)
 

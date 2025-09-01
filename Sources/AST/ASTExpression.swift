@@ -14,16 +14,16 @@
    limitations under the License.
 */
 
-public protocol Expression : Statement {
+public protocol ASTExpression : Statement {
 }
 
-public protocol BinaryExpression : Expression {
+public protocol BinaryExpression : ASTExpression {
 }
 
-public protocol PrefixExpression :  Expression {
+public protocol PrefixExpression :  ASTExpression {
 }
 
-public protocol PostfixExpression : Expression {
+public protocol PostfixExpression : ASTExpression {
 }
 
 public protocol PrimaryExpression : PostfixExpression {

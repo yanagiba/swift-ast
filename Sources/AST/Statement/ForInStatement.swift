@@ -19,17 +19,17 @@ public class ForInStatement : ASTNode, Statement {
                         // but I will leave it as it is, and decide this later
     public let isCaseMatching: Bool
     public let matchingPattern: Pattern
-    public let whereClause: Expression?
+    public let whereClause: ASTExpression?
   }
   public private(set) var item: Item
-  public private(set) var collection: Expression
+  public private(set) var collection: ASTExpression
   public let codeBlock: CodeBlock
 
   public init(
     isCaseMatching: Bool = false,
     matchingPattern: Pattern,
-    collection: Expression,
-    whereClause: Expression? = nil,
+    collection: ASTExpression,
+    whereClause: ASTExpression? = nil,
     codeBlock: CodeBlock
   ) {
     self.item = Item(isCaseMatching: isCaseMatching,
@@ -40,11 +40,11 @@ public class ForInStatement : ASTNode, Statement {
 
   // MARK: - Node Mutations
 
-  public func replaceCollection(with expr: Expression) {
+  public func replaceCollection(with expr: ASTExpression) {
     collection = expr
   }
 
-  public func replaceWhereClause(with expr: Expression) {
+  public func replaceWhereClause(with expr: ASTExpression) {
     item = Item(isCaseMatching: item.isCaseMatching,
       matchingPattern: item.matchingPattern, whereClause: expr)
   }

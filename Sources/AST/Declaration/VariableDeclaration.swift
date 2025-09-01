@@ -22,7 +22,7 @@ public class VariableDeclaration : ASTNode, Declaration {
     case getterSetterKeywordBlock(
       Identifier, TypeAnnotation, GetterSetterKeywordBlock)
     case willSetDidSetBlock(
-      Identifier, TypeAnnotation?, Expression?, WillSetDidSetBlock)
+      Identifier, TypeAnnotation?, ASTExpression?, WillSetDidSetBlock)
   }
   public let attributes: Attributes
   public let modifiers: DeclarationModifiers
@@ -88,7 +88,7 @@ public class VariableDeclaration : ASTNode, Declaration {
     attributes: Attributes = [],
     modifiers: DeclarationModifiers = [],
     variableName: Identifier,
-    initializer: Expression,
+    initializer: ASTExpression,
     willSetDidSetBlock: WillSetDidSetBlock
   ) {
     self.init(
@@ -103,7 +103,7 @@ public class VariableDeclaration : ASTNode, Declaration {
     modifiers: DeclarationModifiers = [],
     variableName: Identifier,
     typeAnnotation: TypeAnnotation,
-    initializer: Expression? = nil,
+    initializer: ASTExpression? = nil,
     willSetDidSetBlock: WillSetDidSetBlock
   ) {
     self.init(attributes: attributes,

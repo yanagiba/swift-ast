@@ -25,9 +25,9 @@ public class ClosureExpression : ASTNode, PrimaryExpression {
       }
 
       public let specifier: Specifier?
-      public let expression: Expression
+      public let expression: ASTExpression
 
-      public init(specifier: Specifier? = nil, expression: Expression) {
+      public init(specifier: Specifier? = nil, expression: ASTExpression) {
         self.specifier = specifier
         self.expression = expression
       }

@@ -1320,7 +1320,7 @@ extension Parser {
 
   private func parsePatternInitializer() throws -> PatternInitializer {
     let pttrn = try parsePattern()
-    var initExpr: Expression?
+    var initExpr: ASTExpression?
     if _lexer.match(.assignmentOperator) {
       initExpr = try parseExpression()
     }
