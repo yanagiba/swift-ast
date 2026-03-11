@@ -24,3 +24,15 @@
 
 #sourceLocation(file: "filename", line: 10)
 #sourceLocation()
+
+#if canImport(Foundation)
+  break
+#endif
+
+#if compiler(>=5.5) && canImport(SwiftUI)
+  break
+#endif
+
+#if os(iOS) || os(visionOS)
+  break
+#endif

@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -28,10 +28,6 @@ extension Parser {
   func _raiseWarning(_ kind: ParserErrorKind) throws {
     try _diagnosticPool.appendWarning(kind: kind, sourceLocatable: _lexer.look())
   }
-
-  var _diagnosticPool: DiagnosticPool {
-    return .shared
-  }
 }
 
 public enum ParserErrorKind : DiagnosticKind {
@@ -39,6 +35,9 @@ public enum ParserErrorKind : DiagnosticKind {
 
   case leftBraceExpected(String)
   case rightBraceExpected(String)
+
+  /// typed throws
+  case expectedCloseParenThrowsType
 
   // attributes
   case missingAttributeName
@@ -72,6 +71,8 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedArrowSubscript
   /// extension declaration
   case missingExtensionName
+  /// actor declaration
+  case missingActorName
   /// class declaration
   case missingClassName
   /// struct declaration
@@ -85,6 +86,8 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedCaseName
   case missingEnumName
   case enumExpectedAfterIndirect
+  /// macro declaration
+  case missingMacroName
   /// function declaration
   case unnamedParameter
   case expectedParameterType
@@ -147,6 +150,7 @@ public enum ParserErrorKind : DiagnosticKind {
   // generics
   case expectedRightChevron(String)
   case expectedGenericsParameterName
+  case expectedGenericValueParameterType
   case expectedGenericTypeRestriction(String)
   case expectedGenericRequirementName
   case requiresDoubleEqualForSameTypeRequirement
@@ -161,7 +165,13 @@ public enum ParserErrorKind : DiagnosticKind {
   // statements
   case statementSameLineWithoutSemicolon
   case expectedOpenParenSourceLocation
+  case expectedOpenParenDiagnosticDirective
+  case expectedStringLiteralDiagnosticDirective
+  case expectedCloseParenDiagnosticDirective
   case expectedValidCompilerCtrlKeyword
+  case expectedCompilationCondition
+  case expectedCloseParenCompilationCondition
+  case expectedArgumentInPlatformCondition
   case invalidLabelOnStatement
   case expectedCaseColon
   case expectedDefaultColon
@@ -176,6 +186,8 @@ public enum ParserErrorKind : DiagnosticKind {
   case expectedCloseParenAvailabilityCondition
   case expectedForEachIn
   case expectedElseAfterGuard
+  case expectedElseForIfExpr
+  case malformedConditionalCompilationClause
 
   // types
   case expectedType
@@ -204,6 +216,8 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected '{' for \(node)"
     case .rightBraceExpected(let node):
       return "expected '}' for \(node)"
+    case .expectedCloseParenThrowsType:
+      return "expected ')' after thrown error type"
     case .badDeclaration:
       return "expected declaration"
     case .missingPropertyMemberName:
@@ -250,6 +264,8 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected '->' for subscript declaration"
     case .missingExtensionName:
       return "expected type name in extension declaration"
+    case .missingActorName:
+      return "expected an actor name"
     case .missingClassName:
       return "expected a class name"
     case .missingStructName:
@@ -270,6 +286,8 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expect a case name for enum declaration"
     case .missingEnumName:
       return "expected an enum name"
+    case .missingMacroName:
+      return "expected a macro name"
     case .unnamedParameter:
       return "expected parameter name followed by ':'"
     case .expectedParameterType:
@@ -378,6 +396,8 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected '>' to complete \(node)"
     case .expectedGenericsParameterName:
       return "expected an identifier to name generic parameter"
+    case .expectedGenericValueParameterType:
+      return "expected ':' and type for value generic parameter"
     case .expectedGenericTypeRestriction(let restricting):
       return "expected a class type or protocol-constrained type restricting '\(restricting)'"
     case .expectedGenericRequirementName:
@@ -398,8 +418,20 @@ public enum ParserErrorKind : DiagnosticKind {
       return "consecutive statements on a line must be separated by ';'"
     case .expectedOpenParenSourceLocation:
       return "expected '(' following '#sourceLocation'"
+    case .expectedOpenParenDiagnosticDirective:
+      return "expected '(' in diagnostic directive"
+    case .expectedStringLiteralDiagnosticDirective:
+      return "expected string literal in diagnostic directive"
+    case .expectedCloseParenDiagnosticDirective:
+      return "expected ')' in diagnostic directive"
     case .expectedValidCompilerCtrlKeyword:
       return "expected a valid keyword after '#' in compiler-control statement"
+    case .expectedCompilationCondition:
+      return "expected a compilation condition"
+    case .expectedCloseParenCompilationCondition:
+      return "expected ')' in compilation condition"
+    case .expectedArgumentInPlatformCondition:
+      return "expected argument in platform condition"
     case .invalidLabelOnStatement:
       return "labels are only valid on loops, if, and switch statements"
     case .expectedCaseColon:
@@ -428,6 +460,10 @@ public enum ParserErrorKind : DiagnosticKind {
       return "expected 'in' after for-each pattern"
     case .expectedElseAfterGuard:
       return "expected 'else' after 'guard' condition"
+    case .expectedElseForIfExpr:
+      return "expected 'else' in if expression"
+    case .malformedConditionalCompilationClause:
+      return "expected an expression in the conditional compilation clause"
     case .expectedType:
       return "expected type"
     case .expectedCloseSquareArrayType:

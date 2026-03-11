@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -27,10 +27,16 @@ extension Parser {
     return FunctionResult(attributes: attrs, type: type)
   }
 
-  func parseThrowsKind() -> (ThrowsKind, SourceLocation?) {
+  func parseThrowsKind() throws -> (ThrowsKind, SourceLocation?) {
     let endLocation = getEndLocation()
     switch _lexer.read([.throws, .rethrows]) {
     case .throws:
+      if _lexer.match(.leftParen) {
+        let type = try parseType()
+        let parenEndLocation = getEndLocation()
+        try match(.rightParen, orFatal: .expectedCloseParenThrowsType)
+        return (.typedThrowing(type), parenEndLocation)
+      }
       return (.throwing, endLocation)
     case .rethrows:
       return (.rethrowing, endLocation)

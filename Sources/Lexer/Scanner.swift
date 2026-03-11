@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -58,6 +58,17 @@ class Scanner {
     }
 
     return _scan(_nextPointer)
+  }
+
+  func peek(ahead offset: Int) -> UnicodeScalar? {
+    guard _currentPointer < _content.endIndex else { return nil }
+    var ptr = _content.index(after: _currentPointer)
+    for _ in 0..<offset {
+      guard ptr < _content.endIndex else { return nil }
+      ptr = _content.index(after: ptr)
+    }
+    guard ptr < _content.endIndex else { return nil }
+    return _content[ptr]
   }
 
   private func _scan(_ ptr: Pointer) -> UnicodeScalar? {

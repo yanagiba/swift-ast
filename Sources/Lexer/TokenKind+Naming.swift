@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2019, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -43,6 +43,12 @@ public extension Token.Kind /* named identifier */ {
       return .name("as")
     case .associativity:
       return .name("associativity")
+    case .async:
+      return .name("async")
+    case .await:
+      return .name("await")
+    case .borrowing:
+      return .name("borrowing")
     case .break:
       return .name("break")
     case .catch:
@@ -51,6 +57,8 @@ public extension Token.Kind /* named identifier */ {
       return .name("case")
     case .class:
       return .name("class")
+    case .consuming:
+      return .name("consuming")
     case .continue:
       return .name("continue")
     case .convenience:
@@ -117,6 +125,8 @@ public extension Token.Kind /* named identifier */ {
       return .name("nil")
     case .none:
       return .name("none")
+    case .nonisolated:
+      return .name("nonisolated")
     case .nonmutating:
       return .name("nonmutating")
     case .open:
@@ -127,6 +137,8 @@ public extension Token.Kind /* named identifier */ {
       return .name("optional")
     case .override:
       return .name("override")
+    case .package:
+      return .name("package")
     case .postfix:
       return .name("postfix")
     case .prefix:

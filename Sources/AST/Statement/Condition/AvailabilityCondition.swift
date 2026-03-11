@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -22,9 +22,11 @@ public struct AvailabilityCondition {
     case all
   }
 
+  public let isUnavailable: Bool
   public let arguments: [Argument]
 
-  public init(arguments: [Argument]) {
+  public init(isUnavailable: Bool = false, arguments: [Argument]) {
+    self.isUnavailable = isUnavailable
     self.arguments = arguments
   }
 }
@@ -47,6 +49,7 @@ extension AvailabilityCondition.Argument : ASTTextRepresentable {
 extension AvailabilityCondition : ASTTextRepresentable {
   public var textDescription: String {
     let argumentsText = arguments.map({ $0.textDescription }).joined(separator: ", ")
-    return "#available(\(argumentsText))"
+    let keyword = isUnavailable ? "#unavailable" : "#available"
+    return "\(keyword)(\(argumentsText))"
   }
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -159,6 +159,8 @@ extension SwitchStatement.Case {
       return "case \(itemListText):\n\(stmts.ttyPrint.indented)"
     case .default(let stmts):
       return "default:\n\(stmts.ttyPrint.indented)"
+    case .compilerControl(let stmt):
+      return stmt.ttyPrint
     }
   }
 }

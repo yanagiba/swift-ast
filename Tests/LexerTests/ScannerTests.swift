@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -41,6 +41,15 @@ class ScannerTests: XCTestCase {
     XCTAssertEqual(scanner.column, 2)
     XCTAssertEqual(scanner.scan(), char("s", .identifierHead))
     XCTAssertNil(scanner.peek())
+  }
+
+  func testPeekAheadAtEOF() {
+    let scanner = Scanner(content: "a")
+    XCTAssertEqual(scanner.scan(), char("a", .identifierHead))
+    scanner.advance()
+    XCTAssertNil(scanner.peek())
+    XCTAssertNil(scanner.peek(ahead: 0))
+    XCTAssertNil(scanner.peek(ahead: 1))
   }
 
   func testEmoji() {
@@ -261,14 +270,6 @@ class ScannerTests: XCTestCase {
     XCTAssertEqual(scanner.scan(), char("c", .identifierHead))
     XCTAssertEqual(scanner.peek(), "\n")
   }
-
-  static var allTests = [
-    ("testEmptyContent", testEmptyContent),
-    ("testCharacters", testCharacters),
-    ("testEmoji", testEmoji),
-    ("testRyuichiLovesSushiAtCafé", testRyuichiLovesSushiAtCafé),
-    ("testCheckpoints", testCheckpoints),
-  ]
 
   private func char(_ str: String, _ role: Role) -> Char {
     guard let unicodeScalar = UnicodeScalar(str) else {

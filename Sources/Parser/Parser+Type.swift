@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -25,17 +25,23 @@ extension Parser {
       return nil
     }
 
-    var isInOutParameter = false
+    var ownershipModifier: TypeAnnotation.OwnershipModifier?
 
     let attrs = try parseAttributes()
 
     if _lexer.look().kind == .inout {
       _lexer.advance()
-      isInOutParameter = true
+      ownershipModifier = .inout
+    } else if _lexer.look().kind == .borrowing {
+      _lexer.advance()
+      ownershipModifier = .borrowing
+    } else if _lexer.look().kind == .consuming {
+      _lexer.advance()
+      ownershipModifier = .consuming
     }
 
     let type = try parseType()
-    let typeAnnotation = TypeAnnotation(type: type, attributes: attrs, isInOutParameter: isInOutParameter)
+    let typeAnnotation = TypeAnnotation(type: type, attributes: attrs, ownershipModifier: ownershipModifier)
     typeAnnotation.setSourceRange(startLocation, type.sourceRange.end)
     return typeAnnotation
   }
@@ -44,14 +50,30 @@ extension Parser {
     let attrs = try parseAttributes()
 
     let isOpaqueType = isOpaqueTypeHead()
+    let isBoxedProtocolType = !isOpaqueType && isBoxedProtocolTypeHead()
     let atomicType = try parseAtomicType()
     let containerType = try parseContainerType(atomicType, attributes: attrs)
 
-    return isOpaqueType ? OpaqueType(wrappedType: containerType) : containerType
+    if isOpaqueType {
+      return OpaqueType(wrappedType: containerType)
+    } else if isBoxedProtocolType {
+      let boxedType = BoxedProtocolType(wrappedType: containerType)
+      boxedType.setSourceRange(containerType.sourceRange)
+      return boxedType
+    } else {
+      return containerType
+    }
   }
 
   func isOpaqueTypeHead() -> Bool {
     guard case .name("some")? = _lexer.look().kind.namedIdentifier else { return false }
+
+    _lexer.advance()
+    return true
+  }
+
+  func isBoxedProtocolTypeHead() -> Bool {
+    guard case .name("any")? = _lexer.look().kind.namedIdentifier else { return false }
 
     _lexer.advance()
     return true
@@ -168,16 +190,36 @@ extension Parser {
     var localName: Identifier?
     let type: Type
     var attributes: [Attribute] = []
-    var isInOutParameter = false
+    var ownershipModifier: TypeAnnotation.OwnershipModifier?
 
     let looked = _lexer.look()
     switch looked.kind {
     case .at:
       attributes = try parseAttributes()
-      isInOutParameter = _lexer.match(.inout)
+      switch _lexer.look().kind {
+      case .inout:
+        _lexer.advance()
+        ownershipModifier = .inout
+      case .borrowing:
+        _lexer.advance()
+        ownershipModifier = .borrowing
+      case .consuming:
+        _lexer.advance()
+        ownershipModifier = .consuming
+      default:
+        break
+      }
       type = try parseType()
     case .inout:
-      isInOutParameter = true
+      ownershipModifier = .inout
+      _lexer.advance()
+      type = try parseType()
+    case .borrowing:
+      ownershipModifier = .borrowing
+      _lexer.advance()
+      type = try parseType()
+    case .consuming:
+      ownershipModifier = .consuming
       _lexer.advance()
       type = try parseType()
     default:
@@ -187,7 +229,7 @@ extension Parser {
         externalName = elementBody.externalName
         localName = elementBody.localName
         attributes = elementBody.attributes
-        isInOutParameter = elementBody.isInOutParameter
+        ownershipModifier = elementBody.ownershipModifier
       } else {
         type = try parseType()
       }
@@ -204,7 +246,7 @@ extension Parser {
       externalName: externalName,
       localName: localName,
       attributes: attributes,
-      isInOutParameter: isInOutParameter,
+      ownershipModifier: ownershipModifier,
       isVariadic: isVariadic)
   }
 
@@ -230,7 +272,7 @@ extension Parser {
       externalName: externalName,
       localName: internalName,
       attributes: typeAnnotation.attributes,
-      isInOutParameter: typeAnnotation.isInOutParameter)
+      ownershipModifier: typeAnnotation.ownershipModifier)
   }
 
   func parseProtocolCompositionType(_ type: Type) throws -> ProtocolCompositionType {
@@ -283,11 +325,11 @@ extension Parser {
     _ type: Type, attributes attrs: Attributes = []
   ) throws -> Type {
     func getAtomicType() throws -> Type {
-      do {
-        if let parenthesizedType = type as? ParenthesizedType {
-          return try parenthesizedType.toTupleType()
-        }
+      guard let parenthesizedType = type as? ParenthesizedType else {
         return type
+      }
+      do {
+        return try parenthesizedType.toTupleType()
       } catch ParenthesizedType.TupleConversionError.isVariadic {
         throw _raiseFatal(.tupleTypeVariadicElement)
       } catch ParenthesizedType.TupleConversionError.multipleLabels {
@@ -316,16 +358,32 @@ extension Parser {
     }
 
     let examined = _lexer.examine([
-      .throws, .rethrows, .arrow, .dot,
+      .async, .throws, .rethrows, .arrow, .dot,
     ])
     guard examined.0 else {
       return try getAtomicType()
     }
     var parsedType: Type
     switch examined.1 {
+    case .async:
+      let innerExamined = _lexer.examine([.throws, .rethrows, .arrow])
+      switch innerExamined.1 {
+      case .throws:
+        let throwKind = try parseTypedThrowsOrPlain()
+        try match(.arrow, orFatal: .throwsInWrongPosition("throws"))
+        parsedType = try parseFunctionType(attributes: attrs, type: type, isAsync: true, throwKind: throwKind)
+      case .rethrows:
+        try match(.arrow, orFatal: .throwsInWrongPosition("rethrows"))
+        parsedType = try parseFunctionType(attributes: attrs, type: type, isAsync: true, throwKind: .rethrowing)
+      case .arrow:
+        parsedType = try parseFunctionType(attributes: attrs, type: type, isAsync: true, throwKind: .nothrowing)
+      default:
+        return try getAtomicType()
+      }
     case .throws:
+      let throwKind = try parseTypedThrowsOrPlain()
       try match(.arrow, orFatal: .throwsInWrongPosition("throws"))
-      parsedType = try parseFunctionType(attributes: attrs, type: type, throwKind: .throwing)
+      parsedType = try parseFunctionType(attributes: attrs, type: type, throwKind: throwKind)
     case .rethrows:
       try match(.arrow, orFatal: .throwsInWrongPosition("rethrows"))
       parsedType = try parseFunctionType(attributes: attrs, type: type, throwKind: .rethrowing)
@@ -351,7 +409,7 @@ extension Parser {
     return try parseContainerType(parsedType)
   }
 
-  private func parseFunctionType(attributes attrs: Attributes, type: Type, throwKind: ThrowsKind) throws -> Type {
+  private func parseFunctionType(attributes attrs: Attributes, type: Type, isAsync: Bool = false, throwKind: ThrowsKind) throws -> Type {
     guard let parenthesizedType = type as? ParenthesizedType else {
       throw _raiseFatal(.expectedFunctionTypeArguments)
     }
@@ -360,7 +418,7 @@ extension Parser {
         externalName: $0.externalName,
         localName: $0.localName,
         attributes: $0.attributes,
-        isInOutParameter: $0.isInOutParameter,
+        ownershipModifier: $0.ownershipModifier,
         isVariadic: $0.isVariadic)
     }
     let returnType = try parseType()
@@ -368,9 +426,19 @@ extension Parser {
       attributes: attrs,
       arguments: funcArguments,
       returnType: returnType,
+      isAsync: isAsync,
       throwsKind: throwKind)
     funcType.setSourceRange(type.sourceLocation, returnType.sourceRange.end)
     return funcType
+  }
+
+  private func parseTypedThrowsOrPlain() throws -> ThrowsKind {
+    if _lexer.match(.leftParen) {
+      let type = try parseType()
+      try match(.rightParen, orFatal: .expectedCloseParenThrowsType)
+      return .typedThrowing(type)
+    }
+    return .throwing
   }
 
   func parseTypeInheritanceClause() throws -> TypeInheritanceClause? {
@@ -384,14 +452,15 @@ extension Parser {
         return TypeInheritanceClause(classRequirement: classRequirement)
       }
     }
-    var types = [TypeIdentifier]()
+    var types = [TypeInheritanceClause.InheritedType]()
     repeat {
+      let isSuppressed = _lexer.match(.prefixOperator("~"))
       let typeSourceRange = getLookedRange()
       if _lexer.match(.class) {
         throw _raiseFatal(.lateClassRequirement)
       } else if let idHead = readNamedIdentifier() {
         let type = try parseIdentifierType(idHead, typeSourceRange)
-        types.append(type)
+        types.append(TypeInheritanceClause.InheritedType(type: type, isSuppressed: isSuppressed))
       } else {
         throw _raiseFatal(.expectedTypeRestriction)
       }
@@ -411,21 +480,21 @@ fileprivate class ParenthesizedType : Type {
     fileprivate let localName: Identifier?
     fileprivate let type: Type
     fileprivate let attributes: Attributes
-    fileprivate let isInOutParameter: Bool
+    fileprivate let ownershipModifier: TypeAnnotation.OwnershipModifier?
     fileprivate let isVariadic: Bool
 
     fileprivate init(type: Type,
       externalName: Identifier? = nil,
       localName: Identifier? = nil,
       attributes: Attributes = [],
-      isInOutParameter: Bool = false,
+      ownershipModifier: TypeAnnotation.OwnershipModifier? = nil,
       isVariadic: Bool = false)
     {
       self.externalName = externalName
       self.localName = localName
       self.type = type
       self.attributes = attributes
-      self.isInOutParameter = isInOutParameter
+      self.ownershipModifier = ownershipModifier
       self.isVariadic = isVariadic
     }
   }
@@ -454,7 +523,7 @@ fileprivate class ParenthesizedType : Type {
           type: e.type,
           name: name,
           attributes: e.attributes,
-          isInOutParameter: e.isInOutParameter)
+          ownershipModifier: e.ownershipModifier)
         tupleElements.append(tupleElement)
       } else {
         let tupleElement = TupleType.Element(type: e.type)

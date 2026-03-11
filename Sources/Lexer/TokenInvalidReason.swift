@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import Diagnostic
 
-public enum TokenInvalidReason : DiagnosticKind {
+public enum TokenInvalidReason : DiagnosticKind, Sendable {
   case reserved
   case badChar
   case badNumber
@@ -32,6 +32,7 @@ public enum TokenInvalidReason : DiagnosticKind {
   case invalidEscapeSequenceInStringLiteral
   case newlineEscapesNotAllowedOnLastLine
   case newlineEscapesNotSupportedInStringLiteral
+  case unterminatedRegexLiteral
 
   public var diagnosticMessage: String {
     switch self {
@@ -65,6 +66,8 @@ public enum TokenInvalidReason : DiagnosticKind {
       return "newline escape is not allowed on the line immediately following the close \"\"\""
     case .newlineEscapesNotSupportedInStringLiteral:
       return "newline escape is not supported in single-line string literal"
+    case .unterminatedRegexLiteral:
+      return "unterminated regex literal"
     }
   }
 }

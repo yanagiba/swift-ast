@@ -1,7 +1,7 @@
-// swift-tools-version:5.0
+// swift-tools-version:6.0
 
 /*
-   Copyright 2015-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ let package = Package(
         "Bocho",
       ]
     ),
-    .target(
+    .executableTarget(
       name: "swift-ast",
       dependencies: [
         "Frontend",
@@ -190,8 +190,14 @@ let package = Package(
       name: "IntegrationTests",
       dependencies: [
         "Frontend",
+      ],
+      exclude: [
+        "TTYASTDumpTestResources",
+        "TTYASTPrintTestResources",
+        "ShebangResources",
+        "SemaTestResources",
       ]
     ),
   ],
-  swiftLanguageVersions: [.v5]
+  swiftLanguageModes: [.v6]
 )

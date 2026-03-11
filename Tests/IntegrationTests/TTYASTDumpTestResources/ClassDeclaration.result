@@ -76,13 +76,15 @@ top_level_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:17:1-
   class_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:40:1-48:2>
     name: Foo
     compiler_ctrl_stmt <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:41:1-41:6>
-      kind: `if`, condition: ` a`
+      kind: `if`
+      condition: `a`
     const_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:42:3-42:12>
       pattern: a
         literal_expr <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:42:11-42:12>
           kind: `int`, literal: `1`, raw_text: `1`
     compiler_ctrl_stmt <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:43:1-43:10>
-      kind: `elseif`, condition: ` b`
+      kind: `elseif`
+      condition: `b`
     const_decl <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:44:3-44:12>
       pattern: b
         literal_expr <range: TTYASTDumpTestResources/ClassDeclarationTests.swift:44:11-44:12>

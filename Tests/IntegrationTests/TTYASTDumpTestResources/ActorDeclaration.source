@@ -1,0 +1,10 @@
+actor Counter {
+  var count = 0
+  func increment() {
+    count += 1
+  }
+}
+
+actor BankAccount: Sendable {
+  let id: Int
+}

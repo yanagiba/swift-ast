@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,8 +18,9 @@ public extension Token.Kind /* modifiers */ {
   var isModifier: Bool {
     switch self {
     case .class, .convenience, .dynamic, .final, .infix, .lazy,
+      .nonisolated,
       .optional, .override, .postfix, .prefix, .required, .static, .unowned, .weak,
-      .private, .fileprivate, .internal, .public, .open,
+      .private, .fileprivate, .internal, .public, .open, .package,
       .mutating, .nonmutating:
         return true
       default:
@@ -28,16 +29,20 @@ public extension Token.Kind /* modifiers */ {
   }
 
   static var declarationModifiers: [Token.Kind] {
-    // Note: this doesn't include the access level modifiers and mutation modifiers
-    return [.class, .convenience, .dynamic, .final, .infix, .lazy,
+    // Note: this doesn't include the access level modifiers or mutation modifiers
+    return [.class, .convenience, .dynamic, .final, .infix, .lazy, .nonisolated,
       .optional, .override, .postfix, .prefix, .required, .static, .unowned, .weak]
   }
 
   static var accessLevelModifiers: [Token.Kind] {
-    return [.private, .fileprivate, .internal, .public, .open]
+    return [.private, .fileprivate, .internal, .public, .open, .package]
   }
 
   static var mutationModifiers: [Token.Kind] {
     return [.mutating, .nonmutating]
+  }
+
+  static var actorIsolationModifiers: [Token.Kind] {
+    return [.nonisolated]
   }
 }

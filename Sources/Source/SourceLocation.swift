@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct SourceLocation: Equatable, Hashable {
+public struct SourceLocation: Equatable, Hashable, Sendable {
   public let identifier: String
   public let line: Int
   public let column: Int

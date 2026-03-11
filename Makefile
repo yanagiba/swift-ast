@@ -1,6 +1,6 @@
 BUILD_DIR=.build/debug
 
-.PHONY: all clean build test xcodegen
+.PHONY: all clean build test snapshot
 
 all: build
 
@@ -14,5 +14,5 @@ build:
 test: build
 	swift test
 
-xcodegen:
-	swift package generate-xcodeproj --enable-code-coverage
+snapshot: build
+	RECORD_SNAPSHOTS=1 swift test --filter IntegrationTests

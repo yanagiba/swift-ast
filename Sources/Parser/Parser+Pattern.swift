@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -55,20 +55,40 @@ struct ParserPatternConfig {
     }
   }
 
+  fileprivate func isIdentifierHeadKeyword(_ tokenKind: Token.Kind) -> Bool {
+    switch tokenKind {
+    case .Any, .Self,
+      .async, .await, .borrowing, .consuming,
+      .get, .set, .left, .right, .open,
+      .nonisolated, .package, .prefix, .postfix:
+      return true
+    default:
+      return false
+    }
+  }
+
   fileprivate var tokenKinds: [Token.Kind] {
     var tokenKinds: [Token.Kind] = [
       .underscore,
       .dummyIdentifier,
       .leftParen,
-      // below are keywords also can be used as identifier pattern
+    ]
+    tokenKinds += [
       .Any,
       .Self,
+      .async,
+      .await,
+      .borrowing,
+      .consuming,
       .get,
-      .set,
       .left,
-      .right,
+      .nonisolated,
       .open,
+      .package,
+      .postfix,
       .prefix,
+      .right,
+      .set,
     ]
     if !onlyIdWildCardOptional {
       tokenKinds += [
@@ -122,7 +142,12 @@ extension Parser {
       return typeCastingPttrn
     case .underscore:
       return try parseUnderscoreHeadedPattern(config: config, startRange: lookedRange)
-    case .identifier, .Any, .Self, .get, .set, .left, .right, .open, .prefix, .postfix:
+    case .identifier:
+      guard let idHead = patternHead.namedIdentifier?.id else {
+        throw _raiseFatal(.expectedPattern)
+      }
+      return try parseIdentifierHeadedPattern(idHead, config: config, startRange: lookedRange)
+    case _ where config.isIdentifierHeadKeyword(patternHead):
       guard let idHead = patternHead.namedIdentifier?.id else {
         throw _raiseFatal(.expectedPattern)
       }

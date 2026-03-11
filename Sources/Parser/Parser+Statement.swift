@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ extension Parser {
       {
         _lexer.advance(by: 2)
         stmt = try parseLabeledStatement(withLabelName: .name(name), startLocation: lookedRange.start)
-      } else if name == "precedencegroup" {
+      } else if ["precedencegroup", "actor", "macro"].contains(name) {
         stmt = try parseDeclaration()
       } else {
         // if identifier is not immediately followed by a colon
@@ -193,21 +193,25 @@ extension Parser {
     var endLocation = getEndLocation()
     switch _lexer.read([.if, .dummyIdentifier, .else]) {
     case .if:
-      let condition = readUntilEOL()
+      let condition = try parseCompilationCondition()
       kind = .if(condition)
-      for _ in 0..<condition.count {
-        endLocation = endLocation.nextColumn
-      }
+      endLocation = _lexer.look(skipLineFeed: false).sourceRange.start
     case .identifier(let id, false):
       switch id {
       case "elseif":
-        let condition = readUntilEOL()
+        let condition = try parseCompilationCondition()
         kind = .elseif(condition)
-        for _ in 0..<condition.count {
-          endLocation = endLocation.nextColumn
-        }
+        endLocation = _lexer.look(skipLineFeed: false).sourceRange.start
       case "endif":
         kind = .endif
+      case "warning", "error":
+        try match(.leftParen, orFatal: .expectedOpenParenDiagnosticDirective)
+        guard case let .staticStringLiteral(message, _, _) = _lexer.read(.dummyStaticStringLiteral) else {
+          throw _raiseFatal(.expectedStringLiteralDiagnosticDirective)
+        }
+        endLocation = getEndLocation()
+        try match(.rightParen, orFatal: .expectedCloseParenDiagnosticDirective)
+        kind = id == "warning" ? .warning(message) : .error(message)
       case "sourceLocation":
         try match(.leftParen, orFatal: .expectedOpenParenSourceLocation)
         if _lexer.match(.rightParen) {
@@ -218,7 +222,7 @@ extension Parser {
         var lineNumber: Int?
         if _lexer.read(.dummyIdentifier) == .identifier("file", false),
           _lexer.match(.colon),
-          case let .staticStringLiteral(name, _) = _lexer.read(.dummyStaticStringLiteral),
+          case let .staticStringLiteral(name, _, _) = _lexer.read(.dummyStaticStringLiteral),
           _lexer.match(.comma),
           _lexer.read(.dummyIdentifier) == .identifier("line", false),
           _lexer.match(.colon),
@@ -242,6 +246,162 @@ extension Parser {
     let ctrlStmt = CompilerControlStatement(kind: kind)
     ctrlStmt.setSourceRange(startLocation, endLocation)
     return ctrlStmt
+  }
+
+  // MARK: - Compilation Condition Parsing
+
+  func parseCompilationCondition() throws -> CompilationCondition {
+    let lhs = try parseCompilationConditionAnd()
+    if _lexer.match(.binaryOperator("||"), exactMatch: true) {
+      let rhs = try parseCompilationCondition()
+      return .or(lhs, rhs)
+    }
+    return lhs
+  }
+
+  private func parseCompilationConditionAnd() throws -> CompilationCondition {
+    let lhs = try parseCompilationConditionPrimary()
+    if _lexer.match(.binaryOperator("&&"), exactMatch: true) {
+      let rhs = try parseCompilationConditionAnd()
+      return .and(lhs, rhs)
+    }
+    return lhs
+  }
+
+  private func parseCompilationConditionPrimary() throws -> CompilationCondition { // swift-lint:suppress(high_cyclomatic_complexity)
+    // Negation: !condition
+    if _lexer.match(.prefixOperator("!"), exactMatch: true) {
+      let condition = try parseCompilationConditionPrimary()
+      return .not(condition)
+    }
+
+    // Parenthesized: (condition)
+    if _lexer.match(.leftParen) {
+      let condition = try parseCompilationCondition()
+      try match(.rightParen, orFatal: .expectedCloseParenCompilationCondition)
+      return .parenthesized(condition)
+    }
+
+    // Boolean literals
+    switch _lexer.read(.booleanLiteral(true)) {
+    case .booleanLiteral(let v):
+      return .booleanLiteral(v)
+    default:
+      break
+    }
+
+    // Identifier-based: platform conditions or plain identifiers
+    guard case .identifier(let name, false) = _lexer.read(.dummyIdentifier) else {
+      throw _raiseFatal(.expectedCompilationCondition)
+    }
+
+    // Check for platform condition: name(...)
+    guard _lexer.match(.leftParen) else {
+      return .identifier(name)
+    }
+
+    switch name {
+    case "os":
+      let arg = try readPlatformConditionArgument()
+      try match(.rightParen, orFatal: .expectedCloseParenCompilationCondition)
+      return .os(arg)
+    case "arch":
+      let arg = try readPlatformConditionArgument()
+      try match(.rightParen, orFatal: .expectedCloseParenCompilationCondition)
+      return .arch(arg)
+    case "targetEnvironment":
+      let arg = try readPlatformConditionArgument()
+      try match(.rightParen, orFatal: .expectedCloseParenCompilationCondition)
+      return .targetEnvironment(arg)
+    case "canImport":
+      let path = try readImportPath()
+      try match(.rightParen, orFatal: .expectedCloseParenCompilationCondition)
+      return .canImport(path)
+    case "hasFeature":
+      let feature = try readPlatformConditionArgument()
+      try match(.rightParen, orFatal: .expectedCloseParenCompilationCondition)
+      return .hasFeature(feature)
+    case "swift", "compiler":
+      let (op, version) = try readVersionConstraint()
+      try match(.rightParen, orFatal: .expectedCloseParenCompilationCondition)
+      if name == "swift" {
+        return .swift(op, version)
+      }
+      return .compiler(op, version)
+    default:
+      // Unknown function-like condition — read arguments as raw text until )
+      var arg = ""
+      while let scalar = _lexer.lookUnicodeScalar() {
+        guard scalar != ")" && scalar != "\n" else { break }
+        _lexer.advanceChar()
+        arg += String(scalar)
+      }
+      try match(.rightParen, orFatal: .expectedCloseParenCompilationCondition)
+      return .identifier("\(name)(\(arg))")
+    }
+  }
+
+  private func readPlatformConditionArgument() throws -> String {
+    guard case .identifier(let arg, false) = _lexer.read(.dummyIdentifier) else {
+      throw _raiseFatal(.expectedArgumentInPlatformCondition)
+    }
+    return arg
+  }
+
+  private func readImportPath() throws -> String {
+    guard case .identifier(let first, false) = _lexer.read(.dummyIdentifier) else {
+      throw _raiseFatal(.expectedArgumentInPlatformCondition)
+    }
+    var path = first
+    while _lexer.match(.dot) {
+      guard case .identifier(let component, false) = _lexer.read(.dummyIdentifier) else {
+        throw _raiseFatal(.expectedArgumentInPlatformCondition)
+      }
+      path += ".\(component)"
+    }
+    return path
+  }
+
+  private func readVersionConstraint() throws -> (String, String) {
+    // Read operator: >= or <
+    let op: String
+    switch _lexer.look().kind {
+    case .prefixOperator(let o) where o == ">=" || o == "<":
+      _lexer.advance()
+      op = o
+    case .leftChevron:
+      _lexer.advance()
+      op = "<"
+    default:
+      throw _raiseFatal(.expectedArgumentInPlatformCondition)
+    }
+
+    // Read version: e.g. 3.1 or 5.5.1
+    var version: String
+    switch _lexer.look().kind {
+    case .floatingPointLiteral(_, let raw):
+      _lexer.advance()
+      version = raw
+    case .integerLiteral(_, let raw):
+      _lexer.advance()
+      version = raw
+    default:
+      throw _raiseFatal(.expectedArgumentInPlatformCondition)
+    }
+
+    // Read additional .N components (e.g. 5.5.1 → already got "5.5", now read ".1")
+    while _lexer.look().kind == .dot {
+      let nextKind = _lexer.look(ahead: 1).kind
+      if case .integerLiteral(_, let raw) = nextKind {
+        _lexer.advance() // consume dot
+        _lexer.advance() // consume integer
+        version += ".\(raw)"
+      } else {
+        break
+      }
+    }
+
+    return (op, version)
   }
 
   private func parseLabeledStatement(
@@ -271,6 +431,7 @@ extension Parser {
   }
 
   private func parseDoStatement(startLocation: SourceLocation) throws -> DoStatement {
+    let (throwsKind, _) = try parseThrowsKind()
     let codeBlock = try parseCodeBlock()
     var endLocation = codeBlock.sourceRange.end
 
@@ -297,7 +458,7 @@ extension Parser {
       catchClauses.append(catchClause)
     }
 
-    let doStmt = DoStatement(codeBlock: codeBlock, catchClauses: catchClauses)
+    let doStmt = DoStatement(throwsKind: throwsKind, codeBlock: codeBlock, catchClauses: catchClauses)
     doStmt.setSourceRange(startLocation, endLocation)
     return doStmt
   }
@@ -308,8 +469,16 @@ extension Parser {
     let expr = try parseExpression(config: noTrailingConfig)
     try match(.leftBrace, orFatal: .leftBraceExpected("switch statement"))
     var cases: [SwitchStatement.Case] = []
-    var examined = _lexer.examine([.case, .default])
-    while examined.0 {
+    while true {
+      if _lexer.look().kind == .hash {
+        let hashStartLocation = getStartLocation()
+        _ = _lexer.match(.hash)
+        let compCtrlStmt = try parseCompilerControlStatement(startLocation: hashStartLocation)
+        cases.append(.compilerControl(compCtrlStmt))
+        continue
+      }
+      let examined = _lexer.examine([.case, .default])
+      guard examined.0 else { break }
       switch examined.1 {
       case .case:
         var itemList: [SwitchStatement.Case.Item] = []
@@ -323,18 +492,75 @@ extension Parser {
           itemList.append(item)
         } while _lexer.match(.comma)
         try match(.colon, orFatal: .expectedCaseColon)
-        let stmts = try parseStatements()
+        var stmts: Statements = []
+        while true {
+          switch _lexer.look().kind {
+          case .eof, .rightBrace, .default, .case:
+            break
+          case .hash:
+            let nextKind = _lexer.look(ahead: 1).kind
+            let switchLevelDirective: Bool
+            switch nextKind {
+            case .if, .else:
+              switchLevelDirective = true
+            default:
+              switch nextKind.namedIdentifier {
+              case .name("elseif")?, .name("endif")?:
+                switchLevelDirective = true
+              default:
+                switchLevelDirective = false
+              }
+            }
+            if switchLevelDirective {
+              break
+            }
+            stmts.append(try parseStatement())
+            continue
+          default:
+            stmts.append(try parseStatement())
+            continue
+          }
+          break
+        }
         try assert(!stmts.isEmpty, orFatal: .caseStmtWithoutBody("case"))
         cases.append(.case(itemList, stmts))
       case .default:
         try match(.colon, orFatal: .expectedDefaultColon)
-        let stmts = try parseStatements()
+        var stmts: Statements = []
+        while true {
+          switch _lexer.look().kind {
+          case .eof, .rightBrace, .default, .case:
+            break
+          case .hash:
+            let nextKind = _lexer.look(ahead: 1).kind
+            let switchLevelDirective: Bool
+            switch nextKind {
+            case .if, .else:
+              switchLevelDirective = true
+            default:
+              switch nextKind.namedIdentifier {
+              case .name("elseif")?, .name("endif")?:
+                switchLevelDirective = true
+              default:
+                switchLevelDirective = false
+              }
+            }
+            if switchLevelDirective {
+              break
+            }
+            stmts.append(try parseStatement())
+            continue
+          default:
+            stmts.append(try parseStatement())
+            continue
+          }
+          break
+        }
         try assert(!stmts.isEmpty, orFatal: .caseStmtWithoutBody("default"))
         cases.append(.default(stmts))
       default:
         break
       }
-      examined = _lexer.examine([.case, .default])
     }
     let endLocation = getEndLocation()
     try match(.rightBrace, orFatal: .rightBraceExpected("switch statement"))
@@ -402,7 +628,7 @@ extension Parser {
     return whileStmt
   }
 
-  private func parseConditionList() throws -> ConditionList {
+  func parseConditionList() throws -> ConditionList {
     var conditionList: ConditionList = []
     repeat {
       let condition = try parseCondition()
@@ -450,7 +676,14 @@ extension Parser {
   }
 
   private func parseAvailabilityCondition() throws -> Condition {
-    guard case .identifier("available", false) = _lexer.look().kind else {
+    // Check for both #available and #unavailable
+    let isUnavailable: Bool
+    switch _lexer.look().kind {
+    case .identifier("available", false):
+      isUnavailable = false
+    case .identifier("unavailable", false):
+      isUnavailable = true
+    default:
       throw _raiseFatal(.expectedAvailableKeyword)
     }
     _lexer.advance()
@@ -459,8 +692,10 @@ extension Parser {
       "iOS", "iOSApplicationExtension",
       "macOS", "macOSApplicationExtension",
       "OSX", // TODO: remove this line at a later time
-      "watchOS",
-      "tvOS",
+      "watchOS", "watchOSApplicationExtension",
+      "tvOS", "tvOSApplicationExtension",
+      "visionOS", "visionOSApplicationExtension",
+      "macCatalyst", "macCatalystApplicationExtension",
     ]
     var arguments: [AvailabilityCondition.Argument] = []
     repeat {
@@ -496,7 +731,7 @@ extension Parser {
       }
     } while _lexer.match(.comma)
     try match(.rightParen, orFatal: .expectedCloseParenAvailabilityCondition)
-    return .availability(AvailabilityCondition(arguments: arguments))
+    return .availability(AvailabilityCondition(isUnavailable: isUnavailable, arguments: arguments))
   }
 
   private func parseForInStatement(startLocation: SourceLocation) throws -> ForInStatement {

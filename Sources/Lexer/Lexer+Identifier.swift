@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2019, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -88,10 +88,14 @@ fileprivate extension Role {
 fileprivate let keywordMapping: [String: Token.Kind] = [
   "as": .as,
   "associativity": .associativity,
+  "async": .async,
+  "await": .await,
+  "borrowing": .borrowing,
   "break": .break,
   "catch": .catch,
   "case": .case,
   "class": .class,
+  "consuming": .consuming,
   "continue": .continue,
   "convenience": .convenience,
   "default": .default,
@@ -126,11 +130,13 @@ fileprivate let keywordMapping: [String: Token.Kind] = [
   "mutating": .mutating,
   "nil": .nil,
   "none": .none,
+  "nonisolated": .nonisolated,
   "nonmutating": .nonmutating,
   "open": .open,
   "operator": .operator,
   "optional": .optional,
   "override": .override,
+  "package": .package,
   "postfix": .postfix,
   "prefix": .prefix,
   "private": .private,

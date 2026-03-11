@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -48,10 +48,4 @@ class ParserDeferStatementTests: XCTestCase {
       XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 9))
     })
   }
-
-  static var allTests = [
-    ("testDefer", testDefer),
-    ("testDeferNothing", testDeferNothing),
-    ("testSourceRange", testSourceRange),
-  ]
 }

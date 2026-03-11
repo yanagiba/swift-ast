@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ public class InitializerDeclaration : ASTNode, Declaration {
   public let kind: InitKind
   public let genericParameterClause: GenericParameterClause?
   public private(set) var parameterList: [FunctionSignature.Parameter]
+  public let isAsync: Bool
   public let throwsKind: ThrowsKind
   public let genericWhereClause: GenericWhereClause?
   public let body: CodeBlock
@@ -36,6 +37,7 @@ public class InitializerDeclaration : ASTNode, Declaration {
     kind: InitKind = .nonfailable,
     genericParameterClause: GenericParameterClause? = nil,
     parameterList: [FunctionSignature.Parameter] = [],
+    isAsync: Bool = false,
     throwsKind: ThrowsKind = .nothrowing,
     genericWhereClause: GenericWhereClause? = nil,
     body: CodeBlock
@@ -45,6 +47,7 @@ public class InitializerDeclaration : ASTNode, Declaration {
     self.kind = kind
     self.genericParameterClause = genericParameterClause
     self.parameterList = parameterList
+    self.isAsync = isAsync
     self.throwsKind = throwsKind
     self.genericWhereClause = genericWhereClause
     self.body = body
@@ -65,10 +68,11 @@ public class InitializerDeclaration : ASTNode, Declaration {
     let headText = "\(attrsText)\(modifiersText)init\(kind.textDescription)"
     let genericParameterText = genericParameterClause?.textDescription ?? ""
     let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
+    let asyncText = isAsync ? " async" : ""
     let throwsKindText = throwsKind.textDescription.isEmpty ? "" : " \(throwsKind.textDescription)"
     let genericWhereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
     let bodyText = body.textDescription
-    return "\(headText)\(genericParameterText)\(parameterText)\(throwsKindText)\(genericWhereText) \(bodyText)"
+    return "\(headText)\(genericParameterText)\(parameterText)\(asyncText)\(throwsKindText)\(genericWhereText) \(bodyText)"
   }
 }
 

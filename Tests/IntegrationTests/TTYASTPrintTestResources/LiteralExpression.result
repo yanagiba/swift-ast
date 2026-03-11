@@ -18,12 +18,12 @@ please your Majesty?" he asked.
 till you come to the end; then stop."
 """
 """
-  The White Rabbit put on his spectacles.  "Where shall I begin,
-  please your Majesty?" he asked.
+The White Rabbit put on his spectacles.  "Where shall I begin,
+please your Majesty?" he asked.
 
-  "Begin at the beginning," the King said gravely, "and go on
-  till you come to the end; then stop."
-  """
+"Begin at the beginning," the King said gravely, "and go on
+till you come to the end; then stop."
+"""
 """
 Escaping the first quote \"""
 Escaping all three quotes \"\"\"
@@ -35,20 +35,20 @@ It also ends with a line feed.
 
 """
 """
-  \("""
+\("""
 helloworld
 """)a\("foo")\("bar")z
-  """
 """
-  \("""
-    hello
-    world
-    """)
-  a
-  \("foo")
-  \("bar")
-  z
-  """
+"""
+\("""
+  hello
+  world
+  """)
+a
+\("foo")
+\("bar")
+z
+"""
 _ = []
 _ = [1, 2, 3]
 _ = [_, [:], foo()]
@@ -61,3 +61,13 @@ _ = #function
 _ = #colorLiteral(red: 255, green: 127, blue: 0, alpha: 1.0)
 _ = #fileLiteral(resourceName: "foo")
 _ = #imageLiteral(resourceName: #fileLiteral(resourceName: "bar.png"))
+#"hello"#
+#"She said \"hello\""#
+#"a\#nb"#
+##"hello"##
+##"a\##nb"##
+/abc/
+/\d+/
+/[a-z]+/
+"\(x, format: .fixed(2))"
+"\(x, specifier: "%0.2f")"

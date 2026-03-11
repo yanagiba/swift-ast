@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:17:1-21:23>
+top_level_decl <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:17:1-29:7>
   explicit_member_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:17:1-17:6>
     identifier_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:17:1-17:4>
       kind: `identifier`, identifier: `foo`
@@ -31,3 +31,21 @@ top_level_decl <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swi
     identifier: `b`
     arguments:
     0: name: `y`
+  conditional_compilation_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:24:1-29:7>
+    base: identifier_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:24:1-24:4>
+      kind: `identifier`, identifier: `foo`
+    0: compiler_ctrl_stmt <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:25:1-25:10>
+    kind: `if`
+    condition: `DEBUG`
+      explicit_member_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:24:1-26:5>
+        identifier_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:24:1-24:4>
+          kind: `identifier`, identifier: `foo`
+        identifier: `bar`
+    1: compiler_ctrl_stmt <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:27:1-27:6>
+    kind: `else`
+      explicit_member_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:24:1-28:5>
+        identifier_expr <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:24:1-24:4>
+          kind: `identifier`, identifier: `foo`
+        identifier: `baz`
+    compiler_ctrl_stmt <range: TTYASTDumpTestResources/ExplicitMemberExpressionTests.swift:29:1-29:7>
+      kind: `endif`

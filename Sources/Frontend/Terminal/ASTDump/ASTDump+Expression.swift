@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2019, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -45,9 +45,17 @@ extension ClosureExpression : TTYASTDumpRepresentable {
         body += "\n"
         body += "capture_list: `\(captureList.map({ $0.textDescription }).joined(separator: ", "))`".indented
       }
+      if !signature.attributes.isEmpty {
+        body += "\n"
+        body += "attributes: `\(signature.attributes.textDescription)`".indented
+      }
       if let parameterClause = signature.parameterClause {
         body += "\n"
         body += "parameters: `\(parameterClause.textDescription)`".indented
+      }
+      if signature.isAsync {
+        body += "\n"
+        body += "async: `true`".indented
       }
       if signature.canThrow {
         body += "\n"
@@ -68,6 +76,19 @@ extension ClosureExpression : TTYASTDumpRepresentable {
         .indented
     }
     return "\(head)\(body)"
+  }
+}
+
+extension ConditionalCompilationExpression : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("conditional_compilation_expr", sourceRange)
+    var body = "base: \(base.ttyDump)".indented
+    for (index, clause) in clauses.enumerated() {
+      body += "\n" + "\(index): ".indented + clause.condition.ttyDump
+      body += "\n" + clause.expression.ttyDump.indented.indented
+    }
+    body += "\n" + endifStatement.ttyDump.indented
+    return "\(head)\n\(body)"
   }
 }
 
@@ -147,6 +168,10 @@ extension FunctionCallExpression : TTYASTDumpRepresentable {
     if let trailingClosure = trailingClosure {
       body += "\n" + "trailing_\(trailingClosure.ttyDump)".indented
     }
+    for (label, closure) in additionalTrailingClosures {
+      body += "\n" + "additional_trailing_label: `\(label)`".indented
+      body += "\n" + closure.ttyDump.indented
+    }
     return "\(head)\n\(body)"
   }
 }
@@ -170,6 +195,24 @@ extension IdentifierExpression : TTYASTDumpRepresentable {
       body += "kind: `binding_reference`, variable: `\(refVar)`"
     }
     return "\(head)\n\(body)"
+  }
+}
+
+extension IfExpression : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("if_expr", sourceRange)
+    let conditions = dump(conditionList).indented
+    let body = codeBlock.ttyDump.indented
+    let neck = "\(head)\n\(conditions)\n\(body)"
+
+    switch elseClause {
+    case .else(let codeBlock):
+      return "\(neck)\n" +
+        "else:\n\(codeBlock.ttyDump)".indented
+    case .elseif(let ifExpr):
+      return "\(neck)\n" +
+        "elseif:\n\(ifExpr.ttyDump)".indented
+    }
   }
 }
 
@@ -225,6 +268,51 @@ extension KeyPathStringExpression : TTYASTDumpRepresentable {
   }
 }
 
+extension MacroExpansionExpression : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("macro_expansion_expr", sourceRange)
+    var body = "macro_name: `\(macroName)`".indented
+    if let genericArgumentClause = genericArgumentClause {
+      body += "\n" + "generic_argument: `\(genericArgumentClause.textDescription)`".indented
+    }
+    if let argumentClause = argumentClause {
+      body += "\n" + "arguments:".indented
+      if argumentClause.isEmpty {
+        body += " <empty>"
+      }
+      for (index, arg) in argumentClause.enumerated() {
+        body += "\n" + "\(index): ".indented
+        switch arg {
+        case .expression(let expr):
+          body += "kind: `expression`\n"
+          body += expr.ttyDump.indented.indented
+        case let .namedExpression(identifier, expr):
+          body += "kind: `named_expression`, name: `\(identifier)`\n"
+          body += expr.ttyDump.indented.indented
+        case .memoryReference(let expr):
+          body += "kind: `memory_reference`\n"
+          body += expr.ttyDump.indented.indented
+        case let .namedMemoryReference(name, expr):
+          body += "kind: `named_memory_reference`, name: `\(name)\n"
+          body += expr.ttyDump.indented.indented
+        case .operator(let op):
+          body += "kind: `operator`, operator: `\(op)`"
+        case let .namedOperator(identifier, op):
+          body += "kind: `named_operator`, name: `\(identifier)`, operator: `\(op)`"
+        }
+      }
+    }
+    if let trailingClosure = trailingClosure {
+      body += "\n" + "trailing_\(trailingClosure.ttyDump)".indented
+    }
+    for (label, closure) in additionalTrailingClosures {
+      body += "\n" + "additional_trailing_label: `\(label)`".indented
+      body += "\n" + closure.ttyDump.indented
+    }
+    return "\(head)\n\(body)"
+  }
+}
+
 extension LiteralExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("literal_expr", sourceRange)
@@ -239,9 +327,39 @@ extension LiteralExpression : TTYASTDumpRepresentable {
     case let .floatingPoint(d, rawText):
       body += "kind: `double`, literal: `\(d)`, raw_text: `\(rawText)`"
     case let .staticString(_, rawText):
-      body += "kind: `string`, raw_text: `\(rawText)`"
-    case let .interpolatedString(_, rawText):
-      body += "kind: `interpolated_string`, raw_text: `\(rawText)`"
+      body += "kind: `string`, raw_text: `\(rawText.dedentedMultilineString)`"
+    case let .interpolatedString(segments, rawText):
+      body += "kind: `interpolated_string`, raw_text: `\(rawText.dedentedMultilineString)`"
+      for (index, segment) in segments.enumerated() {
+        body += "\n"
+        switch segment {
+        case .text(let value):
+          body += "\(index): kind: `text`, value: `\(value)`".indented
+        case .interpolation(let args):
+          body += "\(index): kind: `interpolation`".indented
+          for (argIndex, arg) in args.enumerated() {
+            body += "\n" + "\(argIndex): ".indented.indented
+            switch arg {
+            case .expression(let expr):
+              body += "kind: `expression`\n"
+              body += expr.ttyDump.indented.indented.indented
+            case let .namedExpression(identifier, expr):
+              body += "kind: `named_expression`, name: `\(identifier)`\n"
+              body += expr.ttyDump.indented.indented.indented
+            case .memoryReference(let expr):
+              body += "kind: `memory_reference`\n"
+              body += expr.ttyDump.indented.indented.indented
+            case let .namedMemoryReference(name, expr):
+              body += "kind: `named_memory_reference`, name: `\(name)`\n"
+              body += expr.ttyDump.indented.indented.indented
+            case .operator(let op):
+              body += "kind: `operator`, operator: `\(op)`"
+            case let .namedOperator(identifier, op):
+              body += "kind: `named_operator`, name: `\(identifier)`, operator: `\(op)`"
+            }
+          }
+        }
+      }
     case .array(let exprs):
       body += "kind: `array`"
       if exprs.isEmpty {
@@ -266,6 +384,8 @@ extension LiteralExpression : TTYASTDumpRepresentable {
       }
     case .playground(let playgroundLiteral):
       body += "kind: `playground`, literal: `\(playgroundLiteral.textDescription)`"
+    case let .regex(_, rawText):
+      body += "kind: `regex`, raw_text: `\(rawText)`"
     }
     return "\(head)\n\(body)"
   }
@@ -415,6 +535,49 @@ extension SuperclassExpression : TTYASTDumpRepresentable {
   }
 }
 
+extension SwitchExpression : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("switch_expr", sourceRange)
+    var body = expression.ttyDump.indented
+    body += "\n"
+    body += "cases:".indented
+    if cases.isEmpty {
+      body += " <empty>"
+    }
+    for (index, eachCase) in cases.enumerated() {
+      body += "\n"
+      body += "\(index): ".indented
+      switch eachCase {
+      case let .case(items, stmts):
+        body += "kind: `case`"
+        body += "\n"
+        body += "items:".indented.indented
+        if items.isEmpty {
+          body += " <empty>"
+        }
+        for (itemIndex, item) in items.enumerated() {
+          body += "\n"
+          body += "\(itemIndex): pattern: `\(item.pattern)`".indented.indented
+          if let whereExpr = item.whereExpression {
+            body += "\n"
+            body += "where: \(whereExpr.ttyDump)".indented.indented.indented
+          }
+        }
+        body += "\n"
+        body += stmts.map({ $0.ttyDump }).joined(separator: "\n").indented.indented
+      case .default(let stmts):
+        body += "kind: `default`"
+        body += "\n"
+        body += stmts.map({ $0.ttyDump }).joined(separator: "\n").indented.indented
+      case .compilerControl(let stmt):
+        body += "kind: `compiler_control`\n"
+        body += stmt.ttyDump.indented.indented
+      }
+    }
+    return "\(head)\n\(body)"
+  }
+}
+
 extension TernaryConditionalOperatorExpression : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("ternary_cond_expr", sourceRange)
@@ -422,6 +585,13 @@ extension TernaryConditionalOperatorExpression : TTYASTDumpRepresentable {
     let trueExprDump = trueExpression.ttyDump.indented
     let falseExprDump = falseExpression.ttyDump.indented
     return "\(head)\n\(condExprDump)\n\(trueExprDump)\n\(falseExprDump)"
+  }
+}
+
+extension AwaitExpression : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("await_expr", sourceRange)
+    return "\(head)\n" + expression.ttyDump.indented
   }
 }
 

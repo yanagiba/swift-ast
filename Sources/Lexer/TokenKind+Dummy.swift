@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2019, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,11 +19,12 @@ extension Token.Kind {
   public static let dummyIntegerLiteral: Token.Kind = .integerLiteral(0, rawRepresentation: "")
   public static let dummyFloatingPointLiteral: Token.Kind = .floatingPointLiteral(0, rawRepresentation: "")
   public static let dummyBooleanLiteral: Token.Kind = .booleanLiteral(true)
-  public static let dummyStaticStringLiteral: Token.Kind = .staticStringLiteral("", rawRepresentation: "")
+  public static let dummyStaticStringLiteral: Token.Kind = .staticStringLiteral("", rawRepresentation: "", hashCount: 0)
   public static let dummyInterpolatedStringLiteralHead: Token.Kind =
-    .interpolatedStringLiteralHead("", rawRepresentation: "")
+    .interpolatedStringLiteralHead("", rawRepresentation: "", hashCount: 0)
   public static let dummyImplicitParameterName: Token.Kind = .implicitParameterName(0)
   public static let dummyBindingReference: Token.Kind = .bindingReference("")
+  public static let dummyRegexLiteral: Token.Kind = .regexLiteral("", rawRepresentation: "")
   public static let dummyPrefixOperator: Token.Kind = .prefixOperator("")
   public static let dummyBinaryOperator: Token.Kind = .binaryOperator("")
   public static let dummyPostfixOperator: Token.Kind = .postfixOperator("")

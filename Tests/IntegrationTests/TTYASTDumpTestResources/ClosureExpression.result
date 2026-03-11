@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1-37:84>
+top_level_decl <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1-42:33>
   assign_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1-17:7>
     wildcard_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1-17:2>
     closure_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:5-17:7>
@@ -183,3 +183,18 @@ top_level_decl <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:17:1
               identifier_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:37:71-37:74>
                 kind: `identifier`, identifier: `foo`
             identifier: `title`
+  assign_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:40:1-40:21>
+    wildcard_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:40:1-40:2>
+    closure_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:40:5-40:21>
+      attributes: `@Sendable`
+  assign_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:41:1-41:38>
+    wildcard_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:41:1-41:2>
+    closure_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:41:5-41:38>
+      attributes: `@Sendable`
+      parameters: `(x: Int)`
+      return_type: `Void`
+  assign_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:42:1-42:33>
+    wildcard_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:42:1-42:2>
+    closure_expr <range: TTYASTDumpTestResources/ClosureExpressionTests.swift:42:5-42:33>
+      capture_list: `weak self`
+      attributes: `@Sendable`

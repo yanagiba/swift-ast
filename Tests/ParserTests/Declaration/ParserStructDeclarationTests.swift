@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -358,20 +358,17 @@ class ParserStructDeclarationTests: XCTestCase {
     )
   }
 
-  static var allTests = [
-    ("testName", testName),
-    ("testAttributes", testAttributes),
-    ("testModifiers", testModifiers),
-    ("testAttributesAndModifier", testAttributesAndModifier),
-    ("testGenericParameterClause", testGenericParameterClause),
-    ("testTypeInheritance", testTypeInheritance),
-    ("testGenericWhereClause", testGenericWhereClause),
-    ("testGenericParameterTypeInheritanceAndGenericWhere", testGenericParameterTypeInheritanceAndGenericWhere),
-    ("testDeclarationMember", testDeclarationMember),
-    ("testMultipleDeclarationMembers", testMultipleDeclarationMembers),
-    ("testNestedStructDecl", testNestedStructDecl),
-    ("testMembersWithSemicolons", testMembersWithSemicolons),
-    ("testCompilerControlMember", testCompilerControlMember),
-    ("testSourceRange", testSourceRange),
-  ]
+  func testSuppressedConformance() {
+    parseDeclarationAndTest("struct Foo: ~Copyable {}", "struct Foo: ~Copyable {}", testClosure: { decl in
+      guard let structDecl = decl as? StructDeclaration else {
+        XCTFail("Failed in getting a struct declaration.")
+        return
+      }
+
+      XCTAssertEqual(structDecl.name.textDescription, "Foo")
+      XCTAssertEqual(structDecl.typeInheritanceClause?.textDescription, ": ~Copyable")
+      XCTAssertEqual(structDecl.typeInheritanceClause?.typeInheritanceList.count, 1)
+      XCTAssertTrue(structDecl.typeInheritanceClause?.typeInheritanceList[0].isSuppressed ?? false)
+    })
+  }
 }

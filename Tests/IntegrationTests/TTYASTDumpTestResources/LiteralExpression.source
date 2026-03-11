@@ -78,3 +78,19 @@ _ = #function
 _ = #colorLiteral(red: 255, green: 127, blue: 0, alpha: 1.0)
 _ = #fileLiteral(resourceName: "foo")
 _ = #imageLiteral(resourceName: #fileLiteral(resourceName: "bar.png"))
+
+// extended string delimiters
+#"hello"#
+#"She said \"hello\""#
+#"a\#nb"#
+##"hello"##
+##"a\##nb"##
+
+// regex literals
+/abc/
+/\d+/
+/[a-z]+/
+
+// SE-0228 string interpolation as argument list
+"\(x, format: .fixed(2))"
+"\(x, specifier: "%0.2f")"

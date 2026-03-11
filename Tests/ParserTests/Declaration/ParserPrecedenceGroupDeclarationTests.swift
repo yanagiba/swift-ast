@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -299,19 +299,4 @@ class ParserPrecedenceGroupDeclarationTests: XCTestCase {
       }
     )
   }
-
-  static var allTests = [
-    ("testName", testName),
-    ("testHigherThanSingle", testHigherThanSingle),
-    ("testHigherThanMultiple", testHigherThanMultiple),
-    ("testLowerThanSingle", testLowerThanSingle),
-    ("testLowerThanMultiple", testLowerThanMultiple),
-    ("testAssignmentTrue", testAssignmentTrue),
-    ("testAssignmentFalse", testAssignmentFalse),
-    ("testAssociativityLeft", testAssociativityLeft),
-    ("testAssociativityRight", testAssociativityRight),
-    ("testAssociativityNone", testAssociativityNone),
-    ("testCombination", testCombination),
-    ("testSourceRange", testSourceRange),
-  ]
 }

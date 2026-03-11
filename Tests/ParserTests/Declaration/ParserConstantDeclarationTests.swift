@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -193,17 +193,4 @@ class ParserConstantDeclarationTests: XCTestCase {
       XCTAssertEqual(decl.sourceRange, getRange(1, 1, 1, 26))
     })
   }
-
-  static var allTests = [
-    ("testDefineConstant", testDefineConstant),
-    ("testDefineConstantWithTypeAnnotation", testDefineConstantWithTypeAnnotation),
-    ("testDefineConstantWithInitializer", testDefineConstantWithInitializer),
-    ("testMultipleDecls", testMultipleDecls),
-    ("testAttributes", testAttributes),
-    ("testModifiers", testModifiers),
-    ("testAttributeAndModifiers", testAttributeAndModifiers),
-    ("testFollowedByTrailingClosure", testFollowedByTrailingClosure),
-    ("testFollowedBySemicolon", testFollowedBySemicolon),
-    ("testSourceRange", testSourceRange),
-  ]
 }

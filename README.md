@@ -4,9 +4,9 @@
 [![swift-lint master](https://img.shields.io/badge/swift‐lint-master-C70025.svg)](https://github.com/yanagiba/swift-lint)
 [![swift-transform pending](https://img.shields.io/badge/swift‐transform-pending-C70025.svg)](https://github.com/yanagiba/swift-transform)
 
-[![Travis CI Status](https://api.travis-ci.org/yanagiba/swift-ast.svg?branch=master)](https://travis-ci.org/yanagiba/swift-ast)
+[![GitHub Actions Status](https://github.com/yanagiba/swift-ast/actions/workflows/tests.yaml/badge.svg?branch=master)](https://github.com/yanagiba/swift-ast/actions)
 [![codecov](https://codecov.io/gh/yanagiba/swift-ast/branch/master/graph/badge.svg)](https://codecov.io/gh/yanagiba/swift-ast)
-![Swift 5.1](https://img.shields.io/badge/swift-5.1-brightgreen.svg)
+![Swift 6](https://img.shields.io/badge/swift-6-brightgreen.svg)
 ![Swift Package Manager](https://img.shields.io/badge/SPM-ready-orange.svg)
 ![Platforms](https://img.shields.io/badge/platform-%20Linux%20|%20macOS%20-red.svg)
 ![License](https://img.shields.io/github/license/yanagiba/swift-ast.svg)
@@ -52,7 +52,7 @@ catch up as Swift evolves.
 
 ## Requirements
 
-- [Swift 5.1](https://swift.org/download/)
+- [Swift 6](https://swift.org/download/)
 
 ## Installation
 
@@ -97,19 +97,19 @@ calling `swift ast` in your terminal directly.
 Add the swift-ast dependency to `Package.swift`:
 
 ```swift
-// swift-tools-version:5.0
+// swift-tools-version:6.0
 
 import PackageDescription
 
 let package = Package(
   name: "MyPackage",
   dependencies: [
-    .package(url: "https://github.com/yanagiba/swift-ast.git", from: "0.19.9")
+    .package(url: "https://github.com/yanagiba/swift-ast.git", from: "0.26.3")
   ],
   targets: [
     .target(name: "MyTarget", dependencies: ["SwiftAST+Tooling"]),
   ],
-  swiftLanguageVersions: [.v5]
+  swiftLanguageModes: [.v5]
 )
 ```
 

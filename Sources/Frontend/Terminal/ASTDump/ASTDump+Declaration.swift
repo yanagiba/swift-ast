@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -36,6 +36,47 @@ extension CodeBlock : TTYASTDumpRepresentable {
       return "<empty_code_block>"
     }
     return statements.map { $0.ttyDump }.joined(separator: "\n")
+  }
+}
+
+extension ActorDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("actor_decl", sourceRange)
+    var neck = "\n" + "name: \(name)".indented
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indented
+    }
+    if let accessLevel = accessLevelModifier {
+      neck += "\n"
+      neck += "access_level: \(accessLevel)".indented
+    }
+    if let genericParam = genericParameterClause {
+      neck += "\n"
+      neck += "generic_param: `\(genericParam.textDescription)`".indented
+    }
+    if let typeInheritance = typeInheritanceClause {
+      neck += "\n"
+      neck += "parent_types\(typeInheritance.textDescription)".indented
+    }
+    if let genericWhere = genericWhereClause {
+      neck += "\n"
+      neck += "generic_where: `\(genericWhere.textDescription)`".indented
+    }
+    let body: String
+    if members.isEmpty {
+      body = "<empty_body>".indented
+    } else {
+      body = members.map { member -> String in
+        switch member {
+        case .declaration(let decl):
+          return decl.ttyDump
+        case .compilerControl(let stmt):
+          return stmt.ttyDump
+        }
+      }.joined(separator: "\n").indented
+    }
+    return "\(head)\(neck)\n\(body)"
   }
 }
 
@@ -278,6 +319,35 @@ extension FunctionDeclaration : TTYASTDumpRepresentable {
   }
 }
 
+extension MacroDeclaration : TTYASTDumpRepresentable {
+  var ttyDump: String {
+    let head = dump("macro_decl", sourceRange)
+    var neck = "\n" + "name: \(name)".indented
+    if !attributes.isEmpty {
+      neck += "\n"
+      neck += "attributes: `\(attributes.textDescription)`".indented
+    }
+    if let accessLevel = accessLevelModifier {
+      neck += "\n"
+      neck += "access_level: \(accessLevel)".indented
+    }
+    if let genericParam = genericParameterClause {
+      neck += "\n"
+      neck += "generic_param: `\(genericParam.textDescription)`".indented
+    }
+    if let genericWhere = genericWhereClause {
+      neck += "\n"
+      neck += "generic_where: `\(genericWhere.textDescription)`".indented
+    }
+    let signatureDump = dump(signature)
+    if !signatureDump.isEmpty {
+      neck += "\n" + signatureDump.indented
+    }
+    let defDump = definition?.ttyDump ?? "<no_definition>"
+    return "\(head)\(neck)\n\(defDump.indented)"
+  }
+}
+
 extension ImportDeclaration : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("import_decl", sourceRange)
@@ -476,6 +546,9 @@ extension ProtocolDeclaration : TTYASTDumpRepresentable {
             }
             if !member.parameterList.isEmpty {
               memberDump += "\n" + dump(member.parameterList).indented
+            }
+            if member.isAsync {
+              memberDump += "\n" + "async: `true`".indented
             }
             if member.throwsKind != .nothrowing {
               memberDump += "\n" + "throws_kind: `\(member.throwsKind.textDescription)`".indented

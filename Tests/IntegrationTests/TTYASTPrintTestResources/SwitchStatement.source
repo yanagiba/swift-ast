@@ -38,3 +38,15 @@ switch a { // https://github.com/yanagiba/swift-ast/issues/41
   default:
     print("more than 5")
 }
+
+// compiler control inside switch
+switch x {
+case 1:
+  one()
+#if DEBUG
+case 99:
+  debug()
+#endif
+default:
+  other()
+}

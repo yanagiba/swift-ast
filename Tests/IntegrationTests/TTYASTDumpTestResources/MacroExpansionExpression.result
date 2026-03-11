@@ -1,0 +1,13 @@
+top_level_decl <range: TTYASTDumpTestResources/MacroExpansionExpressionTests.swift:1:1-4:27>
+  assign_expr <range: TTYASTDumpTestResources/MacroExpansionExpressionTests.swift:1:1-1:10>
+    wildcard_expr <range: TTYASTDumpTestResources/MacroExpansionExpressionTests.swift:1:1-1:2>
+    literal_expr <range: TTYASTDumpTestResources/MacroExpansionExpressionTests.swift:1:5-1:10>
+      kind: `string`, raw_text: `#file`
+  assign_expr <range: TTYASTDumpTestResources/MacroExpansionExpressionTests.swift:2:1-2:10>
+    wildcard_expr <range: TTYASTDumpTestResources/MacroExpansionExpressionTests.swift:2:1-2:2>
+    literal_expr <range: TTYASTDumpTestResources/MacroExpansionExpressionTests.swift:2:5-2:10>
+      kind: `int`, literal: `2`, raw_text: `#line`
+  compiler_ctrl_stmt <range: TTYASTDumpTestResources/MacroExpansionExpressionTests.swift:3:1-3:30>
+    kind: `warning`, message: `this is a warning`
+  compiler_ctrl_stmt <range: TTYASTDumpTestResources/MacroExpansionExpressionTests.swift:4:1-4:27>
+    kind: `error`, message: `this is an error`

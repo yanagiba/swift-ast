@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 import XCTest
 
+@testable import Diagnostic
+@testable import AST
 @testable import Parser
 @testable import Source
-@testable import AST
 
 let sourcePath = "SemaTests/SemaTests.swift"
 
 func getParser(_ content: String) -> Parser {
+  let diagnosticPool = DiagnosticPool()
   let source = SourceFile(path: sourcePath, content: content)
-  return Parser(source: source)
+  return Parser(source: source, diagnosticPool: diagnosticPool)
 }
 
 func parse(_ content: String) -> TopLevelDeclaration {

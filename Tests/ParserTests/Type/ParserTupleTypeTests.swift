@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 */
 
 import XCTest
+
+@testable import AST
 
 class ParserTupleTypeTests: XCTestCase {
   func testElementsWithTypeOnly() {
@@ -33,6 +35,22 @@ class ParserTupleTypeTests: XCTestCase {
       "(p1: @a foo, p2: Optional<bar>, p3: @x @y @z Dictionary<key, value>, p4: (a) -> b, p5: inout ())")
   }
 
+  func testTupleOwnershipModifierModel() {
+    parseTypeAndTest("(a: inout foo, b: borrowing bar, c: consuming baz)", "(a: inout foo, b: borrowing bar, c: consuming baz)", testClosure: { type in
+      guard let tupleType = type as? TupleType else {
+        XCTFail("Failed in converting to a tuple type.")
+        return
+      }
+      XCTAssertEqual(tupleType.elements.count, 3)
+      guard tupleType.elements.count == 3 else {
+        return
+      }
+      XCTAssertEqual(tupleType.elements[0].ownershipModifier, .inout)
+      XCTAssertEqual(tupleType.elements[1].ownershipModifier, .borrowing)
+      XCTAssertEqual(tupleType.elements[2].ownershipModifier, .consuming)
+    })
+  }
+
   func testSourceRange() {
     parseTypeAndTest("()", "()", testClosure: { type in
       XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 3))
@@ -48,10 +66,4 @@ class ParserTupleTypeTests: XCTestCase {
       }
     )
   }
-
-  static var allTests = [
-    ("testElementsWithTypeOnly", testElementsWithTypeOnly),
-    ("testElementsWithName", testElementsWithName),
-    ("testSourceRange", testSourceRange),
-  ]
 }

@@ -19,25 +19,25 @@ public class TupleType : TypeBase {
     public let type: Type
     public let name: Identifier?
     public let attributes: Attributes
-    public let isInOutParameter: Bool
+    public let ownershipModifier: TypeAnnotation.OwnershipModifier?
 
     public init(type: Type) {
       self.type = type
       self.name = nil
       self.attributes = []
-      self.isInOutParameter = false
+      self.ownershipModifier = nil
     }
 
     public init(
       type: Type,
       name: Identifier,
       attributes: Attributes = [],
-      isInOutParameter: Bool = false
+      ownershipModifier: TypeAnnotation.OwnershipModifier? = nil
     ) {
       self.name = name
       self.type = type
       self.attributes = attributes
-      self.isInOutParameter = isInOutParameter
+      self.ownershipModifier = ownershipModifier
     }
   }
 
@@ -57,11 +57,11 @@ public class TupleType : TypeBase {
 extension TupleType.Element : ASTTextRepresentable {
   public var textDescription: String {
     let attr = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    let inoutStr = isInOutParameter ? "inout " : ""
+    let ownershipText = ownershipModifier.map { "\($0.rawValue) " } ?? ""
     var nameStr = ""
     if let name = name {
       nameStr = "\(name): "
     }
-    return "\(nameStr)\(attr)\(inoutStr)\(type.textDescription)"
+    return "\(nameStr)\(attr)\(ownershipText)\(type.textDescription)"
   }
 }

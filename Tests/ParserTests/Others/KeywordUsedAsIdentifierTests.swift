@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -65,10 +65,14 @@ class KeywordUsedAsIdentifierTests: XCTestCase {
       switch foo {
       case .as: break
       case .associativity: break
+      case .async: break
+      case .await: break
+      case .borrowing: break
       case .break: break
       case .catch: break
       case .case: break
       case .class: break
+      case .consuming: break
       case .continue: break
       case .convenience: break
       case .default: break
@@ -103,11 +107,13 @@ class KeywordUsedAsIdentifierTests: XCTestCase {
       case .mutating: break
       case .nil: break
       case .none: break
+      case .nonisolated: break
       case .nonmutating: break
       case .open: break
       case .operator: break
       case .optional: break
       case .override: break
+      case .package: break
       case .postfix: break
       case .prefix: break
       case .private: break
@@ -145,6 +151,13 @@ class KeywordUsedAsIdentifierTests: XCTestCase {
       }
       """)
     XCTAssertEqual(result.statements.count, 1)
+    let textDescription = result.statements[0].textDescription
+    XCTAssertTrue(textDescription.contains("async"))
+    XCTAssertTrue(textDescription.contains("await"))
+    XCTAssertTrue(textDescription.contains("borrowing"))
+    XCTAssertTrue(textDescription.contains("consuming"))
+    XCTAssertTrue(textDescription.contains("nonisolated"))
+    XCTAssertTrue(textDescription.contains("package"))
   }
 
   func testKeywordUsedInTuplePattern() {
@@ -164,26 +177,11 @@ class KeywordUsedAsIdentifierTests: XCTestCase {
   }
 
   func testKeywordUsedInConstantDecl() {
-    let keywords = ["set", "get", "left", "right", "open"]
+    let keywords = ["set", "get", "left", "right", "open",
+                    "async", "await", "borrowing", "consuming", "nonisolated", "package"]
     for keyword in keywords {
       let result = parse("let \(keyword)")
       XCTAssertEqual(result.statements[0].textDescription, "let \(keyword)")
     }
   }
-
-  static var allTests = [
-    ("testKeywordUsedInTupleType", testKeywordUsedInTupleType),
-    ("testKeywordUsedInFunctionType", testKeywordUsedInFunctionType),
-    ("testKeywordUsedInSelfExpression", testKeywordUsedInSelfExpression),
-    ("testKeywordUsedInClosureExpressionParameterName", testKeywordUsedInClosureExpressionParameterName),
-    ("testKeywordUsedInImplicitMemberExpression", testKeywordUsedInImplicitMemberExpression),
-    ("testKeywordUsedInTupleExpression", testKeywordUsedInTupleExpression),
-    ("testKeywordUsedInExplicitMemberExpression", testKeywordUsedInExplicitMemberExpression),
-    ("testKeywordUsedInEnumCasePattern", testKeywordUsedInEnumCasePattern),
-    ("testKeywordUsedInSwitchCase", testKeywordUsedInSwitchCase),
-    ("testKeywordUsedInTuplePattern", testKeywordUsedInTuplePattern),
-    ("testKeywordUsedInFunctionCall", testKeywordUsedInFunctionCall),
-    ("testKeywordUsedInFunctionDecl", testKeywordUsedInFunctionDecl),
-    ("testKeywordUsedInConstantDecl", testKeywordUsedInConstantDecl),
-  ]
 }

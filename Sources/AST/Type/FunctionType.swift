@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ public class FunctionType : TypeBase {
     public let localName: Identifier?
     public let type: Type
     public let attributes: Attributes
-    public let isInOutParameter: Bool
+    public let ownershipModifier: TypeAnnotation.OwnershipModifier?
     public let isVariadic: Bool
 
     public init(
@@ -28,14 +28,14 @@ public class FunctionType : TypeBase {
       externalName: Identifier? = nil,
       localName: Identifier? = nil,
       attributes: Attributes = [],
-      isInOutParameter: Bool = false,
+      ownershipModifier: TypeAnnotation.OwnershipModifier? = nil,
       isVariadic: Bool = false
     ) {
       self.externalName = externalName
       self.localName = localName
       self.type = type
       self.attributes = attributes
-      self.isInOutParameter = isInOutParameter
+      self.ownershipModifier = ownershipModifier
       self.isVariadic = isVariadic
     }
   }
@@ -43,17 +43,20 @@ public class FunctionType : TypeBase {
   public let attributes: Attributes
   public let arguments: [Argument]
   public let returnType: Type
+  public let isAsync: Bool
   public let throwsKind: ThrowsKind
 
   public init(
     attributes: Attributes = [],
     arguments: [Argument],
     returnType: Type,
+    isAsync: Bool = false,
     throwsKind: ThrowsKind
   ) {
     self.attributes = attributes
     self.arguments = arguments
     self.returnType = returnType
+    self.isAsync = isAsync
     self.throwsKind = throwsKind
   }
 
@@ -62,20 +65,21 @@ public class FunctionType : TypeBase {
   override public var textDescription: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
     let argsText = "(\(arguments.map({ $0.textDescription }).joined(separator: ", ")))"
+    let asyncText = isAsync ? " async" : ""
     let throwsText = throwsKind.textDescription.isEmpty ? "" : " \(throwsKind.textDescription)"
-    return "\(attrsText)\(argsText)\(throwsText) -> \(returnType.textDescription)"
+    return "\(attrsText)\(argsText)\(asyncText)\(throwsText) -> \(returnType.textDescription)"
   }
 }
 
 extension FunctionType.Argument : ASTTextRepresentable {
   public var textDescription: String {
     let attr = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    let inoutStr = isInOutParameter ? "inout " : ""
+    let ownershipText = ownershipModifier.map { "\($0.rawValue) " } ?? ""
     var nameStr = externalName.map({ "\($0) " }) ?? ""
     if let localName = localName {
       nameStr += "\(localName): "
     }
     let variadicDots = isVariadic ? "..." : ""
-    return "\(nameStr)\(attr)\(inoutStr)\(type.textDescription)\(variadicDots)"
+    return "\(nameStr)\(attr)\(ownershipText)\(type.textDescription)\(variadicDots)"
   }
 }

@@ -19,3 +19,11 @@ foo.bar
 foo.bar<a, b, c>
 foo.bar(a:b:c:)
 foo.bar.a<x>.100.b(y:)
+
+// conditional compilation in postfix expressions
+foo
+#if DEBUG
+.bar
+#else
+.baz
+#endif

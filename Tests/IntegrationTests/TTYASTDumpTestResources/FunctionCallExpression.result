@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:18:1-45:25>
+top_level_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:18:1-49:35>
   function_call_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:18:1-18:6>
     identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:18:1-18:4>
       kind: `identifier`, identifier: `foo`
@@ -256,6 +256,10 @@ top_level_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift
       1: return_stmt <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:43:3-43:16>
         literal_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:43:10-43:16>
           kind: `interpolated_string`, raw_text: `"\(j)"`
+          0: kind: `interpolation`
+            0: kind: `expression`
+              identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:43:13-43:14>
+                kind: `identifier`, identifier: `j`
   function_call_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:45:1-45:25>
     identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:45:1-45:7>
       kind: `identifier`, identifier: `toggle`
@@ -263,3 +267,36 @@ top_level_decl <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift
     0: kind: `named_expression`, name: `isOn`
       identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:45:14-45:24>
         kind: `binding_reference`, variable: `favorited`
+  function_call_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:48:1-48:21>
+    identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:48:1-48:4>
+      kind: `identifier`, identifier: `foo`
+    trailing_closure_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:48:5-48:10>
+      statements:
+      0: identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:48:7-48:8>
+        kind: `identifier`, identifier: `a`
+    additional_trailing_label: `bar`
+    closure_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:48:16-48:21>
+      statements:
+      0: identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:48:18-48:19>
+        kind: `identifier`, identifier: `b`
+  function_call_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:49:1-49:35>
+    identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:49:1-49:4>
+      kind: `identifier`, identifier: `foo`
+    arguments:
+    0: kind: `expression`
+      identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:49:5-49:6>
+        kind: `identifier`, identifier: `x`
+    trailing_closure_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:49:8-49:13>
+      statements:
+      0: identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:49:10-49:11>
+        kind: `identifier`, identifier: `a`
+    additional_trailing_label: `bar`
+    closure_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:49:19-49:24>
+      statements:
+      0: identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:49:21-49:22>
+        kind: `identifier`, identifier: `b`
+    additional_trailing_label: `baz`
+    closure_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:49:30-49:35>
+      statements:
+      0: identifier_expr <range: TTYASTDumpTestResources/FunctionCallExpressionTests.swift:49:32-49:33>
+        kind: `identifier`, identifier: `c`

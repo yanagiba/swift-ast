@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,11 +20,12 @@ import Source
 public struct DiagnosticStopper : Error { // TODO: need a better way to stop the parser
 }
 
-public class DiagnosticPool {
-  public static let shared = DiagnosticPool()
+public final class DiagnosticPool {
 
   private var _diagnostics: [Diagnostic] = []
   private var _checkpoints: [String: [Diagnostic]] = [:]
+
+  public init() {}
 
   public func appendFatal(
     kind: DiagnosticKind, sourceLocatable: SourceLocatable
@@ -67,7 +68,7 @@ public class DiagnosticPool {
   }
 
   public func clear() {
-    DiagnosticPool.shared._diagnostics = []
+    _diagnostics.removeAll()
   }
 
   public func checkPoint() -> String {
@@ -80,7 +81,7 @@ public class DiagnosticPool {
     guard let loadedDiagnostics = _checkpoints[cpId] else {
       return false
     }
-    DiagnosticPool.shared._diagnostics = loadedDiagnostics
+    _diagnostics = loadedDiagnostics
     return true
   }
 }

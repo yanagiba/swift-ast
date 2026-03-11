@@ -1,0 +1,20 @@
+top_level_decl <range: TTYASTDumpTestResources/ActorDeclarationTests.swift:1:1-10:2>
+  actor_decl <range: TTYASTDumpTestResources/ActorDeclarationTests.swift:1:1-6:2>
+    name: Counter
+    var_decl <range: TTYASTDumpTestResources/ActorDeclarationTests.swift:2:3-2:16>
+      pattern: count
+        literal_expr <range: TTYASTDumpTestResources/ActorDeclarationTests.swift:2:15-2:16>
+          kind: `int`, literal: `0`, raw_text: `0`
+    func_decl <range: TTYASTDumpTestResources/ActorDeclarationTests.swift:3:3-5:4>
+      name: increment
+      binary_op_expr <range: TTYASTDumpTestResources/ActorDeclarationTests.swift:4:5-4:15>
+        operator: `+=`
+        identifier_expr <range: TTYASTDumpTestResources/ActorDeclarationTests.swift:4:5-4:10>
+          kind: `identifier`, identifier: `count`
+        literal_expr <range: TTYASTDumpTestResources/ActorDeclarationTests.swift:4:14-4:15>
+          kind: `int`, literal: `1`, raw_text: `1`
+  actor_decl <range: TTYASTDumpTestResources/ActorDeclarationTests.swift:8:1-10:2>
+    name: BankAccount
+    parent_types: Sendable
+    const_decl <range: TTYASTDumpTestResources/ActorDeclarationTests.swift:9:3-9:14>
+      pattern: id: Int

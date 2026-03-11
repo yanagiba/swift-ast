@@ -1,0 +1,16 @@
+top_level_decl <range: TTYASTDumpTestResources/AwaitExpressionTests.swift:1:1-2:27>
+  await_expr <range: TTYASTDumpTestResources/AwaitExpressionTests.swift:1:1-1:18>
+    function_call_expr <range: TTYASTDumpTestResources/AwaitExpressionTests.swift:1:7-1:18>
+      identifier_expr <range: TTYASTDumpTestResources/AwaitExpressionTests.swift:1:7-1:16>
+        kind: `identifier`, identifier: `fetchData`
+      arguments: <empty>
+  await_expr <range: TTYASTDumpTestResources/AwaitExpressionTests.swift:2:1-2:27>
+    function_call_expr <range: TTYASTDumpTestResources/AwaitExpressionTests.swift:2:7-2:27>
+      explicit_member_expr <range: TTYASTDumpTestResources/AwaitExpressionTests.swift:2:7-2:18>
+        identifier_expr <range: TTYASTDumpTestResources/AwaitExpressionTests.swift:2:7-2:13>
+          kind: `identifier`, identifier: `server`
+        identifier: `send`
+      arguments:
+      0: kind: `expression`
+        identifier_expr <range: TTYASTDumpTestResources/AwaitExpressionTests.swift:2:19-2:26>
+          kind: `identifier`, identifier: `message`

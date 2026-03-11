@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ public class SwitchStatement : ASTNode, Statement {
 
     case `case`([Item], Statements)
     case `default`(Statements)
+    case compilerControl(CompilerControlStatement)
   }
   public private(set) var expression: ASTExpression
   public private(set) var cases: [Case]
@@ -79,6 +80,8 @@ extension SwitchStatement.Case : ASTTextRepresentable {
       return "case \(itemListText):\n\(stmts.textDescription)"
     case .default(let stmts):
       return "default:\n\(stmts.textDescription)"
+    case .compilerControl(let stmt):
+      return stmt.textDescription
     }
   }
 }

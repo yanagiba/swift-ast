@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ class ParserInitializerDeclarationTests: XCTestCase {
       XCTAssertEqual(initDecl.kind, .nonfailable)
       XCTAssertNil(initDecl.genericParameterClause)
       XCTAssertTrue(initDecl.parameterList.isEmpty)
+      XCTAssertFalse(initDecl.isAsync)
       XCTAssertEqual(initDecl.throwsKind, .nothrowing)
       XCTAssertNil(initDecl.genericWhereClause)
       XCTAssertEqual(initDecl.body.textDescription, "{}")
@@ -418,6 +419,39 @@ class ParserInitializerDeclarationTests: XCTestCase {
     })
   }
 
+  func testAsyncInitializer() {
+    parseDeclarationAndTest(
+      "init() async {}",
+      "init() async {}",
+      testClosure: { decl in
+      guard let initDecl = decl as? InitializerDeclaration else {
+        XCTFail("Failed in getting an initializer declaration.")
+        return
+      }
+
+      XCTAssertTrue(initDecl.isAsync)
+      XCTAssertEqual(initDecl.throwsKind, .nothrowing)
+      XCTAssertEqual(initDecl.body.textDescription, "{}")
+    })
+  }
+
+  func testAsyncThrowsInitializer() {
+    parseDeclarationAndTest(
+      "init(bar: Bar) async throws {}",
+      "init(bar: Bar) async throws {}",
+      testClosure: { decl in
+      guard let initDecl = decl as? InitializerDeclaration else {
+        XCTFail("Failed in getting an initializer declaration.")
+        return
+      }
+
+      XCTAssertTrue(initDecl.isAsync)
+      XCTAssertEqual(initDecl.throwsKind, .throwing)
+      XCTAssertEqual(initDecl.parameterList.count, 1)
+      XCTAssertEqual(initDecl.body.textDescription, "{}")
+    })
+  }
+
   func testGenericWhereClause() {
     parseDeclarationAndTest(
       "init<A>() where A == Foo {}",
@@ -455,25 +489,4 @@ class ParserInitializerDeclarationTests: XCTestCase {
       }
     )
   }
-
-  static var allTests = [
-    ("testNonfailable", testNonfailable),
-    ("testOptionalFailable", testOptionalFailable),
-    ("testImplicitlyUnwrappedFailable", testImplicitlyUnwrappedFailable),
-    ("testAttributes", testAttributes),
-    ("testModifiers", testModifiers),
-    ("testAttributesAndModifiers", testAttributesAndModifiers),
-    ("testGenericParameterClause", testGenericParameterClause),
-    ("testParameter", testParameter),
-    ("testInoutParameter", testInoutParameter),
-    ("testSpecifyingArgumentLabels", testSpecifyingArgumentLabels),
-    ("testOmittingArgumentLabels", testOmittingArgumentLabels),
-    ("testParameterWithDefaultArgument", testParameterWithDefaultArgument),
-    ("testVariadicParameter", testVariadicParameter),
-    ("testMultipleParameters", testMultipleParameters),
-    ("testInitializerThatThrows", testInitializerThatThrows),
-    ("testInitializerThatRethrows", testInitializerThatRethrows),
-    ("testGenericWhereClause", testGenericWhereClause),
-    ("testSourceRange", testSourceRange),
-  ]
 }

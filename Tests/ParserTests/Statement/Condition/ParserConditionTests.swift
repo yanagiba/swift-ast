@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -262,18 +262,159 @@ class ParserConditionTests: XCTestCase { // Note: we will test condition and con
     parseStatementAndTest("if foo < (bar) {}", "if foo < (bar) {}")
   }
 
-  static var allTests = [
-    ("testBooleanCondition", testBooleanCondition),
-    ("testBooleanOperator", testBooleanOperator),
-    ("testParenthesized", testParenthesized),
-    ("testAvailableToAll", testAvailableToAll),
-    ("testAvailableToMajorVersion", testAvailableToMajorVersion),
-    ("testAvailableToMinorVersion", testAvailableToMinorVersion),
-    ("testAvailableToPatchVersion", testAvailableToPatchVersion),
-    ("testCaseCondition",testCaseCondition),
-    ("testExprPatternIsAssignmentOperatorExpr", testExprPatternIsAssignmentOperatorExpr),
-    ("testLetCondition", testLetCondition),
-    ("testVarCondition", testVarCondition),
-    ("testOpenChveronIsProperlyChecked", testOpenChveronIsProperlyChecked),
-  ]
+  // MARK: - Phase 6: Platform & Compilation Condition Updates
+
+  func testVisionOSPlatform() {
+    parseStatementAndTest("while #available(visionOS 1, *) {}", "while #available(visionOS 1, *) {}", testClosure: { stmt in
+      let conditionList = self.getConditionList(from: stmt)
+      XCTAssertEqual(conditionList.count, 1)
+      guard case .availability(let avail) = conditionList[0] else {
+        XCTFail("Failed in getting an availability condition.")
+        return
+      }
+      let args = avail.arguments
+      XCTAssertEqual(args.count, 2)
+      guard case let .major(platform, majorVersion) = args[0] else {
+        XCTFail("Failed in getting an availability argument `visionOS 1`")
+        return
+      }
+      XCTAssertEqual(platform, "visionOS")
+      XCTAssertEqual(majorVersion, 1)
+      XCTAssertEqual(args[0].textDescription, "visionOS 1")
+      XCTAssertEqual(avail.textDescription, "#available(visionOS 1, *)")
+    })
+  }
+
+  func testVisionOSApplicationExtensionPlatform() {
+    parseStatementAndTest("while #available(visionOSApplicationExtension 1.0, *) {}", "while #available(visionOSApplicationExtension 1.0, *) {}", testClosure: { stmt in
+      let conditionList = self.getConditionList(from: stmt)
+      XCTAssertEqual(conditionList.count, 1)
+      guard case .availability(let avail) = conditionList[0] else {
+        XCTFail("Failed in getting an availability condition.")
+        return
+      }
+      let args = avail.arguments
+      XCTAssertEqual(args.count, 2)
+      guard case let .minor(platform, majorVersion, minorVersion) = args[0] else {
+        XCTFail("Failed in getting an availability argument `visionOSApplicationExtension 1.0`")
+        return
+      }
+      XCTAssertEqual(platform, "visionOSApplicationExtension")
+      XCTAssertEqual(majorVersion, 1)
+      XCTAssertEqual(minorVersion, 0)
+      XCTAssertEqual(avail.textDescription, "#available(visionOSApplicationExtension 1.0, *)")
+    })
+  }
+
+  func testMacCatalystPlatform() {
+    parseStatementAndTest("while #available(macCatalyst 13, *) {}", "while #available(macCatalyst 13, *) {}", testClosure: { stmt in
+      let conditionList = self.getConditionList(from: stmt)
+      XCTAssertEqual(conditionList.count, 1)
+      guard case .availability(let avail) = conditionList[0] else {
+        XCTFail("Failed in getting an availability condition.")
+        return
+      }
+      let args = avail.arguments
+      XCTAssertEqual(args.count, 2)
+      guard case let .major(platform, majorVersion) = args[0] else {
+        XCTFail("Failed in getting an availability argument `macCatalyst 13`")
+        return
+      }
+      XCTAssertEqual(platform, "macCatalyst")
+      XCTAssertEqual(majorVersion, 13)
+      XCTAssertEqual(avail.textDescription, "#available(macCatalyst 13, *)")
+    })
+  }
+
+  func testMacCatalystApplicationExtensionPlatform() {
+    parseStatementAndTest("while #available(macCatalystApplicationExtension 13.1, *) {}", "while #available(macCatalystApplicationExtension 13.1, *) {}", testClosure: { stmt in
+      let conditionList = self.getConditionList(from: stmt)
+      XCTAssertEqual(conditionList.count, 1)
+      guard case .availability(let avail) = conditionList[0] else {
+        XCTFail("Failed in getting an availability condition.")
+        return
+      }
+      let args = avail.arguments
+      XCTAssertEqual(args.count, 2)
+      guard case let .minor(platform, majorVersion, minorVersion) = args[0] else {
+        XCTFail("Failed in getting an availability argument `macCatalystApplicationExtension 13.1`")
+        return
+      }
+      XCTAssertEqual(platform, "macCatalystApplicationExtension")
+      XCTAssertEqual(majorVersion, 13)
+      XCTAssertEqual(minorVersion, 1)
+      XCTAssertEqual(avail.textDescription, "#available(macCatalystApplicationExtension 13.1, *)")
+    })
+  }
+
+  func testUnavailableCondition() {
+    parseStatementAndTest("while #unavailable(iOS 15, *) {}", "while #unavailable(iOS 15, *) {}", testClosure: { stmt in
+      let conditionList = self.getConditionList(from: stmt)
+      XCTAssertEqual(conditionList.count, 1)
+      guard case .availability(let avail) = conditionList[0] else {
+        XCTFail("Failed in getting an availability condition.")
+        return
+      }
+      XCTAssertTrue(avail.isUnavailable)
+      XCTAssertEqual(avail.textDescription, "#unavailable(iOS 15, *)")
+    })
+  }
+
+  func testUnavailableConditionWithMultiplePlatforms() {
+    parseStatementAndTest(
+      "while #unavailable(iOS 15, macOS 12, *) {}",
+      "while #unavailable(iOS 15, macOS 12, *) {}",
+      testClosure: { stmt in
+        let conditionList = self.getConditionList(from: stmt)
+        XCTAssertEqual(conditionList.count, 1)
+        guard case .availability(let avail) = conditionList[0] else {
+          XCTFail("Failed in getting an availability condition.")
+          return
+        }
+        XCTAssertTrue(avail.isUnavailable)
+        XCTAssertEqual(avail.arguments.count, 3)
+        XCTAssertEqual(avail.textDescription, "#unavailable(iOS 15, macOS 12, *)")
+      }
+    )
+  }
+
+  func testWatchOSApplicationExtensionPlatform() {
+    parseStatementAndTest("while #available(watchOSApplicationExtension 9, *) {}", "while #available(watchOSApplicationExtension 9, *) {}", testClosure: { stmt in
+      let conditionList = self.getConditionList(from: stmt)
+      XCTAssertEqual(conditionList.count, 1)
+      guard case .availability(let avail) = conditionList[0] else {
+        XCTFail("Failed in getting an availability condition.")
+        return
+      }
+      let args = avail.arguments
+      XCTAssertEqual(args.count, 2)
+      guard case let .major(platform, majorVersion) = args[0] else {
+        XCTFail("Failed in getting an availability argument `watchOSApplicationExtension 9`")
+        return
+      }
+      XCTAssertEqual(platform, "watchOSApplicationExtension")
+      XCTAssertEqual(majorVersion, 9)
+      XCTAssertEqual(avail.textDescription, "#available(watchOSApplicationExtension 9, *)")
+    })
+  }
+
+  func testTVOSApplicationExtensionPlatform() {
+    parseStatementAndTest("while #available(tvOSApplicationExtension 16, *) {}", "while #available(tvOSApplicationExtension 16, *) {}", testClosure: { stmt in
+      let conditionList = self.getConditionList(from: stmt)
+      XCTAssertEqual(conditionList.count, 1)
+      guard case .availability(let avail) = conditionList[0] else {
+        XCTFail("Failed in getting an availability condition.")
+        return
+      }
+      let args = avail.arguments
+      XCTAssertEqual(args.count, 2)
+      guard case let .major(platform, majorVersion) = args[0] else {
+        XCTFail("Failed in getting an availability argument `tvOSApplicationExtension 16`")
+        return
+      }
+      XCTAssertEqual(platform, "tvOSApplicationExtension")
+      XCTAssertEqual(majorVersion, 16)
+      XCTAssertEqual(avail.textDescription, "#available(tvOSApplicationExtension 16, *)")
+    })
+  }
 }

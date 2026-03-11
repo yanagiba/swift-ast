@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ class ParserDeclarationModifiersTests: XCTestCase {
       "final",
       "infix",
       "lazy",
+      "nonisolated",
       "optional",
       "override",
       "postfix",
@@ -50,6 +51,8 @@ class ParserDeclarationModifiersTests: XCTestCase {
       "public(set)",
       "open",
       "open(set)",
+      "package",
+      "package(set)",
     ]
     let declModifiers: [DeclarationModifier] = [
       .class,
@@ -58,6 +61,7 @@ class ParserDeclarationModifiersTests: XCTestCase {
       .final,
       .infix,
       .lazy,
+      .nonisolated,
       .optional,
       .override,
       .postfix,
@@ -80,6 +84,8 @@ class ParserDeclarationModifiersTests: XCTestCase {
       .accessLevel(.publicSet),
       .accessLevel(.open),
       .accessLevel(.openSet),
+      .accessLevel(.packageLevel),
+      .accessLevel(.packageLevelSet),
     ]
     let testStr = declModifierStrs.joined(separator: " ")
     let declParser = getParser(testStr)
@@ -89,8 +95,4 @@ class ParserDeclarationModifiersTests: XCTestCase {
       XCTAssertEqual(modifier, declModifiers[index])
     }
   }
-
-  static var allTests = [
-    ("testAllModifiers", testAllModifiers),
-  ]
 }

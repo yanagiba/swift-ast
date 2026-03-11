@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -101,6 +101,32 @@ extension PatternInitializer {
 extension Collection where Iterator.Element == PatternInitializer {
   var ttyPrint: String {
     return self.map({ $0.ttyPrint }).joined(separator: ", ")
+  }
+}
+
+extension ActorDeclaration.Member {
+  var ttyPrint: String {
+    switch self {
+    case .declaration(let decl):
+      return decl.ttyPrint
+    case .compilerControl(let stmt):
+      return stmt.ttyPrint
+    }
+  }
+}
+
+extension ActorDeclaration : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
+    let modifierText = accessLevelModifier.map({ "\($0.textDescription) " }) ?? ""
+    let headText = "\(attrsText)\(modifierText)actor \(name)"
+    let genericParameterClauseText = genericParameterClause?.textDescription ?? ""
+    let typeText = typeInheritanceClause?.textDescription ?? ""
+    let whereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
+    let neckText = "\(genericParameterClauseText)\(typeText)\(whereText)"
+    let membersText = members.map({ $0.ttyPrint }).joined(separator: "\n")
+    let memberText = members.isEmpty ? "" : "\n\(membersText.indented)\n"
+    return "\(headText)\(neckText) {" + memberText + "}"
   }
 }
 
@@ -213,6 +239,12 @@ extension FunctionDeclaration : TTYASTPrintRepresentable {
   }
 }
 
+extension MacroDeclaration : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return textDescription
+  }
+}
+
 extension InitializerDeclaration : TTYASTPrintRepresentable {
   var ttyPrint: String {
     let attrsText = attributes.isEmpty ? "" : "\(attributes.textDescription) "
@@ -220,9 +252,10 @@ extension InitializerDeclaration : TTYASTPrintRepresentable {
     let headText = "\(attrsText)\(modifiersText)init\(kind.textDescription)"
     let genericParamText = genericParameterClause?.textDescription ?? ""
     let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
+    let asyncText = isAsync ? " async" : ""
     let throwsKindText = throwsKind.textDescription.isEmpty ? "" : " \(throwsKind.textDescription)"
     let genericWhereText = genericWhereClause.map({ " \($0.textDescription)" }) ?? ""
-    return "\(headText)\(genericParamText)\(parameterText)\(throwsKindText)\(genericWhereText) \(body.ttyPrint)"
+    return "\(headText)\(genericParamText)\(parameterText)\(asyncText)\(throwsKindText)\(genericWhereText) \(body.ttyPrint)"
   }
 }
 

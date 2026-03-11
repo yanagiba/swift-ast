@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import XCTest
 
 class SourceReaderTests : XCTestCase {
   func testReading() {
-    testPath(#file)
+    testPath(#filePath)
   }
 
   func testReadingFromCurrentPath() {
@@ -45,7 +45,7 @@ class SourceReaderTests : XCTestCase {
       XCTAssertTrue(sourceFile.content.contains("Ryuichi Sai"))
       XCTAssertTrue(sourceFile.content.contains("SourceReaderTests"))
       XCTAssertTrue(sourceFile.content.contains("XCTAssertTrue(sourceFile.content.contains"))
-      XCTAssertTrue(sourceFile.content.contains("(\"testReading\", testReading),"))
+
     } catch {
       XCTFail("Failed in reading file \(path)")
     }
@@ -54,10 +54,4 @@ class SourceReaderTests : XCTestCase {
   private var isXcode10: Bool {
     return FileManager.default.currentDirectoryPath.contains("Debug")
   }
-
-  static var allTests = [
-    ("testReading", testReading),
-//    ("testReadingFromCurrentPath", testReadingFromCurrentPath),
-//    ("testReadingFromParentPath", testReadingFromParentPath),
-  ]
 }

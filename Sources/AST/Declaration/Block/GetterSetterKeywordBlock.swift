@@ -48,6 +48,17 @@ public struct GetterSetterKeywordBlock {
     self.getter = getter
     self.setter = setter
   }
+
+  public init(from block: GetterSetterBlock) {
+    self.getter = GetterKeywordClause(
+      attributes: block.getter.attributes,
+      mutationModifier: block.getter.mutationModifier)
+    self.setter = block.setter.map {
+      SetterKeywordClause(
+        attributes: $0.attributes,
+        mutationModifier: $0.mutationModifier)
+    }
+  }
 }
 
 extension GetterSetterKeywordBlock.GetterKeywordClause : ASTTextRepresentable {

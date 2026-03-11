@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -75,6 +75,7 @@ private class FoldingVisitor : ASTVisitor {
     let foldedParams = signature.parameterList.map(foldFunctionSignatureParameter)
     return FunctionSignature(
       parameterList: foldedParams,
+      isAsync: signature.isAsync,
       throwsKind: signature.throwsKind,
       result: signature.result)
   }
@@ -95,6 +96,13 @@ private class FoldingVisitor : ASTVisitor {
   }
 
   func visit(_ decl: FunctionDeclaration) throws -> Bool {
+    let foldedSignature = foldFunctionSignature(decl.signature)
+    decl.replaceSignature(with: foldedSignature)
+
+    return true
+  }
+
+  func visit(_ decl: MacroDeclaration) throws -> Bool {
     let foldedSignature = foldFunctionSignature(decl.signature)
     decl.replaceSignature(with: foldedSignature)
 
@@ -135,6 +143,7 @@ private class FoldingVisitor : ASTVisitor {
           kind: initMember.kind,
           genericParameter: initMember.genericParameter,
           parameterList: foldedParams,
+          isAsync: initMember.isAsync,
           throwsKind: initMember.throwsKind,
           genericWhere: initMember.genericWhere)
         decl.replaceMember(at: i, with: .initializer(foldedInitMember))
@@ -290,37 +299,47 @@ private class FoldingVisitor : ASTVisitor {
     }
   }
 
+  private func foldSwitchCaseItem(_ item: SwitchStatement.Case.Item) -> SwitchStatement.Case.Item {
+    var foldedWhereExpression: ASTExpression? = item.whereExpression
+    if let whereSeqExpr = item.whereExpression as? SequenceExpression {
+      foldedWhereExpression = foldSequenceExpression(whereSeqExpr)
+    }
+
+    var foldedPattern = item.pattern
+    if let exprPattern = item.pattern as? ExpressionPattern {
+      let foldedPatternExpr = foldExpression(exprPattern.expression)
+      foldedPattern = ExpressionPattern(expression: foldedPatternExpr)
+    }
+
+    return SwitchStatement.Case.Item(
+      pattern: foldedPattern, whereExpression: foldedWhereExpression)
+  }
+
+  private func foldSwitchCases(_ cases: [SwitchStatement.Case]) -> [SwitchStatement.Case] {
+    return cases.map { switchCase in
+      switch switchCase {
+      case let .case(items, statements):
+        let foldedItems = items.map(foldSwitchCaseItem)
+        let foldedStatements = foldStatements(statements)
+        return .case(foldedItems, foldedStatements)
+      case .default(let statements):
+        let foldedStatements = foldStatements(statements)
+        return .default(foldedStatements)
+      case .compilerControl:
+        return switchCase
+      }
+    }
+  }
+
   func visit(_ stmt: SwitchStatement) throws -> Bool {
     if let seqExpr = stmt.expression as? SequenceExpression {
       let foldedExpr = foldSequenceExpression(seqExpr)
       stmt.replaceExpression(with: foldedExpr)
     }
 
-    for i in stmt.cases.indices {
-      let eachCase = stmt.cases[i]
-      switch eachCase {
-      case let .case(items, statements):
-        let foldedItems = items.map { i -> SwitchStatement.Case.Item in
-          var foldedWhereExpression: ASTExpression? = i.whereExpression
-          if let whereSeqExpr = i.whereExpression as? SequenceExpression {
-            foldedWhereExpression = foldSequenceExpression(whereSeqExpr)
-          }
-          var foldedPattern = i.pattern
-          if let exprPattern = i.pattern as? ExpressionPattern,
-            let pttrnSeqExpr = exprPattern.expression as? SequenceExpression
-          {
-            let foldedPttrnSeqExpr = foldSequenceExpression(pttrnSeqExpr)
-            foldedPattern = ExpressionPattern(expression: foldedPttrnSeqExpr)
-          }
-          return SwitchStatement.Case.Item(
-            pattern: foldedPattern, whereExpression: foldedWhereExpression)
-        }
-        let foldedStmts = foldStatements(statements)
-        stmt.replaceCase(at: i, with: .case(foldedItems, foldedStmts))
-      case .default(let statements):
-        let foldedStmts = foldStatements(statements)
-        stmt.replaceCase(at: i, with: .default(foldedStmts))
-      }
+    let foldedCases = foldSwitchCases(stmt.cases)
+    for i in foldedCases.indices {
+      stmt.replaceCase(at: i, with: foldedCases[i])
     }
 
     return true
@@ -395,11 +414,64 @@ private class FoldingVisitor : ASTVisitor {
     return true
   }
 
+  func visit(_ expr: MacroExpansionExpression) throws -> Bool {
+    if let argumentList = expr.argumentClause {
+      for i in argumentList.indices {
+        let argument = argumentList[i]
+        switch argument {
+        case .expression(let argExpr):
+          let foldedExpr = foldExpression(argExpr)
+          expr.replaceArgument(at: i, with: .expression(foldedExpr))
+        case let .namedExpression(name, argExpr):
+          let foldedExpr = foldExpression(argExpr)
+          expr.replaceArgument(at: i, with: .namedExpression(name, foldedExpr))
+        case .memoryReference(let argExpr):
+          let foldedExpr = foldExpression(argExpr)
+          expr.replaceArgument(at: i, with: .memoryReference(foldedExpr))
+        case let .namedMemoryReference(name, argExpr):
+          let foldedExpr = foldExpression(argExpr)
+          expr.replaceArgument(at: i, with: .namedMemoryReference(name, foldedExpr))
+        default:
+          continue
+        }
+      }
+    }
+
+    return true
+  }
+
+  func visit(_ expr: IfExpression) throws -> Bool {
+    for i in expr.conditionList.indices {
+      let condition = expr.conditionList[i]
+      let foldedCondition = foldCondition(condition)
+      expr.replaceCondition(at: i, with: foldedCondition)
+    }
+
+    return true
+  }
+
   func visit(_ expr: LiteralExpression) throws -> Bool {
     switch expr.kind {
-    case let .interpolatedString(exprs, str):
-      let foldedExprs = exprs.map(foldExpression)
-      expr.reset(with: .interpolatedString(foldedExprs, str))
+    case let .interpolatedString(segments, str):
+      let foldedSegments: [InterpolationSegment] = segments.map { segment in
+        guard case .interpolation(let args) = segment else { return segment }
+        let foldedArgs: FunctionCallExpression.ArgumentList = args.map { arg in
+          switch arg {
+          case .expression(let argExpr):
+            return .expression(foldExpression(argExpr))
+          case let .namedExpression(name, argExpr):
+            return .namedExpression(name, foldExpression(argExpr))
+          case .memoryReference(let argExpr):
+            return .memoryReference(foldExpression(argExpr))
+          case let .namedMemoryReference(name, argExpr):
+            return .namedMemoryReference(name, foldExpression(argExpr))
+          case .operator, .namedOperator:
+            return arg
+          }
+        }
+        return .interpolation(foldedArgs)
+      }
+      expr.reset(with: .interpolatedString(foldedSegments, str))
     case .array(let exprs):
       let foldedExprs = exprs.map(foldExpression)
       expr.reset(with: .array(foldedExprs))
@@ -448,6 +520,20 @@ private class FoldingVisitor : ASTVisitor {
     return true
   }
 
+  func visit(_ expr: SwitchExpression) throws -> Bool {
+    if let seqExpr = expr.expression as? SequenceExpression {
+      let foldedExpr = foldSequenceExpression(seqExpr)
+      expr.replaceExpression(with: foldedExpr)
+    }
+
+    let foldedCases = foldSwitchCases(expr.cases)
+    for i in foldedCases.indices {
+      expr.replaceCase(at: i, with: foldedCases[i])
+    }
+
+    return true
+  }
+
   func visit(_ expr: SubscriptExpression) throws -> Bool {
     for i in expr.arguments.indices {
       let arg = expr.arguments[i]
@@ -456,6 +542,12 @@ private class FoldingVisitor : ASTVisitor {
       expr.replaceArgument(at: i, with: foldedArg)
     }
 
+    return true
+  }
+
+  func visit(_ expr: AwaitExpression) throws -> Bool {
+    let foldedExpr = foldExpression(expr.expression)
+    expr.replaceExpression(with: foldedExpr)
     return true
   }
 

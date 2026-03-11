@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -31,6 +31,88 @@ class ParserDoStatementTests: XCTestCase {
       XCTAssertTrue(stmts[0] is TryOperatorExpression)
       XCTAssertEqual(stmts[0].textDescription, "try foo()")
       XCTAssertTrue(doStmt.catchClauses.isEmpty)
+      XCTAssertEqual(doStmt.throwsKind, .nothrowing)
+    })
+  }
+
+  func testThrowsClause() {
+    parseStatementAndTest("do throws { try foo() } catch { }",
+      "do throws {\ntry foo()\n} catch {}",
+      testClosure: { stmt in
+      guard let doStmt = stmt as? DoStatement else {
+        XCTFail("Failed in parsing a do statement.")
+        return
+      }
+      XCTAssertEqual(doStmt.throwsKind, .throwing)
+      XCTAssertEqual(doStmt.codeBlock.statements.count, 1)
+      XCTAssertEqual(doStmt.catchClauses.count, 1)
+    })
+  }
+
+  func testTypedThrowsClause() {
+    parseStatementAndTest("do throws(MyError) { try foo() } catch { }",
+      "do throws(MyError) {\ntry foo()\n} catch {}",
+      testClosure: { stmt in
+      guard let doStmt = stmt as? DoStatement else {
+        XCTFail("Failed in parsing a do statement.")
+        return
+      }
+      guard case .typedThrowing(let type) = doStmt.throwsKind else {
+        XCTFail("Expected typed throwing, got \(doStmt.throwsKind)")
+        return
+      }
+      XCTAssertEqual(type.textDescription, "MyError")
+      XCTAssertEqual(doStmt.codeBlock.statements.count, 1)
+      XCTAssertEqual(doStmt.catchClauses.count, 1)
+    })
+  }
+
+  func testDoThrowsWithMultipleCatches() {
+    parseStatementAndTest(
+      "do throws { try foo() } catch is NetworkError { retry() } catch { fail() }",
+      "do throws {\ntry foo()\n} catch is NetworkError {\nretry()\n} catch {\nfail()\n}",
+      testClosure: { stmt in
+      guard let doStmt = stmt as? DoStatement else {
+        XCTFail("Failed in parsing a do statement.")
+        return
+      }
+      XCTAssertEqual(doStmt.throwsKind, .throwing)
+      XCTAssertEqual(doStmt.catchClauses.count, 2)
+    })
+  }
+
+  func testNestedDoThrows() {
+    parseStatementAndTest(
+      "do throws { do throws(InnerError) { try bar() } catch { } } catch { }",
+      "do throws {\ndo throws(InnerError) {\ntry bar()\n} catch {}\n} catch {}",
+      testClosure: { stmt in
+      guard let doStmt = stmt as? DoStatement else {
+        XCTFail("Failed in parsing a do statement.")
+        return
+      }
+      XCTAssertEqual(doStmt.throwsKind, .throwing)
+      XCTAssertEqual(doStmt.catchClauses.count, 1)
+      let innerStmts = doStmt.codeBlock.statements
+      XCTAssertEqual(innerStmts.count, 1)
+      XCTAssertTrue(innerStmts[0] is DoStatement)
+    })
+  }
+
+  func testDoTypedThrowsWithPatternCatch() {
+    parseStatementAndTest(
+      "do throws(MyError) { try action() } catch .notFound { handle() } catch .timeout { retry() }",
+      "do throws(MyError) {\ntry action()\n} catch .notFound {\nhandle()\n} catch .timeout {\nretry()\n}",
+      testClosure: { stmt in
+      guard let doStmt = stmt as? DoStatement else {
+        XCTFail("Failed in parsing a do statement.")
+        return
+      }
+      guard case .typedThrowing(let type) = doStmt.throwsKind else {
+        XCTFail("Expected typed throwing")
+        return
+      }
+      XCTAssertEqual(type.textDescription, "MyError")
+      XCTAssertEqual(doStmt.catchClauses.count, 2)
     })
   }
 
@@ -231,15 +313,4 @@ class ParserDoStatementTests: XCTestCase {
       }
     )
   }
-
-  static var allTests = [
-    ("testNoCatch", testNoCatch),
-    ("testCatchAll", testCatchAll),
-    ("testCatchPattern", testCatchPattern),
-    ("testCatchWhere", testCatchWhere),
-    ("testCatchPatternAndWhere", testCatchPatternAndWhere),
-    ("testMultipleCatches", testMultipleCatches),
-    ("testCatchPatternMatching", testCatchPatternMatching),
-    ("testSourceRange", testSourceRange),
-  ]
 }

@@ -24,10 +24,14 @@ class LexerKeywordTests: XCTestCase {
   let keywordMapping: [(keyword: String, kind: Token.Kind)] = [
     ("as", .as),
     ("associativity", .associativity),
+    ("async", .async),
+    ("await", .await),
+    ("borrowing", .borrowing),
     ("break", .break),
     ("catch", .catch),
     ("case", .case),
     ("class", .class),
+    ("consuming", .consuming),
     ("continue", .continue),
     ("convenience", .convenience),
     ("default", .default),
@@ -61,11 +65,13 @@ class LexerKeywordTests: XCTestCase {
     ("mutating", .mutating),
     ("nil", .nil),
     ("none", .none),
+    ("nonisolated", .nonisolated),
     ("nonmutating", .nonmutating),
     ("open", .open),
     ("operator", .operator),
     ("optional", .optional),
     ("override", .override),
+    ("package", .package),
     ("postfix", .postfix),
     ("prefix", .prefix),
     ("private", .private),
@@ -109,8 +115,4 @@ class LexerKeywordTests: XCTestCase {
       }
     }
   }
-
-  static var allTests = [
-    ("testKeywords", testKeywords),
-  ]
 }

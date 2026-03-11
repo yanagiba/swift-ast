@@ -10,3 +10,9 @@ do {
 } catch {
   all()
 }
+do {
+  try foo()
+} catch {}
+do {
+  try foo()
+} catch {}

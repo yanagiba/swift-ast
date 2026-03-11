@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -161,7 +161,6 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("_ = \\foo.", .fatal, .expectedKeyPathComponentIdentifierOrPostfix)
     parseProblematic("_ = \\foo.bar.", .fatal, .expectedKeyPathComponentIdentifierOrPostfix)
     parseProblematic("_ = #func", .fatal, .expectedObjectLiteralIdentifier)
-    parseProblematic("_ = #abc", .fatal, .expectedObjectLiteralIdentifier)
     parseProblematic("_ = #keyPath", .fatal, .expectedOpenParenKeyPathStringExpr)
     parseProblematic("_ = #keyPath(a", .fatal, .expectedCloseParenKeyPathStringExpr)
     parseProblematic("_ = #selector", .fatal, .expectedOpenParenSelectorExpr)
@@ -365,16 +364,4 @@ class ParserErrorKindTests : XCTestCase {
     parseProblematic("protocol Foo : Bar, class)", .fatal, .lateClassRequirement)
     parseProblematic("protocol Foo : class, _)", .fatal, .expectedTypeRestriction)
   }
-
-  static var allTests = [
-    ("testAttributes", testAttributes),
-    ("testCodeBlock", testCodeBlock),
-    ("testDeclarations", testDeclarations),
-    ("testExpressions", testExpressions),
-    ("testPlaygroundLiterals", testPlaygroundLiterals),
-    ("testGenerics", testGenerics),
-    ("testPatterns", testPatterns),
-    ("testStatements", testStatements),
-    ("testTypes", testTypes),
-  ]
 }

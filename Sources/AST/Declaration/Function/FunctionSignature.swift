@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -62,15 +62,18 @@ public struct FunctionSignature {
   }
 
   public let parameterList: [Parameter]
+  public let isAsync: Bool
   public let throwsKind: ThrowsKind
   public let result: FunctionResult?
 
   public init(
     parameterList: [Parameter] = [],
+    isAsync: Bool = false,
     throwsKind: ThrowsKind = .nothrowing,
     result: FunctionResult? = nil
   ) {
     self.parameterList = parameterList
+    self.isAsync = isAsync
     self.throwsKind = throwsKind
     self.result = result
   }
@@ -93,9 +96,10 @@ extension FunctionSignature : ASTTextRepresentable {
   public var textDescription: String {
     let parameterText =
       ["(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"]
+    let asyncText = isAsync ? ["async"] : []
     let throwsKindText =
       throwsKind.textDescription.isEmpty ? [] : [throwsKind.textDescription]
     let resultText = result.map({ [$0.textDescription] }) ?? []
-    return (parameterText + throwsKindText + resultText).joined(separator: " ")
+    return (parameterText + asyncText + throwsKindText + resultText).joined(separator: " ")
   }
 }

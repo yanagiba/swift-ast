@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -55,25 +55,33 @@ public class ClosureExpression : ASTNode, PrimaryExpression {
     }
 
     public let captureList: [CaptureItem]?
+    public let attributes: Attributes
     public let parameterClause: ParameterClause?
+    public let isAsync: Bool
     public let canThrow: Bool
     public let functionResult: FunctionResult?
 
-    public init(captureList: [CaptureItem]) {
+    public init(captureList: [CaptureItem]? = nil, attributes: Attributes = []) {
       self.captureList = captureList
+      self.attributes = attributes
       self.parameterClause = nil
+      self.isAsync = false
       self.canThrow = false
       self.functionResult = nil
     }
 
     public init(
       captureList: [CaptureItem]? = nil,
+      attributes: Attributes = [],
       parameterClause: ParameterClause,
+      isAsync: Bool = false,
       canThrow: Bool = false,
       functionResult: FunctionResult? = nil
     ) {
       self.captureList = captureList
+      self.attributes = attributes
       self.parameterClause = parameterClause
+      self.isAsync = isAsync
       self.canThrow = canThrow
       self.functionResult = functionResult
     }
@@ -162,11 +170,17 @@ extension ClosureExpression.Signature.ParameterClause : ASTTextRepresentable {
 extension ClosureExpression.Signature : ASTTextRepresentable {
   public var textDescription: String {
     var signatureText = [String]()
+    if !attributes.isEmpty {
+      signatureText.append(attributes.textDescription)
+    }
     if let captureList = captureList {
       signatureText.append("[\(captureList.map({ $0.textDescription }).joined(separator: ", "))]")
     }
     if let parameterClause = parameterClause {
       signatureText.append(parameterClause.textDescription)
+    }
+    if isAsync {
+      signatureText.append("async")
     }
     if canThrow {
       signatureText.append("throws")

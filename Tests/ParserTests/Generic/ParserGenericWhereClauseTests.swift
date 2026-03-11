@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import XCTest
 
+@testable import AST
 @testable import Parser
 
 class ParserGenericWhereClauseTests: XCTestCase {
@@ -44,6 +45,21 @@ class ParserGenericWhereClauseTests: XCTestCase {
       } else {
         XCTFail("Failed in getting right size of requirement list.")
       }
+    } catch {
+      XCTFail("Failed in getting a generic where clause.")
+    }
+  }
+
+  func testProtocolConformanceRequirementSourceRange() {
+    let genericParser = getParser("where S1: T1 & T2")
+    do {
+      let genericWhereClause = try genericParser.parseGenericWhereClause()
+      guard let requirement = genericWhereClause?.requirementList.first,
+            case let .protocolConformance(_, type) = requirement else {
+        XCTFail("Failed in getting a protocol conformance requirement.")
+        return
+      }
+      XCTAssertEqual(type.sourceRange, getRange(1, 11, 1, 18))
     } catch {
       XCTFail("Failed in getting a generic where clause.")
     }
@@ -112,12 +128,34 @@ class ParserGenericWhereClauseTests: XCTestCase {
     }
   }
 
-  static var allTests = [
-    ("testSingleTypeConformanceRequirement", testSingleTypeConformanceRequirement),
-    ("testSingleProtocolConformanceRequirement", testSingleProtocolConformanceRequirement),
-    ("testSingleOldSyntaxProtocolConformanceRequirement", testSingleOldSyntaxProtocolConformanceRequirement),
-    ("testSingleSameTypeRequirement", testSingleSameTypeRequirement),
-    ("testMultipleRequirements", testMultipleRequirements),
-    ("testSelfRequirements", testSelfRequirements),
-  ]
+  func testSuppressedConformanceRequirement() {
+    let genericParser = getParser("where T: ~Copyable")
+    do {
+      let genericWhereClause = try genericParser.parseGenericWhereClause()
+      if let requirements = genericWhereClause?.requirementList, requirements.count == 1 {
+        XCTAssertEqual(requirements[0].textDescription, "T: ~Copyable")
+        XCTAssertEqual(genericWhereClause?.textDescription, "where T: ~Copyable")
+      } else {
+        XCTFail("Failed in getting right size of requirement list.")
+      }
+    } catch {
+      XCTFail("Failed in getting a generic where clause.")
+    }
+  }
+
+  func testMixedWithSuppressedConformance() {
+    let genericParser = getParser("where T: Equatable, T: ~Copyable")
+    do {
+      let genericWhereClause = try genericParser.parseGenericWhereClause()
+      if let requirements = genericWhereClause?.requirementList, requirements.count == 2 {
+        XCTAssertEqual(requirements[0].textDescription, "T: Equatable")
+        XCTAssertEqual(requirements[1].textDescription, "T: ~Copyable")
+        XCTAssertEqual(genericWhereClause?.textDescription, "where T: Equatable, T: ~Copyable")
+      } else {
+        XCTFail("Failed in getting right size of requirement list.")
+      }
+    } catch {
+      XCTFail("Failed in getting a generic where clause.")
+    }
+  }
 }

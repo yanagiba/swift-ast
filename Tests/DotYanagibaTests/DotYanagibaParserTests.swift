@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -163,14 +163,4 @@ class DotYanagibaParserTests : XCTestCase {
 
     XCTAssertNil(result.modules["foobar"])
   }
-
-  static var allTests = [
-    ("testIntOption", testIntOption),
-    ("testStringOption", testStringOption),
-    ("testListIntOption", testListIntOption),
-    ("testListStringOption", testListStringOption),
-    ("testDictIntOption", testDictIntOption),
-    ("testDictStringOption", testDictStringOption),
-    ("testMultiModules", testMultiModules),
-  ]
 }

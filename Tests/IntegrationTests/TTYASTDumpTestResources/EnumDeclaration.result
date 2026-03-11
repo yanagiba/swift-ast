@@ -186,12 +186,14 @@ top_level_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:17:1-9
   enum_decl <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:88:1-96:2>
     name: Foo
     compiler_ctrl_stmt <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:89:1-89:6>
-      kind: `if`, condition: ` a`
+      kind: `if`
+      condition: `a`
     union_case
       name: `a`
       tuple: `(A)`
     compiler_ctrl_stmt <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:91:1-91:10>
-      kind: `elseif`, condition: ` b`
+      kind: `elseif`
+      condition: `b`
     union_case
       name: `b`
     compiler_ctrl_stmt <range: TTYASTDumpTestResources/EnumDeclarationTests.swift:93:1-93:6>

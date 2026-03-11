@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -63,13 +63,4 @@ class ParserSubscriptExpressionTests: XCTestCase {
       })
     }
   }
-
-  static var allTests = [
-    ("testSingleExpr", testSingleExpr),
-    ("testMultipleExprs", testMultipleExprs),
-    ("testVariables", testVariables),
-    ("testArgumentWithIdentifier", testArgumentWithIdentifier),
-    ("testArgumentListOnSameLine", testArgumentListOnSameLine),
-    ("testSourceRange", testSourceRange),
-  ]
 }

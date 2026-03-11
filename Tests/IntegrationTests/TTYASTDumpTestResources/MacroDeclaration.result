@@ -1,0 +1,16 @@
+top_level_decl <range: TTYASTDumpTestResources/MacroDeclarationTests.swift:1:1-1:114>
+  macro_decl <range: TTYASTDumpTestResources/MacroDeclarationTests.swift:1:1-1:114>
+    name: stringify
+    generic_param: `<T>`
+    parameters:
+    0: _ value: T
+    return_type: `(T, String)`
+    macro_expansion_expr <range: TTYASTDumpTestResources/MacroDeclarationTests.swift:1:49-1:114>
+      macro_name: `externalMacro`
+      arguments:
+      0: kind: `named_expression`, name: `module`
+        literal_expr <range: TTYASTDumpTestResources/MacroDeclarationTests.swift:1:72-1:89>
+          kind: `string`, raw_text: `"StringifyMacros"`
+      1: kind: `named_expression`, name: `type`
+        literal_expr <range: TTYASTDumpTestResources/MacroDeclarationTests.swift:1:97-1:113>
+          kind: `string`, raw_text: `"StringifyMacro"`

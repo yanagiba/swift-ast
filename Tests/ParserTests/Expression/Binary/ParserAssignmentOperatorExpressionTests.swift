@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ class ParserAssignmentOperatorExpressionTests: XCTestCase {
   func testSourceRange() {
     let testExprs: [(testString: String, expectedEndColumn: Int)] = [
       ("foo = bar", 10),
+      ("foo = await bar", 16),
       ("(a, b) = (1, 2)", 16),
     ]
     for t in testExprs {
@@ -60,11 +61,4 @@ class ParserAssignmentOperatorExpressionTests: XCTestCase {
       })
     }
   }
-
-  static var allTests = [
-    ("testAssignment", testAssignment),
-    ("testRhsIsTryOperator", testRhsIsTryOperator),
-    ("testTupleAssignment", testTupleAssignment),
-    ("testSourceRange", testSourceRange),
-  ]
 }

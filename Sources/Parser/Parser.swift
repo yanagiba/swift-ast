@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,16 +15,19 @@
 */
 
 import AST
+import Diagnostic
 import Lexer
 import Source
 
 public class Parser {
   let _sourceFile: SourceFile
   let _lexer: Lexer
+  let _diagnosticPool: DiagnosticPool
 
-  public init(source: SourceFile) {
+  public init(source: SourceFile, diagnosticPool: DiagnosticPool) {
     _sourceFile = source
     _lexer = Lexer(source: source)
+    _diagnosticPool = diagnosticPool
   }
 
   public func parse() throws -> TopLevelDeclaration {

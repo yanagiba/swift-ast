@@ -43,3 +43,7 @@ map { i -> String in
   return "\(j)"
 }
 toggle(isOn: $favorited)
+
+// multiple trailing closures
+foo { a } bar: { b }
+foo(x) { a } bar: { b } baz: { c }

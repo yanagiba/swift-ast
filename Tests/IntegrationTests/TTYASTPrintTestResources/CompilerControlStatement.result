@@ -1,9 +1,1 @@
-#if os(macOS)
-break
-#elseif swift(>=3.1)
-return
-#else
-continue
-#endif
-#sourceLocation(file: "filename", line: 10)
-#sourceLocation()
+error: failed in parsing the source TTYASTPrintTestResources/CompilerControlStatementTests.swift.

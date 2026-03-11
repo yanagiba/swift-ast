@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -216,44 +216,5 @@ class RoleTests: XCTestCase {
   func testStartOfHeading() {
     XCTAssertEqual(role(of: "\u{1}"), .unknown)
   }
-
-  static var allTests = [
-    ("testEmptyContent", testEmptyContent),
-    ("testLineFeed", testLineFeed),
-    ("testCarriageReturn", testCarriageReturn),
-    ("testLeftParen", testLeftParen),
-    ("testRightParen", testRightParen),
-    ("testLeftBrace", testLeftBrace),
-    ("testRightBrace", testRightBrace),
-    ("testLeftSquare", testLeftSquare),
-    ("testRightSquare", testRightSquare),
-    ("testPeriod", testPeriod),
-    ("testComma", testComma),
-    ("testColon", testColon),
-    ("testSemicolon", testSemicolon),
-    ("testEqual", testEqual),
-    ("testAt", testAt),
-    ("testHash", testHash),
-    ("testAmp", testAmp),
-    ("testMinus", testMinus),
-    ("testBacktick", testBacktick),
-    ("testBackslash", testBackslash),
-    ("testDollar", testDollar),
-    ("testDoubleQuote", testDoubleQuote),
-    ("testExclaim", testExclaim),
-    ("testQuestion", testQuestion),
-    ("testLessThan", testLessThan),
-    ("testGreaterThan", testGreaterThan),
-    ("testUnderscore", testUnderscore),
-    ("testSlash", testSlash),
-    ("testAsterisk", testAsterisk),
-    ("testDigits", testDigits),
-    ("testSpaces", testSpaces),
-    ("testOperatorHeads", testOperatorHeads),
-    ("testOperatorBody", testOperatorBody),
-    ("testIdentifierHeads", testIdentifierHeads),
-    ("testIdentifierBody", testIdentifierBody),
-    ("testStartOfHeading", testStartOfHeading),
-  ]
 
 }

@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1-80:71>
+top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1-96:27>
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1-17:4>
     kind: `nil`, literal: `nil`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:18:1-18:5>
@@ -21,8 +21,31 @@ top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1
     kind: `string`, raw_text: `"The quick brown fox jumps over the lazy dog"`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:27:1-27:36>
     kind: `interpolated_string`, raw_text: `"\("helloworld")a\("foo")\("bar")z"`
+    0: kind: `interpolation`
+      0: kind: `expression`
+        literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:27:4-27:16>
+          kind: `string`, raw_text: `"helloworld"`
+    1: kind: `text`, value: `a`
+    2: kind: `interpolation`
+      0: kind: `expression`
+        literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:27:20-27:25>
+          kind: `string`, raw_text: `"foo"`
+    3: kind: `interpolation`
+      0: kind: `expression`
+        literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:27:28-27:33>
+          kind: `string`, raw_text: `"bar"`
+    4: kind: `text`, value: `z`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:28:1-28:15>
     kind: `interpolated_string`, raw_text: `"1 2 \(1 + 2)"`
+    0: kind: `text`, value: `1 2 `
+    1: kind: `interpolation`
+      0: kind: `expression`
+        binary_op_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:28:8-28:13>
+          operator: `+`
+          literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:28:8-28:9>
+            kind: `int`, literal: `1`, raw_text: `1`
+          literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:28:12-28:13>
+            kind: `int`, literal: `2`, raw_text: `2`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:29:1-35:4>
     kind: `string`, raw_text: `"""
   The White Rabbit put on his spectacles.  "Where shall I begin,
@@ -33,12 +56,12 @@ top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1
   """`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:36:1-42:6>
     kind: `string`, raw_text: `"""
-    The White Rabbit put on his spectacles.  "Where shall I begin,
-    please your Majesty?" he asked.
+  The White Rabbit put on his spectacles.  "Where shall I begin,
+  please your Majesty?" he asked.
   
-    "Begin at the beginning," the King said gravely, "and go on
-    till you come to the end; then stop."
-    """`
+  "Begin at the beginning," the King said gravely, "and go on
+  till you come to the end; then stop."
+  """`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:43:1-46:4>
     kind: `string`, raw_text: `"""
   Escaping the first quote \"""
@@ -53,21 +76,59 @@ top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1
   """`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:53:1-57:6>
     kind: `interpolated_string`, raw_text: `"""
-    \("""
+  \("""
   helloworld
   """)a\("foo")\("bar")z
-    """`
+  """`
+    0: kind: `interpolation`
+      0: kind: `expression`
+        literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:54:5-56:4>
+          kind: `string`, raw_text: `"""
+        helloworld
+        """`
+    1: kind: `text`, value: `a`
+    2: kind: `interpolation`
+      0: kind: `expression`
+        literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:56:8-56:13>
+          kind: `string`, raw_text: `"foo"`
+    3: kind: `interpolation`
+      0: kind: `expression`
+        literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:56:16-56:21>
+          kind: `string`, raw_text: `"bar"`
+    4: kind: `text`, value: `z`
   literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:58:1-67:6>
     kind: `interpolated_string`, raw_text: `"""
-    \("""
-      hello
-      world
-      """)
+  \("""
+    hello
+    world
+    """)
+  a
+  \("foo")
+  \("bar")
+  z
+  """`
+    0: kind: `interpolation`
+      0: kind: `expression`
+        literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:59:5-62:8>
+          kind: `string`, raw_text: `"""
+        hello
+        world
+        """`
+    1: kind: `text`, value: `
     a
-    \("foo")
-    \("bar")
-    z
-    """`
+    `
+    2: kind: `interpolation`
+      0: kind: `expression`
+        literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:64:5-64:10>
+          kind: `string`, raw_text: `"foo"`
+    3: kind: `text`, value: `
+    `
+    4: kind: `interpolation`
+      0: kind: `expression`
+        literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:65:5-65:10>
+          kind: `string`, raw_text: `"bar"`
+    5: kind: `text`, value: `
+    z`
   assign_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:69:1-69:7>
     wildcard_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:69:1-69:2>
     literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:69:5-69:7>
@@ -143,3 +204,42 @@ top_level_decl <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:17:1
     wildcard_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:80:1-80:2>
     literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:80:5-80:71>
       kind: `playground`, literal: `#imageLiteral(resourceName: #fileLiteral(resourceName: "bar.png"))`
+  literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:83:1-83:10>
+    kind: `string`, raw_text: `#"hello"#`
+  literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:84:1-84:23>
+    kind: `string`, raw_text: `#"She said \"hello\""#`
+  literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:85:1-85:10>
+    kind: `string`, raw_text: `#"a\#nb"#`
+  literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:86:1-86:12>
+    kind: `string`, raw_text: `##"hello"##`
+  literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:87:1-87:13>
+    kind: `string`, raw_text: `##"a\##nb"##`
+  literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:90:1-90:6>
+    kind: `regex`, raw_text: `/abc/`
+  literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:91:1-91:6>
+    kind: `regex`, raw_text: `/\d+/`
+  literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:92:1-92:9>
+    kind: `regex`, raw_text: `/[a-z]+/`
+  literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:95:1-95:26>
+    kind: `interpolated_string`, raw_text: `"\(x, format: .fixed(2))"`
+    0: kind: `interpolation`
+      0: kind: `expression`
+        identifier_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:95:4-95:5>
+          kind: `identifier`, identifier: `x`
+      1: kind: `named_expression`, name: `format`
+        function_call_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:95:15-95:24>
+          implicit_member_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:95:15-95:21>
+            identifier: `identifier`
+          arguments:
+          0: kind: `expression`
+            literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:95:22-95:23>
+              kind: `int`, literal: `2`, raw_text: `2`
+  literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:96:1-96:27>
+    kind: `interpolated_string`, raw_text: `"\(x, specifier: "%0.2f")"`
+    0: kind: `interpolation`
+      0: kind: `expression`
+        identifier_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:96:4-96:5>
+          kind: `identifier`, identifier: `x`
+      1: kind: `named_expression`, name: `specifier`
+        literal_expr <range: TTYASTDumpTestResources/LiteralExpressionTests.swift:96:18-96:25>
+          kind: `string`, raw_text: `"%0.2f"`

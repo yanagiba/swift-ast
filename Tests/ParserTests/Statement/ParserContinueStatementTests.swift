@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -58,11 +58,4 @@ class ParserContinueStatementTests: XCTestCase {
       XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 13))
     })
   }
-
-  static var allTests = [
-    ("testContinue", testContinue),
-    ("testContinueWithLabelName", testContinueWithLabelName),
-    ("testLabelNameNotImmediateFollow", testLabelNameNotImmediateFollow),
-    ("testSourceRange", testSourceRange),
-  ]
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,17 +16,18 @@
 
 import XCTest
 
+@testable import Diagnostic
+@testable import Frontend
 @testable import Parser
 @testable import Sema
-@testable import Frontend
 
 class SemaIntegrationTests : XCTestCase {
   func testSequenceExpressionFolding() {
     // This test focuses on where to perform the foldings, check out
     // SequenceExpressionFoldingTests for testing the actual folding logic
 
-    testIntegration("SemaTestResources", "SequenceExpressionFolding") { source -> String in
-      let parser = Parser(source: source)
+    testIntegration("SemaTestResources", "SequenceExpressionFolding") { source, diagnosticPool -> String in
+      let parser = Parser(source: source, diagnosticPool: diagnosticPool)
       guard let topLevelDecl = try? parser.parse() else {
         return "error: failed in parsing the source \(source.identifier)."
       }
@@ -37,8 +38,4 @@ class SemaIntegrationTests : XCTestCase {
       return topLevelDecl.ttyDump
     }
   }
-
-  static var allTests = [
-    ("testSequenceExpressionFolding", testSequenceExpressionFolding),
-  ]
 }

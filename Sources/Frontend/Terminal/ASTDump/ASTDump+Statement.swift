@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -46,9 +46,11 @@ extension CompilerControlStatement : TTYASTDumpRepresentable {
     var body = String.indent
     switch kind {
     case .if(let condition):
-      body += "kind: `if`, condition: `\(condition)`"
+      body += "kind: `if`"
+      body += "\n" + dumpCondition(condition).indented
     case .elseif(let condition):
-      body += "kind: `elseif`, condition: `\(condition)`"
+      body += "kind: `elseif`"
+      body += "\n" + dumpCondition(condition).indented
     case .else:
       body += "kind: `else`"
     case .endif:
@@ -58,8 +60,43 @@ extension CompilerControlStatement : TTYASTDumpRepresentable {
       if let fileName = fileName, let lineNumber = lineNumber {
         body += ", file_name: `\(fileName)`, line_number: `\(lineNumber)`"
       }
+    case .warning(let message):
+      body += "kind: `warning`, message: `\(message)`"
+    case .error(let message):
+      body += "kind: `error`, message: `\(message)`"
     }
     return "\(head)\n\(body)"
+  }
+
+  private func dumpCondition(_ condition: CompilationCondition) -> String {
+    switch condition {
+    case .os(let name):
+      return "condition: `os(\(name))`"
+    case .arch(let name):
+      return "condition: `arch(\(name))`"
+    case let .swift(op, version):
+      return "condition: `swift(\(op)\(version))`"
+    case let .compiler(op, version):
+      return "condition: `compiler(\(op)\(version))`"
+    case .canImport(let path):
+      return "condition: `canImport(\(path))`"
+    case .hasFeature(let feature):
+      return "condition: `hasFeature(\(feature))`"
+    case .targetEnvironment(let env):
+      return "condition: `targetEnvironment(\(env))`"
+    case .identifier(let name):
+      return "condition: `\(name)`"
+    case .booleanLiteral(let value):
+      return "condition: `\(value)`"
+    case .not(let inner):
+      return "condition: `not`\n" + dumpCondition(inner).indented
+    case let .and(lhs, rhs):
+      return "condition: `and`\n" + dumpCondition(lhs).indented + "\n" + dumpCondition(rhs).indented
+    case let .or(lhs, rhs):
+      return "condition: `or`\n" + dumpCondition(lhs).indented + "\n" + dumpCondition(rhs).indented
+    case .parenthesized(let inner):
+      return "condition: `parenthesized`\n" + dumpCondition(inner).indented
+    }
   }
 }
 
@@ -82,6 +119,10 @@ extension DeferStatement : TTYASTDumpRepresentable {
 extension DoStatement : TTYASTDumpRepresentable {
   var ttyDump: String {
     let head = dump("do_stmt", sourceRange)
+    var throwsText = ""
+    if throwsKind != .nothrowing {
+      throwsText = "\n" + "throws: `\(throwsKind.textDescription)`".indented
+    }
     let body = codeBlock.ttyDump.indented
     var catches = "catches:".indented
     if catchClauses.isEmpty {
@@ -103,7 +144,7 @@ extension DoStatement : TTYASTDumpRepresentable {
       catches += "\n"
       catches += catchClause.codeBlock.ttyDump.indented.indented
     }
-    return "\(head)\n\(body)\n\(catches)"
+    return "\(head)\(throwsText)\n\(body)\n\(catches)"
   }
 }
 
@@ -226,6 +267,9 @@ extension SwitchStatement : TTYASTDumpRepresentable {
         body += "kind: `default`"
         body += "\n"
         body += stmts.map({ $0.ttyDump }).joined(separator: "\n").indented.indented
+      case .compilerControl(let stmt):
+        body += "kind: `compiler_control`\n"
+        body += stmt.ttyDump.indented.indented
       }
     }
     return "\(head)\n\(body)"

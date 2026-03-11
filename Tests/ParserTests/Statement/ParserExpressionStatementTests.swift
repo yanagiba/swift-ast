@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -50,9 +50,4 @@ class ParserExpressionStatementTests: XCTestCase {
       XCTFail("Failed in parsing a list of expressions as statements.")
     }
   }
-
-  static var allTests = [
-    ("testAssignmentOpExprStmt", testAssignmentOpExprStmt),
-    ("testExpressions", testExpressions),
-  ]
 }

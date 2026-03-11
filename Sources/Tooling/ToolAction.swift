@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -32,16 +32,16 @@ open class ToolAction {
     var unparsedSourceFiles: [SourceFile] = []
 
     for sourceFile in sourceFiles {
-      DiagnosticPool.shared.clear()
+      let diagnosticPool = DiagnosticPool()
 
-      let parser = Parser(source: sourceFile)
+      let parser = Parser(source: sourceFile, diagnosticPool: diagnosticPool)
       if let topLevelDecl = try? parser.parse() {
         unitCollection.append(topLevelDecl)
       } else {
         unparsedSourceFiles.append(sourceFile)
       }
 
-      DiagnosticPool.shared.report(withConsumer: diagnosticConsumer)
+      diagnosticPool.report(withConsumer: diagnosticConsumer)
     }
 
     guard unparsedSourceFiles.isEmpty else {

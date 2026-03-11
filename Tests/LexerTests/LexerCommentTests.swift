@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -139,15 +139,4 @@ class LexerCommentTests: XCTestCase {
       XCTAssertEqual($0, .invalid(.reserved))
     }
   }
-
-  static var allTests = [
-    ("testSingleLineComment", testSingleLineComment),
-    ("testMultipleSingleLineComments", testMultipleSingleLineComments),
-    ("testSingleLineMultipleLineComment", testSingleLineMultipleLineComment),
-    ("testMultiLineMultipleLineComment", testMultiLineMultipleLineComment),
-    ("testNestedMultipleLineComments", testNestedMultipleLineComments),
-    ("testMultipleLineCommentsOneNextToTheOther", testMultipleLineCommentsOneNextToTheOther),
-    ("testUnbalanceMultipleLineComment", testUnbalanceMultipleLineComment),
-    ("testMultipleLineCommentTail", testMultipleLineCommentTail),
-  ]
 }

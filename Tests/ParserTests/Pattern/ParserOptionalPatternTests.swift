@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -103,12 +103,4 @@ class ParserOptionalPatternTests: XCTestCase {
       XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 8))
     })
   }
-
-  static var allTests = [
-    ("testIdentifierOptional", testIdentifierOptional),
-    ("testWildcardOptional", testWildcardOptional),
-    ("testEnumCasePatternOptional", testEnumCasePatternOptional),
-    ("testTuplePatternOptional", testTuplePatternOptional),
-    ("testSourceRange", testSourceRange),
-  ]
 }

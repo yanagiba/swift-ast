@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -635,9 +635,19 @@ class LexicalParentAssignmentTests: XCTestCase {
           return
         }
         switch expr.kind {
-        case .interpolatedString(let es, _):
-          for e in es {
-            XCTAssertTrue(e.lexicalParent === expr)
+        case .interpolatedString(let segments, _):
+          for segment in segments {
+            if case .interpolation(let args) = segment {
+              for arg in args {
+                switch arg {
+                case .expression(let e), .namedExpression(_, let e),
+                     .memoryReference(let e), .namedMemoryReference(_, let e):
+                  XCTAssertTrue(e.lexicalParent === expr)
+                default:
+                  break
+                }
+              }
+            }
           }
         case .array(let es):
           for e in es {
@@ -900,52 +910,4 @@ class LexicalParentAssignmentTests: XCTestCase {
     XCTAssertNil(topLevelDecl.lexicalParent)
     testAssigned(topLevelDecl)
   }
-
-  static var allTests = [
-    ("testTopLevelDeclaration", testTopLevelDeclaration),
-    ("testClassDeclaration", testClassDeclaration),
-    ("testConstantDeclaration", testConstantDeclaration),
-    ("testDeinitializerDeclaration", testDeinitializerDeclaration),
-    ("testEnumDeclaration", testEnumDeclaration),
-    ("testExtensionDeclaration", testExtensionDeclaration),
-    ("testFunctionDeclaration", testFunctionDeclaration),
-    ("testInitializerDeclaration", testInitializerDeclaration),
-    ("testStructDeclaration", testStructDeclaration),
-    ("testSubscriptDeclaration", testSubscriptDeclaration),
-    ("testVariableDeclaration", testVariableDeclaration),
-    ("testDeferStatement", testDeferStatement),
-    ("testDoStatement", testDoStatement),
-    ("testForInStatement", testForInStatement),
-    ("testGuardStatement", testGuardStatement),
-    ("testIfStatement", testIfStatement),
-    ("testLabeledStatement", testLabeledStatement),
-    ("testRepeatWhileStatement", testRepeatWhileStatement),
-    ("testReturnStatement", testReturnStatement),
-    ("testSwitchStatement", testSwitchStatement),
-    ("testThrowStatement", testThrowStatement),
-    ("testWhileStatement", testWhileStatement),
-    ("testAssignmentOperatorExpression", testAssignmentOperatorExpression),
-    ("testBinaryOperatorExpression", testBinaryOperatorExpression),
-    ("testExplicitMemberExpression", testExplicitMemberExpression),
-    ("testForcedValueExpression", testForcedValueExpression),
-    ("testFunctionCallExpressionAndClosureExpression",
-      testFunctionCallExpressionAndClosureExpression),
-    ("testInitializerExpression", testInitializerExpression),
-    ("testKeyPathStringExpression", testKeyPathStringExpression),
-    ("testLiteralExpression", testLiteralExpression),
-    ("testOptionalChainingExpression", testOptionalChainingExpression),
-    ("testParenthesizedExpression", testParenthesizedExpression),
-    ("testPostfixOperatorExpression", testPostfixOperatorExpression),
-    ("testPostfixSelfExpression", testPostfixSelfExpression),
-    ("testPrefixOperatorExpression", testPrefixOperatorExpression),
-    ("testSelectorExpression", testSelectorExpression),
-    ("testSelfExpression", testSelfExpression),
-    ("testSequenceExpression", testSequenceExpression),
-    ("testSubscriptExpression", testSubscriptExpression),
-    ("testSuperclassExpression", testSuperclassExpression),
-    ("testTernaryConditionalOperatorExpression", testTernaryConditionalOperatorExpression),
-    ("testTryOperatorExpression", testTryOperatorExpression),
-    ("testTupleExpression", testTupleExpression),
-    ("testTypeCastingOperatorExpression", testTypeCastingOperatorExpression),
-  ]
 }

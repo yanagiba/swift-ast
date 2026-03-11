@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -106,14 +106,4 @@ class ParserLabeledStatementTests: XCTestCase {
       XCTAssertEqual(stmt.sourceRange, getRange(1, 1, 1, 22))
     })
   }
-
-  static var allTests = [
-    ("testLabeledFor", testLabeledFor),
-    ("testLabeledWhile", testLabeledWhile),
-    ("testLabeledRepeat", testLabeledRepeat),
-    ("testLabeledIf", testLabeledIf),
-    ("testLabeledSwitch", testLabeledSwitch),
-    ("testLabeledDo", testLabeledDo),
-    ("testSourceRange", testSourceRange),
-  ]
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -1566,75 +1566,4 @@ class ParserVariableDeclarationTests: XCTestCase {
       }
     )
   }
-
-  static var allTests = [
-    ("testVariableName", testVariableName),
-    ("testTypeAnnotation", testTypeAnnotation),
-    ("testSingleInitializer", testSingleInitializer),
-    ("testMultipleInitializers", testMultipleInitializers),
-    // code block
-    ("testEmptyCodeBlock", testEmptyCodeBlock),
-    ("testCodeBlock", testCodeBlock),
-    // getter-setter block
-    ("testGetter", testGetter),
-    ("testGetterWithAttributes", testGetterWithAttributes),
-    ("testGetterWithModifier", testGetterWithModifier),
-    ("testGetterWithAttributesAndModifier", testGetterWithAttributesAndModifier),
-    ("testGetterThenSetter", testGetterThenSetter),
-    ("testGetterThenSetterWithAttributes", testGetterThenSetterWithAttributes),
-    ("testGetterThenSetterWithModifier", testGetterThenSetterWithModifier),
-    ("testGetterThenSetterWithAttributesAndModifier", testGetterThenSetterWithAttributesAndModifier),
-    ("testGetterWithAttributesThenSetterWithAttributes", testGetterWithAttributesThenSetterWithAttributes),
-    ("testGetterWithModifierThenSetterWithModifier", testGetterWithModifierThenSetterWithModifier),
-    ("testGetterWithAttributesAndModifierThenSetterWithAttributesAndModifier",
-      testGetterWithAttributesAndModifierThenSetterWithAttributesAndModifier),
-    ("testGetterThenSetterWithName", testGetterThenSetterWithName),
-    ("testSetterThenGetter", testSetterThenGetter),
-    ("testSetterWithAttributesModifierAndNameThenGetterWithAttributesAndModifier",
-      testSetterWithAttributesModifierAndNameThenGetterWithAttributesAndModifier),
-    // getter-setter-keyword block
-    ("testGetterKeyword", testGetterKeyword),
-    ("testGetterKeywordWithAttributes", testGetterKeywordWithAttributes),
-    ("testGetterKeywordWithModifier", testGetterKeywordWithModifier),
-    ("testGetterKeywordWithAttributesAndModifier", testGetterKeywordWithAttributesAndModifier),
-    ("testGetterKeywordThenSetterKeyword", testGetterKeywordThenSetterKeyword),
-    ("testGetterKeywordThenSetterKeywordWithAttributes", testGetterKeywordThenSetterKeywordWithAttributes),
-    ("testGetterKeywordThenSetterKeywordWithModifier", testGetterKeywordThenSetterKeywordWithModifier),
-    ("testGetterKeywordThenSetterKeywordWithAttributesAndModifier",
-      testGetterKeywordThenSetterKeywordWithAttributesAndModifier),
-    ("testGetterKeywordWithAttributesThenSetterKeywordWithAttributes",
-      testGetterKeywordWithAttributesThenSetterKeywordWithAttributes),
-    ("testGetterKeywordWithModifierThenSetterKeywordWithModifier",
-      testGetterKeywordWithModifierThenSetterKeywordWithModifier),
-    ("testGetterKeywordWithAttributesAndModifierThenSetterKeywordWithAttributesAndModifier",
-      testGetterKeywordWithAttributesAndModifierThenSetterKeywordWithAttributesAndModifier),
-    ("testSetterKeywordThenGetterKeyword", testSetterKeywordThenGetterKeyword),
-    ("testSetterKeywordWithAttributesAndModifierThenGetterKeywordWithAttributesAndModifier",
-      testSetterKeywordWithAttributesAndModifierThenGetterKeywordWithAttributesAndModifier),
-    // will-set-did-set block
-    ("testWillSet", testWillSet),
-    ("testWillSetWithAttributes", testWillSetWithAttributes),
-    ("testWillSetWithName", testWillSetWithName),
-    ("testWillSetWithAttributesAndName", testWillSetWithAttributesAndName),
-    ("testDidSet", testDidSet),
-    ("testDidSetWithAttributes", testDidSetWithAttributes),
-    ("testDidSetWithName", testDidSetWithName),
-    ("testDidSetWithAttributesAndName", testDidSetWithAttributesAndName),
-    ("testWillSetThenDidSet", testWillSetThenDidSet),
-    ("testWillSetWithAttributesAndNameThenDidSetWithAttributesAndName",
-      testWillSetWithAttributesAndNameThenDidSetWithAttributesAndName),
-    ("testDidSetThenWillSet", testDidSetThenWillSet),
-    ("testDidSetWithAttributesAndNameThenWillSetWithAttributesAndName",
-      testDidSetWithAttributesAndNameThenWillSetWithAttributesAndName),
-    ("testTypeAnnotationWillSetDidSet", testTypeAnnotationWillSetDidSet),
-    ("testTypeAnnotationInitializerWillSetDidSet", testTypeAnnotationInitializerWillSetDidSet),
-    // trailing closure
-    ("testFollowedByTrailingClosure", testFollowedByTrailingClosure),
-    // attributes/modifiers
-    ("testAttributes", testAttributes),
-    ("testModifiers", testModifiers),
-    ("testAttributeAndModifiers", testAttributeAndModifiers),
-    // context
-    ("testSourceRange", testSourceRange),
-  ]
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -49,10 +49,4 @@ class ParserWildcardPatternTests: XCTestCase {
       XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 12))
     })
   }
-
-  static var allTests = [
-    ("testParseWildcardPattern", testParseWildcardPattern),
-    ("testTypeAnnotation", testTypeAnnotation),
-    ("testSourceRange", testSourceRange),
-  ]
 }

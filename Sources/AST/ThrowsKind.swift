@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,7 +17,25 @@
 public enum ThrowsKind {
   case nothrowing
   case throwing
+  case typedThrowing(Type)
   case rethrowing
+}
+
+extension ThrowsKind : Equatable {
+  public static func == (lhs: ThrowsKind, rhs: ThrowsKind) -> Bool {
+    switch (lhs, rhs) {
+    case (.nothrowing, .nothrowing):
+      return true
+    case (.throwing, .throwing):
+      return true
+    case (.rethrowing, .rethrowing):
+      return true
+    case (.typedThrowing(let lhsType), .typedThrowing(let rhsType)):
+      return lhsType.textDescription == rhsType.textDescription
+    default:
+      return false
+    }
+  }
 }
 
 extension ThrowsKind : ASTTextRepresentable {
@@ -27,6 +45,8 @@ extension ThrowsKind : ASTTextRepresentable {
       return ""
     case .throwing:
       return "throws"
+    case .typedThrowing(let type):
+      return "throws(\(type.textDescription))"
     case .rethrowing:
       return "rethrows"
     }

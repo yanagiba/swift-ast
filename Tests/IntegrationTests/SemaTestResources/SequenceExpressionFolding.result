@@ -53,6 +53,30 @@ top_level_decl <range: SemaTestResources/SequenceExpressionFoldingTests.swift:17
     wildcard_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:1-23:2>
     literal_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:5-23:23>
       kind: `interpolated_string`, raw_text: `"\(a / b - c)\(a / b - c)"`
+      0: kind: `interpolation`
+        0: kind: `expression`
+          binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:8-23:13>
+            operator: `-`
+            binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:8-23:11>
+              operator: `/`
+              identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:8-23:9>
+                kind: `identifier`, identifier: `a`
+              identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:10-23:11>
+                kind: `identifier`, identifier: `b`
+            identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:12-23:13>
+              kind: `identifier`, identifier: `c`
+      1: kind: `interpolation`
+        0: kind: `expression`
+          binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:16-23:21>
+            operator: `-`
+            binary_op_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:16-23:19>
+              operator: `/`
+              identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:16-23:17>
+                kind: `identifier`, identifier: `a`
+              identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:18-23:19>
+                kind: `identifier`, identifier: `b`
+            identifier_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:23:20-23:21>
+              kind: `identifier`, identifier: `c`
   assign_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:24:1-24:27>
     wildcard_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:24:1-24:2>
     literal_expr <range: SemaTestResources/SequenceExpressionFoldingTests.swift:24:5-24:27>

@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -70,13 +70,4 @@ class ParserOptionalChainingExpressionTests: XCTestCase {
       })
     }
   }
-
-  static var allTests = [
-    ("testOptional", testOptional),
-    ("testTwoOptional", testTwoOptional),
-    ("testOptionalForced", testOptionalForced),
-    ("testNotImmediateFollow", testNotImmediateFollow),
-    ("testQuestionInTheMiddle", testQuestionInTheMiddle),
-    ("testSourceRange", testSourceRange),
-  ]
 }

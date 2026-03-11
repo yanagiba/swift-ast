@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ extension Lexer /* string literal */ {
     swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
     */
     isMultiline: Bool = false,
+    hashCount: Int = 0,
     postponeCaliberation: Bool = false
   ) -> Token.Kind {
     var literal = ""
-    var rawRepresentation = isMultiline ? "\"\"\"" : "\""
+    let hashDelimiter = String(repeating: "#", count: hashCount)
+    var rawRepresentation = isMultiline ? hashDelimiter + "\"\"\"" : hashDelimiter + "\""
 
     func appendRaw() {
       rawRepresentation += char.string
@@ -62,9 +64,13 @@ extension Lexer /* string literal */ {
     func isLastRawCharEscaping() -> Bool {
       var rawRepresentationLines = rawRepresentation.components(separatedBy: .newlines)
       rawRepresentationLines.removeLast()
-      let lastRawContentLine = rawRepresentationLines.removeLast()
-      let lastRawChar = lastRawContentLine.reversed().drop(while: { $0 == " " || $0 == "\t" }).first
-      return lastRawChar == "\\"
+      var lastRawContentLine = rawRepresentationLines.removeLast()
+      // Strip trailing whitespace
+      while lastRawContentLine.last == " " || lastRawContentLine.last == "\t" {
+        lastRawContentLine.removeLast()
+      }
+      let escapePrefix = "\\" + hashDelimiter
+      return lastRawContentLine.hasSuffix(escapePrefix)
     }
 
     func caliberateMultlineStringLiteral() -> Token.Kind {
@@ -78,7 +84,7 @@ extension Lexer /* string literal */ {
         return .invalid(.newLineExpectedAtTheClosingOfMultilineStringLiteral)
       }
       if lines.isEmpty {
-        return .staticStringLiteral("", rawRepresentation: rawRepresentation)
+        return .staticStringLiteral("", rawRepresentation: rawRepresentation, hashCount: hashCount)
       }
       let indentationLength = indentationPrefix.count
       var caliberatedLines: [String] = []
@@ -95,7 +101,7 @@ extension Lexer /* string literal */ {
         caliberatedLines.append(String(caliberatedLine))
       }
       let caliberatedLiteral = caliberatedLines.joined(separator: "\n")
-      return .staticStringLiteral(caliberatedLiteral, rawRepresentation: rawRepresentation)
+      return .staticStringLiteral(caliberatedLiteral, rawRepresentation: rawRepresentation, hashCount: hashCount)
     }
 
     if isMultiline && !postponeCaliberation {
@@ -122,38 +128,117 @@ extension Lexer /* string literal */ {
         literal.append("\r" as Character)
       case .doubleQuote:
         if isMultiline {
-          if _scanner.peek() == "\"" { // see next one is a double quote
-            consumeChar() // consumes the first double quote
-            appendRaw() // add second double quote to rawRepresentation
-            if _scanner.peek() == "\"" { // see if next one is still a double quote
-              consumeChar() // consumes the second double quote
-              appendRaw() // add third double quote to rawRepresentation
-              consumeChar() // consume the third double quote
+          if hashCount == 0 {
+            // Original behavior for non-extended multiline strings
+            if _scanner.peek() == "\"" {
+              consumeChar()
+              appendRaw()
+              if _scanner.peek() == "\"" {
+                consumeChar()
+                appendRaw()
+                consumeChar()
 
-              if postponeCaliberation {
-                return .staticStringLiteral(literal, rawRepresentation: rawRepresentation)
+                if postponeCaliberation {
+                  return .staticStringLiteral(literal, rawRepresentation: rawRepresentation, hashCount: 0)
+                }
+
+                return caliberateMultlineStringLiteral()
+              } else {
+                literal.append("\"" as Character)
+                literal.append("\"" as Character)
               }
-
-              return caliberateMultlineStringLiteral()
             } else {
-              literal.append("\"" as Character)
               literal.append("\"" as Character)
             }
           } else {
-            literal.append("\"" as Character)
+            // Extended multiline: need """ followed by hashCount #s
+            if _scanner.peek() == "\"" && _scanner.peek(ahead: 1) == "\"" {
+              // Potential """ — check for hashCount #s after
+              var matched = true
+              for i in 0..<hashCount {
+                if _scanner.peek(ahead: 2 + i) != "#" {
+                  matched = false
+                  break
+                }
+              }
+              if matched {
+                // Consume "" (first " already appended to raw by appendRaw above)
+                consumeChar()
+                appendRaw()
+                consumeChar()
+                appendRaw()
+                consumeChar()
+                // Consume hashCount #s
+                rawRepresentation += hashDelimiter
+                _consume(nil, andAdvanceScannerBy: hashCount)
+
+                if postponeCaliberation {
+                  return .staticStringLiteral(literal, rawRepresentation: rawRepresentation, hashCount: hashCount)
+                }
+
+                return caliberateMultlineStringLiteral()
+              } else {
+                // Not closing delimiter — literal "
+                literal.append("\"" as Character)
+              }
+            } else {
+              literal.append("\"" as Character)
+            }
+          }
+        } else {
+          if hashCount == 0 {
+            consumeChar()
+            return .staticStringLiteral(literal, rawRepresentation: rawRepresentation, hashCount: 0)
+          } else {
+            // Check for hashCount #s after "
+            var matched = true
+            for i in 0..<hashCount {
+              if _scanner.peek(ahead: i) != "#" {
+                matched = false
+                break
+              }
+            }
+            if matched {
+              rawRepresentation += hashDelimiter
+              _consume(nil, andAdvanceScannerBy: 1 + hashCount)
+              return .staticStringLiteral(literal, rawRepresentation: rawRepresentation, hashCount: hashCount)
+            } else {
+              // Not closing delimiter — literal "
+              literal.append("\"" as Character)
+            }
+          }
+        }
+      case .backslash:
+        if hashCount > 0 {
+          // Extended string: \ is only an escape if followed by hashCount #s
+          var isEscape = true
+          for i in 0..<hashCount {
+            if _scanner.peek(ahead: i) != "#" {
+              isEscape = false
+              break
+            }
+          }
+          if !isEscape {
+            // Literal backslash in extended string
+            literal.append("\\" as Character)
+            break
+          }
+          // Extended escape: consume \ and hashCount #s
+          consumeChar()
+          for _ in 0..<hashCount {
+            appendRaw()
+            consumeChar()
           }
         } else {
           consumeChar()
-          return .staticStringLiteral(literal, rawRepresentation: rawRepresentation)
         }
-      case .backslash: // escaping
-        consumeChar()
 
+        // Process the escape character (shared for both paths)
         appendRaw()
         switch char.unicodeScalar {
         case "(": // head of an interpolated string literal
           consumeChar()
-          return .interpolatedStringLiteralHead(literal, rawRepresentation: rawRepresentation)
+          return .interpolatedStringLiteralHead(literal, rawRepresentation: rawRepresentation, hashCount: hashCount)
         case "0":
           literal.append("\0" as Character)
         case "\\":

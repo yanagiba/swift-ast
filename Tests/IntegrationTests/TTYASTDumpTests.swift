@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import XCTest
 
+@testable import Diagnostic
 @testable import Frontend
 @testable import Parser
 
@@ -36,6 +37,10 @@ class TTYASTDumpTests : XCTestCase {
       "SelectorExpression",
       "KeyPathExpression",
       "KeyPathStringExpression",
+      "IfExpression",
+      "SwitchExpression",
+      "ConditionalCompilationExpression",
+      "MacroExpansionExpression",
 
       // postfix expressions
       "PostfixOperatorExpression",
@@ -57,6 +62,9 @@ class TTYASTDumpTests : XCTestCase {
       "TernaryConditionalOperatorExpression",
       "TypeCastingOperatorExpression",
       "SequenceExpression",
+
+      // await expression
+      "AwaitExpression",
 
       // try expression
       "TryOperatorExpression",
@@ -93,11 +101,13 @@ class TTYASTDumpTests : XCTestCase {
       "StructDeclaration",
       "SubscriptDeclaration",
       "TypealiasDeclaration",
+      "ActorDeclaration",
+      "MacroDeclaration",
       "VariableDeclaration",
     ]
     for testName in testNames {
-      testIntegration(resourceName, testName) { source -> String in
-        let parser = Parser(source: source)
+      testIntegration(resourceName, testName) { source, diagnosticPool -> String in
+        let parser = Parser(source: source, diagnosticPool: diagnosticPool)
         guard let topLevelDecl = try? parser.parse() else {
           return "error: failed in parsing the source \(source.identifier)."
         }
@@ -105,8 +115,4 @@ class TTYASTDumpTests : XCTestCase {
       }
     }
   }
-
-  static var allTests = [
-    ("testASTDump", testASTDump),
-  ]
 }

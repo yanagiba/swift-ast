@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -61,6 +61,18 @@ class ParserFunctionTypeTests: XCTestCase {
     parseTypeAndTest("(a, @x inout a) -> (@y inout b) -> (c)", "(a, @x inout a) -> (@y inout b) -> (c)")
   }
 
+  func testArgumentOwnershipModifierModel() {
+    parseTypeAndTest("(inout foo, borrowing bar, consuming baz) -> qux", "(inout foo, borrowing bar, consuming baz) -> qux", testClosure: { type in
+      guard let functionType = type as? FunctionType else {
+        XCTFail("Failed in converting to a function type.")
+        return
+      }
+      XCTAssertEqual(functionType.arguments[0].ownershipModifier, .inout)
+      XCTAssertEqual(functionType.arguments[1].ownershipModifier, .borrowing)
+      XCTAssertEqual(functionType.arguments[2].ownershipModifier, .consuming)
+    })
+  }
+
   func testArgumentName() {
     parseTypeAndTest("(i: foo) -> bar", "(i: foo) -> bar")
     parseTypeAndTest("(i: @a @b @c foo) -> bar", "(i: @a @b @c foo) -> bar")
@@ -87,6 +99,78 @@ class ParserFunctionTypeTests: XCTestCase {
     parseTypeAndTest("(_ i: foo, _ j: bar) -> bar", "(_ i: foo, _ j: bar) -> bar")
   }
 
+  func testAsyncFunctionType() {
+    parseTypeAndTest("(foo) async -> bar", "(foo) async -> bar", testClosure: { type in
+      guard let functionType = type as? FunctionType else {
+        XCTFail("Failed in converting to a function type.")
+        return
+      }
+
+      XCTAssertTrue(functionType.isAsync)
+      XCTAssertEqual(functionType.throwsKind, .nothrowing)
+      XCTAssertEqual(functionType.arguments.count, 1)
+    })
+  }
+
+  func testAsyncThrowsFunctionType() {
+    parseTypeAndTest("(foo) async throws -> bar", "(foo) async throws -> bar", testClosure: { type in
+      guard let functionType = type as? FunctionType else {
+        XCTFail("Failed in converting to a function type.")
+        return
+      }
+
+      XCTAssertTrue(functionType.isAsync)
+      XCTAssertEqual(functionType.throwsKind, .throwing)
+    })
+  }
+
+  func testAsyncRethrowsFunctionType() {
+    parseTypeAndTest("(foo) async rethrows -> bar", "(foo) async rethrows -> bar", testClosure: { type in
+      guard let functionType = type as? FunctionType else {
+        XCTFail("Failed in converting to a function type.")
+        return
+      }
+
+      XCTAssertTrue(functionType.isAsync)
+      XCTAssertEqual(functionType.throwsKind, .rethrowing)
+    })
+  }
+
+  func testNonAsyncFunctionType() {
+    parseTypeAndTest("(foo) -> bar", "(foo) -> bar", testClosure: { type in
+      guard let functionType = type as? FunctionType else {
+        XCTFail("Failed in converting to a function type.")
+        return
+      }
+
+      XCTAssertFalse(functionType.isAsync)
+    })
+  }
+
+  func testTypedThrowsFunctionType() {
+    parseTypeAndTest("(foo) throws(MyError) -> bar", "(foo) throws(MyError) -> bar", testClosure: { type in
+      guard let functionType = type as? FunctionType else {
+        XCTFail("Failed in converting to a function type.")
+        return
+      }
+
+      XCTAssertFalse(functionType.isAsync)
+      XCTAssertEqual(functionType.throwsKind, .typedThrowing(TypeIdentifier(names: [TypeIdentifier.TypeName(name: .name("MyError"))])))
+    })
+  }
+
+  func testAsyncTypedThrowsFunctionType() {
+    parseTypeAndTest("(foo) async throws(NetworkError) -> bar", "(foo) async throws(NetworkError) -> bar", testClosure: { type in
+      guard let functionType = type as? FunctionType else {
+        XCTFail("Failed in converting to a function type.")
+        return
+      }
+
+      XCTAssertTrue(functionType.isAsync)
+      XCTAssertEqual(functionType.throwsKind.textDescription, "throws(NetworkError)")
+    })
+  }
+
   func testSourceRange() {
     parseTypeAndTest("(foo) -> bar", "(foo) -> bar", testClosure: { type in
       XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 13))
@@ -95,19 +179,4 @@ class ParserFunctionTypeTests: XCTestCase {
       XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 21))
     })
   }
-
-  static var allTests = [
-    ("testFunctionTypes", testFunctionTypes),
-    ("testThrowsException", testThrowsException),
-    ("testRethrowsException", testRethrowsException),
-    ("testReturnsFunctionType", testReturnsFunctionType),
-    ("testArgumentAttributes", testArgumentAttributes),
-    ("testArgumentInout", testArgumentInout),
-    ("testArgumentAttributesAndInout", testArgumentAttributesAndInout),
-    ("testArgumentName", testArgumentName),
-    ("testArgumentVariadic", testArgumentVariadic),
-    ("testAttributedFuncType", testAttributedFuncType),
-    ("testOuterName", testOuterName),
-    ("testSourceRange", testSourceRange),
-  ]
 }

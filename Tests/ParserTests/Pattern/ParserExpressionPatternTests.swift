@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,12 +20,11 @@ import XCTest
 
 class ParserExpressionPatternTests: XCTestCase {
   func testNotInMatchingPattern() {
-    let expct = expectation(description:
-      "Expect an error because expression-pattern is not allowed when is parsed out of matching pattern context.")
+    var didError = false
     parsePatternAndTest("0", "", errorClosure: { _ in
-      expct.fulfill()
+      didError = true
     })
-    waitForExpectations(timeout: 3)
+    XCTAssertTrue(didError)
   }
 
   func testRawValues() {
@@ -101,15 +100,4 @@ class ParserExpressionPatternTests: XCTestCase {
       XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 13))
     })
   }
-
-  static var allTests = [
-    ("testNotInMatchingPattern", testNotInMatchingPattern),
-    ("testRawValues", testRawValues),
-    ("testRawValuesInTuples", testRawValuesInTuples),
-    ("testInVarDecl", testInVarDecl),
-    ("testCastRawValue", testCastRawValue),
-    ("testSelfExpr", testSelfExpr),
-    ("testRangeInCase", testRangeInCase),
-    ("testSourceRange", testSourceRange),
-  ]
 }

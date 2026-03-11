@@ -1,0 +1,42 @@
+top_level_decl <range: TTYASTDumpTestResources/IfExpressionTests.swift:17:1-19:40>
+  const_decl <range: TTYASTDumpTestResources/IfExpressionTests.swift:17:1-17:33>
+    pattern: x
+      if_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:17:9-17:33>
+        conditions:
+        0: literal_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:17:12-17:16>
+          kind: `bool`, literal: `true`
+        literal_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:17:19-17:20>
+          kind: `int`, literal: `1`, raw_text: `1`
+        else:
+        literal_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:17:30-17:31>
+          kind: `int`, literal: `2`, raw_text: `2`
+  const_decl <range: TTYASTDumpTestResources/IfExpressionTests.swift:18:1-18:46>
+    pattern: y
+      if_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:18:9-18:46>
+        conditions:
+        0: identifier_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:18:12-18:13>
+          kind: `identifier`, identifier: `a`
+        literal_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:18:16-18:17>
+          kind: `int`, literal: `1`, raw_text: `1`
+        elseif:
+        if_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:18:25-18:46>
+          conditions:
+          0: identifier_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:18:28-18:29>
+            kind: `identifier`, identifier: `b`
+          literal_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:18:32-18:33>
+            kind: `int`, literal: `2`, raw_text: `2`
+          else:
+          literal_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:18:43-18:44>
+            kind: `int`, literal: `3`, raw_text: `3`
+  const_decl <range: TTYASTDumpTestResources/IfExpressionTests.swift:19:1-19:40>
+    pattern: z
+      if_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:19:9-19:40>
+        conditions:
+        0: constant_optional_binding: `x`
+          identifier_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:19:20-19:23>
+            kind: `identifier`, identifier: `foo`
+        identifier_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:19:26-19:27>
+          kind: `identifier`, identifier: `x`
+        else:
+        literal_expr <range: TTYASTDumpTestResources/IfExpressionTests.swift:19:37-19:38>
+          kind: `int`, literal: `0`, raw_text: `0`

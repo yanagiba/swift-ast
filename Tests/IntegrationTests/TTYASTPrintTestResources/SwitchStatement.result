@@ -33,3 +33,13 @@ case zero ..< 5:
 default:
   print("more than 5")
 }
+switch x {
+case 1:
+  one()
+#if DEBUG
+case 99:
+  debug()
+#endif
+default:
+  other()
+}

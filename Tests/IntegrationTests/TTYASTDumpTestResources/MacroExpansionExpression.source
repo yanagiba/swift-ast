@@ -1,0 +1,4 @@
+_ = #file
+_ = #line
+#warning("this is a warning")
+#error("this is an error")

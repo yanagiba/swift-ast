@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2019, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ extension Token.Kind {
       (.integerLiteral, .integerLiteral),
       (.floatingPointLiteral, .floatingPointLiteral),
       (.staticStringLiteral, .staticStringLiteral),
+      (.regexLiteral, .regexLiteral),
       (.interpolatedStringLiteralHead, .interpolatedStringLiteralHead),
       (.booleanLiteral, .booleanLiteral),
       (.convenience, .convenience),
@@ -61,9 +62,11 @@ extension Token.Kind {
       (.final, .final),
       (.lazy, .lazy),
       (.mutating, .mutating),
+      (.nonisolated, .nonisolated),
       (.nonmutating, .nonmutating),
       (.optional, .optional),
       (.override, .override),
+      (.package, .package),
       (.required, .required),
       (.static, .static),
       (.unowned, .unowned),
@@ -75,10 +78,14 @@ extension Token.Kind {
       (.open, .open),
       (.as, .as),
       (.associativity, .associativity),
+      (.async, .async),
+      (.await, .await),
+      (.borrowing, .borrowing),
       (.break, .break),
       (.catch, .catch),
       (.case, .case),
       (.class, .class),
+      (.consuming, .consuming),
       (.continue, .continue),
       (.default, .default),
       (.defer, .defer),

@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
    limitations under the License.
 */
 
-public struct Version {
+public struct Version: Sendable {
   public let library: String
   public let swift: String
 
-  public static let current = Version(library: "0.19.10", swift: "5.1")
+  public static let current = Version(library: "0.26.3", swift: "6.0")
 }

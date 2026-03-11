@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -54,39 +54,46 @@ class ParserTypeInheritanceClauseTests: XCTestCase {
 
   func testNoColon() {
     let typeParser = getParser("A, B, C")
-    let nilExpectation = expectation(description: "Expect type inheritance clause to be nil.")
     do {
       if let _ = try typeParser.parseTypeInheritanceClause() {
         XCTFail("Should not get a type inheritance clause.")
-      } else {
-        nilExpectation.fulfill()
       }
     } catch {
       XCTFail("Caught exception when getting a type inheritance clause.")
     }
-    waitForExpectations(timeout: 3)
   }
 
   func testClassRequirementMustBeTheFirst() {
     let typeParser = getParser(": A, class, B")
-    let nilExpectation = expectation(description: "Expect type inheritance clause to be nil.")
     do {
       _ = try typeParser.parseTypeInheritanceClause()
       XCTFail("Should not get a type inheritance clause.")
     } catch {
-      nilExpectation.fulfill()
+      // Expected: class requirement must be first
     }
-    waitForExpectations(timeout: 3)
   }
 
-  static var allTests = [
-    ("testClassRequirement", testClassRequirement),
-    ("testTypeInheritanceList", testTypeInheritanceList),
-    ("testBothClassAndTypeInheritanceList", testBothClassAndTypeInheritanceList),
-    ("testTypeInheritanceListWithMultipleTypes", testTypeInheritanceListWithMultipleTypes),
-    ("testNoColon", testNoColon),
-    ("testClassRequirementMustBeTheFirst", testClassRequirementMustBeTheFirst),
-  ]
+  func testSuppressedConformance() {
+    parseTypeInheritanceClauseAndTest(": ~Copyable") {
+      XCTAssertFalse($0.classRequirement)
+      XCTAssertEqual($0.typeInheritanceList.count, 1)
+      XCTAssertTrue($0.typeInheritanceList[0].isSuppressed)
+      XCTAssertEqual($0.typeInheritanceList[0].type.textDescription, "Copyable")
+      XCTAssertEqual($0.textDescription, ": ~Copyable")
+    }
+  }
+
+  func testMixedSuppressedAndNormal() {
+    parseTypeInheritanceClauseAndTest(": Equatable, ~Copyable") {
+      XCTAssertFalse($0.classRequirement)
+      XCTAssertEqual($0.typeInheritanceList.count, 2)
+      XCTAssertFalse($0.typeInheritanceList[0].isSuppressed)
+      XCTAssertEqual($0.typeInheritanceList[0].type.textDescription, "Equatable")
+      XCTAssertTrue($0.typeInheritanceList[1].isSuppressed)
+      XCTAssertEqual($0.typeInheritanceList[1].type.textDescription, "Copyable")
+      XCTAssertEqual($0.textDescription, ": Equatable, ~Copyable")
+    }
+  }
 }
 
 fileprivate func parseTypeInheritanceClauseAndTest(_ content: String,

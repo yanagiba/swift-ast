@@ -20,21 +20,33 @@ import Frontend
 var filePaths = CommandLine.arguments
 filePaths.remove(at: 0)
 
+var ttyType: TTYType = .astText
+var isForGitHubIssue = false
+var noHeader = false
+
+while let first = filePaths.first, first.hasPrefix("-") {
+  filePaths.remove(at: 0)
+  switch first {
+  case "-github-issue":
+    isForGitHubIssue = true
+  case "-dump-ast":
+    ttyType = .astDump
+  case "-print-ast":
+    ttyType = .astPrint
+  case "-diagnostics-only":
+    ttyType = .diagnosticsOnly
+  case "-no-header":
+    noHeader = true
+  default:
+    break
+  }
+}
+
 let exitCode: Int32
-if filePaths.first == "-github-issue" {
-  filePaths.remove(at: 0)
+if isForGitHubIssue {
   exitCode = terminalMain(filePaths: filePaths, isForGitHubIssue: true)
-} else if filePaths.first == "-dump-ast" {
-  filePaths.remove(at: 0)
-  exitCode = terminalMain(filePaths: filePaths, ttyType: .astDump)
-} else if filePaths.first == "-print-ast" {
-  filePaths.remove(at: 0)
-  exitCode = terminalMain(filePaths: filePaths, ttyType: .astPrint)
-} else if filePaths.first == "-diagnostics-only" {
-  filePaths.remove(at: 0)
-  exitCode = terminalMain(filePaths: filePaths, ttyType: .diagnosticsOnly)
 } else {
-  exitCode = terminalMain(filePaths: filePaths)
+  exitCode = terminalMain(filePaths: filePaths, ttyType: ttyType, noHeader: noHeader)
 }
 
 exit(exitCode)

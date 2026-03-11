@@ -1,5 +1,5 @@
 /*
-   Copyright 2015 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-public struct SourceRange: Equatable, Hashable {
+public struct SourceRange: Equatable, Hashable, Sendable {
   // Note: range := [start..<end)
   public let start: SourceLocation
   public let end: SourceLocation

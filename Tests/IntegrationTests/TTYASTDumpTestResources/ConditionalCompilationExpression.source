@@ -1,0 +1,6 @@
+let x =
+#if os(macOS)
+  1
+#else
+  2
+#endif

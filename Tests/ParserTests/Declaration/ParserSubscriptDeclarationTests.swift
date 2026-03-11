@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -368,27 +368,4 @@ class ParserSubscriptDeclarationTests: XCTestCase {
       }
     )
   }
-
-  static var allTests = [
-    ("testSubscriptDecl", testSubscriptDecl),
-    // attributes/modifiers
-    ("testAttributes", testAttributes),
-    ("testModifiers", testModifiers),
-    ("testAttributeAndModifiers", testAttributeAndModifiers),
-    // parameter clause and result
-    ("testSingleParameter", testSingleParameter),
-    ("testMultipleParameters", testMultipleParameters),
-    ("testResultAttributes", testResultAttributes),
-    // generic parameter and where clauses
-    ("testGenericParameterClause", testGenericParameterClause),
-    ("testGenericWhereClause", testGenericWhereClause),
-    // code block
-    ("testCodeBlock", testCodeBlock),
-    // getter-setter block
-    ("testGetterSetterBlock", testGetterSetterBlock),
-    // getter-setter-keyword block
-    ("testGetterSetterKeywordBlock", testGetterSetterKeywordBlock),
-    // context
-    ("testSourceRange", testSourceRange),
-  ]
 }

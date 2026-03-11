@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2019, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ public class Lexer {
   var _loadedTokens: [Token]
   var _checkpoints: [String: [Token]]
   private var _consumedRoles: [Role]
+  private var _prevTokenCanEndExpr: Bool = false
   var _prevRole: Role {
     return _consumedRoles.last ?? .lineFeed
   }
@@ -224,7 +225,7 @@ public class Lexer {
   }
 
   func lex(previousRoles: [Role] = []) -> Token { // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
-    var location = _getCurrentLocation()
+    let location = _getCurrentLocation()
     var loadedRoles = previousRoles
     let head = char.role
 
@@ -234,6 +235,14 @@ public class Lexer {
 
     func produce(_ kind: Token.Kind) -> Token {
       let range = SourceRange(start: location, end: _getCurrentLocation())
+      switch kind {
+      case .lineFeed:
+        _prevTokenCanEndExpr = false
+      case .eof:
+        break
+      default:
+        _prevTokenCanEndExpr = kind.canEndExpression
+      }
       return Token(kind: kind, sourceRange: range, roles: loadedRoles)
     }
 
@@ -251,6 +260,22 @@ public class Lexer {
     case .lessThan, .greaterThan, .amp, .question, .exclaim:
       return produce(lexReservedOperator(prev: _prevRole))
     case .operatorHead:
+      if char.unicodeScalar == "/" && !_prevTokenCanEndExpr {
+        if let nc = _scanner.peek(),
+           nc != " " && nc != "\t" && nc != "\n" && nc != "\r"
+           && nc != "\0" && nc != "/" && nc != "*" {
+          let scannerCp = _scanner.checkPoint()
+          let savedRolesCount = _consumedRoles.count
+          _consume(.operatorHead)  // consume opening /
+          let result = lexBareRegexLiteral()
+          if case .regexLiteral = result {
+            return produce(result)
+          }
+          // Backtrack: restore scanner + truncate consumed roles
+          _scanner.restore(fromCheckpoint: scannerCp)
+          _consumedRoles.removeLast(_consumedRoles.count - savedRolesCount)
+        }
+      }
       return produce(lexOperator(prev: _prevRole))
     case .dotOperatorHead:
       guard _scanner.peek() == "." else {
@@ -321,6 +346,36 @@ public class Lexer {
       appendHead()
       return produce(.eof)
     /////////////////////////////////////////////////////////////
+    case .hash:
+      // Count consecutive #s via lookahead
+      var hashCount = 1
+      while _scanner.peek(ahead: hashCount - 1) == "#" {
+        hashCount += 1
+      }
+      let charAfterHashes = _scanner.peek(ahead: hashCount - 1)
+      // Check if character after all hashes is /  →  regex literal
+      if charAfterHashes == "/" {
+        for _ in 0..<hashCount {
+          _consume(.hash)
+        }
+        _consume()  // consume /
+        return produce(lexRegexLiteral(hashCount: hashCount))
+      }
+      // Check if character after all hashes is "  →  extended string literal
+      if charAfterHashes == "\"" {
+        for _ in 0..<hashCount {
+          _consume(.hash)
+        }
+        _consume(.doubleQuote)  // consume opening "
+        // Check for multiline: two more "s
+        if char.role == .doubleQuote && _scanner.peek() == "\"" {
+          _consume(andAdvanceScannerBy: 2)
+          return produce(lexStringLiteral(isMultiline: true, hashCount: hashCount))
+        }
+        return produce(lexStringLiteral(hashCount: hashCount))
+      }
+      // Not a regex or string — produce a single .hash token
+      return consumeAndProduce(.hash)
     default:
       if let kind = roleTokenKindMapping[head] {
         return consumeAndProduce(kind)
@@ -341,7 +396,6 @@ fileprivate let roleTokenKindMapping: [Role: Token.Kind] = [
   .rightSquare: .rightSquare,
   .equal: .assignmentOperator,
   .at: .at,
-  .hash: .hash,
   .backslash: .backslash,
   .colon: .colon,
   .comma: .comma,

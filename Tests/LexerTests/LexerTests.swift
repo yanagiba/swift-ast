@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -257,52 +257,34 @@ class LexerTests: XCTestCase {
         .floatingPointLiteral(1, rawRepresentation: "2")))
 
     XCTAssertTrue(
-      Token.Kind.staticStringLiteral("1", rawRepresentation: "2").isEqual(to:
-        .staticStringLiteral("1", rawRepresentation: "2")))
+      Token.Kind.staticStringLiteral("1", rawRepresentation: "2", hashCount: 0).isEqual(to:
+        .staticStringLiteral("1", rawRepresentation: "2", hashCount: 0)))
     XCTAssertFalse(
-      Token.Kind.staticStringLiteral("1", rawRepresentation: "2").isEqual(to:
-        .staticStringLiteral("2", rawRepresentation: "2")))
+      Token.Kind.staticStringLiteral("1", rawRepresentation: "2", hashCount: 0).isEqual(to:
+        .staticStringLiteral("2", rawRepresentation: "2", hashCount: 0)))
     XCTAssertFalse(
-      Token.Kind.staticStringLiteral("1", rawRepresentation: "1").isEqual(to:
-        .staticStringLiteral("1", rawRepresentation: "2")))
+      Token.Kind.staticStringLiteral("1", rawRepresentation: "1", hashCount: 0).isEqual(to:
+        .staticStringLiteral("1", rawRepresentation: "2", hashCount: 0)))
+    XCTAssertFalse(
+      Token.Kind.staticStringLiteral("1", rawRepresentation: "2", hashCount: 0).isEqual(to:
+        .staticStringLiteral("1", rawRepresentation: "2", hashCount: 1)))
 
     XCTAssertTrue(
-      Token.Kind.interpolatedStringLiteralHead("1", rawRepresentation: "2").isEqual(to:
-        .interpolatedStringLiteralHead("1", rawRepresentation: "2")))
+      Token.Kind.interpolatedStringLiteralHead("1", rawRepresentation: "2", hashCount: 0).isEqual(to:
+        .interpolatedStringLiteralHead("1", rawRepresentation: "2", hashCount: 0)))
     XCTAssertFalse(
-      Token.Kind.interpolatedStringLiteralHead("1", rawRepresentation: "2").isEqual(to:
-        .interpolatedStringLiteralHead("2", rawRepresentation: "2")))
+      Token.Kind.interpolatedStringLiteralHead("1", rawRepresentation: "2", hashCount: 0).isEqual(to:
+        .interpolatedStringLiteralHead("2", rawRepresentation: "2", hashCount: 0)))
     XCTAssertFalse(
-      Token.Kind.interpolatedStringLiteralHead("1", rawRepresentation: "1").isEqual(to:
-        .interpolatedStringLiteralHead("1", rawRepresentation: "2")))
+      Token.Kind.interpolatedStringLiteralHead("1", rawRepresentation: "1", hashCount: 0).isEqual(to:
+        .interpolatedStringLiteralHead("1", rawRepresentation: "2", hashCount: 0)))
+    XCTAssertFalse(
+      Token.Kind.interpolatedStringLiteralHead("1", rawRepresentation: "2", hashCount: 0).isEqual(to:
+        .interpolatedStringLiteralHead("1", rawRepresentation: "2", hashCount: 1)))
 
     XCTAssertTrue(Token.Kind.booleanLiteral(true).isEqual(toKindOf: .booleanLiteral(true)))
     XCTAssertTrue(Token.Kind.booleanLiteral(true).isEqual(toKindOf: .booleanLiteral(false)))
     XCTAssertTrue(Token.Kind.booleanLiteral(false).isEqual(to: .booleanLiteral(false)))
     XCTAssertFalse(Token.Kind.booleanLiteral(false).isEqual(to: .booleanLiteral(true)))
   }
-
-  static var allTests = [
-    ("testEmptyContent", testEmptyContent),
-    ("testArrow", testArrow),
-    ("testAssignmentOperator", testAssignmentOperator),
-    ("testAt", testAt),
-    ("testHash", testHash),
-    ("testBackslash", testBackslash),
-    ("testColon", testColon),
-    ("testComma", testComma),
-    ("testDot", testDot),
-    ("testSemicolon", testSemicolon),
-    ("testUnderscore", testUnderscore),
-    ("testLeftParen", testLeftParen),
-    ("testRightParen", testRightParen),
-    ("testLeftBrace", testLeftBrace),
-    ("testRightBrace", testRightBrace),
-    ("testLeftSquare", testLeftSquare),
-    ("testRightSquare", testRightSquare),
-    ("testAllSpacesAreSkipped", testAllSpacesAreSkipped),
-    ("testLineFeed", testLineFeed),
-    ("testSegmentShowUpAtInvalidLocation", testSegmentShowUpAtInvalidLocation),
-    ("testEqutables", testEqutables),
-  ]
 }

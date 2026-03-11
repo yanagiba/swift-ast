@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -45,6 +45,19 @@ private class AssignmentVisitor : ASTVisitor {
   func visit(_ codeBlock: CodeBlock) throws -> Bool {
     for stmt in codeBlock.statements {
       stmt.setLexicalParent(codeBlock)
+    }
+
+    return true
+  }
+
+  func visit(_ decl: ActorDeclaration) throws -> Bool {
+    for member in decl.members {
+      switch member {
+      case .declaration(let d):
+        d.setLexicalParent(decl)
+      case .compilerControl(let s):
+        s.setLexicalParent(decl)
+      }
     }
 
     return true
@@ -109,6 +122,15 @@ private class AssignmentVisitor : ASTVisitor {
     for param in decl.signature.parameterList {
       param.defaultArgumentClause?.setLexicalParent(decl)
     }
+
+    return true
+  }
+
+  func visit(_ decl: MacroDeclaration) throws -> Bool {
+    for param in decl.signature.parameterList {
+      param.defaultArgumentClause?.setLexicalParent(decl)
+    }
+    decl.definition?.setLexicalParent(decl)
 
     return true
   }
@@ -267,6 +289,8 @@ private class AssignmentVisitor : ASTVisitor {
         for s in stmts {
           s.setLexicalParent(stmt)
         }
+      case .compilerControl:
+        break
       }
     }
     return true
@@ -319,6 +343,14 @@ private class AssignmentVisitor : ASTVisitor {
     return true
   }
 
+  func visit(_ expr: ConditionalCompilationExpression) throws -> Bool {
+    expr.base.setLexicalParent(expr)
+    for clause in expr.clauses {
+      clause.expression.setLexicalParent(expr)
+    }
+    return true
+  }
+
   func visit(_ expr: ExplicitMemberExpression) throws -> Bool {
     switch expr.kind {
     case .tuple(let e, _):
@@ -357,12 +389,66 @@ private class AssignmentVisitor : ASTVisitor {
       }
     }
     expr.trailingClosure?.setLexicalParent(expr)
+    for (_, closure) in expr.additionalTrailingClosures {
+      closure.setLexicalParent(expr)
+    }
+
+    return true
+  }
+
+  func visit(_ expr: IfExpression) throws -> Bool {
+    expr.codeBlock.setLexicalParent(expr)
+
+    for condition in expr.conditionList {
+      switch condition {
+      case .expression(let e):
+        e.setLexicalParent(expr)
+      case .case(_, let e):
+        e.setLexicalParent(expr)
+      case .let(_, let e):
+        e.setLexicalParent(expr)
+      case .var(_, let e):
+        e.setLexicalParent(expr)
+      default:
+        continue
+      }
+    }
+
+    switch expr.elseClause {
+    case .else(let codeBlock):
+      codeBlock.setLexicalParent(expr)
+    case .elseif(let elseIfExpr):
+      elseIfExpr.setLexicalParent(expr)
+    }
 
     return true
   }
 
   func visit(_ expr: InitializerExpression) throws -> Bool {
     expr.postfixExpression.setLexicalParent(expr)
+    return true
+  }
+
+  func visit(_ expr: MacroExpansionExpression) throws -> Bool {
+    for arg in expr.argumentClause ?? [] {
+      switch arg {
+      case .expression(let e):
+        e.setLexicalParent(expr)
+      case .namedExpression(_, let e):
+        e.setLexicalParent(expr)
+      case .memoryReference(let e):
+        e.setLexicalParent(expr)
+      case .namedMemoryReference(_, let e):
+        e.setLexicalParent(expr)
+      default:
+        continue
+      }
+    }
+    expr.trailingClosure?.setLexicalParent(expr)
+    for (_, closure) in expr.additionalTrailingClosures {
+      closure.setLexicalParent(expr)
+    }
+
     return true
   }
 
@@ -373,9 +459,19 @@ private class AssignmentVisitor : ASTVisitor {
 
   func visit(_ expr: LiteralExpression) throws -> Bool {
     switch expr.kind {
-    case .interpolatedString(let es, _):
-      for e in es {
-        e.setLexicalParent(expr)
+    case .interpolatedString(let segments, _):
+      for segment in segments {
+        if case .interpolation(let args) = segment {
+          for arg in args {
+            switch arg {
+            case .expression(let argExpr), .namedExpression(_, let argExpr),
+                 .memoryReference(let argExpr), .namedMemoryReference(_, let argExpr):
+              argExpr.setLexicalParent(expr)
+            default:
+              break
+            }
+          }
+        }
       }
     case .array(let es):
       for e in es {
@@ -474,6 +570,28 @@ private class AssignmentVisitor : ASTVisitor {
       }
     }
 
+    return true
+  }
+
+  func visit(_ expr: SwitchExpression) throws -> Bool {
+    expr.expression.setLexicalParent(expr)
+    for c in expr.cases {
+      switch c {
+      case let .case(items, stmts):
+        for i in items {
+          i.whereExpression?.setLexicalParent(expr)
+        }
+        for s in stmts {
+          s.setLexicalParent(expr)
+        }
+      case .default(let stmts):
+        for s in stmts {
+          s.setLexicalParent(expr)
+        }
+      case .compilerControl:
+        break
+      }
+    }
     return true
   }
 

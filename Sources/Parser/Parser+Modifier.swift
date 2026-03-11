@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -49,6 +49,13 @@ extension Parser {
       return .infix
     case .lazy:
       return .lazy
+    case .nonisolated:
+      guard _lexer.match(.leftParen) else {
+        return .nonisolated
+      }
+      guard _lexer.match(.unsafe) else { return nil }
+      guard _lexer.match(.rightParen) else { return nil }
+      return .nonisolatedUnsafe
     case .optional:
       return .optional
     case .override:
@@ -114,6 +121,8 @@ extension Parser {
       return isSetKeyword() ? .publicSet : .public
     case .open:
       return isSetKeyword() ? .openSet : .open
+    case .package:
+      return isSetKeyword() ? .packageLevelSet : .packageLevel
     default:
       return nil
     }

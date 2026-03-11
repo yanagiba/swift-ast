@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import XCTest
 
+@testable import Diagnostic
 @testable import Frontend
 @testable import Parser
 
@@ -36,6 +37,8 @@ class TTYASTPrintTests : XCTestCase {
       "SelectorExpression",
       "KeyPathExpression",
       "KeyPathStringExpression",
+      "IfExpression",
+      "SwitchExpression",
 
       // postfix expressions
       "PostfixOperatorExpression",
@@ -96,8 +99,8 @@ class TTYASTPrintTests : XCTestCase {
       "VariableDeclaration",
     ]
     for testName in testNames {
-      testIntegration(resourceName, testName) { source -> String in
-        let parser = Parser(source: source)
+      testIntegration(resourceName, testName) { source, diagnosticPool -> String in
+        let parser = Parser(source: source, diagnosticPool: diagnosticPool)
         guard let topLevelDecl = try? parser.parse() else {
           return "error: failed in parsing the source \(source.identifier)."
         }
@@ -105,8 +108,4 @@ class TTYASTPrintTests : XCTestCase {
       }
     }
   }
-
-  static var allTests = [
-    ("testASTPrint", testASTPrint),
-  ]
 }

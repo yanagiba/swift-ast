@@ -1,5 +1,5 @@
 /*
-   Copyright 2015-2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2015-2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -171,13 +171,13 @@ func parseProblematic(
     }
   }
 
-  DiagnosticPool.shared.clear()
+  let diagnosticPool = DiagnosticPool()
   do {
-    _ = try getParser(content).parse()
+    _ = try getParser(content, diagnosticPool: diagnosticPool).parse()
   } catch {}
 
   let diagnosticConsumer = TestParserDiagnosticConsumer()
-  DiagnosticPool.shared.report(withConsumer: diagnosticConsumer)
+  diagnosticPool.report(withConsumer: diagnosticConsumer)
   let diagnostics = diagnosticConsumer.diagnostics
   switch diagnostics.count {
   case 0:
@@ -194,9 +194,9 @@ func parseProblematic(
   }
 }
 
-func getParser(_ content: String) -> Parser {
+func getParser(_ content: String, diagnosticPool: DiagnosticPool = DiagnosticPool()) -> Parser {
   let source = SourceFile(path: sourcePath, content: content)
-  return Parser(source: source)
+  return Parser(source: source, diagnosticPool: diagnosticPool)
 }
 
 func parse(_ content: String) -> TopLevelDeclaration {

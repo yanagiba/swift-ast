@@ -1,7 +1,7 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
-   Licensed under the Apache License, Version 20 (the "License");
+   Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
 
@@ -16,6 +16,7 @@
 
 public enum DeclarationModifier: Equatable {
   case `class`, convenience, dynamic, final, infix, lazy
+  case nonisolated, nonisolatedUnsafe
   case optional, override, postfix, prefix, required, `static`
   case unowned, unownedSafe, unownedUnsafe, weak
   case accessLevel(AccessLevelModifier)
@@ -37,6 +38,10 @@ extension DeclarationModifier : ASTTextRepresentable {
       return "infix"
     case .lazy:
       return "lazy"
+    case .nonisolated:
+      return "nonisolated"
+    case .nonisolatedUnsafe:
+      return "nonisolated(unsafe)"
     case .optional:
       return "optional"
     case .override:

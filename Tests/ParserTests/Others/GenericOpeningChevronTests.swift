@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -38,11 +38,4 @@ class GenericOpeningChevronTests: XCTestCase {
     let result = parse("func simpleMax <T: Comparable>(_ x: T, _ y: T) -> T")
     XCTAssertEqual(result.statements[0].textDescription, "func simpleMax<T: Comparable>(_ x: T, _ y: T) -> T")
   }
-
-  static var allTests = [
-    ("testArgumentOpeningChevronImmediatelyFollow", testArgumentOpeningChevronImmediatelyFollow),
-    ("testArgumentOpeningChevronNoNeedImmediatelyFollow", testArgumentOpeningChevronNoNeedImmediatelyFollow),
-    ("testParameterOpeningChevronImmediatelyFollow", testParameterOpeningChevronImmediatelyFollow),
-    ("testParameterOpeningChevronNoNeedImmediatelyFollow", testParameterOpeningChevronNoNeedImmediatelyFollow),
-  ]
 }

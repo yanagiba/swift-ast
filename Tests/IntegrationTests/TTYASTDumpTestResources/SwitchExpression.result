@@ -1,0 +1,40 @@
+top_level_decl <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:17:1-30:2>
+  const_decl <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:17:1-22:2>
+    pattern: x
+      switch_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:17:9-22:2>
+        identifier_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:17:16-17:19>
+          kind: `identifier`, identifier: `val`
+        cases:
+        0: kind: `case`
+          items:
+          0: pattern: `1`
+          identifier_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:19:3-19:6>
+            kind: `identifier`, identifier: `foo`
+        1: kind: `default`
+          identifier_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:21:3-21:6>
+            kind: `identifier`, identifier: `bar`
+  const_decl <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:23:1-30:2>
+    pattern: y
+      switch_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:23:9-30:2>
+        identifier_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:23:16-23:25>
+          kind: `identifier`, identifier: `direction`
+        cases:
+        0: kind: `case`
+          items:
+          0: pattern: `.north`
+          function_call_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:25:3-25:12>
+            identifier_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:25:3-25:10>
+              kind: `identifier`, identifier: `goNorth`
+            arguments: <empty>
+        1: kind: `case`
+          items:
+          0: pattern: `.south`
+          function_call_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:27:3-27:12>
+            identifier_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:27:3-27:10>
+              kind: `identifier`, identifier: `goSouth`
+            arguments: <empty>
+        2: kind: `default`
+          function_call_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:29:3-29:9>
+            identifier_expr <range: TTYASTDumpTestResources/SwitchExpressionTests.swift:29:3-29:7>
+              kind: `identifier`, identifier: `stop`
+            arguments: <empty>

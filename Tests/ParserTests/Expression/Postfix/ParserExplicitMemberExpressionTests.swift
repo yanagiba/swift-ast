@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -174,6 +174,119 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
     }
   }
 
+  func testPostfixConditionalCompilation() {
+    let src = "foo\n#if DEBUG\n.bar\n#else\n.baz\n#endif"
+    let expected = "foo\n#if DEBUG\n.bar\n#else\n.baz\n#endif"
+    parseExpressionAndTest(src, expected, testClosure: { expr in
+      guard let condCompExpr = expr as? ConditionalCompilationExpression else {
+        XCTFail("Failed in getting a conditional compilation expression")
+        return
+      }
+      XCTAssertTrue(condCompExpr.base is IdentifierExpression)
+      XCTAssertEqual(condCompExpr.clauses.count, 2)
+
+      guard case .if(let cond) = condCompExpr.clauses[0].condition.kind else {
+        XCTFail("Expected #if clause")
+        return
+      }
+      guard case .identifier(let name) = cond else {
+        XCTFail("Expected identifier condition")
+        return
+      }
+      XCTAssertEqual(name, "DEBUG")
+      XCTAssertEqual(condCompExpr.clauses[0].expression.textDescription, "foo.bar")
+
+      guard case .else = condCompExpr.clauses[1].condition.kind else {
+        XCTFail("Expected #else clause")
+        return
+      }
+      XCTAssertEqual(condCompExpr.clauses[1].expression.textDescription, "foo.baz")
+
+      guard case .endif = condCompExpr.endifStatement.kind else {
+        XCTFail("Expected #endif")
+        return
+      }
+    })
+  }
+
+  func testPostfixConditionalCompilationIfOnly() {
+    let src = "foo\n#if DEBUG\n.bar\n#endif"
+    let expected = "foo\n#if DEBUG\n.bar\n#endif"
+    parseExpressionAndTest(src, expected, testClosure: { expr in
+      guard let condCompExpr = expr as? ConditionalCompilationExpression else {
+        XCTFail("Failed in getting a conditional compilation expression")
+        return
+      }
+      XCTAssertTrue(condCompExpr.base is IdentifierExpression)
+      XCTAssertEqual(condCompExpr.clauses.count, 1)
+
+      guard case .if(let cond) = condCompExpr.clauses[0].condition.kind else {
+        XCTFail("Expected #if clause")
+        return
+      }
+      guard case .identifier(let name) = cond else {
+        XCTFail("Expected identifier condition")
+        return
+      }
+      XCTAssertEqual(name, "DEBUG")
+      XCTAssertEqual(condCompExpr.clauses[0].expression.textDescription, "foo.bar")
+    })
+  }
+
+  func testPostfixConditionalCompilationWithElseIf() {
+    let src = "foo\n#if DEBUG\n.bar\n#elseif RELEASE\n.baz\n#else\n.qux\n#endif"
+    let expected = "foo\n#if DEBUG\n.bar\n#elseif RELEASE\n.baz\n#else\n.qux\n#endif"
+    parseExpressionAndTest(src, expected, testClosure: { expr in
+      guard let condCompExpr = expr as? ConditionalCompilationExpression else {
+        XCTFail("Failed in getting a conditional compilation expression")
+        return
+      }
+      XCTAssertTrue(condCompExpr.base is IdentifierExpression)
+      XCTAssertEqual(condCompExpr.clauses.count, 3)
+
+      guard case .if(let cond1) = condCompExpr.clauses[0].condition.kind else {
+        XCTFail("Expected #if clause")
+        return
+      }
+      guard case .identifier(let name1) = cond1 else {
+        XCTFail("Expected identifier condition for #if")
+        return
+      }
+      XCTAssertEqual(name1, "DEBUG")
+      XCTAssertEqual(condCompExpr.clauses[0].expression.textDescription, "foo.bar")
+
+      guard case .elseif(let cond2) = condCompExpr.clauses[1].condition.kind else {
+        XCTFail("Expected #elseif clause")
+        return
+      }
+      guard case .identifier(let name2) = cond2 else {
+        XCTFail("Expected identifier condition for #elseif")
+        return
+      }
+      XCTAssertEqual(name2, "RELEASE")
+      XCTAssertEqual(condCompExpr.clauses[1].expression.textDescription, "foo.baz")
+
+      guard case .else = condCompExpr.clauses[2].condition.kind else {
+        XCTFail("Expected #else clause")
+        return
+      }
+      XCTAssertEqual(condCompExpr.clauses[2].expression.textDescription, "foo.qux")
+    })
+  }
+
+  func testPostfixConditionalCompilationWithContinuation() {
+    let src = "foo\n#if DEBUG\n.bar\n#endif\n.baz"
+    parseExpressionAndTest(src, "foo\n#if DEBUG\n.bar\n#endif.baz", testClosure: { expr in
+      guard let explicitMemberExpr = expr as? ExplicitMemberExpression,
+        case let .namedType(postfixExpr, identifier) = explicitMemberExpr.kind else {
+        XCTFail("Failed in getting an explicit member expression after conditional compilation")
+        return
+      }
+      ASTTextEqual(identifier, "baz")
+      XCTAssertTrue(postfixExpr is ConditionalCompilationExpression)
+    })
+  }
+
   func testSourceRange() {
     let testExprs: [(testString: String, expectedEndColumn: Int)] = [
       ("foo.0", 6),
@@ -220,16 +333,4 @@ class ParserExplicitMemberExpressionTests: XCTestCase {
       XCTAssertEqual(postfixExpr1.sourceRange, getRange(1, 1, 1, 5))
     })
   }
-
-  static var allTests = [
-    ("testTupleMember", testTupleMember),
-    ("testIdentifier", testIdentifier),
-    ("testGenericArgumentClause", testGenericArgumentClause),
-    ("testArgumentName", testArgumentName),
-    ("testUnderscoreAsArgumentName", testUnderscoreAsArgumentName),
-    ("testNested", testNested),
-    ("testImplicitParameterName", testImplicitParameterName),
-    ("testPostfixExpressionAsLiteralExpression", testPostfixExpressionAsLiteralExpression),
-    ("testSourceRange", testSourceRange),
-  ]
 }

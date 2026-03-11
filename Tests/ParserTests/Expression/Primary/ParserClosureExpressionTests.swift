@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -644,6 +644,253 @@ class ParserClosureExpressionTests: XCTestCase {
     parseExpressionAndTest("{ ($0, .region) }", "{ ($0, .region) }")
   }
 
+  func testAsync() {
+    parseExpressionAndTest("{ () async in }", "{ () async in }", testClosure: { expr in
+      guard let closureExpr = expr as? ClosureExpression else {
+        XCTFail("Failed in getting a closure expression.")
+        return
+      }
+
+      guard let signature = closureExpr.signature,
+        let clause = signature.parameterClause,
+        case .parameterList(let params) = clause else {
+        XCTFail("Failed in getting a closure signature.")
+        return
+      }
+      XCTAssertTrue(params.isEmpty)
+
+      XCTAssertNil(signature.captureList)
+      XCTAssertTrue(signature.isAsync)
+      XCTAssertFalse(signature.canThrow)
+      XCTAssertNil(signature.functionResult)
+
+      XCTAssertNil(closureExpr.statements)
+    })
+  }
+
+  func testAsyncThrows() {
+    parseExpressionAndTest("{ () async throws in }", "{ () async throws in }", testClosure: { expr in
+      guard let closureExpr = expr as? ClosureExpression else {
+        XCTFail("Failed in getting a closure expression.")
+        return
+      }
+
+      guard let signature = closureExpr.signature,
+        let clause = signature.parameterClause,
+        case .parameterList(let params) = clause else {
+        XCTFail("Failed in getting a closure signature.")
+        return
+      }
+      XCTAssertTrue(params.isEmpty)
+
+      XCTAssertNil(signature.captureList)
+      XCTAssertTrue(signature.isAsync)
+      XCTAssertTrue(signature.canThrow)
+      XCTAssertNil(signature.functionResult)
+
+      XCTAssertNil(closureExpr.statements)
+    })
+  }
+
+  func testAsyncWithResult() {
+    parseExpressionAndTest(
+      "{ () async -> Foo in }",
+      "{ () async -> Foo in }",
+      testClosure: { expr in
+      guard let closureExpr = expr as? ClosureExpression else {
+        XCTFail("Failed in getting a closure expression.")
+        return
+      }
+
+      guard let signature = closureExpr.signature else {
+        XCTFail("Failed in getting a closure signature.")
+        return
+      }
+
+      XCTAssertTrue(signature.isAsync)
+      XCTAssertFalse(signature.canThrow)
+      XCTAssertNotNil(signature.functionResult)
+    })
+  }
+
+  func testAsyncThrowsWithResult() {
+    parseExpressionAndTest(
+      "{ () async throws -> Foo in }",
+      "{ () async throws -> Foo in }",
+      testClosure: { expr in
+      guard let closureExpr = expr as? ClosureExpression else {
+        XCTFail("Failed in getting a closure expression.")
+        return
+      }
+
+      guard let signature = closureExpr.signature else {
+        XCTFail("Failed in getting a closure signature.")
+        return
+      }
+
+      XCTAssertTrue(signature.isAsync)
+      XCTAssertTrue(signature.canThrow)
+      XCTAssertNotNil(signature.functionResult)
+    })
+  }
+
+  func testAsyncIdentifierList() {
+    parseExpressionAndTest("{ a, b async in }", "{ a, b async in }", testClosure: { expr in
+      guard let closureExpr = expr as? ClosureExpression else {
+        XCTFail("Failed in getting a closure expression.")
+        return
+      }
+
+      guard let signature = closureExpr.signature else {
+        XCTFail("Failed in getting a closure signature.")
+        return
+      }
+
+      XCTAssertTrue(signature.isAsync)
+      XCTAssertFalse(signature.canThrow)
+    })
+  }
+
+  func testAsyncThrowsIdentifierList() {
+    parseExpressionAndTest("{ a, b async throws in }", "{ a, b async throws in }", testClosure: { expr in
+      guard let closureExpr = expr as? ClosureExpression else {
+        XCTFail("Failed in getting a closure expression.")
+        return
+      }
+
+      guard let signature = closureExpr.signature else {
+        XCTFail("Failed in getting a closure signature.")
+        return
+      }
+
+      XCTAssertTrue(signature.isAsync)
+      XCTAssertTrue(signature.canThrow)
+    })
+  }
+
+  func testAttributeOnly() {
+    parseExpressionAndTest("{ @Sendable in }", "{ @Sendable in }", testClosure: { expr in
+      guard let closureExpr = expr as? ClosureExpression else {
+        XCTFail("Failed in getting a closure expression.")
+        return
+      }
+
+      guard let signature = closureExpr.signature else {
+        XCTFail("Failed in getting a closure signature.")
+        return
+      }
+      XCTAssertEqual(signature.attributes.count, 1)
+      XCTAssertEqual(signature.attributes.textDescription, "@Sendable")
+      XCTAssertNil(signature.captureList)
+      XCTAssertNil(signature.parameterClause)
+      XCTAssertFalse(signature.isAsync)
+      XCTAssertFalse(signature.canThrow)
+      XCTAssertNil(signature.functionResult)
+
+      XCTAssertNil(closureExpr.statements)
+    })
+  }
+
+  func testAttributeWithParameters() {
+    parseExpressionAndTest(
+      "{ @Sendable (x: Int) -> Void in }",
+      "{ @Sendable (x: Int) -> Void in }",
+      testClosure: { expr in
+      guard let closureExpr = expr as? ClosureExpression else {
+        XCTFail("Failed in getting a closure expression.")
+        return
+      }
+
+      guard let signature = closureExpr.signature,
+        let clause = signature.parameterClause,
+        case .parameterList(let params) = clause else {
+        XCTFail("Failed in getting a closure signature.")
+        return
+      }
+      XCTAssertEqual(signature.attributes.count, 1)
+      XCTAssertEqual(signature.attributes.textDescription, "@Sendable")
+      XCTAssertEqual(params.count, 1)
+      XCTAssertEqual(params[0].name.textDescription, "x")
+      XCTAssertEqual(params[0].typeAnnotation?.textDescription, ": Int")
+      XCTAssertNotNil(signature.functionResult)
+      XCTAssertEqual(signature.functionResult?.type.textDescription, "Void")
+
+      XCTAssertNil(closureExpr.statements)
+    })
+  }
+
+  func testAttributeWithCaptureList() {
+    parseExpressionAndTest(
+      "{ @Sendable [weak self] in }",
+      "{ @Sendable [weak self] in }",
+      testClosure: { expr in
+      guard let closureExpr = expr as? ClosureExpression else {
+        XCTFail("Failed in getting a closure expression.")
+        return
+      }
+
+      guard let signature = closureExpr.signature,
+        let captureList = signature.captureList else {
+        XCTFail("Failed in getting a closure signature.")
+        return
+      }
+      XCTAssertEqual(captureList.count, 1)
+      XCTAssertEqual(captureList[0].specifier, .weak)
+      XCTAssertEqual(signature.attributes.count, 1)
+      XCTAssertEqual(signature.attributes.textDescription, "@Sendable")
+      XCTAssertNil(signature.parameterClause)
+
+      XCTAssertNil(closureExpr.statements)
+    })
+  }
+
+  func testAttributeWithIdentifierList() {
+    parseExpressionAndTest(
+      "{ @Sendable x, y in }",
+      "{ @Sendable x, y in }",
+      testClosure: { expr in
+      guard let closureExpr = expr as? ClosureExpression else {
+        XCTFail("Failed in getting a closure expression.")
+        return
+      }
+
+      guard let signature = closureExpr.signature,
+        let clause = signature.parameterClause,
+        case .identifierList(let ids) = clause else {
+        XCTFail("Failed in getting a closure signature.")
+        return
+      }
+      XCTAssertEqual(signature.attributes.count, 1)
+      XCTAssertEqual(signature.attributes.textDescription, "@Sendable")
+      ASTTextEqual(ids, ["x", "y"])
+
+      XCTAssertNil(closureExpr.statements)
+    })
+  }
+
+  func testMultipleClosureAttributes() {
+    parseExpressionAndTest(
+      "{ @Sendable @escaping in }",
+      "{ @Sendable @escaping in }",
+      testClosure: { expr in
+      guard let closureExpr = expr as? ClosureExpression else {
+        XCTFail("Failed in getting a closure expression.")
+        return
+      }
+
+      guard let signature = closureExpr.signature else {
+        XCTFail("Failed in getting a closure signature.")
+        return
+      }
+      XCTAssertEqual(signature.attributes.count, 2)
+      XCTAssertEqual(signature.attributes[0].name.textDescription, "Sendable")
+      XCTAssertEqual(signature.attributes[1].name.textDescription, "escaping")
+      XCTAssertNil(signature.parameterClause)
+
+      XCTAssertNil(closureExpr.statements)
+    })
+  }
+
   func testSourceRange() {
     let testExprs: [(testString: String, expectedEndColumn: Int)] = [
       ("{}", 3),
@@ -656,33 +903,4 @@ class ParserClosureExpressionTests: XCTestCase {
       })
     }
   }
-
-  static var allTests = [
-    ("testEmptyClosure", testEmptyClosure),
-    ("testSingleStatement", testSingleStatement),
-    ("testMultipleStatements", testMultipleStatements),
-    ("testOneCaptureItem", testOneCaptureItem),
-    ("testCaptureItemSpecifier", testCaptureItemSpecifier),
-    ("testMultiCaptureItem", testMultiCaptureItem),
-    ("testCaptureListAndStatements", testCaptureListAndStatements),
-    ("testEmptyParameterList", testEmptyParameterList),
-    ("testParamName", testParamName),
-    ("testParamNameAndTypeAnnotation", testParamNameAndTypeAnnotation),
-    ("testParamNameAndTypeAnnotationVarargs", testParamNameAndTypeAnnotationVarargs),
-    ("testMultipleParameters", testMultipleParameters),
-    ("testOneIdentifier", testOneIdentifier),
-    ("testMultipleIdentifiers", testMultipleIdentifiers),
-    ("testParameterListAndStatements", testParameterListAndStatements),
-    ("testIdentifierListAndStatements", testIdentifierListAndStatements),
-    ("testThrows", testThrows),
-    ("testFunctionResult", testFunctionResult),
-    ("testFunctionResultWithAttributes", testFunctionResultWithAttributes),
-    ("testThrowsAndFunctionResult", testThrowsAndFunctionResult),
-    ("testCaptureListAndFullSignature", testCaptureListAndFullSignature),
-    ("testStatementsStartWithLeftParen", testStatementsStartWithLeftParen),
-    ("testStatementStartWithLeftSquare", testStatementStartWithLeftSquare),
-    ("testStatementsStartWithIdentifier", testStatementsStartWithIdentifier),
-    ("testImplicitlyReturnTuple", testImplicitlyReturnTuple),
-    ("testSourceRange", testSourceRange),
-  ]
 }

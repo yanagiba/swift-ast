@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import XCTest
 
 @testable import AST
+@testable import Diagnostic
 
 class ParserTypeCastingPatternTests: XCTestCase {
   func testIsPattern() {
@@ -33,11 +34,12 @@ class ParserTypeCastingPatternTests: XCTestCase {
   }
 
   func testIsPatternOnlyAvilableInSwitchCase() {
-    let expct = expectation(description: "Expect an error because is-pattern is parsed out of switch-case.")
-    parsePatternAndTest("is Foo", "", errorClosure: { _ in
-      expct.fulfill()
-    })
-    waitForExpectations(timeout: 3)
+    var capturedError: Error?
+    parsePatternAndTest("is Foo", "", errorClosure: { capturedError = $0 })
+    guard let _ = capturedError as? DiagnosticStopper else {
+      XCTFail("Expected 'is Foo' to be rejected outside switch-case pattern matching")
+      return
+    }
   }
 
   func testAsPattern() {
@@ -63,11 +65,4 @@ class ParserTypeCastingPatternTests: XCTestCase {
       XCTAssertEqual(pttrn.sourceRange, getRange(1, 1, 1, 15))
     })
   }
-
-  static var allTests = [
-    ("testIsPattern", testIsPattern),
-    ("testIsPatternOnlyAvilableInSwitchCase", testIsPatternOnlyAvilableInSwitchCase),
-    ("testAsPattern", testAsPattern),
-    ("testSourceRange", testSourceRange),
-  ]
 }

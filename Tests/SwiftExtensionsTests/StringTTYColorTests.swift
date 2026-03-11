@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -42,9 +42,4 @@ class StringTTYColorTests : XCTestCase {
     XCTAssertEqual("abc".colored(with: .white), "\u{001B}[37mabc\u{001B}[0m")
     XCTAssertEqual("abc".colored(with: .default), "\u{001B}[0mabc\u{001B}[0m")
   }
-
-  static var allTests = [
-    ("testColorTTYCode", testColorTTYCode),
-    ("testColoredString", testColoredString),
-  ]
 }

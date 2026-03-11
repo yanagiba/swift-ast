@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -68,6 +68,7 @@ public class ProtocolDeclaration : ASTNode, Declaration {
     public let kind: InitializerDeclaration.InitKind
     public let genericParameter: GenericParameterClause?
     public let parameterList: [FunctionSignature.Parameter]
+    public let isAsync: Bool
     public let throwsKind: ThrowsKind
     public let genericWhere: GenericWhereClause?
 
@@ -77,6 +78,7 @@ public class ProtocolDeclaration : ASTNode, Declaration {
       kind: InitializerDeclaration.InitKind = .nonfailable,
       genericParameter: GenericParameterClause? = nil,
       parameterList: [FunctionSignature.Parameter] = [],
+      isAsync: Bool = false,
       throwsKind: ThrowsKind = .nothrowing,
       genericWhere: GenericWhereClause? = nil
     ) {
@@ -85,6 +87,7 @@ public class ProtocolDeclaration : ASTNode, Declaration {
       self.kind = kind
       self.genericParameter = genericParameter
       self.parameterList = parameterList
+      self.isAsync = isAsync
       self.throwsKind = throwsKind
       self.genericWhere = genericWhere
     }
@@ -223,9 +226,10 @@ extension ProtocolDeclaration.InitializerMember : ASTTextRepresentable {
     let headText = "\(attrsText)\(modifiersText)init\(kind.textDescription)"
     let genericParameterClauseText = genericParameter?.textDescription ?? ""
     let parameterText = "(\(parameterList.map({ $0.textDescription }).joined(separator: ", ")))"
+    let asyncText = isAsync ? " async" : ""
     let throwsKindText = throwsKind.textDescription.isEmpty ? "" : " \(throwsKind.textDescription)"
     let genericWhereClauseText = genericWhere.map({ " \($0.textDescription)" }) ?? ""
-    return "\(headText)\(genericParameterClauseText)\(parameterText)\(throwsKindText)\(genericWhereClauseText)"
+    return "\(headText)\(genericParameterClauseText)\(parameterText)\(asyncText)\(throwsKindText)\(genericWhereClauseText)"
   }
 }
 

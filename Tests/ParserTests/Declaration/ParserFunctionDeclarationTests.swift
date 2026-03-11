@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -558,6 +558,85 @@ class ParserFunctionDeclarationTests: XCTestCase {
     })
   }
 
+  func testAsyncFunction() {
+    parseDeclarationAndTest(
+      "func foo() async",
+      "func foo() async",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+
+      XCTAssertTrue(funcDecl.signature.isAsync)
+      XCTAssertEqual(funcDecl.signature.throwsKind, .nothrowing)
+      XCTAssertNil(funcDecl.signature.result)
+      XCTAssertEqual(funcDecl.signature.textDescription, "() async")
+    })
+  }
+
+  func testAsyncThrowsFunction() {
+    parseDeclarationAndTest(
+      "func foo(bar: Bar) async throws",
+      "func foo(bar: Bar) async throws",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+
+      XCTAssertTrue(funcDecl.signature.isAsync)
+      XCTAssertEqual(funcDecl.signature.throwsKind, .throwing)
+      XCTAssertNil(funcDecl.signature.result)
+      XCTAssertEqual(funcDecl.signature.textDescription, "(bar: Bar) async throws")
+    })
+  }
+
+  func testAsyncThrowsWithResult() {
+    parseDeclarationAndTest(
+      "func foo() async throws -> Foo",
+      "func foo() async throws -> Foo",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+
+      XCTAssertTrue(funcDecl.signature.isAsync)
+      XCTAssertEqual(funcDecl.signature.throwsKind, .throwing)
+      XCTAssertEqual(funcDecl.signature.result?.textDescription, "-> Foo")
+      XCTAssertEqual(funcDecl.signature.textDescription, "() async throws -> Foo")
+    })
+  }
+
+  func testAsyncWithResult() {
+    parseDeclarationAndTest(
+      "func fetch() async -> Data",
+      "func fetch() async -> Data",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+
+      XCTAssertTrue(funcDecl.signature.isAsync)
+      XCTAssertEqual(funcDecl.signature.throwsKind, .nothrowing)
+      XCTAssertEqual(funcDecl.signature.result?.textDescription, "-> Data")
+      XCTAssertEqual(funcDecl.signature.textDescription, "() async -> Data")
+    })
+  }
+
+  func testNonAsyncFunction() {
+    parseDeclarationAndTest("func foo()", "func foo()", testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+
+      XCTAssertFalse(funcDecl.signature.isAsync)
+    })
+  }
+
   func testGenericWhereClause() {
     parseDeclarationAndTest(
       "func foo<A>() where A == Foo",
@@ -767,33 +846,108 @@ class ParserFunctionDeclarationTests: XCTestCase {
     )
   }
 
-  static var allTests = [
-    ("testNameIdentifier", testNameIdentifier),
-    ("testNameOperator", testNameOperator),
-    ("testReservedOperators", testReservedOperators),
-    ("testAttributes", testAttributes),
-    ("testModifiers", testModifiers),
-    ("testAttributesAndModifiers", testAttributesAndModifiers),
-    ("testGenericParameterClause", testGenericParameterClause),
-    ("testParameter", testParameter),
-    ("testInoutParameter", testInoutParameter),
-    ("testSpecifyingArgumentLabels", testSpecifyingArgumentLabels),
-    ("testOmittingArgumentLabels", testOmittingArgumentLabels),
-    ("testParameterWithDefaultArgument", testParameterWithDefaultArgument),
-    ("testVariadicParameter", testVariadicParameter),
-    ("testProtocolCompositionParameter", testProtocolCompositionParameter),
-    ("testMultipleParameters", testMultipleParameters),
-    ("testFunctionThatThrows", testFunctionThatThrows),
-    ("testFunctionThatRethrows", testFunctionThatRethrows),
-    ("testFunctionResult", testFunctionResult),
-    ("testThrowsWithResult", testThrowsWithResult),
-    ("testRethrowsWithResult", testRethrowsWithResult),
-    ("testGenericWhereClause", testGenericWhereClause),
-    ("testFunctionBody", testFunctionBody),
-    ("testWhereClauseAndBody", testWhereClauseAndBody),
-    ("testArgumentCanHaveNoInternalName", testArgumentCanHaveNoInternalName),
-    ("testArgumentAsFunctionType", testArgumentAsFunctionType),
-    ("testOthers", testOthers),
-    ("testSourceRange", testSourceRange),
-  ]
+  func testTypedThrows() {
+    parseDeclarationAndTest(
+      "func foo(bar: Bar) throws(MyError) -> Foo",
+      "func foo(bar: Bar) throws(MyError) -> Foo",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+
+      XCTAssertEqual(funcDecl.signature.throwsKind.textDescription, "throws(MyError)")
+      XCTAssertEqual(funcDecl.signature.result?.textDescription, "-> Foo")
+    })
+  }
+
+  func testAsyncTypedThrows() {
+    parseDeclarationAndTest(
+      "func fetch() async throws(NetworkError) -> Data",
+      "func fetch() async throws(NetworkError) -> Data",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+
+      XCTAssertTrue(funcDecl.signature.isAsync)
+      XCTAssertEqual(funcDecl.signature.throwsKind.textDescription, "throws(NetworkError)")
+      XCTAssertEqual(funcDecl.signature.result?.textDescription, "-> Data")
+    })
+  }
+
+  func testBorrowingParameter() {
+    parseDeclarationAndTest(
+      "func foo(x: borrowing Int)",
+      "func foo(x: borrowing Int)",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+
+      XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
+      XCTAssertEqual(funcDecl.signature.parameterList[0].textDescription, "x: borrowing Int")
+    })
+  }
+
+  func testConsumingParameter() {
+    parseDeclarationAndTest(
+      "func foo(x: consuming String)",
+      "func foo(x: consuming String)",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+
+      XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
+      XCTAssertEqual(funcDecl.signature.parameterList[0].textDescription, "x: consuming String")
+    })
+  }
+
+  func testBorrowingAndConsumingParameters() {
+    parseDeclarationAndTest(
+      "func transfer(from source: borrowing Account, to dest: consuming Account)",
+      "func transfer(from source: borrowing Account, to dest: consuming Account)",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+      XCTAssertEqual(funcDecl.signature.parameterList.count, 2)
+      XCTAssertEqual(funcDecl.signature.parameterList[0].textDescription, "from source: borrowing Account")
+      XCTAssertEqual(funcDecl.signature.parameterList[1].textDescription, "to dest: consuming Account")
+    })
+  }
+
+  func testBorrowingGenericParameter() {
+    parseDeclarationAndTest(
+      "func process<T>(value: borrowing T)",
+      "func process<T>(value: borrowing T)",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+      XCTAssertNotNil(funcDecl.genericParameterClause)
+      XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
+      XCTAssertEqual(funcDecl.signature.parameterList[0].textDescription, "value: borrowing T")
+    })
+  }
+
+  func testConsumingWithReturnType() {
+    parseDeclarationAndTest(
+      "func take(item: consuming Widget) -> Receipt",
+      "func take(item: consuming Widget) -> Receipt",
+      testClosure: { decl in
+      guard let funcDecl = decl as? FunctionDeclaration else {
+        XCTFail("Failed in getting a function declaration.")
+        return
+      }
+      XCTAssertEqual(funcDecl.signature.parameterList.count, 1)
+      XCTAssertNotNil(funcDecl.signature.result)
+    })
+  }
 }

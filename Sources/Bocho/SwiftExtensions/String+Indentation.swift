@@ -27,4 +27,28 @@ public extension String {
       .map { String.indent + $0 }
       .joined(separator: "\n")
   }
+
+  /// Dedent a multiline string literal so its content starts at column 0.
+  ///
+  /// The raw text of a multiline `"""` literal includes the original source
+  /// indentation.  This normalises the content to column 0 so that helpers
+  /// like `.indented` can add the correct whitespace for the output context.
+  var dedentedMultilineString: String {
+    let stripped = drop(while: { $0 == "#" })
+    guard stripped.hasPrefix("\"\"\"") else { return self }
+
+    var lines = split(separator: "\n", omittingEmptySubsequences: false)
+    guard lines.count > 1 else { return self }
+
+    let lastLine = lines[lines.count - 1]
+    let indent = lastLine.prefix(while: { $0 == " " || $0 == "\t" })
+    guard !indent.isEmpty else { return self }
+
+    for i in 1..<lines.count {
+      if lines[i].hasPrefix(indent) {
+        lines[i] = lines[i].dropFirst(indent.count)
+      }
+    }
+    return lines.joined(separator: "\n")
+  }
 }

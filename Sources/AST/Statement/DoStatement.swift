@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -31,10 +31,12 @@ public class DoStatement : ASTNode, Statement {
       self.codeBlock = codeBlock
     }
   }
+  public let throwsKind: ThrowsKind
   public let codeBlock: CodeBlock
   public private(set) var catchClauses: [CatchClause]
 
-  public init(codeBlock: CodeBlock, catchClauses: [CatchClause] = []) {
+  public init(throwsKind: ThrowsKind = .nothrowing, codeBlock: CodeBlock, catchClauses: [CatchClause] = []) {
+    self.throwsKind = throwsKind
     self.codeBlock = codeBlock
     self.catchClauses = catchClauses
   }
@@ -49,7 +51,11 @@ public class DoStatement : ASTNode, Statement {
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
-    return (["do \(codeBlock.textDescription)"] +
+    var doText = "do"
+    if throwsKind != .nothrowing {
+      doText += " \(throwsKind.textDescription)"
+    }
+    return (["\(doText) \(codeBlock.textDescription)"] +
       catchClauses.map({ $0.textDescription })).joined(separator: " ")
   }
 }

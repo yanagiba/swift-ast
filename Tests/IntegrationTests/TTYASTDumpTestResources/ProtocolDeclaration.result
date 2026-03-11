@@ -152,7 +152,8 @@ top_level_decl <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:17
     name: Foo
     0: kind: `compiler_control`
       compiler_ctrl_stmt <range: TTYASTDumpTestResources/ProtocolDeclarationTests.swift:61:1-61:8>
-        kind: `if`, condition: ` bar`
+        kind: `if`
+        condition: `bar`
     1: kind: `property`
       name: Foo
       type: Bar

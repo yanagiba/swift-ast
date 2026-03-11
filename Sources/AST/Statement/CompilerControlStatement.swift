@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -21,13 +21,17 @@ public class CompilerControlStatement : ASTNode, Statement {
   // and flattly saved along with other statements.
   public enum Kind {
     // conditional compilation block
-    case `if`(String)
-    case elseif(String)
+    case `if`(CompilationCondition)
+    case elseif(CompilationCondition)
     case `else`
     case endif
 
     // line control
     case sourceLocation(String?, Int?)
+
+    // diagnostic directives
+    case warning(String)
+    case error(String)
   }
 
   public let kind: Kind
@@ -41,9 +45,9 @@ public class CompilerControlStatement : ASTNode, Statement {
   override public var textDescription: String {
     switch self.kind {
     case .if(let condition):
-      return "#if\(condition)"
+      return "#if \(condition.textDescription)"
     case .elseif(let condition):
-      return "#elseif\(condition)"
+      return "#elseif \(condition.textDescription)"
     case .else:
       return "#else"
     case .endif:
@@ -53,6 +57,10 @@ public class CompilerControlStatement : ASTNode, Statement {
         return "#sourceLocation(file: \"\(fileName)\", line: \(lineNumber))"
       }
       return "#sourceLocation()"
+    case .warning(let message):
+      return "#warning(\"\(message)\")"
+    case .error(let message):
+      return "#error(\"\(message)\")"
     }
   }
 }

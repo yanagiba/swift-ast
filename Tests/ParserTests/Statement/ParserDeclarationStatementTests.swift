@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -139,6 +139,23 @@ class ParserDeclarationStatementTests: XCTestCase {
     })
   }
 
+  func testActorDeclarationAsStatement() {
+    parseStatementAndTest("actor Counter {}", "actor Counter {}", testClosure: { stmt in
+      XCTAssertTrue(stmt is Declaration)
+      XCTAssertTrue(stmt is ActorDeclaration)
+    })
+  }
+
+  func testMacroDeclarationAsStatement() {
+    parseStatementAndTest(
+      "macro stringify(_: Any) = #externalMacro(module: \"M\", type: \"T\")",
+      "macro stringify(_: Any) = #externalMacro(module: \"M\", type: \"T\")",
+      testClosure: { stmt in
+        XCTAssertTrue(stmt is Declaration)
+        XCTAssertTrue(stmt is MacroDeclaration)
+      })
+  }
+
   func testPrecedenceGroupDeclaration() {
     parseStatementAndTest("precedencegroup foo {}", "precedencegroup foo {}", testClosure: { stmt in
       XCTAssertTrue(stmt is Declaration)
@@ -160,14 +177,4 @@ class ParserDeclarationStatementTests: XCTestCase {
       XCTFail("Failed in parsing a list of declarations as statements.")
     }
   }
-
-  static var allTests = [
-    ("testStartWithDeclarationKeyword", testStartWithDeclarationKeyword),
-    ("testStartWithAttributes", testStartWithAttributes),
-    ("testStartWithModifiers", testStartWithModifiers),
-    ("testClassDeclaration", testClassDeclaration),
-    ("testOperatorDeclaration", testOperatorDeclaration),
-    ("testPrecedenceGroupDeclaration", testPrecedenceGroupDeclaration),
-    ("testDeclarations", testDeclarations),
-  ]
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -30,8 +30,4 @@ class SourceRangeTests : XCTestCase {
     XCTAssertEqual(range.end.column, 0)
     XCTAssertEqual(range.description, "dummy:0:0-0:0")
   }
-
-  static var allTests = [
-    ("testDummyRange", testDummyRange),
-  ]
 }

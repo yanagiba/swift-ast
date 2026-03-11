@@ -27,3 +27,13 @@ do {
 } catch {
   all()
 }
+
+do throws {
+  try foo()
+} catch {
+}
+
+do throws(MyError) {
+  try foo()
+} catch {
+}

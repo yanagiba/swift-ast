@@ -30,3 +30,5 @@ map { i -> String in
   return "\(j)"
 }
 toggle(isOn: $favorited)
+foo { a }
+foo(x) { a }

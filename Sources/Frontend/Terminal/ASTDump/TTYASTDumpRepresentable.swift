@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -64,6 +64,9 @@ extension TTYASTDumpRepresentable {
     var dumps: [String] = []
     if !funcSign.parameterList.isEmpty {
       dumps.append(dump(funcSign.parameterList))
+    }
+    if funcSign.isAsync {
+      dumps.append("async: `true`")
     }
     if funcSign.throwsKind != .nothrowing {
       dumps.append("throws_kind: `\(funcSign.throwsKind.textDescription)`")

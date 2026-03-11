@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import XCTest
 
 @testable import AST
+@testable import Diagnostic
 @testable import Parser
 
 class ParserDeclarationModifierTests: XCTestCase {
@@ -28,6 +29,8 @@ class ParserDeclarationModifierTests: XCTestCase {
       "final": .final,
       "infix": .infix,
       "lazy": .lazy,
+      "nonisolated": .nonisolated,
+      "nonisolated(unsafe)": .nonisolatedUnsafe,
       "optional": .optional,
       "override": .override,
       "postfix": .postfix,
@@ -47,7 +50,12 @@ class ParserDeclarationModifierTests: XCTestCase {
     }
   }
 
-  static var allTests = [
-    ("testModifiers", testModifiers),
-  ]
+  func testNonisolatedUnsafeIsAcceptedInDeclarationGrammar() {
+    parseDeclarationAndTest(
+      "nonisolated func f() {}",
+      "nonisolated func f() {}")
+    parseDeclarationAndTest(
+      "nonisolated(unsafe) func f() {}",
+      "nonisolated(unsafe) func f() {}")
+  }
 }

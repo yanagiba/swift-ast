@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -142,14 +142,4 @@ class ParserTypealiasDeclarationTests: XCTestCase {
       }
     )
   }
-
-  static var allTests = [
-    ("testTypealias", testTypealias),
-    ("testAttributes", testAttributes),
-    ("testModifiers", testModifiers),
-    ("testAttributesAndModifier", testAttributesAndModifier),
-    ("testGeneric", testGeneric),
-    ("testAttributesAndModifierAndGeneric", testAttributesAndModifierAndGeneric),
-    ("testSourceRange", testSourceRange),
-  ]
 }

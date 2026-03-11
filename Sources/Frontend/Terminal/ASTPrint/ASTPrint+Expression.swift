@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -61,6 +61,12 @@ extension ClosureExpression : TTYASTPrintRepresentable {
       }
     }
     return "{\(signatureText)\(stmtsText)}"
+  }
+}
+
+extension ConditionalCompilationExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return textDescription
   }
 }
 
@@ -139,6 +145,24 @@ extension InitializerExpression : TTYASTPrintRepresentable {
   }
 }
 
+extension MacroExpansionExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return textDescription
+  }
+}
+
+extension IfExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return textDescription
+  }
+}
+
+extension SwitchExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return textDescription
+  }
+}
+
 extension LiteralExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     switch kind {
@@ -156,7 +180,7 @@ extension LiteralExpression : TTYASTPrintRepresentable {
         .joined(separator: ", ")
       return "[\(dictText)]"
     default:
-      return textDescription
+      return textDescription.dedentedMultilineString
     }
   }
 }
@@ -254,6 +278,12 @@ extension SuperclassExpression : TTYASTPrintRepresentable {
 extension TernaryConditionalOperatorExpression : TTYASTPrintRepresentable {
   var ttyPrint: String {
     return "\(conditionExpression.ttyPrint) ? \(trueExpression.ttyPrint) : \(falseExpression.ttyPrint)"
+  }
+}
+
+extension AwaitExpression : TTYASTPrintRepresentable {
+  var ttyPrint: String {
+    return "await \(expression.ttyPrint)"
   }
 }
 

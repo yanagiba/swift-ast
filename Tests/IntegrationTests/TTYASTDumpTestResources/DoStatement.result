@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/DoStatementTests.swift:17:1-29:2>
+top_level_decl <range: TTYASTDumpTestResources/DoStatementTests.swift:17:1-39:2>
   do_stmt <range: TTYASTDumpTestResources/DoStatementTests.swift:17:1-19:2>
     try_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:18:3-18:10>
       kind: `try`
@@ -27,3 +27,25 @@ top_level_decl <range: TTYASTDumpTestResources/DoStatementTests.swift:17:1-29:2>
         identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:28:3-28:6>
           kind: `identifier`, identifier: `all`
         arguments: <empty>
+  do_stmt <range: TTYASTDumpTestResources/DoStatementTests.swift:31:1-34:2>
+    throws: `throws`
+    try_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:32:3-32:12>
+      kind: `try`
+      function_call_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:32:7-32:12>
+        identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:32:7-32:10>
+          kind: `identifier`, identifier: `foo`
+        arguments: <empty>
+    catches:
+    0: <catch_all>
+      <empty_code_block>
+  do_stmt <range: TTYASTDumpTestResources/DoStatementTests.swift:36:1-39:2>
+    throws: `throws(MyError)`
+    try_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:37:3-37:12>
+      kind: `try`
+      function_call_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:37:7-37:12>
+        identifier_expr <range: TTYASTDumpTestResources/DoStatementTests.swift:37:7-37:10>
+          kind: `identifier`, identifier: `foo`
+        arguments: <empty>
+    catches:
+    0: <catch_all>
+      <empty_code_block>

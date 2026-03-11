@@ -30,7 +30,8 @@ public enum TTYType {
 public func terminalMain(
   filePaths: [String],
   ttyType: TTYType = .astText,
-  isForGitHubIssue: Bool = false
+  isForGitHubIssue: Bool = false,
+  noHeader: Bool = false
 ) -> Int32 {
   if isForGitHubIssue {
     return runGitHubIssueGen(for: filePaths)
@@ -65,7 +66,9 @@ public func terminalMain(
 
   for astUnit in result.astUnitCollection {
     if let sourceFile = astUnit.sourceFile {
-      printHeader(for: sourceFile.identifier)
+      if !noHeader {
+        printHeader(for: sourceFile.identifier)
+      }
 
       let topLevelDecl = astUnit.translationUnit
       switch ttyType {

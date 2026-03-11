@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -65,13 +65,4 @@ class ParserParenthesizedExpressionTests: XCTestCase {
       XCTAssertEqual(expr.sourceRange, getRange(1, 1, 1, 6))
     })
   }
-
-  static var allTests = [
-    ("testParenthesizedExpression", testParenthesizedExpression),
-    ("testContainsTupleExpression", testContainsTupleExpression),
-    ("testHasIdentifier", testHasIdentifier),
-    ("testZeroElement", testZeroElement),
-    ("testMoreThanOneElement", testMoreThanOneElement),
-    ("testSourceRange", testSourceRange),
-  ]
 }

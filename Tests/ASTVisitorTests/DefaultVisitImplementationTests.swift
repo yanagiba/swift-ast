@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -642,65 +642,4 @@ class DefaultVisitImplementationTests : XCTestCase {
       XCTFail("Failed in visiting WildcardExpression")
     }
   }
-
-  static var allTests = [
-    ("testVisitTopLevelDeclaration", testVisitTopLevelDeclaration),
-    ("testVisitCodeBlock", testVisitCodeBlock),
-    ("testVisitClassDeclaration", testVisitClassDeclaration),
-    ("testVisitConstantDeclaration", testVisitConstantDeclaration),
-    ("testVisitDeinitializerDeclaration", testVisitDeinitializerDeclaration),
-    ("testVisitEnumDeclaration", testVisitEnumDeclaration),
-    ("testVisitExtensionDeclaration", testVisitExtensionDeclaration),
-    ("testVisitFunctionDeclaration", testVisitFunctionDeclaration),
-    ("testVisitImportDeclaration", testVisitImportDeclaration),
-    ("testVisitInitializerDeclaration", testVisitInitializerDeclaration),
-    ("testVisitOperatorDeclaration", testVisitOperatorDeclaration),
-    ("testVisitPrecedenceGroupDeclaration", testVisitPrecedenceGroupDeclaration),
-    ("testVisitProtocolDeclaration", testVisitProtocolDeclaration),
-    ("testVisitStructDeclaration", testVisitStructDeclaration),
-    ("testVisitSubscriptDeclaration", testVisitSubscriptDeclaration),
-    ("testVisitTypealiasDeclaration", testVisitTypealiasDeclaration),
-    ("testVisitVariableDeclaration", testVisitVariableDeclaration),
-    ("testVisitBreakStatement", testVisitBreakStatement),
-    ("testVisitCompilerControlStatement", testVisitCompilerControlStatement),
-    ("testVisitContinueStatement", testVisitContinueStatement),
-    ("testVisitDeferStatement", testVisitDeferStatement),
-    ("testVisitDoStatement", testVisitDoStatement),
-    ("testVisitFallthroughStatement", testVisitFallthroughStatement),
-    ("testVisitForInStatement", testVisitForInStatement),
-    ("testVisitGuardStatement", testVisitGuardStatement),
-    ("testVisitIfStatement", testVisitIfStatement),
-    ("testVisitLabeledStatement", testVisitLabeledStatement),
-    ("testVisitRepeatWhileStatement", testVisitRepeatWhileStatement),
-    ("testVisitReturnStatement", testVisitReturnStatement),
-    ("testVisitSwitchStatement", testVisitSwitchStatement),
-    ("testVisitThrowStatement", testVisitThrowStatement),
-    ("testVisitWhileStatement", testVisitWhileStatement),
-    ("testVisitAssignmentOperatorExpression", testVisitAssignmentOperatorExpression),
-    ("testVisitBinaryOperatorExpression", testVisitBinaryOperatorExpression),
-    ("testVisitClosureExpression", testVisitClosureExpression),
-    ("testVisitExplicitMemberExpression", testVisitExplicitMemberExpression),
-    ("testVisitForcedValueExpression", testVisitForcedValueExpression),
-    ("testVisitFunctionCallExpression", testVisitFunctionCallExpression),
-    ("testVisitIdentifierExpression", testVisitIdentifierExpression),
-    ("testVisitImplicitMemberExpression", testVisitImplicitMemberExpression),
-    ("testVisitInOutExpression", testVisitInOutExpression),
-    ("testVisitInitializerExpression", testVisitInitializerExpression),
-    ("testVisitKeyPathStringExpression", testVisitKeyPathStringExpression),
-    ("testVisitLiteralExpression", testVisitLiteralExpression),
-    ("testVisitOptionalChainingExpression", testVisitOptionalChainingExpression),
-    ("testVisitParenthesizedExpression", testVisitParenthesizedExpression),
-    ("testVisitPostfixOperatorExpression", testVisitPostfixOperatorExpression),
-    ("testVisitPostfixSelfExpression", testVisitPostfixSelfExpression),
-    ("testVisitPrefixOperatorExpression", testVisitPrefixOperatorExpression),
-    ("testVisitSelectorExpression", testVisitSelectorExpression),
-    ("testVisitSelfExpression", testVisitSelfExpression),
-    ("testVisitSubscriptExpression", testVisitSubscriptExpression),
-    ("testVisitSuperclassExpression", testVisitSuperclassExpression),
-    ("testVisitTernaryConditionalOperatorExpression", testVisitTernaryConditionalOperatorExpression),
-    ("testVisitTryOperatorExpression", testVisitTryOperatorExpression),
-    ("testVisitTupleExpression", testVisitTupleExpression),
-    ("testVisitTypeCastingOperatorExpression", testVisitTypeCastingOperatorExpression),
-    ("testVisitWildcardExpression", testVisitWildcardExpression),
-  ]
 }

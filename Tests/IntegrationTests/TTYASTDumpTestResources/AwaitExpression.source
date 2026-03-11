@@ -1,0 +1,2 @@
+await fetchData()
+await server.send(message)

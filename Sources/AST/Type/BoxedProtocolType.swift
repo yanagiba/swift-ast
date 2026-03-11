@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,13 +14,16 @@
    limitations under the License.
 */
 
-import XCTest
+public class BoxedProtocolType : TypeBase {
+  public let wrappedType: Type
 
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(DotYanagibaParserTests.allTests),
-    testCase(DotYanagibaMergeTests.allTests),
-  ]
+  public init(wrappedType: Type) {
+    self.wrappedType = wrappedType
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    return "any \(wrappedType.textDescription)"
+  }
 }
-#endif

@@ -60,13 +60,15 @@ top_level_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:17:1
   struct_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:37:1-45:2>
     name: Foo
     compiler_ctrl_stmt <range: TTYASTDumpTestResources/StructDeclarationTests.swift:38:1-38:6>
-      kind: `if`, condition: ` a`
+      kind: `if`
+      condition: `a`
     const_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:39:3-39:12>
       pattern: a
         literal_expr <range: TTYASTDumpTestResources/StructDeclarationTests.swift:39:11-39:12>
           kind: `int`, literal: `1`, raw_text: `1`
     compiler_ctrl_stmt <range: TTYASTDumpTestResources/StructDeclarationTests.swift:40:1-40:10>
-      kind: `elseif`, condition: ` b`
+      kind: `elseif`
+      condition: `b`
     const_decl <range: TTYASTDumpTestResources/StructDeclarationTests.swift:41:3-41:12>
       pattern: b
         literal_expr <range: TTYASTDumpTestResources/StructDeclarationTests.swift:41:11-41:12>

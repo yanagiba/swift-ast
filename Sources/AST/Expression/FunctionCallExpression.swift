@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -29,23 +29,29 @@ public class FunctionCallExpression : ASTNode, PostfixExpression {
   public let postfixExpression: PostfixExpression
   public private(set) var argumentClause: ArgumentList?
   public let trailingClosure: ClosureExpression?
+  public let additionalTrailingClosures: [(Identifier, ClosureExpression)]
 
   public init(
-    postfixExpression: PostfixExpression, argumentClause: ArgumentList
+    postfixExpression: PostfixExpression,
+    argumentClause: ArgumentList,
+    additionalTrailingClosures: [(Identifier, ClosureExpression)] = []
   ) {
     self.postfixExpression = postfixExpression
     self.argumentClause = argumentClause
     self.trailingClosure = nil
+    self.additionalTrailingClosures = additionalTrailingClosures
   }
 
   public init(
     postfixExpression: PostfixExpression,
     argumentClause: ArgumentList? = nil,
-    trailingClosure: ClosureExpression
+    trailingClosure: ClosureExpression,
+    additionalTrailingClosures: [(Identifier, ClosureExpression)] = []
   ) {
     self.postfixExpression = postfixExpression
     self.argumentClause = argumentClause
     self.trailingClosure = trailingClosure
+    self.additionalTrailingClosures = additionalTrailingClosures
   }
 
   // MARK: - Node Mutations
@@ -67,7 +73,10 @@ public class FunctionCallExpression : ASTNode, PostfixExpression {
     if let trailingClosure = trailingClosure {
       trailingText = " \(trailingClosure.textDescription)"
     }
-    return "\(postfixExpression.textDescription)\(parameterText)\(trailingText)"
+    let additionalText = additionalTrailingClosures.map({ (label, closure) in
+      " \(label): \(closure.textDescription)"
+    }).joined()
+    return "\(postfixExpression.textDescription)\(parameterText)\(trailingText)\(additionalText)"
   }
 }
 

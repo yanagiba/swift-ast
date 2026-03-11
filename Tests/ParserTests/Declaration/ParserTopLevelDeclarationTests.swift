@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -137,12 +137,4 @@ class ParserTopLevelDeclarationTests: XCTestCase {
       XCTFail("Failed in parsing a top level declaration.")
     }
   }
-
-  static var allTests = [
-    ("testSimpleCase", testSimpleCase),
-    ("testComments", testComments),
-    ("testShebang", testShebang),
-    ("testSourceRange", testSourceRange),
-    ("testLexicalParent", testLexicalParent),
-  ]
 }

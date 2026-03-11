@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,26 +17,32 @@
 import Source
 
 public class TypeAnnotation : LocatableNode {
+  public enum OwnershipModifier : String {
+    case `inout`
+    case borrowing
+    case consuming
+  }
+
   public let type: Type
   public let attributes: Attributes
-  public let isInOutParameter: Bool
+  public let ownershipModifier: OwnershipModifier?
 
   public init(
     type: Type,
     attributes: Attributes = [],
-    isInOutParameter: Bool = false
+    ownershipModifier: OwnershipModifier? = nil
   ) {
     self.type = type
     self.attributes = attributes
-    self.isInOutParameter = isInOutParameter
+    self.ownershipModifier = ownershipModifier
   }
 
   // MARK: - ASTTextRepresentable
 
   override public var textDescription: String {
     let attr = attributes.isEmpty ? "" : "\(attributes.textDescription) "
-    let inoutStr = isInOutParameter ? "inout " : ""
-    return ": \(attr)\(inoutStr)\(type.textDescription)"
+    let ownershipStr = ownershipModifier.map { "\($0.rawValue) " } ?? ""
+    return ": \(attr)\(ownershipStr)\(type.textDescription)"
   }
 }
 

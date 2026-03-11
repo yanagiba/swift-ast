@@ -1,0 +1,14 @@
+let x = switch val {
+case 1:
+foo
+default:
+bar
+}
+let y = switch direction {
+case .north:
+goNorth()
+case .south:
+goSouth()
+default:
+stop()
+}

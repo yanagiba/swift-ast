@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,15 +14,22 @@
    limitations under the License.
 */
 
-import XCTest
+public class AwaitExpression : ASTNode, ASTExpression {
+  public private(set) var expression: ASTExpression
 
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(TTYASTDumpTests.allTests),
-    testCase(TTYASTPrintTests.allTests),
-    testCase(ShebangIntegrationTests.allTests),
-    testCase(SemaIntegrationTests.allTests),
-  ]
+  public init(expression: ASTExpression) {
+    self.expression = expression
+  }
+
+  // MARK: - Node Mutations
+
+  public func replaceExpression(with newExpression: ASTExpression) {
+    expression = newExpression
+  }
+
+  // MARK: - ASTTextRepresentable
+
+  override public var textDescription: String {
+    return "await \(expression.textDescription)"
+  }
 }
-#endif

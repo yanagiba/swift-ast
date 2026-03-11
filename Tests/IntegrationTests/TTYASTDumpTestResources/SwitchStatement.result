@@ -1,4 +1,4 @@
-top_level_decl <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:1-40:2>
+top_level_decl <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:1-52:2>
   switch_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:1-17:14>
     identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:8-17:11>
       kind: `identifier`, identifier: `foo`
@@ -128,3 +128,33 @@ top_level_decl <range: TTYASTDumpTestResources/SwitchStatementTests.swift:17:1-4
         0: kind: `expression`
           literal_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:39:11-39:24>
             kind: `string`, raw_text: `"more than 5"`
+  switch_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:43:1-52:2>
+    identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:43:8-43:9>
+      kind: `identifier`, identifier: `x`
+    cases:
+    0: kind: `case`
+      items:
+      0: pattern: `1`
+      function_call_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:45:3-45:8>
+        identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:45:3-45:6>
+          kind: `identifier`, identifier: `one`
+        arguments: <empty>
+    1: kind: `compiler_control`
+      compiler_ctrl_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:46:1-46:10>
+        kind: `if`
+        condition: `DEBUG`
+    2: kind: `case`
+      items:
+      0: pattern: `99`
+      function_call_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:48:3-48:10>
+        identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:48:3-48:8>
+          kind: `identifier`, identifier: `debug`
+        arguments: <empty>
+    3: kind: `compiler_control`
+      compiler_ctrl_stmt <range: TTYASTDumpTestResources/SwitchStatementTests.swift:49:1-49:7>
+        kind: `endif`
+    4: kind: `default`
+      function_call_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:51:3-51:10>
+        identifier_expr <range: TTYASTDumpTestResources/SwitchStatementTests.swift:51:3-51:8>
+          kind: `identifier`, identifier: `other`
+        arguments: <empty>

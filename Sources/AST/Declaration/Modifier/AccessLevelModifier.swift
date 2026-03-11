@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,12 +14,19 @@
    limitations under the License.
 */
 
-public enum AccessLevelModifier : String {
-  case `private`, privateSet = "private(set)"
-  case `fileprivate`, fileprivateSet = "fileprivate(set)"
-  case `internal`, internalSet = "internal(set)"
-  case `public`, publicSet = "public(set)"
-  case `open`, openSet = "open(set)"
+public enum AccessLevelModifier : String, CaseIterable {
+  case `private` = "private"
+  case privateSet = "private(set)"
+  case `fileprivate` = "fileprivate"
+  case fileprivateSet = "fileprivate(set)"
+  case `internal` = "internal"
+  case internalSet = "internal(set)"
+  case `public` = "public"
+  case publicSet = "public(set)"
+  case `open` = "open"
+  case openSet = "open(set)"
+  case packageLevel = "package"
+  case packageLevelSet = "package(set)"
 }
 
 extension AccessLevelModifier : ASTTextRepresentable {

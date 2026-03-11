@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2017, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ extension ASTVisitor {
     swift-lint:rule_configure(CYCLOMATIC_COMPLEXITY=16)
     */
     switch declaration {
+    case let decl as ActorDeclaration:
+      return try traverse(decl)
     case let decl as ClassDeclaration:
       return try traverse(decl)
     case let decl as ConstantDeclaration:
@@ -49,6 +51,8 @@ extension ASTVisitor {
     case let decl as ImportDeclaration:
       return try traverse(decl)
     case let decl as InitializerDeclaration:
+      return try traverse(decl)
+    case let decl as MacroDeclaration:
       return try traverse(decl)
     case let decl as OperatorDeclaration:
       return try traverse(decl)
@@ -67,6 +71,21 @@ extension ASTVisitor {
     default:
       return true // no implementation for this declaration, just continue
     }
+  }
+
+  public func traverse(_ decl: ActorDeclaration) throws -> Bool {
+    guard try visit(decl) else { return false }
+
+    for member in decl.members {
+      switch member {
+      case .declaration(let decl):
+        guard try traverse(decl) else { return false }
+      case .compilerControl(let stmt):
+        guard try traverse(stmt) else { return false }
+      }
+    }
+
+    return true
   }
 
   public func traverse(_ decl: ClassDeclaration) throws -> Bool {
@@ -164,6 +183,22 @@ extension ASTVisitor {
     }
 
     return try traverse(decl.body)
+  }
+
+  public func traverse(_ decl: MacroDeclaration) throws -> Bool {
+    guard try visit(decl) else { return false }
+
+    for param in decl.signature.parameterList {
+      if let defaultArg = param.defaultArgumentClause {
+        guard try traverse(defaultArg) else { return false }
+      }
+    }
+
+    if let definition = decl.definition {
+      guard try traverse(definition) else { return false }
+    }
+
+    return true
   }
 
   public func traverse(_ decl: OperatorDeclaration) throws -> Bool {
@@ -462,6 +497,8 @@ extension ASTVisitor {
         guard try traverse(statements) else { return false }
       case .default(let statements):
         guard try traverse(statements) else { return false }
+      case .compilerControl(let stmt):
+        guard try traverse(stmt) else { return false }
       }
     }
 
@@ -488,9 +525,13 @@ extension ASTVisitor {
     switch expression {
     case let expr as AssignmentOperatorExpression:
       return try traverse(expr)
+    case let expr as AwaitExpression:
+      return try traverse(expr)
     case let expr as BinaryOperatorExpression:
       return try traverse(expr)
     case let expr as ClosureExpression:
+      return try traverse(expr)
+    case let expr as ConditionalCompilationExpression:
       return try traverse(expr)
     case let expr as ExplicitMemberExpression:
       return try traverse(expr)
@@ -499,6 +540,8 @@ extension ASTVisitor {
     case let expr as FunctionCallExpression:
       return try traverse(expr)
     case let expr as IdentifierExpression:
+      return try traverse(expr)
+    case let expr as IfExpression:
       return try traverse(expr)
     case let expr as ImplicitMemberExpression:
       return try traverse(expr)
@@ -509,6 +552,8 @@ extension ASTVisitor {
     case let expr as KeyPathStringExpression:
       return try traverse(expr)
     case let expr as LiteralExpression:
+      return try traverse(expr)
+    case let expr as MacroExpansionExpression:
       return try traverse(expr)
     case let expr as OptionalChainingExpression:
       return try traverse(expr)
@@ -529,6 +574,8 @@ extension ASTVisitor {
     case let expr as SubscriptExpression:
       return try traverse(expr)
     case let expr as SuperclassExpression:
+      return try traverse(expr)
+    case let expr as SwitchExpression:
       return try traverse(expr)
     case let expr as TernaryConditionalOperatorExpression:
       return try traverse(expr)
@@ -556,6 +603,11 @@ extension ASTVisitor {
     guard try visit(expr) else { return false }
     guard try traverse(expr.leftExpression) else { return false }
     return try traverse(expr.rightExpression)
+  }
+
+  public func traverse(_ expr: AwaitExpression) throws -> Bool {
+    guard try visit(expr) else { return false }
+    return try traverse(expr.expression)
   }
 
   public func traverse(_ expr: BinaryOperatorExpression) throws -> Bool {
@@ -622,12 +674,28 @@ extension ASTVisitor {
     if let closureExpr = expr.trailingClosure {
       guard try traverse(closureExpr) else { return false }
     }
+    for (_, closure) in expr.additionalTrailingClosures {
+      guard try traverse(closure) else { return false }
+    }
 
     return true
   }
 
   public func traverse(_ expr: IdentifierExpression) throws -> Bool {
     return try visit(expr)
+  }
+
+  public func traverse(_ expr: IfExpression) throws -> Bool {
+    guard try visit(expr) else { return false }
+
+    guard try traverse(expr.conditionList) else { return false }
+    guard try traverse(expr.codeBlock) else { return false }
+    switch expr.elseClause {
+    case .else(let codeBlock):
+      return try traverse(codeBlock)
+    case .elseif(let ifExpr):
+      return try traverse(ifExpr)
+    }
   }
 
   public func traverse(_ expr: ImplicitMemberExpression) throws -> Bool {
@@ -652,8 +720,21 @@ extension ASTVisitor {
     guard try visit(expr) else { return false }
 
     switch expr.kind {
-    case .interpolatedString(let exprs, _):
-      return try traverse(exprs)
+    case .interpolatedString(let segments, _):
+      for segment in segments {
+        if case .interpolation(let args) = segment {
+          for arg in args {
+            switch arg {
+            case .expression(let argExpr), .namedExpression(_, let argExpr),
+                 .memoryReference(let argExpr), .namedMemoryReference(_, let argExpr):
+              guard try traverse(argExpr) else { return false }
+            default:
+              continue
+            }
+          }
+        }
+      }
+      return true
     case .array(let exprs):
       return try traverse(exprs)
     case .dictionary(let dictEntries):
@@ -665,6 +746,35 @@ extension ASTVisitor {
     default:
       return true
     }
+  }
+
+  public func traverse(_ expr: MacroExpansionExpression) throws -> Bool {
+    guard try visit(expr) else { return false }
+
+    if let argumentList = expr.argumentClause {
+      for argument in argumentList {
+        switch argument {
+        case .expression(let argExpr):
+          guard try traverse(argExpr) else { return false }
+        case .namedExpression(_, let argExpr):
+          guard try traverse(argExpr) else { return false }
+        case .memoryReference(let argExpr):
+          guard try traverse(argExpr) else { return false }
+        case .namedMemoryReference(_, let argExpr):
+          guard try traverse(argExpr) else { return false }
+        default:
+          continue
+        }
+      }
+    }
+    if let closureExpr = expr.trailingClosure {
+      guard try traverse(closureExpr) else { return false }
+    }
+    for (_, closure) in expr.additionalTrailingClosures {
+      guard try traverse(closure) else { return false }
+    }
+
+    return true
   }
 
   public func traverse(_ expr: OptionalChainingExpression) throws -> Bool {
@@ -755,6 +865,28 @@ extension ASTVisitor {
     return true
   }
 
+  public func traverse(_ expr: SwitchExpression) throws -> Bool {
+    guard try visit(expr) else { return false }
+
+    for eachCase in expr.cases {
+      switch eachCase {
+      case let .case(items, statements):
+        for item in items {
+          if let whereExpr = item.whereExpression {
+            guard try traverse(whereExpr) else { return false }
+          }
+        }
+        guard try traverse(statements) else { return false }
+      case .default(let statements):
+        guard try traverse(statements) else { return false }
+      case .compilerControl(let stmt):
+        guard try traverse(stmt) else { return false }
+      }
+    }
+
+    return true
+  }
+
   public func traverse(_ expr: TernaryConditionalOperatorExpression) throws -> Bool {
     guard try visit(expr) else { return false }
 
@@ -800,5 +932,14 @@ extension ASTVisitor {
 
   public func traverse(_ expr: WildcardExpression) throws -> Bool {
     return try visit(expr)
+  }
+
+  public func traverse(_ expr: ConditionalCompilationExpression) throws -> Bool {
+    guard try visit(expr) else { return false }
+    for clause in expr.clauses {
+      guard try traverse(clause.condition) else { return false }
+      guard try traverse(clause.expression) else { return false }
+    }
+    return try traverse(expr.endifStatement)
   }
 }

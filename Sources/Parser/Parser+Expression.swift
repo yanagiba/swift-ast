@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2019 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2019, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
    limitations under the License.
 */
 
-import Foundation
 import AST
 import Lexer
 import Source
@@ -39,8 +38,15 @@ extension Parser {
 
   func parseExpression(config: ParserExpressionConfig = ParserExpressionConfig()) throws -> ASTExpression {
     let tryKind = parseTryKind()
+    let awaitStartLocation = getStartLocation()
+    let hasAwait = _lexer.match(.await)
     let prefixExpr = try parsePrefixExpression(config: config)
-    let expr = try parseBinaryExpressions(leftExpression: prefixExpr, config: config)
+    var expr = try parseBinaryExpressions(leftExpression: prefixExpr, config: config)
+    if hasAwait {
+      let awaitExpr = AwaitExpression(expression: expr)
+      awaitExpr.setSourceRange(awaitStartLocation, expr.sourceRange.end)
+      expr = awaitExpr
+    }
     return tryKind.wrap(expr: expr)
   }
 
@@ -197,10 +203,18 @@ extension Parser {
         append(biOpExpr)
       case .assignmentOperator:
         let tryKind = parseTryKind()
+        let rhsAwaitStart = getStartLocation()
+        let rhsHasAwait = _lexer.match(.await)
         let prefixExpr = try parsePrefixExpression(config: config)
-        let rhs = tryKind.wrap(expr: prefixExpr)
+        var rhs: ASTExpression = prefixExpr
+        if rhsHasAwait {
+          let awaitExpr = AwaitExpression(expression: rhs)
+          awaitExpr.setSourceRange(rhsAwaitStart, rhs.sourceRange.end)
+          rhs = awaitExpr
+        }
+        rhs = tryKind.wrap(expr: rhs)
         let assignOpExpr = AssignmentOperatorExpression(leftExpression: resultExpr, rightExpression: rhs)
-        assignOpExpr.setSourceRange(resultExpr.sourceRange.start, prefixExpr.sourceRange.end)
+        assignOpExpr.setSourceRange(resultExpr.sourceRange.start, rhs.sourceRange.end)
         append(assignOpExpr)
       case .binaryQuestion:
         let trueTryKind = parseTryKind()
@@ -208,7 +222,14 @@ extension Parser {
         trueExpr = trueTryKind.wrap(expr: trueExpr)
         try match(.colon, orFatal: .expectedColonAfterTrueExpr)
         let falseTryKind = parseTryKind()
+        let falseAwaitStart = getStartLocation()
+        let falseHasAwait = _lexer.match(.await)
         var falseExpr: ASTExpression = try parsePrefixExpression(config: config)
+        if falseHasAwait {
+          let awaitExpr = AwaitExpression(expression: falseExpr)
+          awaitExpr.setSourceRange(falseAwaitStart, falseExpr.sourceRange.end)
+          falseExpr = awaitExpr
+        }
         falseExpr = falseTryKind.wrap(expr: falseExpr)
         let ternaryOpExpr = TernaryConditionalOperatorExpression(
           conditionExpression: resultExpr,
@@ -316,40 +337,108 @@ extension Parser {
       return self._lexer.examine(tokens)
     }
 
+    var condCompBase: PostfixExpression?
+    var condCompClauses: [(CompilerControlStatement, PostfixExpression?)] = []
+
     var tokenRange = getLookedRange()
     var examined = examine()
-    while examined.0 {
-      switch examined.1 {
-      case .postfixOperator(let op):
-        let postfixOpExpr = PostfixOperatorExpression(postfixOperator: op, postfixExpression: resultExpr)
-        postfixOpExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
-        resultExpr = postfixOpExpr
-      case .leftParen:
-        resultExpr = try parseFunctionCallExpression(postfixExpression: resultExpr, config: config)
-      case .dot:
-        resultExpr = try parsePostfixMemberExpression(postfixExpression: resultExpr)
-      case .leftSquare:
-        let subscriptArguments = try parseSubscriptArguments()
-        let endLocation = getEndLocation()
-        try match(.rightSquare, orFatal: .expectedCloseSquareExprList)
-        let subscriptExpr = SubscriptExpression(
-        postfixExpression: resultExpr, arguments: subscriptArguments)
-        subscriptExpr.setSourceRange(resultExpr.sourceRange.start, endLocation)
-        resultExpr = subscriptExpr
-      case .postfixExclaim:
-        let vlExpr = ForcedValueExpression(postfixExpression: resultExpr)
-        vlExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
-        resultExpr = vlExpr
-      case .postfixQuestion:
-        let optExpr = OptionalChainingExpression(postfixExpression: resultExpr)
-        optExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
-        resultExpr = optExpr
-      case .leftBrace:
-        let trailingClosure = try parseClosureExpression(startLocation: tokenRange.start)
-        let funcCallExpr = FunctionCallExpression(postfixExpression: resultExpr, trailingClosure: trailingClosure)
-        funcCallExpr.setSourceRange(resultExpr.sourceRange.start, trailingClosure.sourceRange.end)
-        resultExpr = funcCallExpr
-      default:
+    while true {
+      if examined.0 {
+        switch examined.1 {
+        case .postfixOperator(let op):
+          let postfixOpExpr = PostfixOperatorExpression(postfixOperator: op, postfixExpression: resultExpr)
+          postfixOpExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
+          resultExpr = postfixOpExpr
+        case .leftParen:
+          resultExpr = try parseFunctionCallExpression(postfixExpression: resultExpr, config: config)
+        case .dot:
+          resultExpr = try parsePostfixMemberExpression(postfixExpression: resultExpr)
+        case .leftSquare:
+          let subscriptArguments = try parseSubscriptArguments()
+          let endLocation = getEndLocation()
+          try match(.rightSquare, orFatal: .expectedCloseSquareExprList)
+          let subscriptExpr = SubscriptExpression(
+          postfixExpression: resultExpr, arguments: subscriptArguments)
+          subscriptExpr.setSourceRange(resultExpr.sourceRange.start, endLocation)
+          resultExpr = subscriptExpr
+        case .postfixExclaim:
+          let vlExpr = ForcedValueExpression(postfixExpression: resultExpr)
+          vlExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
+          resultExpr = vlExpr
+        case .postfixQuestion:
+          let optExpr = OptionalChainingExpression(postfixExpression: resultExpr)
+          optExpr.setSourceRange(resultExpr.sourceRange.start, tokenRange.end)
+          resultExpr = optExpr
+        case .leftBrace:
+          let trailingClosure = try parseClosureExpression(startLocation: tokenRange.start)
+          let additionalClosures = try parseAdditionalTrailingClosures()
+          let endLoc = additionalClosures.last?.1.sourceRange.end ?? trailingClosure.sourceRange.end
+          let funcCallExpr = FunctionCallExpression(
+            postfixExpression: resultExpr,
+            trailingClosure: trailingClosure,
+            additionalTrailingClosures: additionalClosures)
+          funcCallExpr.setSourceRange(resultExpr.sourceRange.start, endLoc)
+          resultExpr = funcCallExpr
+        default:
+          break
+        }
+      } else if _lexer.look().kind == .hash {
+        if _lexer.look(ahead: 1).kind == .if && condCompBase == nil {
+          // Speculatively parse #if to check if it's postfix conditional compilation
+          // (next token after condition must be `.` for a member expression)
+          let lexerCp = _lexer.checkPoint()
+          let diagCp = _diagnosticPool.checkPoint()
+          let hashStart = getStartLocation()
+          _ = _lexer.match(.hash)
+          let ctrl = try parseCompilerControlStatement(startLocation: hashStart)
+          if _lexer.look().kind != .dot {
+            _lexer.restore(fromCheckpoint: lexerCp)
+            _diagnosticPool.restore(fromCheckpoint: diagCp)
+            break
+          }
+          condCompBase = resultExpr
+          condCompClauses.append((ctrl, nil))
+        } else if let base = condCompBase {
+          if let lastIdx = condCompClauses.indices.last,
+            condCompClauses[lastIdx].1 == nil
+          {
+            condCompClauses[lastIdx].1 = resultExpr
+          }
+          let hashStart = getStartLocation()
+          _ = _lexer.match(.hash)
+          let ctrl = try parseCompilerControlStatement(startLocation: hashStart)
+          switch ctrl.kind {
+          case .else, .elseif:
+            condCompClauses.append((ctrl, nil))
+            resultExpr = base
+          case .endif:
+            let clauses = try condCompClauses.map {
+              if let expression = $0.1 {
+                return ConditionalCompilationExpression.Clause(
+                  condition: $0.0, expression: expression)
+              }
+              // Recover with the shared base expression so parsing can continue,
+              // but still emit an explicit error because an empty/malformed
+              // conditional compilation clause is not valid input.
+              try _diagnosticPool.appendError(
+                kind: ParserErrorKind.malformedConditionalCompilationClause,
+                sourceLocatable: $0.0)
+              return ConditionalCompilationExpression.Clause(
+                condition: $0.0, expression: base)
+            }
+            let condCompExpr = ConditionalCompilationExpression(
+              base: base, clauses: clauses, endifStatement: ctrl)
+            condCompExpr.setSourceRange(base.sourceRange.start, ctrl.sourceRange.end)
+            resultExpr = condCompExpr
+            condCompBase = nil
+            condCompClauses = []
+          default:
+            break
+          }
+        } else {
+          break
+        }
+      } else {
         break
       }
 
@@ -435,11 +524,13 @@ extension Parser {
         let closureStartLocation = getStartLocation()
         _lexer.advance()
         let trailingClosure = try parseClosureExpression(startLocation: closureStartLocation)
-        endLocation = trailingClosure.sourceRange.end
+        let additionalClosures = try parseAdditionalTrailingClosures()
+        endLocation = additionalClosures.last?.1.sourceRange.end ?? trailingClosure.sourceRange.end
         funcCallExpr = FunctionCallExpression(
           postfixExpression: expr,
           argumentClause: [],
-          trailingClosure: trailingClosure)
+          trailingClosure: trailingClosure,
+          additionalTrailingClosures: additionalClosures)
       } else {
         funcCallExpr = FunctionCallExpression(postfixExpression: expr, argumentClause: [])
       }
@@ -457,11 +548,13 @@ extension Parser {
       let closureStartLocation = getStartLocation()
       _lexer.advance()
       let trailingClosure = try parseClosureExpression(startLocation: closureStartLocation)
-      endLocation = trailingClosure.sourceRange.end
+      let additionalClosures = try parseAdditionalTrailingClosures()
+      endLocation = additionalClosures.last?.1.sourceRange.end ?? trailingClosure.sourceRange.end
       funcCallExpr = FunctionCallExpression(
         postfixExpression: expr,
         argumentClause: argumentList,
-        trailingClosure: trailingClosure)
+        trailingClosure: trailingClosure,
+        additionalTrailingClosures: additionalClosures)
     } else {
       funcCallExpr = FunctionCallExpression(postfixExpression: expr, argumentClause: argumentList)
     }
@@ -611,11 +704,13 @@ extension Parser {
       .dummyIntegerLiteral,
       .dummyFloatingPointLiteral,
       .dummyStaticStringLiteral,
+      .dummyRegexLiteral,
       .dummyInterpolatedStringLiteralHead,
       .dummyBooleanLiteral,
       .nil, .leftSquare, .hash, .backslash,
       .self, .super, .leftBrace,
       .leftParen, .dot, .underscore,
+      .if, .switch,
     ])
     switch matched {
     ////// literal expression, selector expression, and key path string expression
@@ -635,12 +730,16 @@ extension Parser {
       let floatExpr = LiteralExpression(kind: .floatingPoint(d, r))
       floatExpr.setSourceRange(lookedRange)
       return floatExpr
-    case let .staticStringLiteral(s, r):
+    case let .staticStringLiteral(s, r, _):
       let strExpr = LiteralExpression(kind: .staticString(s, r))
       strExpr.setSourceRange(lookedRange)
       return strExpr
-    case let .interpolatedStringLiteralHead(s, r):
-      return try parseInterpolatedStringLiteral(head: s, raw: r, startLocation: lookedRange.start)
+    case let .regexLiteral(s, r):
+      let regexExpr = LiteralExpression(kind: .regex(s, r))
+      regexExpr.setSourceRange(lookedRange)
+      return regexExpr
+    case let .interpolatedStringLiteralHead(s, r, hc):
+      return try parseInterpolatedStringLiteral(head: s, raw: r, hashCount: hc, startLocation: lookedRange.start)
     case .leftSquare:
       return try parseCollectionLiteral(startLocation: lookedRange.start)
     case .hash:
@@ -686,6 +785,11 @@ extension Parser {
       let idExpr = IdentifierExpression(kind: .bindingReference(refVar))
       idExpr.setSourceRange(lookedRange)
       return idExpr
+    ////// if expression and switch expression
+    case .if:
+      return try parseIfExpression(startLocation: lookedRange.start)
+    case .switch:
+      return try parseSwitchExpression(startLocation: lookedRange.start)
     default:
       // keyword used as identifier
       if let id = matched.namedIdentifier?.id {
@@ -920,8 +1024,195 @@ extension Parser {
     case "colorLiteral", "fileLiteral", "imageLiteral":
       return try parsePlaygroundLiteral(magicWord, startLocation)
     default:
-      throw _raiseFatal(.expectedObjectLiteralIdentifier)
+      return try parseMacroExpansionExpression(macroName: magicWord, startLocation: startLocation)
     }
+  }
+
+  private func parseMacroExpansionExpression(
+    macroName: String, startLocation: SourceLocation
+  ) throws -> MacroExpansionExpression {
+    let genericArgumentClause = parseGenericArgumentClause()
+
+    var argumentClause: [FunctionCallExpression.Argument]?
+    var endLocation = getEndLocation()
+
+    if _lexer.match(.leftParen) {
+      endLocation = getEndLocation()
+      if _lexer.match(.rightParen) {
+        argumentClause = []
+      } else {
+        argumentClause = try parseMacroArgumentList()
+        endLocation = getEndLocation()
+        try match(.rightParen, orFatal: .expectedCloseParenFuncCall)
+      }
+    }
+
+    var trailingClosure: ClosureExpression?
+    var additionalClosures: [(Identifier, ClosureExpression)] = []
+    if _lexer.look().kind == .leftBrace && isPotentialTrailingClosure() {
+      let closureStartLocation = getStartLocation()
+      _lexer.advance()
+      trailingClosure = try parseClosureExpression(startLocation: closureStartLocation)
+      endLocation = trailingClosure!.sourceRange.end
+      additionalClosures = try parseAdditionalTrailingClosures()
+      if let last = additionalClosures.last {
+        endLocation = last.1.sourceRange.end
+      }
+    }
+
+    let macroExpr = MacroExpansionExpression(
+      macroName: macroName,
+      genericArgumentClause: genericArgumentClause,
+      argumentClause: argumentClause,
+      trailingClosure: trailingClosure,
+      additionalTrailingClosures: additionalClosures)
+    macroExpr.setSourceRange(startLocation, endLocation)
+    return macroExpr
+  }
+
+  private func parseMacroArgumentList() throws -> [FunctionCallExpression.Argument] {
+    var arguments: [FunctionCallExpression.Argument] = []
+    repeat {
+      if _lexer.look(ahead: 1).kind == .colon && _lexer.look().kind != .leftSquare {
+        guard let id = readNamedIdentifier() else {
+          throw _raiseFatal(.expectedParameterNameFuncCall)
+        }
+        _lexer.advance()
+        switch _lexer.read(.prefixAmp) {
+        case .prefixAmp:
+          let argExpr = try parseExpression()
+          arguments.append(.namedMemoryReference(id, argExpr))
+        default:
+          let argExpr = try parseExpression()
+          arguments.append(.namedExpression(id, argExpr))
+        }
+      } else {
+        switch _lexer.read(.prefixAmp) {
+        case .prefixAmp:
+          let argExpr = try parseExpression()
+          arguments.append(.memoryReference(argExpr))
+        default:
+          let argExpr = try parseExpression()
+          arguments.append(.expression(argExpr))
+        }
+      }
+    } while _lexer.match(.comma)
+    return arguments
+  }
+
+  private func parseAdditionalTrailingClosures() throws -> [(Identifier, ClosureExpression)] {
+    var additional: [(Identifier, ClosureExpression)] = []
+    while _lexer.look().kind.namedIdentifier != nil
+      && _lexer.look(ahead: 1).kind == .colon
+      && _lexer.look(ahead: 2).kind == .leftBrace
+    {
+      guard let label = readNamedIdentifier() else { break }
+      _lexer.advance() // consume colon
+      let closureStartLocation = getStartLocation()
+      _lexer.advance() // consume left brace
+      let closure = try parseClosureExpression(startLocation: closureStartLocation)
+      additional.append((label, closure))
+    }
+    return additional
+  }
+
+  private func parseIfExpression(
+    startLocation: SourceLocation
+  ) throws -> IfExpression {
+    let conditionList = try parseConditionList()
+    let codeBlock = try parseCodeBlock()
+
+    guard _lexer.match(.else) else {
+      throw _raiseFatal(.expectedElseForIfExpr)
+    }
+
+    let nestedStartLocation = getStartLocation()
+    if _lexer.match(.if) {
+      let elseIfExpr = try parseIfExpression(startLocation: nestedStartLocation)
+      let ifExpr = IfExpression(
+        conditionList: conditionList,
+        codeBlock: codeBlock,
+        elseClause: .elseif(elseIfExpr))
+      ifExpr.setSourceRange(startLocation, elseIfExpr.sourceRange.end)
+      return ifExpr
+    }
+
+    let elseCodeBlock = try parseCodeBlock()
+    let ifExpr = IfExpression(
+      conditionList: conditionList,
+      codeBlock: codeBlock,
+      elseClause: .else(elseCodeBlock))
+    ifExpr.setSourceRange(startLocation, elseCodeBlock.sourceRange.end)
+    return ifExpr
+  }
+
+  private func parseSwitchExpression(
+    startLocation: SourceLocation
+  ) throws -> SwitchExpression {
+    let noTrailing = ParserExpressionConfig(parseTrailingClosure: false)
+    let expr = try parseExpression(config: noTrailing)
+    try match(.leftBrace, orFatal: .leftBraceExpected("switch expression"))
+    var cases: [SwitchStatement.Case] = []
+    while true {
+      if _lexer.look().kind == .hash {
+        let hashStartLocation = getStartLocation()
+        _ = _lexer.match(.hash)
+        let compCtrlStmt = try parseCompilerControlStatement(startLocation: hashStartLocation)
+        cases.append(.compilerControl(compCtrlStmt))
+        continue
+      }
+      let examined = _lexer.examine([.case, .default])
+      guard examined.0 else { break }
+      switch examined.1 {
+      case .case:
+        var itemList: [SwitchStatement.Case.Item] = []
+        repeat {
+          let pattern = try parsePattern(config: ParserPatternConfig(forPatternMatching: true))
+          var whereExpr: ASTExpression?
+          if _lexer.match(.where) {
+            whereExpr = try parseExpression(config: noTrailing)
+          }
+          let item = SwitchStatement.Case.Item(pattern: pattern, whereExpression: whereExpr)
+          itemList.append(item)
+        } while _lexer.match(.comma)
+        try match(.colon, orFatal: .expectedCaseColon)
+        var stmts: Statements = []
+        while true {
+          switch _lexer.look().kind {
+          case .eof, .rightBrace, .default, .case, .hash:
+            break
+          default:
+            stmts.append(try parseStatement())
+            continue
+          }
+          break
+        }
+        try assert(!stmts.isEmpty, orFatal: .caseStmtWithoutBody("case"))
+        cases.append(.case(itemList, stmts))
+      case .default:
+        try match(.colon, orFatal: .expectedDefaultColon)
+        var stmts: Statements = []
+        while true {
+          switch _lexer.look().kind {
+          case .eof, .rightBrace, .default, .case, .hash:
+            break
+          default:
+            stmts.append(try parseStatement())
+            continue
+          }
+          break
+        }
+        try assert(!stmts.isEmpty, orFatal: .caseStmtWithoutBody("default"))
+        cases.append(.default(stmts))
+      default:
+        break
+      }
+    }
+    let endLocation = getEndLocation()
+    try match(.rightBrace, orFatal: .rightBraceExpected("switch expression"))
+    let switchExpr = SwitchExpression(expression: expr, cases: cases)
+    switchExpr.setSourceRange(startLocation, endLocation)
+    return switchExpr
   }
 
   private func parseKeyPathStringExpression(startLocation: SourceLocation) throws -> KeyPathStringExpression {
@@ -1114,78 +1405,94 @@ extension Parser {
   }
 
   private func parseInterpolatedStringLiteral( // swift-lint:suppress(high_cyclomatic_complexity,high_ncss)
-    head: String, raw: String, startLocation: SourceLocation
+    head: String, raw: String, hashCount: Int = 0, startLocation: SourceLocation
   ) throws -> LiteralExpression { // swift-lint:suppress(nested_code_block_depth)
-    func caliberateExpressions(_ exprs: [ASTExpression]) throws -> [ASTExpression] { // swift-lint:suppress(nested_code_block_depth,long_line)
-      let exprCount = exprs.count
+    func caliberateSegments(_ segments: [InterpolationSegment]) throws -> [InterpolationSegment] { // swift-lint:suppress(nested_code_block_depth,long_line)
+      let segmentCount = segments.count
       var indentationPrefix = ""
-      var caliberatedExprs: [ASTExpression] = []
+      var caliberatedSegments: [InterpolationSegment] = []
 
-      for (offset, expr) in exprs.reversed().enumerated() {
-        if let literalExpr = expr as? LiteralExpression,
-          case let .staticString(blockStr, blockRawText) = literalExpr.kind,
-          blockRawText.isEmpty
-        {
-          var blockLines = blockStr.components(separatedBy: .newlines)
-          if offset == 0 { // let's first of all figure out the indentation prefix
-            indentationPrefix = blockLines.removeLast()
+      for (offset, segment) in segments.reversed().enumerated() {
+        guard case let .text(blockStr) = segment else {
+          caliberatedSegments.append(segment)
+          continue
+        }
+
+        var blockLines = blockStr.components(separatedBy: .newlines)
+        if offset == 0 { // let's first of all figure out the indentation prefix
+          indentationPrefix = blockLines.removeLast()
+          try assert(
+            indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty,
+            orFatal: .newLineExpectedAtTheClosingOfMultilineStringLiteral)
+        }
+
+        let identationLength = indentationPrefix.count
+        var caliberatedLines: [String] = []
+        for (origLineOffset, origLine) in blockLines.enumerated() {
+          if origLineOffset == 0 && offset != segmentCount-1 {
+            caliberatedLines.append(origLine)
+          } else if origLine.isEmpty {
+            caliberatedLines.append(origLine)
+          } else {
             try assert(
-              indentationPrefix.filter({ $0 != " " && $0 != "\t"}).isEmpty,
-              orFatal: .newLineExpectedAtTheClosingOfMultilineStringLiteral)
+              origLine.hasPrefix(indentationPrefix),
+              orFatal: .insufficientIndentationOfLineInMultilineStringLiteral)
+            let startIndex = origLine.index(origLine.startIndex, offsetBy: identationLength)
+            let caliberatedLine = String(origLine[startIndex...])
+            caliberatedLines.append(caliberatedLine)
           }
-
-          let identationLength = indentationPrefix.count
-          var caliberatedLines: [String] = []
-          for (origLineOffset, origLine) in blockLines.enumerated() {
-            if origLineOffset == 0 && offset != exprCount-1 {
-              caliberatedLines.append(origLine)
-            } else if origLine.isEmpty {
-              caliberatedLines.append(origLine)
-            } else {
-              try assert(
-                origLine.hasPrefix(indentationPrefix),
-                orFatal: .insufficientIndentationOfLineInMultilineStringLiteral)
-              let startIndex = origLine.index(origLine.startIndex, offsetBy: identationLength)
-              let caliberatedLine = String(origLine[startIndex...])
-              caliberatedLines.append(caliberatedLine)
-            }
-          }
-          let caliberatedLiteral = caliberatedLines.joined(separator: "\n")
-          if !caliberatedLiteral.isEmpty {
-            let caliberatedLiteralExpr = LiteralExpression(kind: .staticString(caliberatedLiteral, blockRawText))
-            caliberatedExprs.append(caliberatedLiteralExpr)
-          }
-        } else {
-          caliberatedExprs.append(expr)
+        }
+        let caliberatedLiteral = caliberatedLines.joined(separator: "\n")
+        if !caliberatedLiteral.isEmpty {
+          caliberatedSegments.append(.text(caliberatedLiteral))
         }
       }
 
-      return caliberatedExprs.reversed()
+      return caliberatedSegments.reversed()
     }
 
-    var exprs: [ASTExpression] = []
+    var segments: [InterpolationSegment] = []
     var rawText = raw
-    let multilineDelimiter = "\"\"\""
-    let isMultiline = raw.hasPrefix(multilineDelimiter)
+    let hashDelimiter = String(repeating: "#", count: hashCount)
+    let multilineOpenDelimiter = hashDelimiter + "\"\"\""
+    let singleLineOpenDelimiter = hashDelimiter + "\""
+    let multilineCloseDelimiter = "\"\"\"" + hashDelimiter
+    let singleLineCloseDelimiter = "\"" + hashDelimiter
+    let isMultiline = raw.hasPrefix(multilineOpenDelimiter)
     let isInterpolatedHead = startLocation != .DUMMY
 
     func appendRawText(withRawText ir: String) {
-      let startIndexOffset = ir.hasPrefix(multilineDelimiter) ? 3 : 1
-      let endIndexOffset = ir.hasSuffix(multilineDelimiter) ? -3 : -1
-      let startIndex = ir.index(ir.startIndex, offsetBy: startIndexOffset)
-      let endIndex = ir.index(ir.endIndex, offsetBy: endIndexOffset)
+      let startLen = ir.hasPrefix(multilineOpenDelimiter) ? multilineOpenDelimiter.count : singleLineOpenDelimiter.count
+      let endLen = ir.hasSuffix(multilineCloseDelimiter) ? multilineCloseDelimiter.count : singleLineCloseDelimiter.count
+      let startIndex = ir.index(ir.startIndex, offsetBy: startLen)
+      let endIndex = ir.index(ir.endIndex, offsetBy: -endLen)
       rawText += String(ir[startIndex..<endIndex])
     }
 
     if !head.isEmpty {
-      // Note: static strings inside the interpolated string literals do not need to preserve raw representation,
-      // because they are what they are
-      exprs.append(LiteralExpression(kind: .staticString(head, "")))
+      segments.append(.text(head))
     }
 
-    let expr = try parseExpression()
-    exprs.append(expr)
-    rawText += expr.textDescription
+    // Parse interpolation arguments (SE-0228: argument list syntax)
+    var arguments: FunctionCallExpression.ArgumentList = []
+    repeat {
+      if _lexer.look(ahead: 1).kind == .colon {
+        guard let name = readNamedIdentifierOrWildcard() else {
+          throw _raiseFatal(.extraTokenStringInterpolation)
+        }
+        _lexer.advance() // consume ':'
+        let argExpr = try parseExpression()
+        arguments.append(.namedExpression(name, argExpr))
+      } else {
+        let argExpr = try parseExpression()
+        arguments.append(.expression(argExpr))
+      }
+    } while _lexer.match(.comma)
+
+    segments.append(.interpolation(arguments))
+
+    // Build rawText from arguments
+    rawText += arguments.map({ $0.textDescription }).joined(separator: ", ")
 
     if _lexer.matchUnicodeScalar(")") {
       rawText += ")"
@@ -1194,22 +1501,20 @@ extension Parser {
     }
 
     var endLocation: SourceLocation
-    let tailString = _lexer.lexStringLiteral(isMultiline: isMultiline, postponeCaliberation: true)
+    let tailString = _lexer.lexStringLiteral(isMultiline: isMultiline, hashCount: hashCount, postponeCaliberation: true)
     switch tailString {
-    case let .staticStringLiteral(str, raw):
+    case let .staticStringLiteral(str, raw, _):
       if !str.isEmpty {
-        // Note: static strings inside the interpolated string literals do not need to preserve raw representation,
-        // because they are what they are
-        exprs.append(LiteralExpression(kind: .staticString(str, "")))
+        segments.append(.text(str))
         appendRawText(withRawText: raw)
       }
       endLocation = _lexer._getCurrentLocation() // TODO: need to find a better to do it
-    case let .interpolatedStringLiteralHead(headStr, rawStr):
-      let nested = try parseInterpolatedStringLiteral(head: headStr, raw: rawStr, startLocation: .DUMMY)
-      guard case let .interpolatedString(es, ir) = nested.kind else {
+    case let .interpolatedStringLiteralHead(headStr, rawStr, hc):
+      let nested = try parseInterpolatedStringLiteral(head: headStr, raw: rawStr, hashCount: hc, startLocation: .DUMMY)
+      guard case let .interpolatedString(nestedSegments, ir) = nested.kind else {
         throw _raiseFatal(.expectedStringInterpolation)
       }
-      exprs.append(contentsOf: es)
+      segments.append(contentsOf: nestedSegments)
       appendRawText(withRawText: ir)
       endLocation = nested.sourceRange.end
     default:
@@ -1217,12 +1522,12 @@ extension Parser {
     }
 
     if isMultiline && isInterpolatedHead {
-      exprs = try caliberateExpressions(exprs)
+      segments = try caliberateSegments(segments)
     }
 
-    rawText += isMultiline ? multilineDelimiter : "\""
+    rawText += isMultiline ? multilineCloseDelimiter : singleLineCloseDelimiter
 
-    let strExpr = LiteralExpression(kind: .interpolatedString(exprs, rawText))
+    let strExpr = LiteralExpression(kind: .interpolatedString(segments, rawText))
     strExpr.setSourceRange(startLocation, endLocation)
     return strExpr
   }
@@ -1306,6 +1611,7 @@ extension Parser {
       guard
         let id = _lexer.look().kind.namedIdentifierOrWildcard?.id,
         id.textDescription != "in",
+        id.textDescription != "async",
         id.textDescription != "throws"
       else {
         return nil
@@ -1324,9 +1630,22 @@ extension Parser {
     let signatureOpeningCp = _lexer.checkPoint()
     let signatureOpeningDiagnosticCp = _diagnosticPool.checkPoint()
     var signature: ClosureExpression.Signature?
+
+    var closureAttributes: Attributes = []
+    if _lexer.look().kind == .at {
+      let attrCp = _lexer.checkPoint()
+      let attrDiagnosticCp = _diagnosticPool.checkPoint()
+      do {
+        closureAttributes = try parseAttributes()
+      } catch {
+        _lexer.restore(fromCheckpoint: attrCp)
+        _diagnosticPool.restore(fromCheckpoint: attrDiagnosticCp)
+      }
+    }
+
     if _lexer.match(.leftSquare) {
       if let captureList = parseCaptureList() {
-        signature = ClosureExpression.Signature(captureList: captureList)
+        signature = ClosureExpression.Signature(captureList: captureList, attributes: closureAttributes)
       } else {
         _lexer.restore(fromCheckpoint: signatureOpeningCp)
         _diagnosticPool.restore(fromCheckpoint: signatureOpeningDiagnosticCp)
@@ -1344,7 +1663,7 @@ extension Parser {
     }
 
     if let headId = parseParameterName(),
-      [Token.Kind.comma, .throws, .arrow, .in].contains(_lexer.look(ahead: 1).kind)
+      [Token.Kind.comma, .async, .throws, .arrow, .in].contains(_lexer.look(ahead: 1).kind)
     {
       _lexer.advance()
       var ids = [headId]
@@ -1360,13 +1679,21 @@ extension Parser {
 
     if let parameterClause = parameterClause {
       let captureList = signature?.captureList
+      let isAsync = _lexer.match(.async)
       let canThrow = _lexer.match(.throws)
       let funcResult = try parseFunctionResult()
       signature = ClosureExpression.Signature(
         captureList: captureList,
+        attributes: closureAttributes,
         parameterClause: parameterClause,
+        isAsync: isAsync,
         canThrow: canThrow,
         functionResult: funcResult)
+    } else if !closureAttributes.isEmpty {
+      let captureList = signature?.captureList
+      signature = ClosureExpression.Signature(
+        captureList: captureList,
+        attributes: closureAttributes)
     }
 
     if signature != nil, !_lexer.match(.in) {

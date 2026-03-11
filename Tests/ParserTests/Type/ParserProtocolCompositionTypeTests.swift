@@ -1,5 +1,5 @@
 /*
-   Copyright 2016 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -49,11 +49,4 @@ class ParserProtocolCompositionTypeTests: XCTestCase {
       XCTAssertEqual(type.sourceRange, getRange(1, 1, 1, 21))
     })
   }
-
-  static var allTests = [
-    ("testProtocolCompositionTypes", testProtocolCompositionTypes),
-    ("testOldSyntax", testOldSyntax),
-    ("testAmpAsPrefix", testAmpAsPrefix),
-    ("testSourceRange", testSourceRange),
-  ]
 }

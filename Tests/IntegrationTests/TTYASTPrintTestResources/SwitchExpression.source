@@ -1,5 +1,5 @@
 /*
-   Copyright 2017 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,15 +14,17 @@
    limitations under the License.
 */
 
-import XCTest
-
-#if !os(macOS)
-public func allTests() -> [XCTestCaseEntry] {
-  return [
-    testCase(DefaultVisitImplementationTests.allTests),
-    testCase(DefaultTraverseImplementationTests.allTests),
-    testCase(ASTVisitorTopLevelDeclTraversalTests.allTests),
-    testCase(ASTVisitorCodeBlockTraversalTests.allTests),
-  ]
+let x = switch val {
+case 1:
+  foo
+default:
+  bar
 }
-#endif
+let y = switch direction {
+case .north:
+  goNorth()
+case .south:
+  goSouth()
+default:
+  stop()
+}

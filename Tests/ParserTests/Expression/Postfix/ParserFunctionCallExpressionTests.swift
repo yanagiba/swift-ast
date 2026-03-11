@@ -1,5 +1,5 @@
 /*
-   Copyright 2016-2018 Ryuichi Intellectual Property and the Yanagiba project contributors
+   Copyright 2016-2018, 2026 Ryuichi Intellectual Property and the Yanagiba project contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -478,28 +478,4 @@ class ParserFunctionCallExpressionTests: XCTestCase {
       })
     }
   }
-
-  static var allTests = [
-    ("testEmptyParameter", testEmptyParameter),
-    ("testArgumentAsExpression", testArgumentAsExpression),
-    ("testArgumentAsNamedExpression", testArgumentAsNamedExpression),
-    ("testArgumentAsOperator", testArgumentAsOperator),
-    ("testOperators", testOperators),
-    ("testArgumentAsNamedOperator", testArgumentAsNamedOperator),
-    ("testArgumentsStartWithMinusSign", testArgumentsStartWithMinusSign),
-    ("testArgumentsStartWithExclamation", testArgumentsStartWithExclamation),
-    ("testMultipleArguments", testMultipleArguments),
-    ("testClosureArgument", testClosureArgument),
-    ("testTrailingClosureOneArgument", testTrailingClosureOneArgument),
-    ("testTrailingClosureZeroArgument", testTrailingClosureZeroArgument),
-    ("testTrailingClosureNoArgumentClause", testTrailingClosureNoArgumentClause),
-    ("testTrailingClosureSameLine", testTrailingClosureSameLine),
-    ("testDistinguishFromExplicitMemberExpr", testDistinguishFromExplicitMemberExpr),
-    ("testMemoryReference", testMemoryReference),
-    ("testNamedMemoryReference", testNamedMemoryReference),
-    ("testArgumentAsFunctionCallExprWithTrailingClosure", testArgumentAsFunctionCallExprWithTrailingClosure),
-    ("testArgumentAsEmptyDictionary", testArgumentAsEmptyDictionary),
-    ("testPostfixExpressionAsLiteralExpression", testPostfixExpressionAsLiteralExpression),
-    ("testSourceRange", testSourceRange),
-  ]
 }
